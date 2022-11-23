@@ -98,26 +98,6 @@ namespace WpfChatClient
             }
         }
 
-        ///// <summary>
-        ///// Есть в поле для ввода какое-то имя?
-        ///// </summary>
-        //private bool _hasNotTextBoxSomeName;
-
-        ///// <summary>
-        ///// Есть в поле для ввода какое-то имя?
-        ///// </summary>
-        //public bool HasNotTextBoxSomeName
-        //{
-        //    get => _hasNotTextBoxSomeName;
-
-        //    set
-        //    {
-        //        _hasNotTextBoxSomeName = value;
-
-        //        OnPropertyChanged(nameof(HasNotTextBoxSomeName));
-        //    }
-        //}
-
         /// <summary>
         /// Комманда по входу в чат
         /// </summary>
