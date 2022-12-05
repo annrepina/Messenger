@@ -75,7 +75,7 @@ namespace WpfMessengerClient.Models
         public UserAccount()
         {
             _id = 0;
-            _person = null;
+            _person = new Person();
             _password = "";
             _isOnline = false;
             Dialogs = new ObservableCollection<Dialog>();

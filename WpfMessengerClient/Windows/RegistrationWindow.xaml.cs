@@ -11,17 +11,20 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfMessengerClient.ViewModels;
 
 namespace WpfMessengerClient
 {
     /// <summary>
     /// Логика взаимодействия для AuthorizationWindow.xaml
     /// </summary>
-    public partial class AuthorizationWindow : Window
+    public partial class RegistrationWindow : Window
     {
-        public AuthorizationWindow()
+        public RegistrationWindow()
         {
             InitializeComponent();
+
+            DataContext = new RegistrationWindowViewModel();
         }
     }
 }

@@ -22,9 +22,9 @@
                                      Foreground="Gray"
                                      CaretBrush="Gray"
                                      Margin="8,0,0,0"
-                                     Text="{Binding CurrentUser.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                     Text="{Binding CurrentUserAccount.Person.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
-                                    <KeyBinding Command="{Binding OnEnterChatCommand}" Key="Return"/>
+                                    <KeyBinding Command="{Binding OnRegisterInMessengerCommand}" Key="Return"/>
                                 </TextBox.InputBindings>
                             </TextBox>
 
