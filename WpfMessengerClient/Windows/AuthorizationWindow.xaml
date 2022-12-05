@@ -5,8 +5,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfMessengerClient"
         mc:Ignorable="d"
-        Title="AuthorizationWindow" Height="450" Width="800">
-    <Grid>
-        
+        Height="{Binding Source={x:Static SystemParameters.FullPrimaryScreenHeight}}" 
+        Width="{Binding Source={x:Static SystemParameters.FullPrimaryScreenWidth}}"
+        WindowStartupLocation="CenterScreen"
+        Title="Authorization"
+        WindowState="Normal">
+    <Grid Grid.Column="2" Grid.RowSpan="2" Background="#FF021F38">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="500"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Column="1" Grid.Row="1" Background="AliceBlue">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Введите номер" FontSize="32" FontFamily="Tahoma" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Row="1" Text="Ваш номер телефона будет использоваться &#x0a;для входа в аккаунт" FontSize="16" FontFamily="Tahoma" HorizontalAlignment="Center" TextAlignment="Center" Foreground="#6f7378"/>
+            </Grid>
+            <TextBox Grid.Row="1" Style="{StaticResource InputPhoneNumberTextBox}"/>
+            <TextBox Grid.Row="2" Style="{StaticResource InputPasswordTextBox}"/>
+            <TextBox Grid.Row="3" Style="{StaticResource InputPasswordTextBox}"/>
+            <Button Style="{StaticResource RoundedButton}" Grid.Row="4" Content="Войти" IsEnabled="{Binding DidUserNotEnteredChat}" Command="{Binding OnEnterChatCommand}" />
+            <Border CornerRadius="18"/>
+        </Grid>
     </Grid>
 </Window>

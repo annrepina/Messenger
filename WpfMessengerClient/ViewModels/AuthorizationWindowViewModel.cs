@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfMessengerClient
+namespace WpfMessengerClient.ViewModels
 {
     public class AuthorizationWindowViewModel : INotifyPropertyChanged
     {

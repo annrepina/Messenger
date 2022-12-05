@@ -2,12 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WpfChatClient"
-             StartupUri="MainWindow.xaml">
+             StartupUri="/Windows/AuthorizationWindow.xaml">
+            <!--StartupUri="/Windows/MainWindow.xaml">-->
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="./Styles/RoundedButton.xaml"/>
                 <ResourceDictionary Source="./Styles/InputNameTextBox.xaml"/>
+                <ResourceDictionary Source="./Styles/InputPhoneNumberTextBox.xaml"/>
+                <ResourceDictionary Source="./Styles/InputPasswordTextBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>

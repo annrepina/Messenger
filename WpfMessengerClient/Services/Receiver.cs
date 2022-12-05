@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WpfChatClient.Services
+namespace WpfMessengerClient.Services
 {
     /// <summary>
     /// Получает сообщения от сервера

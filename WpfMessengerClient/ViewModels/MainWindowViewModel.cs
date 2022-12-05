@@ -7,9 +7,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfChatClient.Services;
+using WpfMessengerClient.Services;
+using WpfMessengerClient.Models;
 
-namespace WpfChatClient
+namespace WpfMessengerClient.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
@@ -36,12 +37,12 @@ namespace WpfChatClient
         /// <summary>
         /// Текущий пользователь
         /// </summary>
-        private User _currentUser;
+        private UserAccount _currentUser;
 
         /// <summary>
         /// Текущий пользователь
         /// </summary>
-        public User CurrentUser
+        public UserAccount CurrentUser
         {
             get => _currentUser;
 
@@ -76,7 +77,7 @@ namespace WpfChatClient
         /// <summary>
         /// Обозреваемая коллекция пользователей
         /// </summary>
-        public ObservableCollection<User> Users { get; set; }
+        public ObservableCollection<UserAccount> Users { get; set; }
 
         /// <summary>
         /// Поле - была попытка ввода пустого имени?
@@ -108,9 +109,9 @@ namespace WpfChatClient
         /// </summary>
         public MainWindowViewModel()
         {
-            Users = new ObservableCollection<User>();
+            Users = new ObservableCollection<UserAccount>();
             Users.CollectionChanged += OnUsersListPropertyChanged;
-            CurrentUser = new User();
+            CurrentUser = new UserAccount();
             CurrentUser.PropertyChanged += OnCurrentUserPropertyChanged;
 
             OnEnterChatCommand = new DelegateCommand(OnEnterChat);
@@ -176,7 +177,7 @@ namespace WpfChatClient
         private void OnCurrentUserPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             // если изменилось имя и оно не пустое
-            if (e.PropertyName == nameof(CurrentUser.Name))
+            if (e.PropertyName == nameof(CurrentUser.Person.Name))
                 WasAttemptToEnterEmptyName = false;
         }
 
@@ -185,9 +186,10 @@ namespace WpfChatClient
         /// </summary>
         private void OnEnterChat()
         {
-            if(!string.IsNullOrEmpty(CurrentUser.Name))
+            if(!string.IsNullOrEmpty(CurrentUser.Person.Name))
             {
-                _client.Connect(_currentUser.Name);
+                _client.Connect(_currentUser.Person.Name
+                    );
 
                 Users.Add(_currentUser);
 

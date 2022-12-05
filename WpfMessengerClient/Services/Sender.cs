@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfChatClient.Services
+namespace WpfMessengerClient.Services
 {
     public class Sender
     {
