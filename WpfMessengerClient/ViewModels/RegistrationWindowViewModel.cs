@@ -120,8 +120,8 @@ namespace WpfMessengerClient.ViewModels
                         {
                             Regex regex = new Regex(@"^\w{10}");
 
-                            if (!regex.IsMatch(SecondPassword) || SecondPassword.Length > MaxLengthOfPassword || String.co)
-                            error = "Недопустимые символы или пароль длиннее 10 символов";
+                            if (!regex.IsMatch(SecondPassword) || SecondPassword.Length > MaxLengthOfPassword || String.Compare(FirstPassword, SecondPassword) != 0)
+                                error = "Пароли не совпадают";
                     }
                     break;
 
