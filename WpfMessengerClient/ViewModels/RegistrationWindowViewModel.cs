@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
 using WpfMessengerClient.Models;
 
 namespace WpfMessengerClient.ViewModels
@@ -29,10 +31,13 @@ namespace WpfMessengerClient.ViewModels
 
         public DelegateCommand OnRegisterInMessengerCommand { get; set; }
 
+        public DelegateCommand OnPhoneNumberInputTextBoxBackspaceDownCommand { get; set; }
+
         public RegistrationWindowViewModel()
         {
             CurrentUserAccount = new UserAccount();
             OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
+            OnPhoneNumberInputTextBoxBackspaceDownCommand = new DelegateCommand(OnPhoneNumberInputTextBoxBackspaceDown);
         }
 
         /// <summary>
@@ -47,6 +52,18 @@ namespace WpfMessengerClient.ViewModels
         private void OnRegisterInMessenger()
         {
 
+        }
+
+        private void OnPhoneNumberInputTextBoxBackspaceDown()
+        {
+            if (CurrentUserAccount.Person.PhoneNumber.Length < 2)
+            {
+                return;
+            }
+            else
+            {
+                CurrentUserAccount.Person.PhoneNumber = CurrentUserAccount.Person.PhoneNumber.Remove(CurrentUserAccount.Person.PhoneNumber.Length - 1);
+            }
         }
     }
 }

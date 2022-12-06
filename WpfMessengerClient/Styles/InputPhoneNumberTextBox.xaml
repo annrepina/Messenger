@@ -19,18 +19,29 @@
                                      Background="Transparent"
                                      TextWrapping="Wrap"
                                      BorderThickness="0"
-                                     Foreground="Gray"
+                                     Foreground="#FF5F5D5D"
+                                     FontFamily="Tahoma"
+                                     FontSize="20"
                                      CaretBrush="Gray"
-                                     Margin="8,0,0,0"
-                                     Text="{Binding CurrentUserAccount.Person.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <TextBox.InputBindings>
-                                    <KeyBinding Command="{Binding OnRegisterInMessengerCommand}" Key="Return"/>
-                                </TextBox.InputBindings>
+                                     Margin="8,0,0,0">
+                                <TextBox.Text>
+                                    <Binding Path="CurrentUserAccount.Person.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <DataErrorValidationRule />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                                <!--KeyDown="OnPhoneNumberInputTextBoxBackspaceDown">-->
+                                <!--<TextBox.InputBindings>
+                                    --><!--<KeyBinding Command="{Binding OnRegisterInMessengerCommand}" Key="Return"/>--><!--
+                                    <KeyBinding Key="Backspace" Command="{Binding OnPhoneNumberInputTextBoxBackspaceDownCommand}" />
+                                </TextBox.InputBindings>-->
+                                
                             </TextBox>
 
 
                             <TextBlock IsHitTestVisible="False"
-                                       Text="Введите номер телефона"
+                                       Text="+7"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Left"
                                        Margin="10,0,0,0"
