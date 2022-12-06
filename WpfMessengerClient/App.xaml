@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="./Styles/InputNameTextBox.xaml"/>
                 <ResourceDictionary Source="./Styles/InputPhoneNumberTextBox.xaml"/>
                 <ResourceDictionary Source="./Styles/InputPasswordTextBox.xaml"/>
+                <ResourceDictionary Source="./Styles/InputSecondPasswordTextBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>

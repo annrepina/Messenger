@@ -39,9 +39,10 @@
                 <TextBlock Grid.Row="1" Text="Ваш номер телефона будет использоваться &#x0a;для входа в аккаунт" FontSize="16" FontFamily="Tahoma" HorizontalAlignment="Center" TextAlignment="Center" Foreground="#6f7378"/>
             </Grid>
             <TextBox Grid.Row="1" Style="{StaticResource InputPhoneNumberTextBox}"/>
+            <!--<TextBox Grid.Row="2" Style="{StaticResource InputPasswordTextBox}"/>-->
             <TextBox Grid.Row="2" Style="{StaticResource InputPasswordTextBox}"/>
-            <TextBox Grid.Row="3" Style="{StaticResource InputPasswordTextBox}"/>
-            <Button Style="{StaticResource RoundedButton}" Grid.Row="4" Content="Зарегестрироваться" IsEnabled="{Binding DidUserNotEnteredChat}" Command="{Binding OnEnterChatCommand}" />
+            <TextBox Grid.Row="3" Style="{StaticResource InputSecondPasswordTextBox}"/>
+            <Button Style="{StaticResource RoundedButton}" Grid.Row="4" Content="Зарегистрироваться" IsEnabled="{Binding DidUserNotEnteredChat}" Command="{Binding OnEnterChatCommand}" />
             <Button Grid.Row="5" Content="У меня уже есть аккаунт" Background="Transparent" BorderThickness="0" FontFamily="Tahoma" FontSize="20" Foreground="Gray"/>
             <Border CornerRadius="18"/>
         </Grid>   
