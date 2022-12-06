@@ -4,12 +4,16 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models
 {
-    public class UserAccount : INotifyPropertyChanged
+    public class UserAccount : INotifyPropertyChanged, IDataErrorInfo
     {
+        private const int MaxLengthOfPassword = 10;
+        private const int MinLengthOfPassword = 6;
+
         private int _id;
         private Person _person;
         private string _password;
@@ -84,6 +88,47 @@ namespace WpfMessengerClient.Models
         private void OnPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
+
+        public string Error => throw new NotImplementedException();
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string error = String.Empty;
+
+                switch (columnName)
+                {
+                    case nameof(Password):
+                        {
+                            Regex regex = new Regex(@"^\w{6}");
+
+                            if (!regex.IsMatch(Password))
+                                error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+
+                            else if (Password.Length > MaxLengthOfPassword)
+                                error = "Пароль должен содержать не больше 10ти символов";
+
+                            else if (Password.Length < MinLengthOfPassword)
+                                error = "Пароль должен содержать не меньше 6ти символов";
+                        }
+                        break;
+
+                    //case nameof(SecondPassword):
+                    //{
+                    //    Regex regex = new Regex(@"^\w{6}");
+
+                    //    if (!regex.IsMatch(SecondPassword) || SecondPassword.Length > MaxLengthOfPassword || SecondPassword.Length < MinLengthOfPassword || String.Compare(FirstPassword, SecondPassword) != 0)
+                    //        error = "Пароли не совпадают";
+                    //}
+                    //break;
+
+                    default:
+                        break;
+                }
+                return error;
+            }//get
         }
     }
 }

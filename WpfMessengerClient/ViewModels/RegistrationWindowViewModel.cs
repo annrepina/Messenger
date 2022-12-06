@@ -15,11 +15,12 @@ namespace WpfMessengerClient.ViewModels
 {
     public class RegistrationWindowViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
-        private const int MaxLengthOfPassword = 10;
-
         private UserAccount _currentUserAccount;
-        private string _firstPassword;
-        private string _secondPassword;
+        //private string _firstPassword;
+        //private string _secondPassword;
+        //private bool _hasCurrentUserAccountName;
+        //private bool _arePasswordsCorrect;
+        private bool _canUserRegisterAccount;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -34,41 +35,82 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        public string FirstPassword
+        //public bool HasCurrentUserAccountName
+        //{
+        //    get => _hasCurrentUserAccountName;
+
+        //    set
+        //    {
+        //        _hasCurrentUserAccountName = value;
+
+        //        //OnPropertyChanged(nameof(HasCurrentUserAccountName));
+
+        //        CanUserRegisterAccount = ArePasswordsCorrect && HasCurrentUserAccountName;
+        //    }
+        //}
+      
+        //public string FirstPassword
+        //{
+        //    get => _firstPassword;
+
+        //    set
+        //    {
+        //        _firstPassword = value;
+        //        OnPropertyChanged(nameof(FirstPassword));
+
+        //        //ArePasswordsCorrect = String.Compare(FirstPassword, SecondPassword) == 0 && FirstPassword.Length >= MinLengthOfPassword && FirstPassword.Length <= MaxLengthOfPassword;
+        //    }
+        //}
+
+        //public IsFirstPasswordCorrect
+
+        //public string SecondPassword
+        //{
+        //    get => _secondPassword;
+
+        //    set
+        //    {
+        //        _secondPassword = value;
+        //        OnPropertyChanged(nameof(SecondPassword));
+        //        ArePasswordsCorrect = String.Compare(FirstPassword, SecondPassword) == 0 && FirstPassword.Length >= MinLengthOfPassword && FirstPassword.Length <= MaxLengthOfPassword;
+        //    }
+        //}
+
+        //public bool ArePasswordsCorrect
+        //{
+        //    get => _arePasswordsCorrect;
+
+        //    set
+        //    {
+        //        _arePasswordsCorrect = value;
+
+        //        //OnPropertyChanged(nameof(ArePasswordsCorrect));
+
+        //        CanUserRegisterAccount = ArePasswordsCorrect && HasCurrentUserAccountName;
+        //    }
+        //}
+
+        public bool CanUserRegisterAccount
         {
-            get => _firstPassword;
+            get => _canUserRegisterAccount;
 
             set
             {
-                _firstPassword = value;
-                OnPropertyChanged(nameof(FirstPassword));
-            }
-        }
+                _canUserRegisterAccount = value;
 
-        public string SecondPassword
-        {
-            get => _secondPassword;
-
-            set
-            {
-                _secondPassword = value;
-                OnPropertyChanged(nameof(SecondPassword));
+                OnPropertyChanged(nameof(CanUserRegisterAccount));
             }
         }
 
         public DelegateCommand OnRegisterInMessengerCommand { get; set; }
 
-        public DelegateCommand OnPhoneNumberInputTextBoxBackspaceDownCommand { get; set; }
-
-
-
         public RegistrationWindowViewModel()
         {
             CurrentUserAccount = new UserAccount();
             OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
-            OnPhoneNumberInputTextBoxBackspaceDownCommand = new DelegateCommand(OnPhoneNumberInputTextBoxBackspaceDown);
-            FirstPassword = "";
-            SecondPassword = "";
+            //FirstPassword = "";
+
+            //SecondPassword = "";
         }
 
         /// <summary>
@@ -82,19 +124,12 @@ namespace WpfMessengerClient.ViewModels
 
         private void OnRegisterInMessenger()
         {
-
-        }
-
-        private void OnPhoneNumberInputTextBoxBackspaceDown()
-        {
-            if (CurrentUserAccount.Person.PhoneNumber.Length < 2)
+            //if(CurrentUserAccount.Person.PhoneNumber)
+            if(CurrentUserAccount.Person.Error != "")
             {
-                return;
+                CurrentUserAccount.Password = "122";
             }
-            else
-            {
-                CurrentUserAccount.Person.PhoneNumber = CurrentUserAccount.Person.PhoneNumber.Remove(CurrentUserAccount.Person.PhoneNumber.Length - 1);
-            }
+
         }
 
         public string Error => throw new NotImplementedException();
@@ -107,29 +142,29 @@ namespace WpfMessengerClient.ViewModels
 
                 switch (columnName)
                 {
-                    case nameof(FirstPassword):
-                        {
-                            Regex regex = new Regex(@"^\w{10}");
+                    //case nameof(FirstPassword):
+                    //{
+                    //    Regex regex = new Regex(@"^\w{6}");
 
-                            if (!regex.IsMatch(FirstPassword) || FirstPassword.Length > MaxLengthOfPassword)
-                                error = "Недопустимые символы или пароль длиннее 10 символов";
-                        }
-                        break;
+                    //    if (!regex.IsMatch(FirstPassword) || FirstPassword.Length > MaxLengthOfPassword || FirstPassword.Length < MinLengthOfPassword)
+                    //        error = "Недопустимые символы или пароль длиннее 10 символов";
+                    //}
+                    //break;
 
-                    case nameof(SecondPassword):
-                        {
-                            Regex regex = new Regex(@"^\w{10}");
+                    //case nameof(SecondPassword):
+                    //{
+                    //    Regex regex = new Regex(@"^\w{6}");
 
-                            if (!regex.IsMatch(SecondPassword) || SecondPassword.Length > MaxLengthOfPassword || String.Compare(FirstPassword, SecondPassword) != 0)
-                                error = "Пароли не совпадают";
-                    }
-                    break;
+                    //    if (!regex.IsMatch(SecondPassword) || SecondPassword.Length > MaxLengthOfPassword || SecondPassword.Length < MinLengthOfPassword || String.Compare(FirstPassword, SecondPassword) != 0)
+                    //        error = "Пароли не совпадают";
+                    //}
+                    //break;
 
                     default:
                         break;
                 }
                 return error;
-            }
+            }//get
         }
     }
 }

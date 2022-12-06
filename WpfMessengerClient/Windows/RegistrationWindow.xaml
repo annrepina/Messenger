@@ -28,7 +28,6 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
@@ -41,9 +40,9 @@
             <TextBox Grid.Row="1" Style="{StaticResource InputPhoneNumberTextBox}"/>
             <!--<TextBox Grid.Row="2" Style="{StaticResource InputPasswordTextBox}"/>-->
             <TextBox Grid.Row="2" Style="{StaticResource InputPasswordTextBox}"/>
-            <TextBox Grid.Row="3" Style="{StaticResource InputSecondPasswordTextBox}"/>
-            <Button Style="{StaticResource RoundedButton}" Grid.Row="4" Content="Зарегистрироваться" IsEnabled="{Binding DidUserNotEnteredChat}" Command="{Binding OnEnterChatCommand}" />
-            <Button Grid.Row="5" Content="У меня уже есть аккаунт" Background="Transparent" BorderThickness="0" FontFamily="Tahoma" FontSize="20" Foreground="Gray"/>
+            <!--<TextBox Grid.Row="3" Style="{StaticResource InputSecondPasswordTextBox}"/>-->
+            <Button Style="{StaticResource RoundedButton}" Grid.Row="3" Content="Зарегистрироваться" Command="{Binding OnRegisterInMessengerCommand}" />
+            <Button Grid.Row="4" Content="У меня уже есть аккаунт" Background="Transparent" BorderThickness="0" FontFamily="Tahoma" FontSize="20" Foreground="Gray"/>
             <Border CornerRadius="18"/>
         </Grid>   
     </Grid>

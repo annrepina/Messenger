@@ -13,11 +13,14 @@ namespace WpfMessengerClient.Models
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private const int MaxPhoneNumberLength = 12;
+        private const int PhoneNumberLength = 12;
+        private const int MaxNameLength = 50;
+        private const int MinNameLength = 2;
 
         private string _name;
         private string? _surname;
         private string _phoneNumber;
+        private string _error;
 
         public string Name 
         {
@@ -61,6 +64,7 @@ namespace WpfMessengerClient.Models
             _name = "";
             _surname = "";
             _phoneNumber = "";
+            _error = "";
         }
 
         private void OnPropertyChanged(string propName)
@@ -68,7 +72,24 @@ namespace WpfMessengerClient.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        public string Error => throw new NotImplementedException();
+        public string Error
+        {
+            get
+            {
+                string error = String.Empty;
+                //Regex regex = new Regex(@"^8\d{10}");
+                Regex regex = new Regex(@"^\+7\d{10}");
+                //Regex regex = new Regex(@"^\d{10}");
+
+                if (!regex.IsMatch(PhoneNumber))
+                    error = "Телефон должен начинасть с +7 и далее 10 цифр";
+
+                else if (PhoneNumber.Length != PhoneNumberLength)
+                    error = "Номер телефон должнен состоять из 12 символов";
+
+                return error;
+            }
+        }
 
         public string this[string columnName]
         {
@@ -77,14 +98,34 @@ namespace WpfMessengerClient.Models
                 string error = String.Empty;
                 switch (columnName)
                 {
+                    //case nameof(Name):
+                    //{
+                    //    //Regex regex = new Regex(@"^8\d{10}");
+                    //    Regex regex = new Regex(@"^\w+");
+                    //    //Regex regex = new Regex(@"^\d{10}");                
+
+                    //    if (!regex.IsMatch(Name))
+                    //        error = "Недопустимые символы";
+
+                    //    else if (Name.Length > MaxNameLength)
+                    //        error = "Имя не должно превышать 50ти символов";
+
+                    //    else if(Name.Length < MinNameLength)
+                    //        error = "Имя должно быть не меньше 2х символов";
+                    //}
+                    //break;
+
                     case nameof(PhoneNumber):
                     {
                         //Regex regex = new Regex(@"^8\d{10}");
                         Regex regex = new Regex(@"^\+7\d{10}");
-                        //Regex regex = new Regex(@"^\d{10}");                
+                            //Regex regex = new Regex(@"^\d{10}");
 
-                        if(!regex.IsMatch(PhoneNumber) || PhoneNumber.Length > MaxPhoneNumberLength)
-                            error = "Недопустимые символы или слишком длинный номер телефона";
+                        if (!regex.IsMatch(PhoneNumber))
+                            error = "Телефон должен начинасть с +7 и далее 10 цифр";
+
+                        else if (PhoneNumber.Length != PhoneNumberLength)
+                            error = "Номер телефон должнен состоять из 12 символов";
                     }
                     break;
 
