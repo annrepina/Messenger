@@ -10,19 +10,24 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using WpfMessengerClient.Models;
+using AutoMapper;
 
 namespace WpfMessengerClient.ViewModels
 {
-    public class RegistrationWindowViewModel : INotifyPropertyChanged, IDataErrorInfo
+    public class RegistrationWindowViewModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         private UserAccount _currentUserAccount;
         //private string _firstPassword;
         //private string _secondPassword;
         //private bool _hasCurrentUserAccountName;
         //private bool _arePasswordsCorrect;
-        private bool _canUserRegisterAccount;
+        //private bool _canUserRegisterAccount;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        private readonly IMapper mapper;
+
+
 
         public UserAccount CurrentUserAccount
         {
@@ -90,17 +95,17 @@ namespace WpfMessengerClient.ViewModels
         //    }
         //}
 
-        public bool CanUserRegisterAccount
-        {
-            get => _canUserRegisterAccount;
+        //public bool CanUserRegisterAccount
+        //{
+        //    get => _canUserRegisterAccount;
 
-            set
-            {
-                _canUserRegisterAccount = value;
+        //    set
+        //    {
+        //        _canUserRegisterAccount = value;
 
-                OnPropertyChanged(nameof(CanUserRegisterAccount));
-            }
-        }
+        //        OnPropertyChanged(nameof(CanUserRegisterAccount));
+        //    }
+        //}
 
         public DelegateCommand OnRegisterInMessengerCommand { get; set; }
 
@@ -108,9 +113,6 @@ namespace WpfMessengerClient.ViewModels
         {
             CurrentUserAccount = new UserAccount();
             OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
-            //FirstPassword = "";
-
-            //SecondPassword = "";
         }
 
         /// <summary>
@@ -124,47 +126,11 @@ namespace WpfMessengerClient.ViewModels
 
         private void OnRegisterInMessenger()
         {
-            //if(CurrentUserAccount.Person.PhoneNumber)
-            if(CurrentUserAccount.Person.Error != "")
+            // если ошибок нет
+            if(!String.IsNullOrEmpty(CurrentUserAccount.Error))
             {
-                CurrentUserAccount.Password = "122";
+                // подключаемся
             }
-
-        }
-
-        public string Error => throw new NotImplementedException();
-
-        public string this[string columnName]
-        {
-            get
-            {
-                string error = String.Empty;
-
-                switch (columnName)
-                {
-                    //case nameof(FirstPassword):
-                    //{
-                    //    Regex regex = new Regex(@"^\w{6}");
-
-                    //    if (!regex.IsMatch(FirstPassword) || FirstPassword.Length > MaxLengthOfPassword || FirstPassword.Length < MinLengthOfPassword)
-                    //        error = "Недопустимые символы или пароль длиннее 10 символов";
-                    //}
-                    //break;
-
-                    //case nameof(SecondPassword):
-                    //{
-                    //    Regex regex = new Regex(@"^\w{6}");
-
-                    //    if (!regex.IsMatch(SecondPassword) || SecondPassword.Length > MaxLengthOfPassword || SecondPassword.Length < MinLengthOfPassword || String.Compare(FirstPassword, SecondPassword) != 0)
-                    //        error = "Пароли не совпадают";
-                    //}
-                    //break;
-
-                    default:
-                        break;
-                }
-                return error;
-            }//get
         }
     }
 }

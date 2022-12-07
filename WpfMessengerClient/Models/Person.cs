@@ -64,7 +64,7 @@ namespace WpfMessengerClient.Models
             _name = "";
             _surname = "";
             _phoneNumber = "";
-            _error = "";
+            _error = null;
         }
 
         private void OnPropertyChanged(string propName)
@@ -76,64 +76,74 @@ namespace WpfMessengerClient.Models
         {
             get
             {
-                string error = String.Empty;
-                //Regex regex = new Regex(@"^8\d{10}");
-                Regex regex = new Regex(@"^\+7\d{10}");
-                //Regex regex = new Regex(@"^\d{10}");
+                return _error;
+            }
 
-                if (!regex.IsMatch(PhoneNumber))
-                    error = "Телефон должен начинасть с +7 и далее 10 цифр";
+            set
+            {
+                _error = value;
 
-                else if (PhoneNumber.Length != PhoneNumberLength)
-                    error = "Номер телефон должнен состоять из 12 символов";
-
-                return error;
+                OnPropertyChanged(nameof(Error));
             }
         }
 
-        public string this[string columnName]
+        public string this[string propName]
         {
             get
             {
-                string error = String.Empty;
-                switch (columnName)
-                {
-                    //case nameof(Name):
-                    //{
-                    //    //Regex regex = new Regex(@"^8\d{10}");
-                    //    Regex regex = new Regex(@"^\w+");
-                    //    //Regex regex = new Regex(@"^\d{10}");                
+                ValidateAllProperties(propName);
 
-                    //    if (!regex.IsMatch(Name))
-                    //        error = "Недопустимые символы";
-
-                    //    else if (Name.Length > MaxNameLength)
-                    //        error = "Имя не должно превышать 50ти символов";
-
-                    //    else if(Name.Length < MinNameLength)
-                    //        error = "Имя должно быть не меньше 2х символов";
-                    //}
-                    //break;
-
-                    case nameof(PhoneNumber):
-                    {
-                        //Regex regex = new Regex(@"^8\d{10}");
-                        Regex regex = new Regex(@"^\+7\d{10}");
-                            //Regex regex = new Regex(@"^\d{10}");
-
-                        if (!regex.IsMatch(PhoneNumber))
-                            error = "Телефон должен начинасть с +7 и далее 10 цифр";
-
-                        else if (PhoneNumber.Length != PhoneNumberLength)
-                            error = "Номер телефон должнен состоять из 12 символов";
-                    }
-                    break;
-
-                    default:
-                        break;
-                }
-                return error;
+                return Error;
             }
         }
+
+        #region Валидация
+
+        private void ValidatePhoneNumber()
+        {
+            //Regex regex = new Regex(@"^8\d{10}");
+            Regex regex = new Regex(@"^\+7\d{10}");
+            //Regex regex = new Regex(@"^\d{10}");
+
+            if (!regex.IsMatch(PhoneNumber))
+                Error = "Телефон должен начинаться с +7 и далее состоять из 10 цифр";
+
+            else if (PhoneNumber.Length != PhoneNumberLength)
+                Error = "Номер телефон должнен состоять из 12 символов всего";
+        }
+
+        private void ValidateAllProperties(string propName)
+        {
+            switch (propName)
+            {
+                //case nameof(Name):
+                //{
+                //    //Regex regex = new Regex(@"^8\d{10}");
+                //    Regex regex = new Regex(@"^\w+");
+                //    //Regex regex = new Regex(@"^\d{10}");                
+
+                //    if (!regex.IsMatch(Name))
+                //        error = "Недопустимые символы";
+
+                //    else if (Name.Length > MaxNameLength)
+                //        error = "Имя не должно превышать 50ти символов";
+
+                //    else if(Name.Length < MinNameLength)
+                //        error = "Имя должно быть не меньше 2х символов";
+                //}
+                //break;
+
+                case nameof(PhoneNumber):
+                    ValidatePhoneNumber();
+
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
+        #endregion Валидация
     }
 }
