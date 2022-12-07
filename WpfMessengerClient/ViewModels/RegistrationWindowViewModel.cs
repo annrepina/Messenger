@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using WpfMessengerClient.Models;
+using WpfMessengerClient.Models.Mapping;
 using AutoMapper;
+using DtoLib.Dto;
+//using DtoLib;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -40,79 +43,17 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        //public bool HasCurrentUserAccountName
-        //{
-        //    get => _hasCurrentUserAccountName;
-
-        //    set
-        //    {
-        //        _hasCurrentUserAccountName = value;
-
-        //        //OnPropertyChanged(nameof(HasCurrentUserAccountName));
-
-        //        CanUserRegisterAccount = ArePasswordsCorrect && HasCurrentUserAccountName;
-        //    }
-        //}
-      
-        //public string FirstPassword
-        //{
-        //    get => _firstPassword;
-
-        //    set
-        //    {
-        //        _firstPassword = value;
-        //        OnPropertyChanged(nameof(FirstPassword));
-
-        //        //ArePasswordsCorrect = String.Compare(FirstPassword, SecondPassword) == 0 && FirstPassword.Length >= MinLengthOfPassword && FirstPassword.Length <= MaxLengthOfPassword;
-        //    }
-        //}
-
-        //public IsFirstPasswordCorrect
-
-        //public string SecondPassword
-        //{
-        //    get => _secondPassword;
-
-        //    set
-        //    {
-        //        _secondPassword = value;
-        //        OnPropertyChanged(nameof(SecondPassword));
-        //        ArePasswordsCorrect = String.Compare(FirstPassword, SecondPassword) == 0 && FirstPassword.Length >= MinLengthOfPassword && FirstPassword.Length <= MaxLengthOfPassword;
-        //    }
-        //}
-
-        //public bool ArePasswordsCorrect
-        //{
-        //    get => _arePasswordsCorrect;
-
-        //    set
-        //    {
-        //        _arePasswordsCorrect = value;
-
-        //        //OnPropertyChanged(nameof(ArePasswordsCorrect));
-
-        //        CanUserRegisterAccount = ArePasswordsCorrect && HasCurrentUserAccountName;
-        //    }
-        //}
-
-        //public bool CanUserRegisterAccount
-        //{
-        //    get => _canUserRegisterAccount;
-
-        //    set
-        //    {
-        //        _canUserRegisterAccount = value;
-
-        //        OnPropertyChanged(nameof(CanUserRegisterAccount));
-        //    }
-        //}
-
         public DelegateCommand OnRegisterInMessengerCommand { get; set; }
 
         public RegistrationWindowViewModel()
         {
             CurrentUserAccount = new UserAccount();
             OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
+
+            var config = new MapperConfiguration(cnf =>
+            {
+                cnf.CreateMap<UserAccount, UserAccountDto>();
+            });
         }
 
         /// <summary>
@@ -127,10 +68,20 @@ namespace WpfMessengerClient.ViewModels
         private void OnRegisterInMessenger()
         {
             // если ошибок нет
-            if(!String.IsNullOrEmpty(CurrentUserAccount.Error))
-            {
+            //if(!String.IsNullOrEmpty(CurrentUserAccount.Error))
+            //{
+                MessengerMapper map = MessengerMapper.GetInstance();
+
+                var mapper = map.CreateIMapper();
+
+                UserAccountDto user = mapper.Map<UserAccountDto>(CurrentUserAccount);
+
+                var a = user;
+
+                //UserAccountDto user = 
+
                 // подключаемся
-            }
+            //}
         }
     }
 }

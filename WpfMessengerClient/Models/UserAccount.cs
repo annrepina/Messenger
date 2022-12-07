@@ -12,8 +12,6 @@ namespace WpfMessengerClient.Models
 {
     public class UserAccount : INotifyPropertyChanged, IDataErrorInfo
     {
-
-
         private const int MaxLengthOfPassword = 10;
         private const int MinLengthOfPassword = 6;
 

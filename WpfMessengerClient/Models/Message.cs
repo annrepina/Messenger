@@ -10,10 +10,12 @@ namespace WpfMessengerClient.Models
     public class Message : INotifyPropertyChanged
     {
         private string _text;
-        private int _sendingUserAccountId;
-        private int _receivingUserAccountId;
+        //private int _sendingUserAccountId;
+        //private int _receivingUserAccountId;
         private bool _isRead;
         private DateTime? _dateTime;
+        private UserAccount _sendingUserAccount;
+        private UserAccount _receivingUserAccount;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -31,27 +33,51 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public int SendingUserAccountId
+        //public int SendingUserAccountId
+        //{
+        //    get => _sendingUserAccountId;
+
+        //    set
+        //    {
+        //        _sendingUserAccountId = value;  
+
+        //        OnPropertyChanged(nameof(SendingUserAccountId));
+        //    }
+        //}
+
+        //public int ReceivingUserAccountId
+        //{
+        //    get => _receivingUserAccountId;
+
+        //    set
+        //    {
+        //        _receivingUserAccountId = value;
+
+        //        OnPropertyChanged(nameof(ReceivingUserAccountId));
+        //    }
+        //}
+
+        public UserAccount SendingUserAccount
         {
-            get => _sendingUserAccountId;
+            get => _sendingUserAccount;
 
             set
             {
-                _sendingUserAccountId = value;  
+                _sendingUserAccount = value;
 
-                OnPropertyChanged(nameof(SendingUserAccountId));
+                OnPropertyChanged(nameof(SendingUserAccount));
             }
         }
 
-        public int ReceivingUserAccountId
+        public UserAccount ReceivingUserAccount
         {
-            get => _receivingUserAccountId;
+            get => _receivingUserAccount;
 
             set
             {
-                _receivingUserAccountId = value;
+                _receivingUserAccount = value;
 
-                OnPropertyChanged(nameof(ReceivingUserAccountId));
+                OnPropertyChanged(nameof(ReceivingUserAccount));
             }
         }
 
@@ -80,11 +106,22 @@ namespace WpfMessengerClient.Models
         public Message()
         {
             _text = "";
-            _sendingUserAccountId = 0;
-            _receivingUserAccountId = 0;
+            _sendingUserAccount = null;
+            _receivingUserAccount = null;
             _isRead = false;
             _dateTime = null;
-    }
+        }
+
+        public Message(string text, UserAccount sendingUserAccount, UserAccount receivingUserAccount)
+        {
+            _text = text;
+            _sendingUserAccount = sendingUserAccount;
+            _receivingUserAccount = receivingUserAccount;
+            _isRead = false;
+            _dateTime = null;
+
+        }
+
         private void OnPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
