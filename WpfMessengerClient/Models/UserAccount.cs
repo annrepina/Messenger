@@ -128,6 +128,8 @@ namespace WpfMessengerClient.Models
         {
             Regex regex = new Regex(@"^\w{6}");
 
+            Error = null;
+
             if (!regex.IsMatch(Password))
                 Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
 

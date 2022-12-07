@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace DtoLib.Dto
 {
-    public class PersonDto
+    public class PersonDto : IDataTransferObject
     {
         public string Name { get; set; }
 

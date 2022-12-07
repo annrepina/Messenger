@@ -4,7 +4,7 @@ using System;
 
 namespace DtoLib.Dto
 {
-    public class UserAccountDto
+    public class UserAccountDto : IDataTransferObject
     {
         //private int _id;
         //private Person _person;

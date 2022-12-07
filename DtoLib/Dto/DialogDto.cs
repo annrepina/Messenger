@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DtoLib.Dto
 {
-    public class DialogDto
+    public class DialogDto : IDataTransferObject
     {
         public int Id { get; set; }
 

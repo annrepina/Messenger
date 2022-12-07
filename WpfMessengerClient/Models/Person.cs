@@ -105,6 +105,8 @@ namespace WpfMessengerClient.Models
             Regex regex = new Regex(@"^\+7\d{10}");
             //Regex regex = new Regex(@"^\d{10}");
 
+            Error = null;
+
             if (!regex.IsMatch(PhoneNumber))
                 Error = "Телефон должен начинаться с +7 и далее состоять из 10 цифр";
 

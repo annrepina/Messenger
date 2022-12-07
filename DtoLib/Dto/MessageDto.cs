@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DtoLib.Dto
 {
-    public class MessageDto
+    public class MessageDto : IDataTransferObject
     {
         public string Text { get; set; }
         //{
