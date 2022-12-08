@@ -80,7 +80,7 @@ namespace WpfMessengerClient.Services
                     //Sender.SendMessage(userName);
                 }
                 
-                Receiver.ReceiveDataPackages();
+                Receiver.ReceiveNetworkMessage();
             }
         }
 

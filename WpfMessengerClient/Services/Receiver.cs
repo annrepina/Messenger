@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DtoLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -53,6 +54,8 @@ namespace WpfMessengerClient.Services
         /// Клиент, который подключается к серверу
         /// </summary>
         public Client Client { get; private set; }
+
+        public NetworkMessage NetworkMessage { get; set; }
 
         /// <summary>
         /// Конструктор с параметром
@@ -130,19 +133,41 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Получать пакеты данных
         /// </summary>
-        public void ReceiveDataPackages()
+        public void ReceiveNetworkMessage()
         {
             Task.Run(() =>
                 {
                     while (true)
                     {
-                        var operationCode = ReceiveOperationCode();
+                        //var operationCode = ReceiveOperationCode();
 
-                        LaunchOperation(operationCode);
+                        //LaunchOperation(operationCode);
+
+                        // буфер для получаемых данных
+                        byte[] data = new byte[256];
+
+                        byte[] buffer = Client.Stream.Read()
                     }
                 }
             );
         }
+
+        ///// <summary>
+        ///// Получать пакеты данных
+        ///// </summary>
+        //public void ReceiveDataPackages()
+        //{
+        //    Task.Run(() =>
+        //    {
+        //        while (true)
+        //        {
+        //            var operationCode = ReceiveOperationCode();
+
+        //            LaunchOperation(operationCode);
+        //        }
+        //    }
+        //    );
+        //}
 
         /// <summary>
         /// Запустить операцию
