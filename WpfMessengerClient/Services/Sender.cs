@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DtoLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,22 +24,32 @@ namespace WpfMessengerClient.Services
         }
 
         /// <summary>
-        /// Отправить сообщение
+        /// Отправить сетевое сообщение серверу
         /// </summary>
-        /// <param name="message">Сообщение</param>
-        public void SendMessage(string message)
+        /// <param name="message">Сетевое сообщение</param>
+        public void SendNetworkMessage(NetworkMessage message)
         {
-            byte[] data = Encoding.UTF8.GetBytes(message);
-            Client.Stream.Write(data, 0, data.Length);  
+            byte[] data = message.SerializeDto();
+            Client.Stream.Write(data, 0, data.Length);
         }
 
-        /// <summary>
-        /// Отправить код операции
-        /// </summary>
-        /// <param name="operationCode">Код операции</param>
-        public void SendOperarationCode(byte operationCode)
-        {
-            Client.Stream.WriteByte(operationCode);
-        }
+        ///// <summary>
+        ///// Отправить сообщение
+        ///// </summary>
+        ///// <param name="message">Сообщение</param>
+        //public void SendMessage(string message)
+        //{
+        //    byte[] data = Encoding.UTF8.GetBytes(message);
+        //    Client.Stream.Write(data, 0, data.Length);  
+        //}
+
+        ///// <summary>
+        ///// Отправить код операции
+        ///// </summary>
+        ///// <param name="operationCode">Код операции</param>
+        //public void SendOperarationCode(byte operationCode)
+        //{
+        //    Client.Stream.WriteByte(operationCode);
+        //}
     }
 }

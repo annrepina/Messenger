@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.Dto
+namespace DtoLib.Interfaces
 {
-    public interface IDataTransferObject
+    public interface IDeserializableDto
     {
+        public IDeserializableDto Deserialize(byte[] buffer);
     }
 }

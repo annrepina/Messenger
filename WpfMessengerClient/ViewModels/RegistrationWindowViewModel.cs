@@ -13,6 +13,8 @@ using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using AutoMapper;
 using DtoLib.Dto;
+using WpfMessengerClient.Services;
+using DtoLib;
 //using DtoLib;
 
 namespace WpfMessengerClient.ViewModels
@@ -22,13 +24,8 @@ namespace WpfMessengerClient.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private UserAccount _currentUserAccount;
-        //private string _firstPassword;
-        //private string _secondPassword;
-        //private bool _hasCurrentUserAccountName;
-        //private bool _arePasswordsCorrect;
-        //private bool _canUserRegisterAccount;
 
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
 
 
@@ -43,17 +40,18 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
+        public ConnectionService /*ConnectionService { get; set; }*/ _connectionService;
+
         public DelegateCommand OnRegisterInMessengerCommand { get; set; }
 
         public RegistrationWindowViewModel()
         {
             CurrentUserAccount = new UserAccount();
             OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
+            _connectionService = new ConnectionService();
 
-            var config = new MapperConfiguration(cnf =>
-            {
-                cnf.CreateMap<UserAccount, UserAccountDto>();
-            });
+            MessengerMapper mapper = MessengerMapper.GetInstance();
+            _mapper = mapper.CreateIMapper();
         }
 
         /// <summary>
@@ -68,20 +66,26 @@ namespace WpfMessengerClient.ViewModels
         private void OnRegisterInMessenger()
         {
             // если ошибок нет
-            //if(!String.IsNullOrEmpty(CurrentUserAccount.Error))
-            //{
-                MessengerMapper map = MessengerMapper.GetInstance();
+            if (!String.IsNullOrEmpty(CurrentUserAccount.Error))
+            {
+                UserAccountDto userAcc = _mapper.Map<UserAccountDto>(CurrentUserAccount);
 
-                var mapper = map.CreateIMapper();
+                NetworkMessage message = new NetworkMessage(userAcc, NetworkMessage.OperationCode.RegistrationCode);
 
-                UserAccountDto user = mapper.Map<UserAccountDto>(CurrentUserAccount);
+                _connectionService.Client.Connect(message);
 
-                var a = user;
 
-                //UserAccountDto user = 
 
-                // подключаемся
-            //}
+                //MessengerMapper map = MessengerMapper.GetInstance();
+
+                //var mapper = map.CreateIMapper();
+
+                //UserAccountDto user = mapper.Map<UserAccountDto>(CurrentUserAccount);
+
+                //var a = user;
+
+            // подключаемся
+            }
         }
     }
 }

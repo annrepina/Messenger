@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DtoLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -47,6 +48,8 @@ namespace WpfMessengerClient.Services
         /// </summary>
         public Sender Sender { get; private set; }
 
+        public bool IsConnected { get; private set; }
+
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
@@ -60,27 +63,51 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Подключиться
         /// </summary>
-        public void Connect(string userName)
+        public void Connect(NetworkMessage message)
         {
             if (!TcpClient.Connected)
             {
                 TcpClient.Connect(Host, Port);
                 Stream = TcpClient.GetStream();
 
-                if (!string.IsNullOrEmpty(userName))
+                if (message != null)
                 {
-                    Sender.SendOperarationCode(Receiver.AddingNewUserCode);
+                    Sender.SendNetworkMessage(message);
 
-                    Sender.SendMessage(userName);
+
+                    //Sender.SendOperarationCode(Receiver.AddingNewUserCode);
+
+                    //Sender.SendMessage(userName);
                 }
                 
                 Receiver.ReceiveDataPackages();
             }
         }
 
-        bool IsConnected()
-        {
-            return true;
-        }
+        ///// <summary>
+        ///// Подключиться
+        ///// </summary>
+        //public void Connect(string userName)
+        //{
+        //    if (!TcpClient.Connected)
+        //    {
+        //        TcpClient.Connect(Host, Port);
+        //        Stream = TcpClient.GetStream();
+
+        //        if (!string.IsNullOrEmpty(userName))
+        //        {
+        //            Sender.SendOperarationCode(Receiver.AddingNewUserCode);
+
+        //            Sender.SendMessage(userName);
+        //        }
+
+        //        Receiver.ReceiveDataPackages();
+        //    }
+        //}
+
+        //bool IsConnected()
+        //{
+        //    return true;
+        //}
     }
 }

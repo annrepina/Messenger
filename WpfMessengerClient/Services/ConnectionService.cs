@@ -11,23 +11,23 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Клиент приложения
         /// </summary>
-        public Client _client;
+        public Client Client { get; init; }
 
         /// <summary>
         /// Получатель сообщений от сервера
         /// </summary>
-        public Receiver _receiver;
+        public Receiver Receiver { get; init; }
 
         /// <summary>
         /// Отправитель сообщений на сервер
         /// </summary>
-        public Sender _sender;
+        public Sender Sender { get; init; }
 
         public ConnectionService()
         {
-            _client = new Client();
-            _receiver = new Receiver(_client);
-            _sender = new Sender(_client);
+            Client = new Client();
+            Receiver = new Receiver(Client);
+            Sender = new Sender(Client);
         }
     }
 }

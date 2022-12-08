@@ -19,6 +19,8 @@ namespace WpfMessengerClient.Models
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public int Id { get; set; }
+
         public string Text
         {
             get => _text;
@@ -105,6 +107,7 @@ namespace WpfMessengerClient.Models
 
         public Message()
         {
+            Id = 0;
             _text = "";
             _sendingUserAccount = null;
             _receivingUserAccount = null;
@@ -114,6 +117,7 @@ namespace WpfMessengerClient.Models
 
         public Message(string text, UserAccount sendingUserAccount, UserAccount receivingUserAccount)
         {
+            Id = 0;
             _text = text;
             _sendingUserAccount = sendingUserAccount;
             _receivingUserAccount = receivingUserAccount;

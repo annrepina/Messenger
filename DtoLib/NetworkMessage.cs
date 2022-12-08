@@ -1,4 +1,6 @@
 ﻿using DtoLib.Dto;
+using DtoLib.Interfaces;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +12,44 @@ namespace DtoLib
     /// <summary>
     /// Сетевое сообщение, которое будет отправляться от клиентского приложения к серверному и обратно
     /// </summary>
-    public class NetworkMessage
+    [ProtoContract]
+    public class NetworkMessage : Serializable, IDeserializableDto
     {
-        public IDataTransferObject DataTransferObject { get; set; }
+        [ProtoMember(1)]
+        public Serializable SerializableDto { get; set; }
 
+        [ProtoMember(2)]
         public OperationCode CurrentCode { get; set;}
 
-        public enum OperationCode
+        public enum OperationCode : byte
         {
-            Registration,
-            Authorization
+            RegistrationCode,
+            AuthorizationCode,
+            SendingMessageCode,
+            ExitCode,
+        }
+
+        public NetworkMessage(Serializable serializable, OperationCode operationCode)
+        {
+            SerializableDto = serializable;
+            CurrentCode = operationCode;
+        }
+
+        public IDeserializableDto Deserialize(byte[] buffer)
+        {
+            try
+            {
+                using (var stream = new MemoryStream(buffer))
+                {
+                    var obj = Serializer.Deserialize<NetworkMessage>(stream);
+                    return obj;
+                }
+            }
+            catch (Exception)
+            {
+                //
+                throw;
+            }
         }
     }
 }

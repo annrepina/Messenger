@@ -188,7 +188,9 @@ namespace WpfMessengerClient.ViewModels
         {
             if(!string.IsNullOrEmpty(CurrentUser.Person.Name))
             {
-                _client.Connect(_currentUser.Person.Name);
+
+
+                //_client.Connect(_currentUser.Person.Name);
 
                 Users.Add(_currentUser);
 

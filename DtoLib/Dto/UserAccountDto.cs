@@ -1,70 +1,77 @@
 ﻿using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System;
+using DtoLib.Interfaces;
+using ProtoBuf;
 
 namespace DtoLib.Dto
 {
-    public class UserAccountDto : IDataTransferObject
+    /// <summary>
+    /// Data transfer object класса UserAccount
+    /// </summary>
+    [ProtoContract]
+    public class UserAccountDto : Serializable, IDeserializableDto
     {
-        //private int _id;
-        //private Person _person;
-        //private string _password;
-        //private bool _isOnline;
-        //private string _error;
-
+        /// <summary>
+        /// Свойство - id
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(1)]
         public int Id { get; set; }
-        //{
-        //    get => _id;
 
-        //    set
-        //    {
-        //        _id = value;
-        //        OnPropertyChanged(nameof(Id));
-        //    }
-        //}
-
+        /// <summary>
+        /// Свойство - объект клааса Person
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(2)]
         public PersonDto Person { get; set; }
-        //{
-        //    get => _person;
 
-        //    set
-        //    {
-        //        if (value != null)
-        //        {
-        //            _person = value;
-
-        //            OnPropertyChanged(nameof(Person));
-        //        }
-        //    }
-        //}
-
+        /// <summary>
+        /// Свойство - пароль
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(3)]
         public string Password { get; set; }
-        //{
-        //    get => _password;
 
-        //    set
-        //    {
-        //        if (!string.IsNullOrEmpty(value))
-        //        {
-        //            _password = value;
-
-        //            OnPropertyChanged(nameof(Password));
-        //        }
-        //    }
-        //}
-
+        /// <summary>
+        /// Свойство - является ли онлайн аккаунт
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(4)]
         public bool IsOnline { get; set; }
-        //{
-        //    get => _isOnline;
 
-        //    set
-        //    {
-        //        _isOnline = value;
-
-        //        OnPropertyChanged(nameof(IsOnline));
-        //    }
-        //}
-
+        /// <summary>
+        /// Свойство - обозреваемая коллекция диалогов у аккаунта
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(5)]
         public ObservableCollection<DialogDto> Dialogs { get; set; }
+
+        public IDeserializableDto Deserialize(byte[] buffer)
+        {
+            try
+            {
+                using (var stream = new MemoryStream(buffer))
+                {
+                    var obj = Serializer.Deserialize<UserAccountDto>(stream);
+                    return obj;
+                }
+            }
+            catch (Exception)
+            {
+                //
+                throw;
+            }
+        }
+
+        #region Debug
+
+        public override string ToString()
+        {
+            return $"Id: {Id}. PhoneNumber: {Person.PhoneNumber}. Password: {Password}. IsOnline: {IsOnline}. DialogsNumber: {Dialogs.Count}";
+        }
+
+        #endregion Debug
+
     }
 }
