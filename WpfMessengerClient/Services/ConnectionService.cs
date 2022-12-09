@@ -1,8 +1,10 @@
-﻿using System;
+﻿using DtoLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfMessengerClient.ViewModels;
 
 namespace WpfMessengerClient.Services
 {
@@ -23,11 +25,25 @@ namespace WpfMessengerClient.Services
         /// </summary>
         public Sender Sender { get; init; }
 
-        public ConnectionService()
+        public IViewModel ViewModel { get; set; }
+
+        public ConnectionService(IViewModel viewModel)
         {
             Client = new Client();
             Receiver = new Receiver(Client);
             Sender = new Sender(Client);
+            ViewModel = viewModel;
+            Client.OnNetworkMessageGot += SendMessageToViewModel;
+        }
+
+        public void Connect(NetworkMessage message)
+        {
+            Client.Connect(message);
+        }
+
+        public void SendMessageToViewModel(NetworkMessage message)
+        {
+            ViewModel.ProcessNetworkMessage(message);
         }
     }
 }

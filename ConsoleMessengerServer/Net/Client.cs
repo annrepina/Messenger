@@ -34,17 +34,17 @@ namespace WpfChatServer.Net
         /// <summary>
         /// Id
         /// </summary>
-        public string Id { get; private set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Предоставляет базовый поток данных для доступа к сети
         /// </summary>
         public NetworkStream NetworkStream { get; private set; }
 
-        /// <summary>
-        /// Имя пользователя
-        /// </summary>
-        public string Name { get; private set; }
+        ///// <summary>
+        ///// Имя пользователя
+        ///// </summary>
+        //public string Name { get; private set; }
 
         /// <summary>
         /// TCP клиент
@@ -63,8 +63,9 @@ namespace WpfChatServer.Net
         /// <param name="server">Сервер</param>
         public Client(TcpClient tcpClient, Server server)
         {
-            Id = Guid.NewGuid().ToString();
-            Name = "";
+            //Id = Guid.NewGuid().ToString();
+            Id = 0;
+            //Name = "";
             _tcpClient = tcpClient;
             _server = server;
             _server.AddClient(this);

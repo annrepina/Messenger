@@ -13,7 +13,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса Dialog
     /// </summary>
     [ProtoContract]
-    public class DialogDto : Serializable, IDeserializableDto
+    public class DialogDto : Serializable/*, IDeserializableDto*/
     {
         /// <summary>
         /// Свойство - id
@@ -43,21 +43,21 @@ namespace DtoLib.Dto
         [ProtoMember(4)]
         public ObservableCollection<MessageDto> Messages { get; set; }
 
-        public IDeserializableDto Deserialize(byte[] buffer)
-        {
-            try
-            {
-                using (var stream = new MemoryStream(buffer))
-                {
-                    var obj = Serializer.Deserialize<MessageDto>(stream);
-                    return obj;
-                }
-            }
-            catch (Exception)
-            {
-                //
-                throw;
-            }
-        }
+        //public IDeserializableDto Deserialize(byte[] buffer)
+        //{
+        //    try
+        //    {
+        //        using (var stream = new MemoryStream(buffer))
+        //        {
+        //            var obj = Serializer.Deserialize<MessageDto>(stream);
+        //            return obj;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //
+        //        throw;
+        //    }
+        //}
     }
 }

@@ -16,8 +16,13 @@ namespace WpfMessengerClient.Services
     /// <summary>
     /// Клиент, который подключается к серверу
     /// </summary>
-    public class Client
+    public class Client /*: INotifyPropertyChanged*/
     {
+        // определение типа делегата
+        public delegate void NetworkMessageGot(NetworkMessage message);
+
+        public event NetworkMessageGot OnNetworkMessageGot;
+
         /// <summary>
         /// Ip хоста
         /// </summary>
@@ -50,6 +55,8 @@ namespace WpfMessengerClient.Services
 
         public bool IsConnected { get; private set; }
 
+        public NetworkMessage NetworkMessage { get; private set; }
+
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
@@ -63,7 +70,7 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Подключиться
         /// </summary>
-        public void Connect(NetworkMessage message)
+        public async void Connect(NetworkMessage message)
         {
             if (!TcpClient.Connected)
             {
@@ -79,9 +86,22 @@ namespace WpfMessengerClient.Services
 
                     //Sender.SendMessage(userName);
                 }
-                
-                Receiver.ReceiveNetworkMessage();
+
+                await Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        Receiver.ReceiveNetworkMessage();
+
+
+                    }
+                });
             }
+        }
+
+        public void GetNetworkMessage(NetworkMessage message)
+        {
+            OnNetworkMessageGot?.Invoke(message);
         }
 
         ///// <summary>
@@ -110,4 +130,5 @@ namespace WpfMessengerClient.Services
         //    return true;
         //}
     }
+
 }

@@ -10,7 +10,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса UserAccount
     /// </summary>
     [ProtoContract]
-    public class UserAccountDto : Serializable, IDeserializableDto
+    public class UserAccountDto : Serializable/*, IDeserializableDto*/
     {
         /// <summary>
         /// Свойство - id
@@ -47,22 +47,22 @@ namespace DtoLib.Dto
         [ProtoMember(5)]
         public ObservableCollection<DialogDto> Dialogs { get; set; }
 
-        public IDeserializableDto Deserialize(byte[] buffer)
-        {
-            try
-            {
-                using (var stream = new MemoryStream(buffer))
-                {
-                    var obj = Serializer.Deserialize<UserAccountDto>(stream);
-                    return obj;
-                }
-            }
-            catch (Exception)
-            {
-                //
-                throw;
-            }
-        }
+        //public IDeserializableDto Deserialize(byte[] buffer)
+        //{
+        //    try
+        //    {
+        //        using (var stream = new MemoryStream(buffer))
+        //        {
+        //            var obj = Serializer.Deserialize<UserAccountDto>(stream);
+        //            return obj;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //
+        //        throw;
+        //    }
+        //}
 
         #region Debug
 

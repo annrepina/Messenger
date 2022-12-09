@@ -29,6 +29,10 @@ namespace DtoLib
             ExitCode,
         }
 
+        public NetworkMessage()
+        {
+        }
+
         public NetworkMessage(Serializable serializable, OperationCode operationCode)
         {
             SerializableDto = serializable;

@@ -19,7 +19,7 @@ using DtoLib;
 
 namespace WpfMessengerClient.ViewModels
 {
-    public class RegistrationWindowViewModel : INotifyPropertyChanged
+    public class RegistrationWindowViewModel : INotifyPropertyChanged, IViewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -72,7 +72,7 @@ namespace WpfMessengerClient.ViewModels
 
                 NetworkMessage message = new NetworkMessage(userAcc, NetworkMessage.OperationCode.RegistrationCode);
 
-                _connectionService.Client.Connect(message);
+                _connectionService.Connect(message);
 
 
 
@@ -86,6 +86,11 @@ namespace WpfMessengerClient.ViewModels
 
             // подключаемся
             }
+        }
+
+        public void ProcessNetworkMessage(NetworkMessage message)
+        {
+            
         }
     }
 }

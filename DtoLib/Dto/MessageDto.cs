@@ -12,7 +12,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса Message
     /// </summary>
     [ProtoContract]
-    public class MessageDto : Serializable, IDeserializableDto
+    public class MessageDto : Serializable/*, IDeserializableDto*/
     {
         /// <summary>
         /// Свойство - id
@@ -57,21 +57,21 @@ namespace DtoLib.Dto
         public DateTime? DateTime { get; set; }
 
 
-        public IDeserializableDto Deserialize(byte[] buffer)
-        {
-            try
-            {
-                using (var stream = new MemoryStream(buffer))
-                {
-                    var obj = Serializer.Deserialize<MessageDto>(stream);
-                    return obj;
-                }
-            }
-            catch (Exception)
-            {
-                //
-                throw;
-            }
-        }
+        //public IDeserializableDto Deserialize(byte[] buffer)
+        //{
+        //    try
+        //    {
+        //        using (var stream = new MemoryStream(buffer))
+        //        {
+        //            var obj = Serializer.Deserialize<MessageDto>(stream);
+        //            return obj;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //
+        //        throw;
+        //    }
+        //}
     }
 }

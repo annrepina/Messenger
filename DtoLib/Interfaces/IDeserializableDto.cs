@@ -10,4 +10,13 @@ namespace DtoLib.Interfaces
     {
         public IDeserializableDto Deserialize(byte[] buffer);
     }
+
+
+
+    //public abstract class IDeserializableDto<T>
+    //where T : Serializable
+    //{
+    //    public static abstract T Deserialize(byte[] buffer);
+    //}
+
 }
