@@ -53,22 +53,25 @@ namespace WpfChatServer.Net
         /// Удалить клиента
         /// </summary>
         /// <param name="clientId">Id клиента</param>
-        public void RemoveClient(string clientId)
+        private void RemoveClient(int clientId)
         {
             if (_clients != null && _clients.Count > 0)
             {
                 // получаем по id подключение
-                Client client = _clients.FirstOrDefault(c => c.Id == clientId);
+                Client? client = _clients.FirstOrDefault(c => c.Id == clientId);
 
                 if (client != null)
+                {
                     _clients.Remove(client);
+                    client.CloseConnection();
+                }
             }
         }
 
         /// <summary>
         /// Прослушивание входящих подключений
         /// </summary>
-        public void ListenForIncomingConnections()
+        public async Task ListenForIncomingConnections()
         {
             try
             {
@@ -77,7 +80,7 @@ namespace WpfChatServer.Net
 
                 while (true)
                 {
-                    TcpClient tcpClient = _tcpListener.AcceptTcpClient();
+                    TcpClient tcpClient = await _tcpListener.AcceptTcpClient();
 
                     Client client = new Client(tcpClient, this);
                     Thread clientThread = new Thread(new ThreadStart(client.ProcessData));
