@@ -53,7 +53,7 @@ namespace WpfChatServer.Net
         /// Удалить клиента
         /// </summary>
         /// <param name="clientId">Id клиента</param>
-        private void RemoveClient(int clientId)
+        public void RemoveClient(int clientId)
         {
             if (_clients != null && _clients.Count > 0)
             {
@@ -71,7 +71,7 @@ namespace WpfChatServer.Net
         /// <summary>
         /// Прослушивание входящих подключений
         /// </summary>
-        public async Task ListenForIncomingConnections()
+        public async Task ListenForIncomingConnectionsAsync()
         {
             try
             {
@@ -80,11 +80,15 @@ namespace WpfChatServer.Net
 
                 while (true)
                 {
-                    TcpClient tcpClient = await _tcpListener.AcceptTcpClient();
+                    TcpClient tcpClient = await _tcpListener.AcceptTcpClientAsync();
 
                     Client client = new Client(tcpClient, this);
-                    Thread clientThread = new Thread(new ThreadStart(client.ProcessData));
-                    clientThread.Start();
+
+                    AddClient(client);
+
+                    Task.Run(client.ProcessData);
+                    //Thread clientThread = new Thread(new ThreadStart(client.ProcessData));
+                    //clientThread.Start();
                 }
             }
             catch (Exception ex)
