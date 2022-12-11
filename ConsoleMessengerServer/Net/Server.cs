@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DtoLib;
+using DtoLib.Dto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -6,13 +8,15 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfChatServer.Net
+namespace ConsoleMessengerServer.Net
 {
     /// <summary>
     /// Сервер, который принимает подлючения клиентов
     /// </summary>
     public class Server
     {
+        public AppLogic Logic { get; init; }
+
         /// <summary>
         /// Прослушиватель TCP подключений от клиентов
         /// </summary>
@@ -26,25 +30,29 @@ namespace WpfChatServer.Net
         /// <summary>
         /// Список клиентов
         /// </summary>
-        private List<Client> _clients;
+        private List<BackClient> _clients;
 
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public Server()
+        public Server(AppLogic appLogic)
         {
-            _clients = new List<Client>();
+            _clients = new List<BackClient>();
 
             _port = 8888;
 
             _tcpListener = new TcpListener(IPAddress.Any, _port);
+
+            Logic = appLogic;
+
+            Logic.OnNetworkMessageSent += SendMessageToViewModel;
         }
 
         /// <summary>
         /// Добавить клиента
         /// </summary>
         /// <param name="client">Клиент</param>
-        public void AddClient(Client client)
+        public void AddClient(BackClient client)
         {
             _clients.Add(client);
         }
@@ -58,7 +66,7 @@ namespace WpfChatServer.Net
             if (_clients != null && _clients.Count > 0)
             {
                 // получаем по id подключение
-                Client? client = _clients.FirstOrDefault(c => c.Id == clientId);
+                BackClient? client = _clients.FirstOrDefault(c => c.Id == clientId);
 
                 if (client != null)
                 {
@@ -71,7 +79,7 @@ namespace WpfChatServer.Net
         /// <summary>
         /// Прослушивание входящих подключений
         /// </summary>
-        public async Task ListenForIncomingConnectionsAsync()
+        public async Task ListenIncomingConnectionsAsync()
         {
             try
             {
@@ -82,11 +90,15 @@ namespace WpfChatServer.Net
                 {
                     TcpClient tcpClient = await _tcpListener.AcceptTcpClientAsync();
 
-                    Client client = new Client(tcpClient, this);
+                    BackClient client = new BackClient(tcpClient, this, Logic);
 
-                    AddClient(client);
+                    _clients.Add(client);
 
-                    Task.Run(client.ProcessData);
+                    Console.WriteLine($"{client.Id} подключился "); 
+
+                    //AddClient(client);
+
+                    await Task.Run(client.ProcessDataAsync);
                     //Thread clientThread = new Thread(new ThreadStart(client.ProcessData));
                     //clientThread.Start();
                 }
@@ -94,55 +106,76 @@ namespace WpfChatServer.Net
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+            finally
+            {
                 DisconnectClients();
             }
         }
 
-        /// <summary>
-        /// Трансляция сообщения подлюченным клиентам
-        /// </summary>
-        /// <param name="message">Сообщение</param>
-        /// <param name="id">Id клиента, который отправил данное сообщение</param>
-        public void BroadcastMessage(string message, string id)
+        public async Task SendMessageToViewModel(NetworkMessage message)
         {
-            byte[] data = Encoding.UTF8.GetBytes(message);
-
-            foreach (var client in _clients)
+            switch(message.CurrentCode)
             {
-                // если id клиента не равно id отправляющего
-                if (client.Id != id)
-                {
-                    // передача данных
-                    client.NetworkStream.Write(data, 0, data.Length);
-                }
+                case NetworkMessage.OperationCode.RegistrationCode:
+                    {
+                        if(message.SerializableDto is UserAccountDto acc)
+                        {
+                            acc.Person.Name = "КУКУ епта";
+                             await acc.CurrentClient.Sender.SendNetworkMessageAsync(message);
+                        }
+
+
+                    }
+                    break;
             }
         }
 
-        public void BroadcastOperationCode(byte operationCode, string id)
-        {
-            foreach (var client in _clients)
-            {
-                // если id клиента не равно id отправляющего
-                if (client.Id != id)
-                {
-                    // передача данных
-                    client.NetworkStream.WriteByte(operationCode);
-                }
-            }
-        }
+        ///// <summary>
+        ///// Трансляция сообщения подлюченным клиентам
+        ///// </summary>
+        ///// <param name="message">Сообщение</param>
+        ///// <param name="id">Id клиента, который отправил данное сообщение</param>
+        //public async Task BroadcastMessageAsync(string message, int id)
+        //{
+        //    byte[] data = Encoding.UTF8.GetBytes(message);
+
+        //    foreach (var client in _clients)
+        //    {
+        //        // если id клиента не равно id отправляющего
+        //        if (client.Id != id)
+        //        {
+        //            // передача данных
+        //            await client.NetworkStream.WriteAsync(data, 0, data.Length);
+        //        }
+        //    }
+        //}
+
+        //public void BroadcastOperationCode(byte operationCode, int id)
+        //{
+        //    foreach (var client in _clients)
+        //    {
+        //        // если id клиента не равно id отправляющего
+        //        if (client.Id != id)
+        //        {
+        //            // передача данных
+        //            client.NetworkStream.WriteByte(operationCode);
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Отключение всех клиентов
         /// </summary>
         public void DisconnectClients()
         {
-            /// Остановка сервера
-            _tcpListener.Stop();
-
             foreach (var client in _clients)
             {
                 client.CloseConnection();
             }
+
+            /// Остановка сервера
+            _tcpListener.Stop();
 
             //завершение процесса
             Environment.Exit(0);

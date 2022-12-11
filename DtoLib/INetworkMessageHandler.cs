@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfMessengerClient.ViewModels
+namespace DtoLib
 {
-    public interface IViewModel
+    public interface INetworkMessageHandler
     {
         public void ProcessNetworkMessage(NetworkMessage message);
     }

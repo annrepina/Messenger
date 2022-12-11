@@ -55,5 +55,21 @@ namespace DtoLib
                 throw;
             }
         }
+        public override byte[] SerializeDto()
+        {
+            try
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    Serializer.Serialize(memoryStream, this);
+                    return memoryStream.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                //
+                throw;
+            }
+        }
     }
 }

@@ -3,26 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfChatServer.Net;
+using ConsoleMessengerServer.Net;
 
-namespace ConsoleChatServer
+namespace ConsoleMessengerServer
 {
     public class App
     {
-        private Server server; // сервер
-        private Thread listenThread; // потока для прослушивания
+        private Server _server; // сервер
 
-        public void Launch()
+        private AppLogic _appLogic;
+
+        public App()
+        {
+            _appLogic = new AppLogic();
+            _server = new Server(_appLogic);
+        }
+
+        public async Task LaunchAsync()
         {
             try
             {
-                server = new Server();
-                listenThread = new Thread(new ThreadStart(server.ListenForIncomingConnections));
-                listenThread.Start(); //старт потока
+                await Task.Run(() => _server.ListenIncomingConnectionsAsync());
             }
             catch (Exception ex)
             {
-                server.DisconnectClients();
+                _server.DisconnectClients();
                 Console.WriteLine(ex.Message);
             }
         }

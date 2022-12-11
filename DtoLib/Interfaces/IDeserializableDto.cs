@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProtoBuf;
 
 namespace DtoLib.Interfaces
 {
+    [ProtoContract]
     public interface IDeserializableDto
     {
         public IDeserializableDto Deserialize(byte[] buffer);

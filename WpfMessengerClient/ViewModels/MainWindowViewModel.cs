@@ -12,7 +12,7 @@ using WpfMessengerClient.Models;
 
 namespace WpfMessengerClient.ViewModels
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel
     {
         /// <summary>
         /// Событие изменения свойств
@@ -22,17 +22,17 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Клиент приложения
         /// </summary>
-        public Client _client;
+        public FrontClient _client;
 
         /// <summary>
         /// Получатель сообщений от сервера
         /// </summary>
-        public Receiver _receiver;
+        //public Receiver _receiver;
 
         /// <summary>
         /// Отправитель сообщений на сервер
         /// </summary>
-        public Sender _sender;
+        //public Sender _sender;
 
         /// <summary>
         /// Текущий пользователь
@@ -116,9 +116,11 @@ namespace WpfMessengerClient.ViewModels
 
             OnEnterChatCommand = new DelegateCommand(OnEnterChat);
 
-            _client = new Client();
-            _receiver = new Receiver(_client);
-            _sender = new Sender(_client);
+            //_client = new FrontClient();
+
+
+            //_receiver = new Receiver(_client);
+            //_sender = new Sender(_client);
 
             WasAttemptToEnterEmptyName = false;
             DidUserNotEnteredChat = true;

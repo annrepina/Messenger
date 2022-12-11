@@ -19,7 +19,7 @@ using DtoLib;
 
 namespace WpfMessengerClient.ViewModels
 {
-    public class RegistrationWindowViewModel : INotifyPropertyChanged, IViewModel
+    public class RegistrationWindowViewModel : INotifyPropertyChanged/*, INetworkMessageHandler*/
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -40,7 +40,9 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        public ConnectionService /*ConnectionService { get; set; }*/ _connectionService;
+        //public ConnectionService /*ConnectionService { get; set; }*/ _connectionService;
+
+        public FrontClient Client { get; set; }
 
         public DelegateCommand OnRegisterInMessengerCommand { get; set; }
 
@@ -48,7 +50,13 @@ namespace WpfMessengerClient.ViewModels
         {
             CurrentUserAccount = new UserAccount();
             OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
-            _connectionService = new ConnectionService();
+            //_connectionService = new ConnectionService(this);
+            // задаем клиента
+
+            Client = new FrontClient(CurrentUserAccount);
+
+            CurrentUserAccount.AddClient(Client);
+            CurrentUserAccount.CurrentClient = Client;
 
             MessengerMapper mapper = MessengerMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
@@ -63,16 +71,16 @@ namespace WpfMessengerClient.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        private void OnRegisterInMessenger()
+        private async void OnRegisterInMessenger()
         {
             // если ошибок нет
-            if (!String.IsNullOrEmpty(CurrentUserAccount.Error))
+            if (String.IsNullOrEmpty(CurrentUserAccount.Error))
             {
                 UserAccountDto userAcc = _mapper.Map<UserAccountDto>(CurrentUserAccount);
 
                 NetworkMessage message = new NetworkMessage(userAcc, NetworkMessage.OperationCode.RegistrationCode);
 
-                _connectionService.Connect(message);
+                await Client.ConnectAsync(message);
 
 
 
@@ -88,9 +96,9 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        public void ProcessNetworkMessage(NetworkMessage message)
-        {
+        //public void ProcessNetworkMessage(NetworkMessage message)
+        //{
             
-        }
+        //}
     }
 }

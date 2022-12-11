@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient.Models.Mapping
 {
@@ -12,13 +13,15 @@ namespace WpfMessengerClient.Models.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Person, PersonDto>();
+            CreateMap<Person, PersonDto>().ReverseMap();
 
-            CreateMap<UserAccount, UserAccountDto>();
+            CreateMap<UserAccount, UserAccountDto>().ReverseMap();
 
-            CreateMap<Dialog, DialogDto>();
+            CreateMap<Dialog, DialogDto>().ReverseMap();
 
-            CreateMap<Message, MessageDto>();
+            CreateMap<Message, MessageDto>().ReverseMap();
+
+            CreateMap<FrontClient, ClientDto>().ReverseMap();
         }
     }
 }

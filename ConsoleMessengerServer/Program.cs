@@ -1,6 +1,6 @@
-﻿using WpfChatServer.Net;
+﻿using ConsoleMessengerServer.Net;
 
-namespace ConsoleChatServer
+namespace ConsoleMessengerServer
 {
     public class Program
     {
@@ -8,24 +8,11 @@ namespace ConsoleChatServer
         //static Thread listenThread; // потока для прослушивания
         static void Main(string[] args)
         {
-            //try
-            //{
-            //    server = new Server();
-            //    listenThread = new Thread(new ThreadStart(server.ListenForIncomingConnections));
-            //    listenThread.Start(); //старт потока
-            //}
-            //catch (Exception ex)
-            //{
-            //    server.DisconnectClients();
-            //    Console.WriteLine(ex.Message);
-            //}
-
             App app = new App();
 
-            app.Launch();
+            Task.Run(() => app.LaunchAsync());
 
-
-
+            Console.ReadKey();
         }
     }
 }

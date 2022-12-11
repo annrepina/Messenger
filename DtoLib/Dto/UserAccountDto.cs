@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System;
 using DtoLib.Interfaces;
 using ProtoBuf;
+using DtoLib.NetworkServices;
 
 namespace DtoLib.Dto
 {
@@ -46,6 +47,21 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(5)]
         public ObservableCollection<DialogDto> Dialogs { get; set; }
+
+        /// <summary>
+        /// Свойство - список клиентов у аккаунта, те клиенты на которых открыта учетка аккаунта
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(6)]
+        public List<Client> Clients { get; set; }
+
+        /// <summary>
+        /// Свойство - текущий клиент аккаунта, с которого идут запросы на сервер в данный момент
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(7)]
+        public Client CurrentClient { get; set; }
+
 
         //public IDeserializableDto Deserialize(byte[] buffer)
         //{

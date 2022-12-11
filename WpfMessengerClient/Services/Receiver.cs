@@ -10,251 +10,244 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 
-namespace WpfMessengerClient.Services
-{
-    /// <summary>
-    /// Получает сообщения от сервера
-    /// </summary>
-    public class Receiver
-    {
-        /// <summary>
-        /// Новый пользователь добавлен
-        /// </summary>
-        public event Action NewUserAddedEvent;
+//namespace WpfMessengerClient.Services
+//{
+//    /// <summary>
+//    /// Получает сообщения от сервера
+//    /// </summary>
+//    public class Receiver
+//    {
+//        ///// <summary>
+//        ///// Новый пользователь добавлен
+//        ///// </summary>
+//        //public event Action NewUserAddedEvent;
 
-        /// <summary>
-        /// Пользователь отключен
-        /// </summary>
-        public event Action UserDisconnectedEvent;
+//        ///// <summary>
+//        ///// Пользователь отключен
+//        ///// </summary>
+//        //public event Action UserDisconnectedEvent;
 
-        /// <summary>
-        /// Сообщение отправлено
-        /// </summary>
-        public event Action MessageSendedEvent;
+//        ///// <summary>
+//        ///// Сообщение отправлено
+//        ///// </summary>
+//        //public event Action MessageSendedEvent;
 
-        #region Константы
+//        //#region Константы
 
-        /// <summary>
-        /// Код добавления нового клиента
-        /// </summary>
-        public const byte AddingNewUserCode = 1;
+//        ///// <summary>
+//        ///// Код добавления нового клиента
+//        ///// </summary>
+//        //public const byte AddingNewUserCode = 1;
 
-        /// <summary>
-        /// Код удаления клиента
-        /// </summary>
-        public const byte DisconnectingUserCode = 2;
+//        ///// <summary>
+//        ///// Код удаления клиента
+//        ///// </summary>
+//        //public const byte DisconnectingUserCode = 2;
 
-        /// <summary>
-        /// Код отравки сообщений
-        /// </summary>
-        public const byte SendingMessageCode = 3;
+//        ///// <summary>
+//        ///// Код отравки сообщений
+//        ///// </summary>
+//        //public const byte SendingMessageCode = 3;
 
-        #endregion Константы
+//        //#endregion Константы
 
-        /// <summary>
-        /// Клиент, который подключается к серверу
-        /// </summary>
-        public Client Client { get; private set; }
+//        /// <summary>
+//        /// Клиент, который подключается к серверу
+//        /// </summary>
+//        public FrontClient Client { get; private set; }
 
-        public NetworkMessage NetworkMessage { get; set; }
+//        //public NetworkMessage NetworkMessage { get; set; }
 
-        /// <summary>
-        /// Конструктор с параметром
-        /// </summary>
-        /// <param name="client">Клиент</param>
-        public Receiver(Client client)
-        {
-            Client = client;
-        }
+//        /// <summary>
+//        /// Конструктор с параметром
+//        /// </summary>
+//        /// <param name="client">Клиент</param>
+//        public Receiver(FrontClient client)
+//        {
+//            Client = client;
+//        }
 
-        /// <summary>
-        /// Получить код операции
-        /// </summary>
-        /// <returns></returns>
-        public byte ReceiveOperationCode()
-        {
-            byte operationCode;
+//        ///// <summary>
+//        ///// Получить код операции
+//        ///// </summary>
+//        ///// <returns></returns>
+//        //public byte ReceiveOperationCode()
+//        //{
+//        //    byte operationCode;
 
-            do
-            {
-                try
-                {
-                    // буфер для получаемых данных
-                    operationCode = (byte)Client.Stream.ReadByte();
-                    break;
-                }
-                catch
-                {
-                    MessageBox.Show("Подкючение прервано!");
-                    Disconnect();
-                }
+//        //    do
+//        //    {
+//        //        try
+//        //        {
+//        //            // буфер для получаемых данных
+//        //            operationCode = (byte)Client.Stream.ReadByte();
+//        //            break;
+//        //        }
+//        //        catch
+//        //        {
+//        //            MessageBox.Show("Подкючение прервано!");
+//        //            Disconnect();
+//        //        }
 
-            } while (true);
+//        //    } while (true);
 
-            return operationCode;
-        }
+//        //    return operationCode;
+//        //}
 
-        /// <summary>
-        /// Получить сообщение
-        /// </summary>
-        /// <returns></returns>
-        public byte[] ReceiveBytes()
-        {
-            //string message = "";
+//        /// <summary>
+//        /// Получить сообщение
+//        /// </summary>
+//        /// <returns></returns>
+//        public async Task<byte[]> ReceiveBytesAsync()
+//        {
+//            //// буфер для получаемых данных
+//            byte[] data = new byte[256];
 
-            while (true)
-            {
-                try
-                {
-                    //// буфер для получаемых данных
-                    byte[] data = new byte[256];
+//            try
+//            {
+//                int bytes = 0;
 
-                    //StringBuilder stringBuilder = new StringBuilder();
-                    int bytes = 0;
+//                do
+//                {
+//                    bytes = await FrontClient.Stream.ReadAsync(data, 0, data.Length); 
 
-                    do
-                    {
-                        bytes = Client.Stream.Read(data, 0, data.Length);
-                        //stringBuilder.Append(Encoding.UTF8.GetString(data, 0, bytes));
+//                } while (FrontClient.Stream.DataAvailable);
 
-                    } while (Client.Stream.DataAvailable);
+//            } 
+//            catch (Exception)
+//            {
+//                MessageBox.Show("Соединение прервано");
+//                Disconnect();
+//            }
 
-                    //message = stringBuilder.ToString();
-
-                    return data;
-                } 
-                catch (Exception)
-                {
-                    MessageBox.Show("Соединение прервано");
-                    Disconnect();
-                }
-            }
-
-            //return data;
-        }
+//            return data;
+//        }
 
 
-        ///// <summary>
-        ///// Получить сообщение
-        ///// </summary>
-        ///// <returns></returns>
-        //public string ReceiveMessage()
-        //{
-        //    string message = "";
+//        ///// <summary>
+//        ///// Получить сообщение
+//        ///// </summary>
+//        ///// <returns></returns>
+//        //public string ReceiveMessage()
+//        //{
+//        //    string message = "";
 
-        //    //while (true)
-        //    //{
-        //    try
-        //    {
-        //        // буфер для получаемых данных
-        //        byte[] data = new byte[256];
+//        //    //while (true)
+//        //    //{
+//        //    try
+//        //    {
+//        //        // буфер для получаемых данных
+//        //        byte[] data = new byte[256];
 
-        //        StringBuilder stringBuilder = new StringBuilder();
-        //        int bytes = 0;
+//        //        StringBuilder stringBuilder = new StringBuilder();
+//        //        int bytes = 0;
 
-        //        do
-        //        {
-        //            bytes = Client.Stream.Read(data, 0, data.Length);
-        //            stringBuilder.Append(Encoding.UTF8.GetString(data, 0, bytes));
+//        //        do
+//        //        {
+//        //            bytes = Client.Stream.Read(data, 0, data.Length);
+//        //            stringBuilder.Append(Encoding.UTF8.GetString(data, 0, bytes));
 
-        //        } while (Client.Stream.DataAvailable);
+//        //        } while (Client.Stream.DataAvailable);
 
-        //        message = stringBuilder.ToString();
-        //    }
-        //    catch (Exception)
-        //    {
-        //        MessageBox.Show("Соединение прервано");
-        //        Disconnect();
-        //    }
-        //    //}
+//        //        message = stringBuilder.ToString();
+//        //    }
+//        //    catch (Exception)
+//        //    {
+//        //        MessageBox.Show("Соединение прервано");
+//        //        Disconnect();
+//        //    }
+//        //    //}
 
-        //    return message;
-        //}
+//        //    return message;
+//        //}
 
 
 
-        /// <summary>
-        /// Получать пакеты данных
-        /// </summary>
-        public async void ReceiveNetworkMessage()
-        {
-            await Task.Run(() =>
-                {
-                    while (true)
-                    {
-                        // буфер для получаемых данных
-                        byte[] data = ReceiveBytes();
+//        /// <summary>
+//        /// Получить сетевое сообщение асинхронно
+//        /// </summary>
+//        public async Task ReceiveNetworkMessageAsync()
+//        {
+//            while (true)
+//            {
+//                try
+//                {
+//                    // буфер для получаемых данных
+//                    byte[] data = await ReceiveBytesAsync();
 
-                        Deserializer<NetworkMessage> deserializer = new Deserializer<NetworkMessage>();
+//                    Deserializer<NetworkMessage> deserializer = new Deserializer<NetworkMessage>();
 
-                        NetworkMessage networkMessage = deserializer.Deserialize(data); 
+//                    NetworkMessage networkMessage = deserializer.Deserialize(data); 
 
-                        Client.GetNetworkMessage(networkMessage);
-                    }
-                }
-            );
-        }
+//                    await Client.GetNetworkMessageAsync(networkMessage);
+//                }
+//                catch (Exception)
+//                {
+//                    break;
+//                }
+//            }
+//        }
 
-        ///// <summary>
-        ///// Получать пакеты данных
-        ///// </summary>
-        //public void ReceiveDataPackages()
-        //{
-        //    Task.Run(() =>
-        //    {
-        //        while (true)
-        //        {
-        //            var operationCode = ReceiveOperationCode();
+//        ///// <summary>
+//        ///// Получать пакеты данных
+//        ///// </summary>
+//        //public void ReceiveDataPackages()
+//        //{
+//        //    Task.Run(() =>
+//        //    {
+//        //        while (true)
+//        //        {
+//        //            var operationCode = ReceiveOperationCode();
 
-        //            LaunchOperation(operationCode);
-        //        }
-        //    }
-        //    );
-        //}
+//        //            LaunchOperation(operationCode);
+//        //        }
+//        //    }
+//        //    );
+//        //}
 
-        /// <summary>
-        /// Запустить операцию
-        /// </summary>
-        /// <param name="operationCode">Код операции</param>
-        public void LaunchOperation(byte operationCode)
-        {
-            switch (operationCode)
-            {
-                case AddingNewUserCode:
-                    NewUserAddedEvent?.Invoke();
+//        ///// <summary>
+//        ///// Запустить операцию
+//        ///// </summary>
+//        ///// <param name="operationCode">Код операции</param>
+//        //public void LaunchOperation(byte operationCode)
+//        //{
+//        //    switch (operationCode)
+//        //    {
+//        //        case AddingNewUserCode:
+//        //            NewUserAddedEvent?.Invoke();
 
-                    break;
+//        //            break;
 
-                case DisconnectingUserCode:
-                    UserDisconnectedEvent?.Invoke();
+//        //        case DisconnectingUserCode:
+//        //            UserDisconnectedEvent?.Invoke();
 
-                    break;
+//        //            break;
 
-                case SendingMessageCode:
-                    MessageSendedEvent?.Invoke();
+//        //        case SendingMessageCode:
+//        //            MessageSendedEvent?.Invoke();
 
-                    break;
+//        //            break;
 
-                default:
-                    break;
-            }
-        }
+//        //        default:
+//        //            break;
+//        //    }
+//        //}
 
-        /// <summary>
-        /// Прервать подключение
-        /// </summary>
-        public void Disconnect()
-        {
-            // Отключение потока
-            if (Client.Stream != null)
-                Client.Stream.Close();
+//        /// <summary>
+//        /// Прервать подключение
+//        /// </summary>
+//        public void Disconnect()
+//        {
+//            // Отключение потока
+//            if (FrontClient.Stream != null)
+//                FrontClient.Stream.Close();
 
-            // Отключение клиента
-            if (Client.TcpClient != null)
-                Client.TcpClient.Close();
+//            // Отключение клиента
+//            if (FrontClient.TcpClient != null)
+//                FrontClient.TcpClient.Close();
 
-            //завершение процесса
-            Environment.Exit(0);
-        }
-    }
-}
+//            //завершение процесса
+//            Environment.Exit(0);
+//        }
+//    }
+//}

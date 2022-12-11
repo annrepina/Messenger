@@ -7,10 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WpfMessengerClient.Services;
+using DtoLib;
 
 namespace WpfMessengerClient.Models
 {
-    public class UserAccount : INotifyPropertyChanged, IDataErrorInfo
+    public class UserAccount : INotifyPropertyChanged, IDataErrorInfo, INetworkMessageHandler
     {
         private const int MaxLengthOfPassword = 10;
         private const int MinLengthOfPassword = 6;
@@ -76,7 +78,11 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public ObservableCollection<Dialog> Dialogs { get; set; }
+        public ObservableCollection<Dialog> Dialogs { get; init; }
+
+        public List<FrontClient> Clients { get; init; }
+
+        public FrontClient CurrentClient { get; set; }
 
         public string Error
         {
@@ -115,11 +121,18 @@ namespace WpfMessengerClient.Models
             _isOnline = false;
             Dialogs = new ObservableCollection<Dialog>();
             _error = null;
+            Clients = new List<FrontClient>();
+            CurrentClient = null;
         }
 
         private void OnPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
+
+        public void AddClient(FrontClient client)
+        {
+            Clients.Add(client);
         }
 
         #region Валидация
@@ -171,7 +184,14 @@ namespace WpfMessengerClient.Models
             }
 
         }
-
         #endregion Валидация
+
+
+        public void ProcessNetworkMessage(NetworkMessage message)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }
