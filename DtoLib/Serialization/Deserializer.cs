@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib
+namespace DtoLib.Serialization
 {
     public class Deserializer<T>
-        where T : Serializable
+        where T : class
     {
         public T Deserialize(byte[] data)
         {

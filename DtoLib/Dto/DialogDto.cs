@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DtoLib.Interfaces;
+using DtoLib.Serialization;
 using ProtoBuf;
 
 namespace DtoLib.Dto
@@ -13,7 +14,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса Dialog
     /// </summary>
     [ProtoContract]
-    public class DialogDto : Serializable/*, IDeserializableDto*/
+    public class DialogDto /*: Serializable, IDeserializableDto*/
     {
         /// <summary>
         /// Свойство - id

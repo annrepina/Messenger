@@ -1,5 +1,6 @@
 ﻿using DtoLib;
 using DtoLib.Dto;
+using DtoLib.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,11 +120,14 @@ namespace ConsoleMessengerServer.Net
             {
                 case NetworkMessage.OperationCode.RegistrationCode:
                     {
-                        if(message.SerializableDto is UserAccountDto acc)
-                        {
-                            acc.Person.Name = "КУКУ епта";
-                             await acc.CurrentClient.Sender.SendNetworkMessageAsync(message);
-                        }
+                        UserAccountDto userAccountDto = new Deserializer<UserAccountDto>().Deserialize(message.Data);
+
+
+                        userAccountDto.Person.Name = "КУКУ епта";
+                        //await userAccountDto.CurrentClient.Sender.SendNetworkMessageAsync(message);
+
+                        await _clients[0].Sender.SendNetworkMessageAsync(message);
+
 
 
                     }

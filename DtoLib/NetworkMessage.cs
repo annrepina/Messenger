@@ -1,5 +1,6 @@
 ﻿using DtoLib.Dto;
 using DtoLib.Interfaces;
+using DtoLib.Serialization;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,16 @@ namespace DtoLib
     /// Сетевое сообщение, которое будет отправляться от клиентского приложения к серверному и обратно
     /// </summary>
     [ProtoContract]
-    public class NetworkMessage : Serializable, IDeserializableDto
+    public class NetworkMessage /*: Serializable, IDeserializableDto*/
     {
+        //[ProtoMember(1)]
+        //public Serializable SerializableDto { get; set; }
+
         [ProtoMember(1)]
-        public Serializable SerializableDto { get; set; }
+        public OperationCode CurrentCode { get; set;}
 
         [ProtoMember(2)]
-        public OperationCode CurrentCode { get; set;}
+        public byte[] Data { get; set;}
 
         public enum OperationCode : byte
         {
@@ -33,43 +37,45 @@ namespace DtoLib
         {
         }
 
-        public NetworkMessage(Serializable serializable, OperationCode operationCode)
+        public NetworkMessage(byte[] data, OperationCode operationCode)
         {
-            SerializableDto = serializable;
+            //SerializableDto = serializable;
             CurrentCode = operationCode;
+            Data = data;
         }
 
-        public IDeserializableDto Deserialize(byte[] buffer)
-        {
-            try
-            {
-                using (var stream = new MemoryStream(buffer))
-                {
-                    var obj = Serializer.Deserialize<NetworkMessage>(stream);
-                    return obj;
-                }
-            }
-            catch (Exception)
-            {
-                //
-                throw;
-            }
-        }
-        public override byte[] SerializeDto()
-        {
-            try
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    Serializer.Serialize(memoryStream, this);
-                    return memoryStream.ToArray();
-                }
-            }
-            catch (Exception ex)
-            {
-                //
-                throw;
-            }
-        }
+        //public IDeserializableDto Deserialize(byte[] buffer)
+        //{
+        //    try
+        //    {
+        //        using (var stream = new MemoryStream(buffer))
+        //        {
+        //            var obj = Serializer.Deserialize<NetworkMessage>(stream);
+        //            return obj;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //
+        //        throw;
+        //    }
+        //}
+
+        //public override byte[] SerializeDto()
+        //{
+        //    try
+        //    {
+        //        using (var memoryStream = new MemoryStream())
+        //        {
+        //            Serializer.Serialize(memoryStream, this);
+        //            return memoryStream.ToArray();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //
+        //        throw;
+        //    }
+        //}
     }
 }

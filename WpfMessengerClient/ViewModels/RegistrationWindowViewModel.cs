@@ -15,6 +15,7 @@ using AutoMapper;
 using DtoLib.Dto;
 using WpfMessengerClient.Services;
 using DtoLib;
+using DtoLib.Serialization;
 //using DtoLib;
 
 namespace WpfMessengerClient.ViewModels
@@ -78,7 +79,13 @@ namespace WpfMessengerClient.ViewModels
             {
                 UserAccountDto userAcc = _mapper.Map<UserAccountDto>(CurrentUserAccount);
 
-                NetworkMessage message = new NetworkMessage(userAcc, NetworkMessage.OperationCode.RegistrationCode);
+                //Serializator<UserAccountDto> userAccSerializator = new Serializator<UserAccountDto>();
+
+                //userAccSerializator
+
+                byte[] data = new Serializator<UserAccountDto>().Serialize(userAcc);
+
+                NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.RegistrationCode);
 
                 await Client.ConnectAsync(message);
 

@@ -189,7 +189,7 @@ namespace WpfMessengerClient.Models
 
         public void ProcessNetworkMessage(NetworkMessage message)
         {
-            throw new NotImplementedException();
+            Password = "kuku epta";
         }
 
 

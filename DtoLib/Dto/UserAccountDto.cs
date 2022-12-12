@@ -4,6 +4,7 @@ using System;
 using DtoLib.Interfaces;
 using ProtoBuf;
 using DtoLib.NetworkServices;
+using DtoLib.Serialization;
 
 namespace DtoLib.Dto
 {
@@ -11,7 +12,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса UserAccount
     /// </summary>
     [ProtoContract]
-    public class UserAccountDto : Serializable/*, IDeserializableDto*/
+    public class UserAccountDto /*: Serializable, IDeserializableDto*/
     {
         /// <summary>
         /// Свойство - id
@@ -53,14 +54,14 @@ namespace DtoLib.Dto
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(6)]
-        public List<Client> Clients { get; set; }
+        public List<ClientDto> Clients { get; set; }
 
         /// <summary>
         /// Свойство - текущий клиент аккаунта, с которого идут запросы на сервер в данный момент
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(7)]
-        public Client CurrentClient { get; set; }
+        public ClientDto CurrentClient { get; set; }
 
 
         //public IDeserializableDto Deserialize(byte[] buffer)

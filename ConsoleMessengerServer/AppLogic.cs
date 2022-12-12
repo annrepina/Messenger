@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DtoLib;
 using ConsoleMessengerServer.Net;
+using DtoLib.Serialization;
+using DtoLib.Dto;
 
 namespace ConsoleMessengerServer
 {
@@ -23,11 +25,16 @@ namespace ConsoleMessengerServer
 
         public void ProcessNetworkMessage(NetworkMessage message)
         {
+           
             switch(message.CurrentCode)
             {
                 case NetworkMessage.OperationCode.RegistrationCode:
                     {
-                        OnNetworkMessageSent?.Invoke(message);
+                        UserAccountDto userAccountDto = new Deserializer<UserAccountDto>().Deserialize(message.Data);
+
+
+                        //OnNetworkMessageSent?.Invoke(message);
+                        Console.WriteLine($"Код операции: {NetworkMessage.OperationCode.RegistrationCode}. Телефон: {userAccountDto.Person.PhoneNumber}. Пароль: {userAccountDto.Password}");
                     }
                     break;
             }

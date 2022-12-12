@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib
+namespace DtoLib.Serialization
 {
     /// <summary>
     /// Абстрактный класс, который может сереализовать себя

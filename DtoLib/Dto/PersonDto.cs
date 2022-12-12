@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using DtoLib.Interfaces;
+using DtoLib.Serialization;
 using ProtoBuf;
 
 namespace DtoLib.Dto
@@ -14,7 +15,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса Person
     /// </summary>
     [ProtoContract]
-    public class PersonDto : Serializable/*, IDeserializableDto*/
+    public class PersonDto /*: Serializable, IDeserializableDto*/
     {
         /// <summary>
         /// Свойство - имя

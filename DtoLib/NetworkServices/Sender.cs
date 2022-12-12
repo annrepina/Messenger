@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DtoLib.Dto;
+using DtoLib.Serialization;
 
 namespace DtoLib.NetworkServices
 {
@@ -31,8 +32,10 @@ namespace DtoLib.NetworkServices
         {
             //if(message.SerializableDto is UserAccountDto acc)
             //{
-                byte[] data = message.SerializeDto();
+            //byte[] data = message.SerializeDto();
             //}
+
+            byte[] data = new Serializator<NetworkMessage>().Serialize(message);
 
             await Client.NetworkStream.WriteAsync(data, 0, data.Length);
         }
