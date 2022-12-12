@@ -21,6 +21,12 @@ namespace DtoLib.Serialization
                 using (var memoryStream = new MemoryStream())
                 {
                     Serializer.Serialize(memoryStream, obj);
+
+                    //var byteArray = memoryStream.ToArray();
+
+                    //byteArray.Where()
+
+                    //return memoryStream.ToArray();
                     return memoryStream.ToArray();
                 }
             }

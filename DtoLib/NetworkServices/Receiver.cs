@@ -38,13 +38,15 @@ namespace DtoLib.NetworkServices
             //// буфер для получаемых данных
             byte[] data = new byte[256];
 
+            int bytes = 0;
+
             try
             {
-                int bytes = 0;
-
                 do
                 {
                     bytes = await Client.NetworkStream.ReadAsync(data, 0, data.Length);
+
+                    //bytes = Client.NetworkStream.Read(data, 0, data.Length);
 
                 } while (Client.NetworkStream.DataAvailable);
 
@@ -55,7 +57,15 @@ namespace DtoLib.NetworkServices
                 Disconnect();
             }
 
-            return data;
+            byte[] cutData = new byte[bytes];
+
+            var list = data.ToList();
+
+            list.RemoveRange(bytes, 256 - bytes);
+
+            list.CopyTo(cutData);
+
+            return cutData;
         }
 
         /// <summary>
