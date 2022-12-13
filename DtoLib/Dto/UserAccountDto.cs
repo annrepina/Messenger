@@ -56,12 +56,12 @@ namespace DtoLib.Dto
         [ProtoMember(6)]
         public List<ClientDto> Clients { get; set; }
 
-        /// <summary>
-        /// Свойство - текущий клиент аккаунта, с которого идут запросы на сервер в данный момент
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(7)]
-        public ClientDto CurrentClient { get; set; }
+        ///// <summary>
+        ///// Свойство - текущий клиент аккаунта, с которого идут запросы на сервер в данный момент
+        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        ///// </summary>
+        //[ProtoMember(7)]
+        //public ClientDto CurrentClient { get; set; }
 
 
         //public IDeserializableDto Deserialize(byte[] buffer)

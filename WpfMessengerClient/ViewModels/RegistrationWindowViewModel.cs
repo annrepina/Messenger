@@ -57,7 +57,7 @@ namespace WpfMessengerClient.ViewModels
             Client = new FrontClient(CurrentUserAccount);
 
             CurrentUserAccount.AddClient(Client);
-            CurrentUserAccount.CurrentClient = Client;
+            //CurrentUserAccount.CurrentClient = Client;
 
             MessengerMapper mapper = MessengerMapper.GetInstance();
             _mapper = mapper.CreateIMapper();

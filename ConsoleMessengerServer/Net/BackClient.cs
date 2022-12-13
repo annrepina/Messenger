@@ -72,7 +72,6 @@ namespace ConsoleMessengerServer.Net
             //Name = "";
             TcpClient = tcpClient;
             _server = server;
-            //_server.AddClient(this);
             NetworkStream = TcpClient.GetStream();
             UserAccountId = 0;
         }

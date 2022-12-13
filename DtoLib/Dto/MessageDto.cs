@@ -36,12 +36,15 @@ namespace DtoLib.Dto
         [ProtoMember(3)]
         public UserAccountDto SendingUserAccount { get; set; }
 
-        /// <summary>
-        /// Свойство - получающий сообщение аккаунт пользователя
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
+        ///// <summary>
+        ///// Свойство - получающий сообщение аккаунт пользователя
+        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        ///// </summary>
+        //[ProtoMember(4)]
+        //public UserAccountDto ReceivingUserAccount { get; set; }
+
         [ProtoMember(4)]
-        public UserAccountDto ReceivingUserAccount { get; set; }
+        public DialogDto Dialog { get; set; }
 
         /// <summary>
         /// Свойство - прочитано ли сообщение 
@@ -56,23 +59,5 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(6)]
         public DateTime? DateTime { get; set; }
-
-
-        //public IDeserializableDto Deserialize(byte[] buffer)
-        //{
-        //    try
-        //    {
-        //        using (var stream = new MemoryStream(buffer))
-        //        {
-        //            var obj = Serializer.Deserialize<MessageDto>(stream);
-        //            return obj;
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        //
-        //        throw;
-        //    }
-        //}
     }
 }

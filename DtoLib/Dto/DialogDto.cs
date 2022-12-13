@@ -23,25 +23,28 @@ namespace DtoLib.Dto
         [ProtoMember(1)]
         public int Id { get; set; }
 
-        /// <summary>
-        /// Свойство - аккаунт первого пользователя - участника диалога
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(2)]
-        public UserAccountDto UserAccount1 { get; set; }
+        ///// <summary>
+        ///// Свойство - аккаунт первого пользователя - участника диалога
+        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        ///// </summary>
+        //[ProtoMember(2)]
+        //public UserAccountDto UserAccount1 { get; set; }
 
-        /// <summary>
-        /// Свойство - аккаунт второго пользователя - участника диалога
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(3)]
-        public UserAccountDto UserAccount2 { get; set; }
+        ///// <summary>
+        ///// Свойство - аккаунт второго пользователя - участника диалога
+        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        ///// </summary>
+        //[ProtoMember(3)]
+        //public UserAccountDto UserAccount2 { get; set; }
+
+        [ProtoMember(2)]
+        public UserAccountDto[] UserAccounts { get; set; }
 
         /// <summary>
         /// Свойство - обозреваемая коллекция сообщения в диалоге
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
-        [ProtoMember(4)]
+        [ProtoMember(3)]
         public ObservableCollection<MessageDto> Messages { get; set; }
 
         //public IDeserializableDto Deserialize(byte[] buffer)

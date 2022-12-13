@@ -12,9 +12,15 @@ namespace ConsoleMessengerServer.Entities
 
         public string Text { get; set; }    
 
-        public UserAccount SendingUserAccount { get; set; }
+        public UserAccount UserAccount { get; set; }
 
-        public UserAccount ReceivingUserAccount { get; set; }
+        public int UserAccountId { get; set; }
+
+        //public UserAccount ReceivingUserAccount { get; set; }
+
+        public Dialog Dialog { get; set; }
+
+        public int DialogId { get; set; }
 
         public bool IsRead { get; set; }
 

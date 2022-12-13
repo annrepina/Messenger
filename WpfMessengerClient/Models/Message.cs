@@ -15,7 +15,8 @@ namespace WpfMessengerClient.Models
         private bool _isRead;
         private DateTime? _dateTime;
         private UserAccount _sendingUserAccount;
-        private UserAccount _receivingUserAccount;
+        //private UserAccount _receivingUserAccount;
+        private Dialog _dialog;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -71,15 +72,27 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public UserAccount ReceivingUserAccount
+        //public UserAccount ReceivingUserAccount
+        //{
+        //    get => _receivingUserAccount;
+
+        //    set
+        //    {
+        //        _receivingUserAccount = value;
+
+        //        OnPropertyChanged(nameof(ReceivingUserAccount));
+        //    }
+        //}
+
+        public Dialog Dialog 
         {
-            get => _receivingUserAccount;
+            get => _dialog;
 
             set
             {
-                _receivingUserAccount = value;
+                _dialog = value;
 
-                OnPropertyChanged(nameof(ReceivingUserAccount));
+                OnPropertyChanged(nameof(Dialog));
             }
         }
 
@@ -110,20 +123,21 @@ namespace WpfMessengerClient.Models
             Id = 0;
             _text = "";
             _sendingUserAccount = null;
-            _receivingUserAccount = null;
+            //_receivingUserAccount = null;
             _isRead = false;
             _dateTime = null;
+            _dialog = null;
         }
 
-        public Message(string text, UserAccount sendingUserAccount, UserAccount receivingUserAccount)
+        public Message(string text, UserAccount sendingUserAccount, UserAccount receivingUserAccount, Dialog dialog)
         {
             Id = 0;
             _text = text;
             _sendingUserAccount = sendingUserAccount;
-            _receivingUserAccount = receivingUserAccount;
+            //_receivingUserAccount = receivingUserAccount;
             _isRead = false;
             _dateTime = null;
-
+            _dialog = dialog;
         }
 
         private void OnPropertyChanged(string propName)

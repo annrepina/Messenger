@@ -82,7 +82,7 @@ namespace WpfMessengerClient.Models
 
         public List<FrontClient> Clients { get; init; }
 
-        public FrontClient CurrentClient { get; set; }
+        //public FrontClient CurrentClient { get; set; }
 
         public string Error
         {
@@ -122,7 +122,7 @@ namespace WpfMessengerClient.Models
             Dialogs = new ObservableCollection<Dialog>();
             _error = null;
             Clients = new List<FrontClient>();
-            CurrentClient = null;
+            //CurrentClient = null;
         }
 
         private void OnPropertyChanged(string propName)

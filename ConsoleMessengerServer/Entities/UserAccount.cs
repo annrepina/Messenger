@@ -22,10 +22,12 @@ namespace ConsoleMessengerServer.Entities
 
         public List<Dialog> Dialogs { get; set; }
 
-        public List<Client> FrontClients { get; init; }
+        public List<Client> Clients { get; init; }
 
-        public Client FrontClient { get; set; }
+        public List<Message> Messages { get; set; }
 
-        public int FrontClientId { get; set; }
+        //public Client Client { get; set; }
+
+        //public int FrontClientId { get; set; }
     }
 }
