@@ -53,7 +53,12 @@ namespace ConsoleMessengerServer.Net
         /// <summary>
         /// Сервер
         /// </summary>
-        private Server _server; // НЕТ
+        private Server _server;
+
+        /// <summary>
+        /// Id аккаунта пользователя
+        /// </summary>
+        public int UserAccountId { get; set; }
 
         /// <summary>
         /// Конструктор с параметрами
@@ -69,6 +74,7 @@ namespace ConsoleMessengerServer.Net
             _server = server;
             //_server.AddClient(this);
             NetworkStream = TcpClient.GetStream();
+            UserAccountId = 0;
         }
 
         /// <summary>
