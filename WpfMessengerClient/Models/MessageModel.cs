@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models
 {
-    public class Message : INotifyPropertyChanged
+    public class MessageModel : INotifyPropertyChanged
     {
         private string _text;
         //private int _sendingUserAccountId;
         //private int _receivingUserAccountId;
         private bool _isRead;
         private DateTime? _dateTime;
-        private UserAccount _sendingUserAccount;
-        private UserAccount _receivingUserAccount;
+        private UserAccountModel _sendingUserAccount;
+        private UserAccountModel _receivingUserAccount;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -59,7 +59,7 @@ namespace WpfMessengerClient.Models
         //    }
         //}
 
-        public UserAccount SendingUserAccount
+        public UserAccountModel SendingUserAccount
         {
             get => _sendingUserAccount;
 
@@ -71,7 +71,7 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public UserAccount ReceivingUserAccount
+        public UserAccountModel ReceivingUserAccount
         {
             get => _receivingUserAccount;
 
@@ -105,7 +105,7 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public Message()
+        public MessageModel()
         {
             Id = 0;
             _text = "";
@@ -115,7 +115,7 @@ namespace WpfMessengerClient.Models
             _dateTime = null;
         }
 
-        public Message(string text, UserAccount sendingUserAccount, UserAccount receivingUserAccount)
+        public MessageModel(string text, UserAccountModel sendingUserAccount, UserAccountModel receivingUserAccount)
         {
             Id = 0;
             _text = text;

@@ -12,13 +12,13 @@ using DtoLib;
 
 namespace WpfMessengerClient.Models
 {
-    public class UserAccount : INotifyPropertyChanged, IDataErrorInfo, INetworkMessageHandler
+    public class UserAccountModel : INotifyPropertyChanged, IDataErrorInfo, INetworkMessageHandler
     {
         private const int MaxLengthOfPassword = 10;
         private const int MinLengthOfPassword = 6;
 
         private int _id;
-        private Person _person;
+        private PersonModel _person;
         private string _password;
         private bool _isOnline;
         private string _error;
@@ -36,7 +36,7 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public Person Person 
+        public PersonModel Person 
         { 
             get => _person;
             
@@ -78,7 +78,7 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public ObservableCollection<Dialog> Dialogs { get; init; }
+        public ObservableCollection<DialogModel> Dialogs { get; init; }
 
         public List<FrontClient> Clients { get; init; }
 
@@ -113,13 +113,13 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public UserAccount()
+        public UserAccountModel()
         {
             _id = 0;
-            _person = new Person();
+            _person = new PersonModel();
             _password = "";
             _isOnline = false;
-            Dialogs = new ObservableCollection<Dialog>();
+            Dialogs = new ObservableCollection<DialogModel>();
             _error = null;
             Clients = new List<FrontClient>();
             CurrentClient = null;

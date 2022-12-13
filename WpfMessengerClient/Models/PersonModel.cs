@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace WpfMessengerClient.Models
 {
-    public class Person : INotifyPropertyChanged, IDataErrorInfo
+    public class PersonModel : INotifyPropertyChanged, IDataErrorInfo
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -59,7 +59,7 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public Person()
+        public PersonModel()
         {
             _name = "";
             _surname = "";

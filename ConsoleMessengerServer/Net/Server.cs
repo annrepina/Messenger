@@ -97,8 +97,6 @@ namespace ConsoleMessengerServer.Net
 
                     Console.WriteLine($"{client.Id} подключился "); 
 
-                    //AddClient(client);
-
                     await Task.Run(client.ProcessDataAsync);
                 }
             }

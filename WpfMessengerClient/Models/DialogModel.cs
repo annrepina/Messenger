@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models
 {
-    public class Dialog : INotifyPropertyChanged
+    public class DialogModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private UserAccount _userAccount1;
-        private UserAccount _userAccount2;
+        private UserAccountModel _userAccount1;
+        private UserAccountModel _userAccount2;
 
         public int Id { get; set; }
 
-        public UserAccount UserAccount1
+        public UserAccountModel UserAccount1
         {
             get => _userAccount1;
 
@@ -32,7 +32,7 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public UserAccount UserAccount2
+        public UserAccountModel UserAccount2
         {
             get => _userAccount2;
 
@@ -46,13 +46,13 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public ObservableCollection<Message> Messages { get; set; }
+        public ObservableCollection<MessageModel> Messages { get; set; }
 
-        public Dialog()
+        public DialogModel()
         {
             _userAccount1 = null;
             _userAccount2 = null;
-            Messages = new ObservableCollection<Message>();
+            Messages = new ObservableCollection<MessageModel>();
         }
 
         private void OnPropertyChanged(string propName)
