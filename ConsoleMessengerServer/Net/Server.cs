@@ -100,8 +100,6 @@ namespace ConsoleMessengerServer.Net
                     //AddClient(client);
 
                     await Task.Run(client.ProcessDataAsync);
-                    //Thread clientThread = new Thread(new ThreadStart(client.ProcessData));
-                    //clientThread.Start();
                 }
             }
             catch (Exception ex)
