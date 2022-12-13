@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.Entities
 {
-    public class FrontClientEntity
+    public class Client
     {
         public int Id { get; set; }
     }

@@ -24,13 +24,13 @@ namespace WpfMessengerClient.ViewModels
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private UserAccountModel _currentUserAccount;
+        private UserAccount _currentUserAccount;
 
         private readonly IMapper _mapper;
 
 
 
-        public UserAccountModel CurrentUserAccount
+        public UserAccount CurrentUserAccount
         {
             get => _currentUserAccount;
 
@@ -49,7 +49,7 @@ namespace WpfMessengerClient.ViewModels
 
         public RegistrationWindowViewModel()
         {
-            CurrentUserAccount = new UserAccountModel();
+            CurrentUserAccount = new UserAccount();
             OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
             //_connectionService = new ConnectionService(this);
             // задаем клиента

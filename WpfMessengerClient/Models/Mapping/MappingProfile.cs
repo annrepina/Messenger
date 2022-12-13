@@ -13,13 +13,13 @@ namespace WpfMessengerClient.Models.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<PersonModel, PersonDto>().ReverseMap();
+            CreateMap<Person, PersonDto>().ReverseMap();
 
-            CreateMap<UserAccountModel, UserAccountDto>().ReverseMap();
+            CreateMap<UserAccount, UserAccountDto>().ReverseMap();
 
-            CreateMap<DialogModel, DialogDto>().ReverseMap();
+            CreateMap<Dialog, DialogDto>().ReverseMap();
 
-            CreateMap<MessageModel, MessageDto>().ReverseMap();
+            CreateMap<Message, MessageDto>().ReverseMap();
 
             CreateMap<FrontClient, ClientDto>().ReverseMap();
         }

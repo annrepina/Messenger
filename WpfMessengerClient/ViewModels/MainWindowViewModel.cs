@@ -37,12 +37,12 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Текущий пользователь
         /// </summary>
-        private UserAccountModel _currentUser;
+        private UserAccount _currentUser;
 
         /// <summary>
         /// Текущий пользователь
         /// </summary>
-        public UserAccountModel CurrentUser
+        public UserAccount CurrentUser
         {
             get => _currentUser;
 
@@ -77,7 +77,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Обозреваемая коллекция пользователей
         /// </summary>
-        public ObservableCollection<UserAccountModel> Users { get; set; }
+        public ObservableCollection<UserAccount> Users { get; set; }
 
         /// <summary>
         /// Поле - была попытка ввода пустого имени?
@@ -109,9 +109,9 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public MainWindowViewModel()
         {
-            Users = new ObservableCollection<UserAccountModel>();
+            Users = new ObservableCollection<UserAccount>();
             Users.CollectionChanged += OnUsersListPropertyChanged;
-            CurrentUser = new UserAccountModel();
+            CurrentUser = new UserAccount();
             CurrentUser.PropertyChanged += OnCurrentUserPropertyChanged;
 
             OnEnterChatCommand = new DelegateCommand(OnEnterChat);

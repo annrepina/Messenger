@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.Entities
 {
-    public class MessageEntity
+    public class Message
     {
         public int Id { get; set; }
 
         public string Text { get; set; }    
 
-        public UserAccountEntity SendingUserAccountEntity { get; set; }
+        public UserAccount SendingUserAccount { get; set; }
 
-        public UserAccountEntity ReceivingUserEntity { get; set; }
+        public UserAccount ReceivingUserAccount { get; set; }
 
         public bool IsRead { get; set; }
 

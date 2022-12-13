@@ -12,7 +12,7 @@ namespace WpfMessengerClient.Models.Mapping
     {
         public UserAccountMappingProfile()
         {
-            CreateMap<UserAccountModel, UserAccountDto>();
+            CreateMap<UserAccount, UserAccountDto>();
         }
     }
 }

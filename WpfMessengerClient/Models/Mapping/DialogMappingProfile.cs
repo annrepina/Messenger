@@ -12,7 +12,7 @@ namespace WpfMessengerClient.Models.Mapping
     {
         public DialogMappingProfile()
         {
-            CreateMap<DialogModel, DialogDto>();
+            CreateMap<Dialog, DialogDto>();
         }
     }
 }

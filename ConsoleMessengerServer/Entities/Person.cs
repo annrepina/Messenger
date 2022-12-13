@@ -9,7 +9,7 @@ namespace ConsoleMessengerServer.Entities
     /// <summary>
     /// Класс - сущность Person
     /// </summary>
-    public class PersonEntity
+    public class Person
     {
         public int Id { get; set; }
 
