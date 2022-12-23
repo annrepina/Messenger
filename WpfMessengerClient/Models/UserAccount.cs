@@ -12,7 +12,7 @@ using DtoLib;
 
 namespace WpfMessengerClient.Models
 {
-    public class UserAccount : INotifyPropertyChanged, IDataErrorInfo, INetworkMessageHandler
+    public class UserAccount : INotifyPropertyChanged, IDataErrorInfo
     {
         private const int MaxLengthOfPassword = 10;
         private const int MinLengthOfPassword = 6;
@@ -78,9 +78,9 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public ObservableCollection<Dialog> Dialogs { get; init; }
+        public ObservableCollection<Dialog> Dialogs { get; set; }
 
-        public List<FrontClient> Clients { get; init; }
+        public List<FrontClient> Clients { get; set; }
 
         //public FrontClient CurrentClient { get; set; }
 
@@ -187,10 +187,10 @@ namespace WpfMessengerClient.Models
         #endregion Валидация
 
 
-        public void ProcessNetworkMessage(NetworkMessage message)
-        {
-            Password = "kuku epta";
-        }
+        //public void ProcessNetworkMessage(NetworkMessage message)
+        //{
+        //    Password = "kuku epta";
+        //}
 
 
     }

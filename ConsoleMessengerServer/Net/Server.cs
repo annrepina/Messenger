@@ -1,4 +1,6 @@
-﻿using DtoLib;
+﻿using ConsoleMessengerServer.DataBase;
+using ConsoleMessengerServer.Entities;
+using DtoLib;
 using DtoLib.Dto;
 using DtoLib.Serialization;
 using System;
@@ -29,16 +31,16 @@ namespace ConsoleMessengerServer.Net
         private int _port;
 
         /// <summary>
-        /// Список клиентов
+        /// Словарь, который содержит пары ключ - id Клиента и сам клиент
         /// </summary>
-        private List<BackClient> _clients;
+        private Dictionary<int, BackClient> _clients;
 
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
         public Server(AppLogic appLogic)
         {
-            _clients = new List<BackClient>();
+            //_clients = new List<BackClient>();
 
             _port = 8888;
 
@@ -46,17 +48,19 @@ namespace ConsoleMessengerServer.Net
 
             Logic = appLogic;
 
-            Logic.OnNetworkMessageSent += SendMessageToViewModel;
+            _clients = new Dictionary<int, BackClient>();
+
+            //Logic.OnNetworkMessageSent += SendMessageToViewModel;
         }
 
-        /// <summary>
-        /// Добавить клиента
-        /// </summary>
-        /// <param name="client">Клиент</param>
-        public void AddClient(BackClient client)
-        {
-            _clients.Add(client);
-        }
+        ///// <summary>
+        ///// Добавить клиента
+        ///// </summary>
+        ///// <param name="client">Клиент</param>
+        //public void AddClient(BackClient client)
+        //{
+        //    _clients.Add(client);
+        //}
 
         /// <summary>
         /// Удалить клиента
@@ -67,13 +71,15 @@ namespace ConsoleMessengerServer.Net
             if (_clients != null && _clients.Count > 0)
             {
                 // получаем по id подключение
-                BackClient? client = _clients.FirstOrDefault(c => c.Id == clientId);
+                //BackClient? client = _clients.FirstOrDefault(c => c.Id == clientId);
 
-                if (client != null)
-                {
-                    _clients.Remove(client);
-                    client.CloseConnection();
-                }
+                //if (client != null)
+                //{
+                //    _clients.Remove(client);
+                //    client.CloseConnection();
+                //}
+
+                _clients.Remove(clientId);
             }
         }
 
@@ -93,11 +99,34 @@ namespace ConsoleMessengerServer.Net
 
                     BackClient client = new BackClient(tcpClient, this, Logic);
 
-                    _clients.Add(client);
+                    // ентити
+                    Client? dbClient;
 
-                    Console.WriteLine($"{client.Id} подключился "); 
+                    using(var dbContext = new MessengerDbContext())
+                    {
+                        dbClient = new Client();
 
-                    await Task.Run(client.ProcessDataAsync);
+                        dbContext.Clients.Add(dbClient);
+
+                        dbContext.SaveChanges();
+
+                        //var a = dbClient.Id;
+
+                        //dbClient = dbContext.Clients.LastOrDefault();
+                    }
+
+                    //_clients.Add(client);
+
+                    if (dbClient != null)
+                    {
+                        Console.WriteLine($"{dbClient.Id} подключился ");
+
+                        client.Id = dbClient.Id;
+
+                        _clients.Add(client.Id, client);
+
+                        await client.ProcessDataAsync();
+                    }
                 }
             }
             catch (Exception ex)
@@ -110,25 +139,29 @@ namespace ConsoleMessengerServer.Net
             }
         }
 
-        public async Task SendMessageToViewModel(NetworkMessage message)
+        public async Task SendMessageToViewModel(NetworkMessage message, int clientId)
         {
-            switch(message.CurrentCode)
-            {
-                case NetworkMessage.OperationCode.RegistrationCode:
-                    {
-                        UserAccountDto userAccountDto = new Deserializer<UserAccountDto>().Deserialize(message.Data);
+            await _clients[clientId].Sender.SendNetworkMessageAsync(message);
+
+            //switch(message.CurrentCode)
+            //{
+            //    case NetworkMessage.OperationCode.RegistrationCode:
+            //        {
+            //            UserAccountDto userAccountDto = new Deserializer<UserAccountDto>().Deserialize(message.Data);
 
 
-                        userAccountDto.Person.Name = "КУКУ епта";
-                        //await userAccountDto.CurrentClient.Sender.SendNetworkMessageAsync(message);
+            //            userAccountDto.Person.Name = "КУКУ епта";
+            //            //await userAccountDto.CurrentClient.Sender.SendNetworkMessageAsync(message);
 
-                        await _clients[0].Sender.SendNetworkMessageAsync(message);
+            //            await _clients[0].Sender.SendNetworkMessageAsync(message);
 
 
 
-                    }
-                    break;
-            }
+            //        }
+            //        break;
+
+
+            //}
         }
 
         ///// <summary>
@@ -171,7 +204,7 @@ namespace ConsoleMessengerServer.Net
         {
             foreach (var client in _clients)
             {
-                client.CloseConnection();
+                client.Value.CloseConnection();
             }
 
             /// Остановка сервера

@@ -9,6 +9,6 @@ namespace DtoLib
 {
     public interface INetworkMessageHandler
     {
-        public void ProcessNetworkMessage(NetworkMessage message);
+        public void ProcessNetworkMessage(NetworkMessage message, int clientId);
     }
 }

@@ -17,6 +17,7 @@ namespace ConsoleMessengerServer
         {
             _appLogic = new AppLogic();
             _server = new Server(_appLogic);
+            _appLogic.Server = _server;
         }
 
         public async Task LaunchAsync()

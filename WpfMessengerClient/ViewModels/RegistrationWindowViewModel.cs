@@ -24,21 +24,33 @@ namespace WpfMessengerClient.ViewModels
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private UserAccount _currentUserAccount;
+        //private UserAccount _currentUserAccount;
 
         private readonly IMapper _mapper;
+        private Messenger _messenger;
 
+        //public UserAccount CurrentUserAccount
+        //{
+        //    get => _currentUserAccount;
 
+        //    set
+        //    {
+        //        _currentUserAccount = value;
+        //        OnPropertyChanged(nameof(CurrentUserAccount));  
+        //    }
+        //}
 
-        public UserAccount CurrentUserAccount
-        {
-            get => _currentUserAccount;
-
+        public Messenger Messenger 
+        { 
+            get => _messenger; 
+            
             set
             {
-                _currentUserAccount = value;
-                OnPropertyChanged(nameof(CurrentUserAccount));  
+                _messenger = value;
+
+                OnPropertyChanged(nameof(Messenger));
             }
+        
         }
 
         //public ConnectionService /*ConnectionService { get; set; }*/ _connectionService;
@@ -49,14 +61,18 @@ namespace WpfMessengerClient.ViewModels
 
         public RegistrationWindowViewModel()
         {
-            CurrentUserAccount = new UserAccount();
+            //CurrentUserAccount = new UserAccount();
+            Messenger = new Messenger();
             OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
             //_connectionService = new ConnectionService(this);
             // задаем клиента
 
-            Client = new FrontClient(CurrentUserAccount);
+            Client = new FrontClient(Messenger);
+            //Client.UserAccount = Messenger.CurrentUserAccount;
 
-            CurrentUserAccount.AddClient(Client);
+            Messenger.CurrentUserAccount.AddClient(Client);
+
+            //CurrentUserAccount.AddClient(Client);
             //CurrentUserAccount.CurrentClient = Client;
 
             MessengerMapper mapper = MessengerMapper.GetInstance();
@@ -75,31 +91,15 @@ namespace WpfMessengerClient.ViewModels
         private async void OnRegisterInMessenger()
         {
             // если ошибок нет
-            if (String.IsNullOrEmpty(CurrentUserAccount.Error))
+            if (String.IsNullOrEmpty(Messenger.CurrentUserAccount.Error))
             {
-                UserAccountDto userAcc = _mapper.Map<UserAccountDto>(CurrentUserAccount);
-
-                //Serializator<UserAccountDto> userAccSerializator = new Serializator<UserAccountDto>();
-
-                //userAccSerializator
+                UserAccountDto userAcc = _mapper.Map<UserAccountDto>(Messenger.CurrentUserAccount);
 
                 byte[] data = new Serializator<UserAccountDto>().Serialize(userAcc);
 
                 NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.RegistrationCode);
 
                 await Client.ConnectAsync(message);
-
-
-
-                //MessengerMapper map = MessengerMapper.GetInstance();
-
-                //var mapper = map.CreateIMapper();
-
-                //UserAccountDto user = mapper.Map<UserAccountDto>(CurrentUserAccount);
-
-                //var a = user;
-
-            // подключаемся
             }
         }
 

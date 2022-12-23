@@ -28,6 +28,7 @@ namespace DtoLib
         public enum OperationCode : byte
         {
             RegistrationCode,
+            SuccessfulRegistrationCode,
             AuthorizationCode,
             SendingMessageCode,
             ExitCode,

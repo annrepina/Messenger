@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using DtoLib.NetworkServices;
 using WpfMessengerClient.ViewModels;
+using WpfMessengerClient.Models;
 
 namespace WpfMessengerClient.Services 
 {
@@ -59,9 +60,18 @@ namespace WpfMessengerClient.Services
 
         public bool IsConnected { get; private set; }
 
+
+
+        //public UserAccount UserAccount { get; set; }
+
         //public INetworkMessageHandler NetworkMessageHandler { get; set; }
 
         //public NetworkMessage NetworkMessage { get; private set; }
+
+        public FrontClient() : base()
+        {
+
+        }
 
         /// <summary>
         /// Констурктор по умолчанию

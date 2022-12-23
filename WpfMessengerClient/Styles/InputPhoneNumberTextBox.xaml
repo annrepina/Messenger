@@ -25,7 +25,7 @@
                                      CaretBrush="Gray"
                                      Margin="8,0,0,0">
                                 <TextBox.Text>
-                                    <Binding Path="CurrentUserAccount.Person.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                    <Binding Path="Messenger.CurrentUserAccount.Person.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
                                         <Binding.ValidationRules>
                                             <DataErrorValidationRule />
                                         </Binding.ValidationRules>

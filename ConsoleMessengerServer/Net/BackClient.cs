@@ -14,41 +14,6 @@ namespace ConsoleMessengerServer.Net
     /// </summary>
     public class BackClient : Client
     {
-        //#region Константы
-
-        ///// <summary>
-        ///// Код добавления нового клиента
-        ///// </summary>
-        //public const byte AddingNewUserCode = 1;
-
-        ///// <summary>
-        ///// Код удаления клиента
-        ///// </summary>
-        //public const byte DisconnectingUserCode = 2;
-
-        ///// <summary>
-        ///// Код отравки сообщений
-        ///// </summary>
-        //public const byte SendingMessageCode = 3;
-
-        //#endregion Константы
-
-
-
-        ///// <summary>
-        ///// Id
-        ///// </summary>
-        //public int Id { get; set; } // ЕСТЬ
-
-        ///// <summary>
-        ///// Предоставляет базовый поток данных для доступа к сети
-        ///// </summary>
-        //public NetworkStream NetworkStream { get; private set; } // ЕСТЬ
-
-        ///// <summary>
-        ///// TCP клиент
-        ///// </summary>
-        //private TcpClient _tcpClient; //ИЕСТЬ
 
         /// <summary>
         /// Сервер
@@ -58,7 +23,7 @@ namespace ConsoleMessengerServer.Net
         /// <summary>
         /// Id аккаунта пользователя
         /// </summary>
-        public int UserAccountId { get; set; }
+        //public int UserAccount { get; set; }
 
         /// <summary>
         /// Конструктор с параметрами
@@ -67,13 +32,10 @@ namespace ConsoleMessengerServer.Net
         /// <param name="server">Сервер</param>
         public BackClient(TcpClient tcpClient, Server server, INetworkMessageHandler networkMessageHandler) : base(networkMessageHandler)
         {
-            //Id = Guid.NewGuid().ToString();
-            //Id = 0;
-            //Name = "";
             TcpClient = tcpClient;
             _server = server;
             NetworkStream = TcpClient.GetStream();
-            UserAccountId = 0;
+            //UserAccount = ;
         }
 
         /// <summary>
@@ -83,10 +45,6 @@ namespace ConsoleMessengerServer.Net
         {
             try
             {
-                //GetUserName();
-
-                //string message = "";
-
                 // в бесконечном цикле получаем сообщения от клиента
                 while (true)
                 {
