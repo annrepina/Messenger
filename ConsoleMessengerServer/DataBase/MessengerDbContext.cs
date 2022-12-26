@@ -45,7 +45,7 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         public MessengerDbContext()
         {
-
+            //Database.EnsureDeleted();
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace ConsoleMessengerServer.DataBase
             // получаем строку подключения
             string connectionString = config.GetConnectionString("DefaultConnection");
 
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(connectionString, builder => builder.EnableRetryOnFailure());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
