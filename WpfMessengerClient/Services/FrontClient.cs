@@ -13,8 +13,9 @@ using System.Windows;
 using DtoLib.NetworkServices;
 using WpfMessengerClient.ViewModels;
 using WpfMessengerClient.Models;
+using DtoLib.NetworkInterfaces;
 
-namespace WpfMessengerClient.Services 
+namespace WpfMessengerClient.Services
 {
     /// <summary>
     /// Клиент, который подключается к серверу
@@ -107,6 +108,11 @@ namespace WpfMessengerClient.Services
 
                 await Receiver.ReceiveNetworkMessageAsync();
             }
+        }
+
+        public override async Task GetNetworkMessageAsync(NetworkMessage message)
+        {
+            await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message));
         }
 
         //public async Task GetNetworkMessageAsync(NetworkMessage message)

@@ -11,10 +11,11 @@ using ConsoleMessengerServer.DataBase;
 using ConsoleMessengerServer.Entities;
 using AutoMapper;
 using ConsoleMessengerServer.Entities.Mapping;
+using DtoLib.NetworkInterfaces;
 
 namespace ConsoleMessengerServer
 {
-    public class AppLogic : INetworkMessageHandler
+    public class AppLogic : IBackNetworkMessageHandler
     {
         public Server Server { get; set; }
 
@@ -72,6 +73,11 @@ namespace ConsoleMessengerServer
                     }
                     break;
             }
+        }
+
+        public void ProcessNetworkMessage(NetworkMessage message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

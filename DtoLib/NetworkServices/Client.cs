@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DtoLib.NetworkInterfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -10,7 +11,7 @@ namespace DtoLib.NetworkServices
     /// <summary>
     /// Клиент, который подключается к серверу
     /// </summary>
-    public class Client
+    public abstract class Client
     {
         /// <summary>
         /// Поток, по которому будет осуществляться передача данных
@@ -57,14 +58,16 @@ namespace DtoLib.NetworkServices
             Sender = new Sender(this);
             NetworkMessageHandler = networkMessageHandler;
         }
-        public async Task GetNetworkMessageAsync(NetworkMessage message)
-        { 
-            if(NetworkMessageHandler != null)
-            {
-                await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message, Id));
-            }
+        public abstract Task GetNetworkMessageAsync(NetworkMessage message);
+        //{ 
+            //if(NetworkMessageHandler != null)
+            //{
+            //    if(message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode || message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode)
+
+            //    await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message, Id));
+            //}
 
 
-        }
+        //}
     }
 }

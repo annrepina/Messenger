@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using DtoLib.NetworkServices;
+using DtoLib.NetworkInterfaces;
 using DtoLib;
 
 namespace ConsoleMessengerServer.Net
@@ -144,6 +145,19 @@ namespace ConsoleMessengerServer.Net
 
             if (TcpClient != null)
                 TcpClient.Close();
+        }
+
+        public override async Task GetNetworkMessageAsync(NetworkMessage message)
+        {
+            if(NetworkMessageHandler is IBackNetworkMessageHandler backNetworkMessageHandler && 
+                (message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode || message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode))
+            {
+                await Task.Run(() => backNetworkMessageHandler.ProcessNetworkMessage(message, Id));
+            }
+
+            else
+                await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message));
+
         }
     }
 }

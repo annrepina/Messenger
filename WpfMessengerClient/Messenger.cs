@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DtoLib;
 using DtoLib.Dto;
+using DtoLib.NetworkInterfaces;
 using DtoLib.Serialization;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace WpfMessengerClient
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        public void ProcessNetworkMessage(NetworkMessage message, int clientId)
+        public void ProcessNetworkMessage(NetworkMessage message)
         {
             switch (message.CurrentCode)
             {
