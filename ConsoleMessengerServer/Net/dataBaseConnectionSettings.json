@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=S-DEV-3\\TESTDB;Database=Messenger;Trusted_Connection=True;Encrypt=False;MultipleActiveResultSets=True;"
+  }
+}
