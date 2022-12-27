@@ -17,12 +17,13 @@ namespace WpfMessengerClient
 {
     public class Messenger : INotifyPropertyChanged, INetworkMessageHandler
     {
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private UserAccount _currentUserAccount;
 
         private readonly IMapper _mapper;
+
+        public FrontClient Client { get; set; }
 
         public UserAccount CurrentUserAccount
         {
@@ -37,10 +38,15 @@ namespace WpfMessengerClient
 
         //public FrontClient FrontClient { get; private set; }
 
-        public Messenger(/*FrontClient frontClient*/)
+        public Messenger()
         {
             CurrentUserAccount = new UserAccount();
-            //FrontClient = frontClient;
+
+            Client = new FrontClient();
+            Client.NetworkMessageHandler = this;
+
+            CurrentUserAccount.AddClient(Client);
+
             MessengerMapper mapper = MessengerMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
         }
@@ -62,7 +68,7 @@ namespace WpfMessengerClient
                     break;
                 case NetworkMessage.OperationCode.SuccessfulRegistrationCode:
                     {
-                        Registr(message);
+                        Register(message);
 
 
 
@@ -79,7 +85,7 @@ namespace WpfMessengerClient
             }
         }
 
-        public void Registr(NetworkMessage message)
+        public void Register(NetworkMessage message)
         {
             var data = message.Data;
 
@@ -90,6 +96,19 @@ namespace WpfMessengerClient
             UserAccount usacc = _mapper.Map<UserAccount>(acc);
 
             CurrentUserAccount.Person.PhoneNumber = usacc.Person.PhoneNumber;
+        }
+
+        public async Task SendRegistrationRequest(string phoneNumber, string password)
+        {
+            UserAccountRegistrationDto userAccountRegistrationDto = new UserAccountRegistrationDto() { PhoneNumber = phoneNumber, Password = password};
+
+            //UserAccountRegistrationDto userAccountRegistrationDto = _mapper.Map<UserAccountRegistrationDto>(Messenger.CurrentUserAccount);
+
+            byte[] data = new Serializator<UserAccountRegistrationDto>().Serialize(userAccountRegistrationDto);
+
+            NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.RegistrationCode);
+
+            await Client.ConnectAsync(message);
         }
     }
 }

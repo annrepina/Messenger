@@ -20,63 +20,141 @@ using DtoLib.Serialization;
 
 namespace WpfMessengerClient.ViewModels
 {
-    public class RegistrationWindowViewModel : INotifyPropertyChanged/*, INetworkMessageHandler*/
+    public class RegistrationWindowViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        //private UserAccount _currentUserAccount;
+        private const int PhoneNumberLength = 12;
+        private const int MaxLengthOfPassword = 10;
+        private const int MinLengthOfPassword = 6;
 
-        private readonly IMapper _mapper;
         private Messenger _messenger;
+        private string _phoneNumber;
+        private string _password;
+        private string _error;
 
-        //public UserAccount CurrentUserAccount
-        //{
-        //    get => _currentUserAccount;
+        public string PhoneNumber
+        {
+            get => _phoneNumber;
 
-        //    set
-        //    {
-        //        _currentUserAccount = value;
-        //        OnPropertyChanged(nameof(CurrentUserAccount));  
-        //    }
-        //}
+            set
+            {
+                _phoneNumber = value;
 
-        public Messenger Messenger 
+                OnPropertyChanged(nameof(PhoneNumber));
+            }
+        }
+
+        public string Password 
         { 
-            get => _messenger; 
-            
+            get => _password;
+
+            set
+            {
+                _password = value;
+
+                OnPropertyChanged(nameof(Password));
+            }
+        }
+
+        public Messenger Messenger
+        {
+            get => _messenger;
+
             set
             {
                 _messenger = value;
 
                 OnPropertyChanged(nameof(Messenger));
             }
-        
+
         }
-
-        //public ConnectionService /*ConnectionService { get; set; }*/ _connectionService;
-
-        public FrontClient Client { get; set; }
 
         public DelegateCommand OnRegisterInMessengerCommand { get; set; }
 
+        public string Error
+        {
+            get
+            {
+                return _error;
+            }
+
+            set
+            {
+                _error = value;
+
+                OnPropertyChanged(nameof(Error));
+            }
+        }
+
+        public string this[string propName]
+        {
+            get
+            {
+                // Потом проверяем есть ли у текущего объекта ошибка
+                ValidateAllProperties(propName);
+
+                return Error;
+            }
+        }
+
+        private void ValidateAllProperties(object propName)
+        {
+            switch (propName)
+            {
+                case nameof(PhoneNumber):
+                    ValidatePhoneNumber();
+
+                    break;
+
+                case nameof(Password):
+                    ValidatePassword();
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void ValidatePassword()
+        {
+            Regex regex = new Regex(@"^\w{6}");
+
+            Error = null;
+
+            if (!regex.IsMatch(Password))
+                Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+
+            else if (Password.Length > MaxLengthOfPassword)
+                Error = "Пароль должен содержать не больше 10ти символов";
+
+            else if (Password.Length < MinLengthOfPassword)
+                Error = "Пароль должен содержать не меньше 6ти символов";
+        }
+
+        private void ValidatePhoneNumber()
+        {
+            //Regex regex = new Regex(@"^8\d{10}");
+            Regex regex = new Regex(@"^\+7\d{10}");
+            //Regex regex = new Regex(@"^\d{10}");
+
+            Error = null;
+
+            if (!regex.IsMatch(PhoneNumber))
+                Error = "Телефон должен начинаться с +7 и далее состоять из 10 цифр";
+
+            else if (PhoneNumber.Length != PhoneNumberLength)
+                Error = "Номер телефон должнен состоять из 12 символов всего";
+        }
+
         public RegistrationWindowViewModel()
         {
-            //CurrentUserAccount = new UserAccount();
             Messenger = new Messenger();
-            OnRegisterInMessengerCommand = new DelegateCommand(OnRegisterInMessenger);
-            //_connectionService = new ConnectionService(this);
-            // задаем клиента
-
-            Client = new FrontClient(Messenger);
-            //Client.UserAccount = Messenger.CurrentUserAccount;
-
-            Messenger.CurrentUserAccount.AddClient(Client);
-
-            //CurrentUserAccount.AddClient(Client);
-            //CurrentUserAccount.CurrentClient = Client;
-
-            MessengerMapper mapper = MessengerMapper.GetInstance();
-            _mapper = mapper.CreateIMapper();
+            OnRegisterInMessengerCommand = new DelegateCommand(async () => await OnRegisterInMessenger());
+            _password = null;
+            _phoneNumber = null;
+            _error = null;
         }
 
         /// <summary>
@@ -88,24 +166,13 @@ namespace WpfMessengerClient.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        private async void OnRegisterInMessenger()
+        private async Task OnRegisterInMessenger()
         {
             // если ошибок нет
-            if (String.IsNullOrEmpty(Messenger.CurrentUserAccount.Error))
+            if (String.IsNullOrEmpty(Error))
             {
-                UserAccountDto userAcc = _mapper.Map<UserAccountDto>(Messenger.CurrentUserAccount);
-
-                byte[] data = new Serializator<UserAccountDto>().Serialize(userAcc);
-
-                NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.RegistrationCode);
-
-                await Client.ConnectAsync(message);
+                await Messenger.SendRegistrationRequest(PhoneNumber, Password);
             }
         }
-
-        //public void ProcessNetworkMessage(NetworkMessage message)
-        //{
-            
-        //}
     }
 }

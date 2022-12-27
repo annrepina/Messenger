@@ -34,27 +34,5 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(3)]
         public string Password { get; set; }
-
-        /// <summary>
-        /// Свойство - является ли онлайн аккаунт
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(4)]
-        public bool IsOnline { get; set; }
-
-        /// <summary>
-        /// Свойство - обозреваемая коллекция диалогов у аккаунта
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(5)]
-        public ObservableCollection<DialogDto> Dialogs { get; set; }
-
-        /// <summary>
-        /// Свойство - список клиентов у аккаунта, те клиенты на которых открыта учетка аккаунта
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(6)]
-        public List<ClientDto> Clients { get; set; }
-
     }
 }

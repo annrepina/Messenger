@@ -51,13 +51,11 @@ namespace DtoLib.NetworkServices
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
-        public Client(INetworkMessageHandler networkMessageHandler)
+        public Client(INetworkMessageHandler networkMessageHandler) : this()
         {
-            Id = 0;
-            Receiver = new Receiver(this);
-            Sender = new Sender(this);
             NetworkMessageHandler = networkMessageHandler;
         }
+
         public abstract Task GetNetworkMessageAsync(NetworkMessage message);
         //{ 
             //if(NetworkMessageHandler != null)

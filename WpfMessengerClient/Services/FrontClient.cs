@@ -22,11 +22,6 @@ namespace WpfMessengerClient.Services
     /// </summary>
     public class FrontClient : Client
     {
-        //// определение типа делегата
-        //public delegate void NetworkMessageGot(NetworkMessage message);
-
-        //public event NetworkMessageGot OnNetworkMessageGot;
-
         /// <summary>
         /// Ip хоста
         /// </summary>
@@ -37,41 +32,11 @@ namespace WpfMessengerClient.Services
         /// </summary>
         private const int Port = 8888;
 
-        ///// <summary>
-        ///// Поток, по которому будет осуществляться передача данных
-        ///// </summary>
-        //public static NetworkStream Stream { get; private set; }
-
-        ///// <summary>
-        ///// Обеспечивает клиентские соединения для сетевых служб tcp.
-        ///// </summary>
-        //public static TcpClient TcpClient { get; private set; }
-
-        //public int Id { get; set; }
-
-        ///// <summary>
-        ///// Получатель сообщений от сервера
-        ///// </summary>
-        //public Receiver Receiver { get; private set; }
-
-        ///// <summary>
-        ///// Отправитель сообщений на сервер
-        ///// </summary>
-        //public Sender Sender { get; private set; }
-
         public bool IsConnected { get; private set; }
-
-
-
-        //public UserAccount UserAccount { get; set; }
-
-        //public INetworkMessageHandler NetworkMessageHandler { get; set; }
-
-        //public NetworkMessage NetworkMessage { get; private set; }
 
         public FrontClient() : base()
         {
-
+            TcpClient = new TcpClient();
         }
 
         /// <summary>
@@ -79,11 +44,7 @@ namespace WpfMessengerClient.Services
         /// </summary>
         public FrontClient(INetworkMessageHandler networkMessageHandler) : base(networkMessageHandler)
         {
-            //Id = 0;
             TcpClient = new TcpClient();
-            //NetworkMessageHandler = networkMessageHandler;
-            //Receiver = new Receiver(this);
-            //Sender = new Sender(this);
         }
 
         /// <summary>

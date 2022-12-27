@@ -22,6 +22,8 @@ namespace ConsoleMessengerServer.Entities.Mapping
             CreateMap<Message, MessageDto>().ReverseMap();
 
             CreateMap<Client, ClientDto>().ReverseMap();
+
+            CreateMap<UserAccount, UserAccountRegistrationDto>().ForMember(nameof(UserAccountRegistrationDto.PhoneNumber), exp => exp.MapFrom(c => c.Person.PhoneNumber)).ReverseMap();
         }
 
     }
