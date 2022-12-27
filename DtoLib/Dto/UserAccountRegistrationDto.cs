@@ -1,10 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using System.Security.Cryptography;
+﻿using ProtoBuf;
 using System;
-using DtoLib.Interfaces;
-using ProtoBuf;
-using DtoLib.NetworkServices;
-using DtoLib.Serialization;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DtoLib.Dto
 {
@@ -12,7 +12,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса UserAccount
     /// </summary>
     [ProtoContract]
-    public class UserAccountDto 
+    public class UserAccountRegistrationDto
     {
         /// <summary>
         /// Свойство - id
@@ -26,7 +26,7 @@ namespace DtoLib.Dto
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(2)]
-        public PersonDto Person { get; set; }
+        public string PhoneNumber { get; set; }
 
         /// <summary>
         /// Свойство - пароль
@@ -55,17 +55,6 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(6)]
         public List<ClientDto> Clients { get; set; }
-
-
-
-        #region Debug
-
-        public override string ToString()
-        {
-            return $"Id: {Id}. PhoneNumber: {Person.PhoneNumber}. Password: {Password}. IsOnline: {IsOnline}. DialogsNumber: {Dialogs.Count}";
-        }
-
-        #endregion Debug
 
     }
 }
