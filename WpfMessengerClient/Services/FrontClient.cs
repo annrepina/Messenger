@@ -34,6 +34,8 @@ namespace WpfMessengerClient.Services
 
         public bool IsConnected { get; private set; }
 
+        public INetworkMessageHandler NetworkMessageHandler { get; set; }
+
         public FrontClient() : base()
         {
             TcpClient = new TcpClient();
@@ -42,9 +44,10 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
-        public FrontClient(INetworkMessageHandler networkMessageHandler) : base(networkMessageHandler)
+        public FrontClient(INetworkMessageHandler networkMessageHandler)
         {
             TcpClient = new TcpClient();
+            NetworkMessageHandler = networkMessageHandler;
         }
 
         /// <summary>
@@ -60,11 +63,6 @@ namespace WpfMessengerClient.Services
                 if (message != null)
                 {
                     await Sender.SendNetworkMessageAsync(message);
-
-
-                    //Sender.SendOperarationCode(Receiver.AddingNewUserCode);
-
-                    //Sender.SendMessage(userName);
                 }
 
                 await Receiver.ReceiveNetworkMessageAsync();
@@ -75,16 +73,6 @@ namespace WpfMessengerClient.Services
         {
             await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message));
         }
-
-        //public async Task GetNetworkMessageAsync(NetworkMessage message)
-        //{
-        //    await Task.Run(() => OnNetworkMessageGot?.Invoke(message));
-        //}
-
-        //public override async Task GetNetworkMessageAsync(NetworkMessage message)
-        //{
-        //    await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message));
-        //}
     }
 
 }

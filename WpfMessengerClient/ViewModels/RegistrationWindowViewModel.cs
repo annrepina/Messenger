@@ -151,6 +151,7 @@ namespace WpfMessengerClient.ViewModels
         public RegistrationWindowViewModel()
         {
             Messenger = new Messenger();
+            //Messenger.OnRegistered += 
             OnRegisterInMessengerCommand = new DelegateCommand(async () => await OnRegisterInMessenger());
             _password = null;
             _phoneNumber = null;
@@ -173,6 +174,11 @@ namespace WpfMessengerClient.ViewModels
             {
                 await Messenger.SendRegistrationRequest(PhoneNumber, Password);
             }
+        }
+
+        public void ChangeWindowToChatWindow()
+        {
+
         }
     }
 }

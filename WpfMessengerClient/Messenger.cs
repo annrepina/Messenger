@@ -19,6 +19,11 @@ namespace WpfMessengerClient
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public delegate void StateChanged();
+
+        public event StateChanged OnRegistered;
+        public event StateChanged OnSignIn;
+
         private UserAccount _currentUserAccount;
 
         private readonly IMapper _mapper;
@@ -68,12 +73,16 @@ namespace WpfMessengerClient
                     break;
                 case NetworkMessage.OperationCode.SuccessfulRegistrationCode:
                     {
-                        Register(message);
+                        RegisterNewAccount(message);
 
 
 
                     }
                     break;
+
+                case NetworkMessage.OperationCode.RegistrationFailedCode:
+                    break;
+
                 case NetworkMessage.OperationCode.AuthorizationCode:
                     break;
                 case NetworkMessage.OperationCode.SendingMessageCode:
@@ -85,26 +94,24 @@ namespace WpfMessengerClient
             }
         }
 
-        public void Register(NetworkMessage message)
+        public void RegisterNewAccount(NetworkMessage message)
         {
             var data = message.Data;
 
-            Deserializer<UserAccountDto> deserializer = new Deserializer<UserAccountDto>();
+            Deserializer<SuccessfulRegistrationDto> deserializer = new Deserializer<SuccessfulRegistrationDto>();
 
-            UserAccountDto acc = deserializer.Deserialize(data);
+            SuccessfulRegistrationDto acc = deserializer.Deserialize(data);
 
             UserAccount usacc = _mapper.Map<UserAccount>(acc);
 
-            CurrentUserAccount.Person.PhoneNumber = usacc.Person.PhoneNumber;
+            CurrentUserAccount = usacc;
         }
 
         public async Task SendRegistrationRequest(string phoneNumber, string password)
         {
-            UserAccountRegistrationDto userAccountRegistrationDto = new UserAccountRegistrationDto() { PhoneNumber = phoneNumber, Password = password};
+            RegistrationAuthentificationDto userAccountRegistrationDto = new RegistrationAuthentificationDto() { PhoneNumber = phoneNumber, Password = password};
 
-            //UserAccountRegistrationDto userAccountRegistrationDto = _mapper.Map<UserAccountRegistrationDto>(Messenger.CurrentUserAccount);
-
-            byte[] data = new Serializator<UserAccountRegistrationDto>().Serialize(userAccountRegistrationDto);
+            byte[] data = new Serializator<RegistrationAuthentificationDto>().Serialize(userAccountRegistrationDto);
 
             NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.RegistrationCode);
 

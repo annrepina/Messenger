@@ -38,23 +38,23 @@ namespace DtoLib.NetworkServices
         /// </summary>
         public Sender Sender { get; private set; }
 
-        public INetworkMessageHandler NetworkMessageHandler { get; set; }
+        //public INetworkMessageHandler NetworkMessageHandler { get; set; }
 
         public Client()
         {
             Id = 0;
             Receiver = new Receiver(this);
             Sender = new Sender(this);
-            NetworkMessageHandler = null;
+            //NetworkMessageHandler = null;
         }
 
-        /// <summary>
-        /// Констурктор по умолчанию
-        /// </summary>
-        public Client(INetworkMessageHandler networkMessageHandler) : this()
-        {
-            NetworkMessageHandler = networkMessageHandler;
-        }
+        ///// <summary>
+        ///// Констурктор по умолчанию
+        ///// </summary>
+        //public Client(INetworkMessageHandler networkMessageHandler) : this()
+        //{
+        //    NetworkMessageHandler = networkMessageHandler;
+        //}
 
         public abstract Task GetNetworkMessageAsync(NetworkMessage message);
         //{ 

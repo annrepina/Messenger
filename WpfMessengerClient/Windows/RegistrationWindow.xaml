@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="500"/>
+            <RowDefinition Height="600"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Column="1" Grid.Row="1" Background="AliceBlue">
@@ -28,6 +28,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
@@ -42,7 +43,8 @@
             <TextBox Grid.Row="2" Style="{StaticResource InputPasswordTextBox}"/>
             <!--<TextBox Grid.Row="3" Style="{StaticResource InputSecondPasswordTextBox}"/>-->
             <Button Style="{StaticResource RoundedButton}" Grid.Row="3" Content="Зарегистрироваться" Command="{Binding OnRegisterInMessengerCommand}" />
-            <Button Grid.Row="4" Content="У меня уже есть аккаунт" Background="Transparent" BorderThickness="0" FontFamily="Tahoma" FontSize="20" Foreground="Gray"/>
+            <Button Style="{StaticResource RoundedButton}" Grid.Row="4" Content="Войти" />
+            <!--<TextBlock Text="{Binding }"/>-->
             <Border CornerRadius="18"/>
         </Grid>   
     </Grid>

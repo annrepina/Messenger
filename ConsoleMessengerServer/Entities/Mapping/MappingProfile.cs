@@ -23,7 +23,12 @@ namespace ConsoleMessengerServer.Entities.Mapping
 
             CreateMap<Client, ClientDto>().ReverseMap();
 
-            CreateMap<UserAccount, UserAccountRegistrationDto>().ForMember(nameof(UserAccountRegistrationDto.PhoneNumber), exp => exp.MapFrom(c => c.Person.PhoneNumber)).ReverseMap();
+            CreateMap<BackClient, Client>().ReverseMap();
+
+            CreateMap<UserAccount, RegistrationAuthentificationDto>().ForMember(nameof(RegistrationAuthentificationDto.PhoneNumber), exp => exp.MapFrom(c => c.Person.PhoneNumber)).ReverseMap();
+
+            CreateMap<UserAccount, SuccessfulRegistrationDto>().ForMember(nameof(SuccessfulRegistrationDto.PhoneNumber), exp => exp.MapFrom(c => c.Person.PhoneNumber))
+                                                               .ForMember(nameof(SuccessfulRegistrationDto.ClientId), exp => exp.MapFrom(c => c.Clients.FirstOrDefault())).ReverseMap();
         }
 
     }

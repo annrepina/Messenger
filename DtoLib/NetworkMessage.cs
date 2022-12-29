@@ -23,12 +23,13 @@ namespace DtoLib
         public OperationCode CurrentCode { get; set;}
 
         [ProtoMember(2)]
-        public byte[] Data { get; set;}
+        public byte[]? Data { get; set;}
 
         public enum OperationCode : byte
         {
             RegistrationCode,
             SuccessfulRegistrationCode,
+            RegistrationFailedCode,
             AuthorizationCode,
             SendingMessageCode,
             ExitCode,
@@ -38,7 +39,7 @@ namespace DtoLib
         {
         }
 
-        public NetworkMessage(byte[] data, OperationCode operationCode)
+        public NetworkMessage(byte[]? data, OperationCode operationCode)
         {
             //SerializableDto = serializable;
             CurrentCode = operationCode;

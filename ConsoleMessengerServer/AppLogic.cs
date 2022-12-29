@@ -12,12 +12,19 @@ using ConsoleMessengerServer.Entities;
 using AutoMapper;
 using ConsoleMessengerServer.Entities.Mapping;
 using DtoLib.NetworkInterfaces;
+using System.Net.Sockets;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleMessengerServer
 {
-    public class AppLogic : IBackNetworkMessageHandler
+    public class AppLogic : INetworkHandler
     {
         public Server Server { get; set; }
+
+        /// <summary>
+        /// Словарь, который содержит пары ключ - id Клиента и сам клиент
+        /// </summary>
+        private Dictionary<int, BackClient> _clients;
 
         private readonly IMapper _mapper;
 
@@ -27,49 +34,93 @@ namespace ConsoleMessengerServer
 
         public AppLogic()
         {
+            Server = new Server(this);
+            _clients = new Dictionary<int, BackClient>();
+
             DataBaseMapper mapper = DataBaseMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
         }
 
+        public async Task StartListeningConnectionsAsync()
+        {
+            try
+            {
+                await Task.Run(() => Server.ListenIncomingConnectionsAsync());
+            }
+            catch (Exception ex)
+            {
+                Server.DisconnectClients();
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public void AddNewClientToDictionary(int dbClientId, BackClient client)
+        {
+            Console.WriteLine($"{dbClientId} подключился ");
+
+            client.Id = dbClientId;
+
+            _clients.Add(client.Id, client);
+        }
+
+        public Client AddNewClientToDb()
+        {
+            // ентити
+            Client? dbClient;
+
+            using (var dbContext = new MessengerDbContext())
+            {
+                dbClient = new Client();
+
+                dbContext.Clients.Add(dbClient);
+
+                dbContext.SaveChanges();
+            }
+
+            return dbClient;
+        }
+
+        #region INetworkHandler Implementation
+
+        public async Task RunNewBackClientAsync(TcpClient tcpClient)
+        {
+            BackClient client = new BackClient(tcpClient);
+
+            client.NetworkHandler = this;
+
+            Client? dbClient = AddNewClientToDb();
+
+            if (dbClient != null)
+            {
+                AddNewClientToDictionary(dbClient.Id, client);
+
+                await client.ProcessDataAsync();
+            }
+        }
+
+        public void DisconnectClients()
+        {
+            foreach (var client in _clients)
+            {
+                client.Value.CloseConnection();
+            }
+        }
+
+        public void RemoveClient(int clientId)
+        {
+            if (_clients != null && _clients.Count > 0)
+            {
+                _clients.Remove(clientId);
+            }
+        }
+
         public async void ProcessNetworkMessage(NetworkMessage message, int clientId)
         {
-           
-            switch(message.CurrentCode)
+            switch (message.CurrentCode)
             {
                 case NetworkMessage.OperationCode.RegistrationCode:
                     {
-                        UserAccountDto userAccountDto = new Deserializer<UserAccountDto>().Deserialize(message.Data);
-
-
-
-                        using (var dbContext = new MessengerDbContext())
-                        {
-                            UserAccount userAcc = _mapper.Map<UserAccount>(userAccountDto);
-
-                            var res = dbContext.UserAccounts.FirstOrDefault(acc => acc.Person.PhoneNumber == userAcc.Person.PhoneNumber);
-
-                            // если вернули null значит аккаунта под таким номером еще нет
-                            if(res == null)
-                            {
-                                dbContext.UserAccounts.Add(userAcc);
-                                dbContext.SaveChanges();
-
-                                UserAccountDto userAccountDtoForServer = _mapper.Map<UserAccountDto>(userAcc);
-
-                                userAccountDtoForServer.Person.PhoneNumber = "+79999999999";
-
-                                byte[] data = new Serializator<UserAccountDto>().Serialize(userAccountDtoForServer);
-
-                                NetworkMessage responseMessage = new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
-
-                                await Server.SendMessageToViewModel(responseMessage, clientId);
-
-                            }
-                        }
-
-
-                        //OnNetworkMessageSent?.Invoke(message);
-                        Console.WriteLine($"Код операции: {NetworkMessage.OperationCode.RegistrationCode}. Телефон: {userAccountDto.Person.PhoneNumber}. Пароль: {userAccountDto.Password}");
+ 
                     }
                     break;
             }
@@ -79,5 +130,57 @@ namespace ConsoleMessengerServer
         {
             throw new NotImplementedException();
         }
+
+        #endregion INetworkHandler Implementation
+
+        public async Task RegisterNewAccount(NetworkMessage message, int clientId)
+        {
+            RegistrationAuthentificationDto userAccountRegistrationDto = new Deserializer<RegistrationAuthentificationDto>().Deserialize(message.Data);
+
+            using (var dbContext = new MessengerDbContext())
+            {
+                // ищем есть ли аккаунт с таким номером уже в бд
+                var res = await dbContext.UserAccounts.FirstOrDefaultAsync(acc => acc.Person.PhoneNumber == userAccountRegistrationDto.PhoneNumber);
+
+                NetworkMessage responseMessage = null;
+
+                // если вернули null значит аккаунта под таким номером еще нет
+                if (res == null)
+                {
+                    // Создаем акккунт и добавляем его в бд
+                    UserAccount userAcc = _mapper.Map<UserAccount>(userAccountRegistrationDto);
+                    //var client = dbContext.Clients.FirstOrDefault(c => c.Id == clientId);
+
+                    // мапим клиента
+                    Client client = _mapper.Map<Client>(_clients[clientId]);
+
+                    userAcc.Clients.Add(client);
+
+                    dbContext.UserAccounts.Add(userAcc);
+
+                    dbContext.SaveChanges();
+
+                    SuccessfulRegistrationDto successfulRegistrDto = _mapper.Map<SuccessfulRegistrationDto>(userAcc);
+
+                    //SuccessfulRegistrationDto successfulRegistrAuthentCompletedDto = new SuccessfulRegistrationDto() 
+                    //            { Id = userAcc.Id, Password = userAcc.Password, PhoneNumber = userAcc.Person.PhoneNumber, ClientId = clientId };
+
+                    byte[] data = new Serializator<SuccessfulRegistrationDto>().Serialize(successfulRegistrDto);
+
+                    responseMessage = new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
+
+                    Console.WriteLine($"Код операции: {NetworkMessage.OperationCode.RegistrationCode}. Id: {userAcc.Id}. Телефон: {userAccountRegistrationDto.PhoneNumber}. Пароль: {userAccountRegistrationDto.Password}");
+
+                }//if
+
+                else
+                {
+                    responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.RegistrationFailedCode);
+                }
+
+                await _clients[clientId].Sender.SendNetworkMessageAsync(responseMessage);
+
+            }//using
+        }//method
     }
 }

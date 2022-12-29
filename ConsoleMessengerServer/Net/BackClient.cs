@@ -15,28 +15,29 @@ namespace ConsoleMessengerServer.Net
     /// </summary>
     public class BackClient : Client
     {
-
-        /// <summary>
-        /// Сервер
-        /// </summary>
-        private Server _server;
-
-        /// <summary>
-        /// Id аккаунта пользователя
-        /// </summary>
-        //public int UserAccount { get; set; }
+        public INetworkHandler NetworkHandler { get; set; }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="tcpClient">TCP клиент</param>
-        /// <param name="server">Сервер</param>
-        public BackClient(TcpClient tcpClient, Server server, INetworkMessageHandler networkMessageHandler) : base(networkMessageHandler)
+        public BackClient(TcpClient tcpClient) : base()
         {
             TcpClient = tcpClient;
-            _server = server;
+            //_server = server;
             NetworkStream = TcpClient.GetStream();
             //UserAccount = ;
+        }
+
+        /// <summary>
+        /// Конструктор с параметрами
+        /// </summary>
+        /// <param name="tcpClient">TCP клиент</param>
+        public BackClient(TcpClient tcpClient, /*Server server, */INetworkHandler networkHandler)
+        {
+            TcpClient = tcpClient;
+            NetworkStream = TcpClient.GetStream();
+            NetworkHandler = networkHandler;
         }
 
         /// <summary>
@@ -52,22 +53,9 @@ namespace ConsoleMessengerServer.Net
                     try
                     {
                         await Receiver.ReceiveNetworkMessageAsync();
-
-                        ///*message = */
-                        //GetMessageAsync();
-                        //message = $"  : {message}";
-                        //Console.WriteLine(message);
-
-                        //_server.BroadcastOperationCode(SendingMessageCode, Id);
-                        //_server.BroadcastMessage(message, Id);
                     }
                     catch (Exception)
                     {
-                        //message = $"{Name}: покинул/покинула чат";
-                        //Console.WriteLine(message);
-
-                        //_server.BroadcastOperationCode(DisconnectingUserCode, Id);
-                        //_server.BroadcastMessage(Name, Id);
                         break;
                     }
                 }
@@ -80,7 +68,7 @@ namespace ConsoleMessengerServer.Net
 
             finally
             {
-                _server.RemoveClient(Id);
+                NetworkHandler.RemoveClient(Id);
                 CloseConnection();
             }
         }
@@ -108,33 +96,6 @@ namespace ConsoleMessengerServer.Net
         //    //Console.WriteLine(message);
         //}
 
-        ///// <summary>
-        ///// Получить сообщение
-        ///// </summary>
-        //private async Task GetMessageAsync()
-        //{
-        //    string message = "";
-
-        //    // Буфер для получения даты
-        //    byte[] data = new byte[256];
-
-        //    StringBuilder stringBuilder = new StringBuilder();
-
-        //    int bytes = 0;
-
-        //    do
-        //    {
-        //        bytes = await System.Net.Sockets.NetworkStream.ReadAsync(data, 0, data.Length);
-
-        //        stringBuilder.Append(Encoding.UTF8.GetString(data, 0, bytes));
-
-        //    } while (System.Net.Sockets.NetworkStream.DataAvailable);
-
-        //    message = stringBuilder.ToString();
-
-        //    //return message;
-        //}
-
         /// <summary>
         /// Закрытие подлючения
         /// </summary>
@@ -144,20 +105,19 @@ namespace ConsoleMessengerServer.Net
                 NetworkStream.Close();
 
             if (TcpClient != null)
+            {
                 TcpClient.Close();
+            }
+
         }
 
         public override async Task GetNetworkMessageAsync(NetworkMessage message)
         {
-            if(NetworkMessageHandler is IBackNetworkMessageHandler backNetworkMessageHandler && 
-                (message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode || message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode))
-            {
-                await Task.Run(() => backNetworkMessageHandler.ProcessNetworkMessage(message, Id));
-            }
-
+            if(message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode || message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode)
+                await Task.Run(() => NetworkHandler.ProcessNetworkMessage(message, Id));
+          
             else
-                await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message));
-
+                await Task.Run(() => NetworkHandler.ProcessNetworkMessage(message));
         }
     }
 }

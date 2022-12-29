@@ -1,7 +1,6 @@
 ﻿using ProtoBuf;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса UserAccount
     /// </summary>
     [ProtoContract]
-    public class UserAccountRegistrationDto
+    public class SuccessfulRegistrationDto
     {
         /// <summary>
         /// Свойство - id
@@ -34,5 +33,13 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(3)]
         public string Password { get; set; }
+
+        /// <summary>
+        /// Свойство - id Клиента на котором прошла успешная регистрация
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(4)]
+        public int ClientId { get; set; }
+
     }
 }
