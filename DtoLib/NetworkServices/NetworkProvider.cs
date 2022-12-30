@@ -11,17 +11,17 @@ namespace DtoLib.NetworkServices
     /// <summary>
     /// Клиент, который подключается к серверу
     /// </summary>
-    public abstract class Client
+    public abstract class NetworkProvider
     {
         /// <summary>
         /// Поток, по которому будет осуществляться передача данных
         /// </summary>
-        public static NetworkStream NetworkStream { get; set; }
+        public NetworkStream NetworkStream { get; set; }
 
         /// <summary>
         /// Обеспечивает клиентские соединения для сетевых служб tcp.
         /// </summary>
-        public static TcpClient TcpClient { get; set; }
+        public TcpClient TcpClient { get; set; }
 
         /// <summary>
         /// Id
@@ -40,7 +40,7 @@ namespace DtoLib.NetworkServices
 
         //public INetworkMessageHandler NetworkMessageHandler { get; set; }
 
-        public Client()
+        public NetworkProvider()
         {
             Id = 0;
             Receiver = new Receiver(this);

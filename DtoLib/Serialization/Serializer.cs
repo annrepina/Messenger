@@ -2,33 +2,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DtoLib.Serialization
 {
     /// <summary>
-    /// Абстрактный класс, который может сереализовать себя
+    /// Статический класс - сериализатор
     /// </summary>
-    [ProtoContract]
-    public abstract class Serializable
+    /// <typeparam name="T">Тип объекта, который нужно сериализовать</typeparam>
+    public static class Serializer<T>
+        where T : class
     {
         /// <summary>
-        /// Сериализует себя и возвращает массив байтов
+        /// Сериализует объект и возвращает массив байтов
         /// </summary>
         /// <returns></returns>
-        public virtual byte[] SerializeDto()
+        public static byte[] Serialize(T obj)
         {
             try
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    Serializer.Serialize(memoryStream, this);
+                    Serializer.Serialize(memoryStream, obj);
                     return memoryStream.ToArray();
                 }
             }
-            catch (SerializationException ex)
+            catch (Exception ex)
             {
                 //
                 throw;

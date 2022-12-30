@@ -12,7 +12,7 @@ using DtoLib;
 
 namespace WpfMessengerClient.Models
 {
-    public class UserAccount : INotifyPropertyChanged, IDataErrorInfo
+    public class UserData : INotifyPropertyChanged, IDataErrorInfo
     {
         private const int MaxLengthOfPassword = 10;
         private const int MinLengthOfPassword = 6;
@@ -80,7 +80,7 @@ namespace WpfMessengerClient.Models
 
         public ObservableCollection<Dialog> Dialogs { get; set; }
 
-        public List<FrontClient> Clients { get; set; }
+        public List<ClientNetworkProvider> Clients { get; set; }
 
         //public FrontClient CurrentClient { get; set; }
 
@@ -113,7 +113,7 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public UserAccount()
+        public UserData()
         {
             _id = 0;
             _person = new Person();
@@ -121,7 +121,7 @@ namespace WpfMessengerClient.Models
             _isOnline = false;
             Dialogs = new ObservableCollection<Dialog>();
             _error = null;
-            Clients = new List<FrontClient>();
+            Clients = new List<ClientNetworkProvider>();
             //CurrentClient = null;
         }
 
@@ -130,7 +130,7 @@ namespace WpfMessengerClient.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        public void AddClient(FrontClient client)
+        public void AddClient(ClientNetworkProvider client)
         {
             Clients.Add(client);
         }

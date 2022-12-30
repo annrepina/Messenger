@@ -20,7 +20,7 @@ namespace WpfMessengerClient.Services
     /// <summary>
     /// Клиент, который подключается к серверу
     /// </summary>
-    public class FrontClient : Client
+    public class ClientNetworkProvider : NetworkProvider
     {
         /// <summary>
         /// Ip хоста
@@ -36,7 +36,7 @@ namespace WpfMessengerClient.Services
 
         public INetworkMessageHandler NetworkMessageHandler { get; set; }
 
-        public FrontClient() : base()
+        public ClientNetworkProvider() : base()
         {
             TcpClient = new TcpClient();
         }
@@ -44,7 +44,7 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
-        public FrontClient(INetworkMessageHandler networkMessageHandler)
+        public ClientNetworkProvider(INetworkMessageHandler networkMessageHandler)
         {
             TcpClient = new TcpClient();
             NetworkMessageHandler = networkMessageHandler;
@@ -62,10 +62,10 @@ namespace WpfMessengerClient.Services
 
                 if (message != null)
                 {
-                    await Sender.SendNetworkMessageAsync(message);
+                    await Sender.SendNetworkMessage(message);
                 }
 
-                await Receiver.ReceiveNetworkMessageAsync();
+                Receiver.ReceiveNetworkMessageAsync();
             }
         }
 

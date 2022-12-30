@@ -28,7 +28,7 @@ namespace WpfMessengerClient.ViewModels
         private const int MaxLengthOfPassword = 10;
         private const int MinLengthOfPassword = 6;
 
-        private Messenger _messenger;
+        private NetworkProviderUserMediator _messenger;
         private string _phoneNumber;
         private string _password;
         private string _error;
@@ -57,7 +57,7 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        public Messenger Messenger
+        public NetworkProviderUserMediator Messenger
         {
             get => _messenger;
 
@@ -150,9 +150,9 @@ namespace WpfMessengerClient.ViewModels
 
         public RegistrationWindowViewModel()
         {
-            Messenger = new Messenger();
-            //Messenger.OnRegistered += 
-            OnRegisterInMessengerCommand = new DelegateCommand(async () => await OnRegisterInMessenger());
+            Messenger = new NetworkProviderUserMediator();
+            Messenger.SignUp += ChangeWindowToChatWindow;
+            OnRegisterInMessengerCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             _password = null;
             _phoneNumber = null;
             _error = null;
@@ -167,7 +167,7 @@ namespace WpfMessengerClient.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        private async Task OnRegisterInMessenger()
+        private async Task RegisterNewUserAsync()
         {
             // если ошибок нет
             if (String.IsNullOrEmpty(Error))
@@ -178,6 +178,12 @@ namespace WpfMessengerClient.ViewModels
 
         public void ChangeWindowToChatWindow()
         {
+            ChatWindow chatWindow = new ChatWindow();
+
+            chatWindow.DataContext = new ChatWindowViewModel(Messenger);
+
+
+
 
         }
     }

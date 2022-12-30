@@ -19,13 +19,13 @@ namespace WpfMessengerClient
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ChatWindow : Window
     {
-        public MainWindow()
+        public ChatWindow()
         {
             InitializeComponent();
 
-            DataContext = new MainWindowViewModel();
+            //DataContext = new ChatWindowViewModel();
         }
     }
 }

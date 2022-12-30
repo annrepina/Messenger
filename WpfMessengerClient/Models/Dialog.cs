@@ -48,7 +48,7 @@ namespace WpfMessengerClient.Models
         //    }
         //}
 
-        public UserAccount[] UserAccounts { get; init; }
+        public UserData[] UserAccounts { get; init; }
 
         public ObservableCollection<Message> Messages { get; set; }
 
@@ -57,7 +57,7 @@ namespace WpfMessengerClient.Models
             //_userAccount1 = null;
             //_userAccount2 = null;
             Id = 0;
-            UserAccounts = new UserAccount[NumberOfAccounts];
+            UserAccounts = new UserData[NumberOfAccounts];
             Messages = new ObservableCollection<Message>();
         }
 

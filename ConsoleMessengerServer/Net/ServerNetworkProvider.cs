@@ -13,7 +13,7 @@ namespace ConsoleMessengerServer.Net
     /// <summary>
     /// Клиент, который подключается к серверу
     /// </summary>
-    public class BackClient : Client
+    public class ServerNetworkProvider : NetworkProvider
     {
         public INetworkHandler NetworkHandler { get; set; }
 
@@ -21,7 +21,7 @@ namespace ConsoleMessengerServer.Net
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="tcpClient">TCP клиент</param>
-        public BackClient(TcpClient tcpClient) : base()
+        public ServerNetworkProvider(TcpClient tcpClient) : base()
         {
             TcpClient = tcpClient;
             //_server = server;
@@ -33,7 +33,7 @@ namespace ConsoleMessengerServer.Net
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="tcpClient">TCP клиент</param>
-        public BackClient(TcpClient tcpClient, /*Server server, */INetworkHandler networkHandler)
+        public ServerNetworkProvider(TcpClient tcpClient, /*Server server, */INetworkHandler networkHandler)
         {
             TcpClient = tcpClient;
             NetworkStream = TcpClient.GetStream();

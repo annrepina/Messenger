@@ -8,10 +8,19 @@ using System.Threading.Tasks;
 
 namespace DtoLib.Serialization
 {
-    public class Deserializer<T>
-        where T : class
+    /// <summary>
+    /// Статический класс - десериализатор
+    /// </summary>
+    public static class Deserializer
     {
-        public T Deserialize(byte[] data)
+        /// <summary>
+        /// Десериализует массив байтов в объект типа T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data">данные в виде массива байтов</param>
+        /// <returns></returns>
+        public static T Deserialize<T>(byte[] data)
+            where T : class
         {
             try
             {

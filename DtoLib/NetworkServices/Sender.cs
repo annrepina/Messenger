@@ -13,26 +13,26 @@ namespace DtoLib.NetworkServices
         /// <summary>
         /// Клиент, который подключается к серверу
         /// </summary>
-        public Client Client { get; private set; }
+        public NetworkProvider NetworkProvider { get; private set; }
 
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
         /// <param name="client">Клиент</param>
-        public Sender(Client client)
+        public Sender(NetworkProvider networkProvider)
         {
-            Client = client;
+            NetworkProvider = networkProvider;
         }
 
         /// <summary>
         /// Отправить сетевое сообщение серверу
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
-        public async Task SendNetworkMessageAsync(NetworkMessage message)
+        public void SendNetworkMessage(NetworkMessage message)
         {
-            byte[] data = new Serializator<NetworkMessage>().Serialize(message);
+            byte[] data = new Serializer<NetworkMessage>().Serialize(message);
 
-            await Client.NetworkStream.WriteAsync(data, 0, data.Length);
+            NetworkProvider.NetworkStream.Write(data, 0, data.Length);
         }
     }
 }

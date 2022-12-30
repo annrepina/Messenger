@@ -14,7 +14,7 @@ namespace WpfMessengerClient.Models
         //private int _receivingUserAccountId;
         private bool _isRead;
         private DateTime? _dateTime;
-        private UserAccount _sendingUserAccount;
+        private UserData _sendingUserAccount;
         //private UserAccount _receivingUserAccount;
         private Dialog _dialog;
 
@@ -60,7 +60,7 @@ namespace WpfMessengerClient.Models
         //    }
         //}
 
-        public UserAccount SendingUserAccount
+        public UserData SendingUserAccount
         {
             get => _sendingUserAccount;
 
@@ -129,7 +129,7 @@ namespace WpfMessengerClient.Models
             _dialog = null;
         }
 
-        public Message(string text, UserAccount sendingUserAccount, UserAccount receivingUserAccount, Dialog dialog)
+        public Message(string text, UserData sendingUserAccount, UserData receivingUserAccount, Dialog dialog)
         {
             Id = 0;
             _text = text;

@@ -18,7 +18,7 @@ namespace ConsoleMessengerServer.Net
     /// </summary>
     public class Server
     {
-        public INetworkHandler INetworkHandler { get; init; }
+        private INetworkHandler NetworkHandler;
 
         /// <summary>
         /// Прослушиватель TCP подключений от клиентов
@@ -44,41 +44,10 @@ namespace ConsoleMessengerServer.Net
 
             _tcpListener = new TcpListener(IPAddress.Any, _port);
 
-            INetworkHandler = iNetworkHandler;
+            NetworkHandler = iNetworkHandler;
 
             //_clients = new Dictionary<int, BackClient>();
         }
-
-        ///// <summary>
-        ///// Добавить клиента
-        ///// </summary>
-        ///// <param name="client">Клиент</param>
-        //public void AddClient(BackClient client)
-        //{
-        //    _clients.Add(client);
-        //}
-
-        ///// <summary>
-        ///// Удалить клиента
-        ///// </summary>
-        ///// <param name="clientId">Id клиента</param>
-        //public void RemoveClient(int clientId)
-        //{
-
-        //    if (_clients != null && _clients.Count > 0)
-        //    {
-        //        // получаем по id подключение
-        //        //BackClient? client = _clients.FirstOrDefault(c => c.Id == clientId);
-
-        //        //if (client != null)
-        //        //{
-        //        //    _clients.Remove(client);
-        //        //    client.CloseConnection();
-        //        //}
-
-        //        _clients.Remove(clientId);
-        //    }
-        //}
 
         /// <summary>
         /// Прослушивание входящих подключений
@@ -94,7 +63,7 @@ namespace ConsoleMessengerServer.Net
                 {
                     TcpClient tcpClient = await _tcpListener.AcceptTcpClientAsync();
 
-                    await INetworkHandler.RunNewBackClientAsync(tcpClient);
+                    await NetworkHandler.RunNewBackClientAsync(tcpClient);
                 }
             }
             catch (Exception ex)
@@ -106,31 +75,6 @@ namespace ConsoleMessengerServer.Net
                 DisconnectClients();
             }
         }
-
-        //public async Task SendMessageToViewModel(NetworkMessage message, int clientId)
-        //{
-        //    await _clients[clientId].Sender.SendNetworkMessageAsync(message);
-
-        //    //switch(message.CurrentCode)
-        //    //{
-        //    //    case NetworkMessage.OperationCode.RegistrationCode:
-        //    //        {
-        //    //            UserAccountDto userAccountDto = new Deserializer<UserAccountDto>().Deserialize(message.Data);
-
-
-        //    //            userAccountDto.Person.Name = "КУКУ епта";
-        //    //            //await userAccountDto.CurrentClient.Sender.SendNetworkMessageAsync(message);
-
-        //    //            await _clients[0].Sender.SendNetworkMessageAsync(message);
-
-
-
-        //    //        }
-        //    //        break;
-
-
-        //    //}
-        //}
 
         ///// <summary>
         ///// Трансляция сообщения подлюченным клиентам
@@ -151,7 +95,6 @@ namespace ConsoleMessengerServer.Net
         //        }
         //    }
         //}
-
         //public void BroadcastOperationCode(byte operationCode, int id)
         //{
         //    foreach (var client in _clients)
@@ -170,7 +113,7 @@ namespace ConsoleMessengerServer.Net
         /// </summary>
         public void DisconnectClients()
         {
-            INetworkHandler.DisconnectClients();
+            NetworkHandler.DisconnectClients();
 
             /// Остановка сервера
             _tcpListener.Stop();

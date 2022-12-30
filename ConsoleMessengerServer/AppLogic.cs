@@ -24,7 +24,7 @@ namespace ConsoleMessengerServer
         /// <summary>
         /// Словарь, который содержит пары ключ - id Клиента и сам клиент
         /// </summary>
-        private Dictionary<int, BackClient> _clients;
+        private Dictionary<int, ServerNetworkProvider> _clients;
 
         private readonly IMapper _mapper;
 
@@ -35,7 +35,7 @@ namespace ConsoleMessengerServer
         public AppLogic()
         {
             Server = new Server(this);
-            _clients = new Dictionary<int, BackClient>();
+            _clients = new Dictionary<int, ServerNetworkProvider>();
 
             DataBaseMapper mapper = DataBaseMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
@@ -54,7 +54,7 @@ namespace ConsoleMessengerServer
             }
         }
 
-        public void AddNewClientToDictionary(int dbClientId, BackClient client)
+        public void AddNewClientToDictionary(int dbClientId, ServerNetworkProvider client)
         {
             Console.WriteLine($"{dbClientId} подключился ");
 
@@ -84,7 +84,7 @@ namespace ConsoleMessengerServer
 
         public async Task RunNewBackClientAsync(TcpClient tcpClient)
         {
-            BackClient client = new BackClient(tcpClient);
+            ServerNetworkProvider client = new ServerNetworkProvider(tcpClient);
 
             client.NetworkHandler = this;
 
@@ -149,7 +149,6 @@ namespace ConsoleMessengerServer
                 {
                     // Создаем акккунт и добавляем его в бд
                     UserAccount userAcc = _mapper.Map<UserAccount>(userAccountRegistrationDto);
-                    //var client = dbContext.Clients.FirstOrDefault(c => c.Id == clientId);
 
                     // мапим клиента
                     Client client = _mapper.Map<Client>(_clients[clientId]);
@@ -162,10 +161,7 @@ namespace ConsoleMessengerServer
 
                     SuccessfulRegistrationDto successfulRegistrDto = _mapper.Map<SuccessfulRegistrationDto>(userAcc);
 
-                    //SuccessfulRegistrationDto successfulRegistrAuthentCompletedDto = new SuccessfulRegistrationDto() 
-                    //            { Id = userAcc.Id, Password = userAcc.Password, PhoneNumber = userAcc.Person.PhoneNumber, ClientId = clientId };
-
-                    byte[] data = new Serializator<SuccessfulRegistrationDto>().Serialize(successfulRegistrDto);
+                    byte[] data = new Serializer<SuccessfulRegistrationDto>().Serialize(successfulRegistrDto);
 
                     responseMessage = new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
 
@@ -178,7 +174,7 @@ namespace ConsoleMessengerServer
                     responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.RegistrationFailedCode);
                 }
 
-                await _clients[clientId].Sender.SendNetworkMessageAsync(responseMessage);
+                await _clients[clientId].Sender.SendNetworkMessage(responseMessage);
 
             }//using
         }//method

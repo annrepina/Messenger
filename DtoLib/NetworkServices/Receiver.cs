@@ -16,7 +16,7 @@ namespace DtoLib.NetworkServices
         /// <summary>
         /// Клиент, который подключается к серверу
         /// </summary>
-        public Client Client { get; private set; }
+        public NetworkProvider Client { get; private set; }
 
         //public NetworkMessage NetworkMessage { get; set; }
 
@@ -24,7 +24,7 @@ namespace DtoLib.NetworkServices
         /// Конструктор с параметром
         /// </summary>
         /// <param name="client">Клиент</param>
-        public Receiver(Client client)
+        public Receiver(NetworkProvider client)
         {
             Client = client;
         }
@@ -44,11 +44,11 @@ namespace DtoLib.NetworkServices
             {
                 do
                 {
-                    bytes = await Client.NetworkStream.ReadAsync(data, 0, data.Length);
+                    bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
 
                     //bytes = Client.NetworkStream.Read(data, 0, data.Length);
 
-                } while (Client.NetworkStream.DataAvailable);
+                } while (NetworkProvider.NetworkStream.DataAvailable);
 
             }
             catch (Exception)
@@ -99,12 +99,12 @@ namespace DtoLib.NetworkServices
         public void Disconnect()
         {
             // Отключение потока
-            if (Client.NetworkStream != null)
-                Client.NetworkStream.Close();
+            if (NetworkProvider.NetworkStream != null)
+                NetworkProvider.NetworkStream.Close();
 
             // Отключение клиента
-            if (Client.TcpClient != null)
-                Client.TcpClient.Close();
+            if (NetworkProvider.TcpClient != null)
+                NetworkProvider.TcpClient.Close();
 
             //завершение процесса
             Environment.Exit(0);
