@@ -13,21 +13,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfMessengerClient.ViewModels;
 
-namespace WpfMessengerClient
+namespace WpfMessengerClient.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для AuthorizationWindow.xaml
+    /// Логика взаимодействия для SignUpSignInWindow.xaml
     /// </summary>
-    public partial class RegistrationWindow : Window
+    public partial class SignUpSignInWindow : Window
     {
-        public RegistrationWindow()
+        public SignUpSignInWindow()
         {
             InitializeComponent();
         }
 
-        public RegistrationWindow(RegistrationWindowViewModel registrationWindowViewModel) : this()
+        public SignUpSignInWindow(SignUpSignInWindowViewModel viewModel) : this()
         {
-            DataContext = registrationWindowViewModel;
+            DataContext = viewModel;
         }
     }
 }

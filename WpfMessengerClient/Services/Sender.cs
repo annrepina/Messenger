@@ -12,7 +12,7 @@ namespace WpfMessengerClient.Services
     //    /// <summary>
     //    /// Клиент, который подключается к серверу
     //    /// </summary>
-    //    public FrontClient Client { get; private set; }
+    //    public FrontClient NetworkProvider { get; private set; }
 
     //    /// <summary>
     //    /// Конструктор с параметром
@@ -20,7 +20,7 @@ namespace WpfMessengerClient.Services
     //    /// <param name="client">Клиент</param>
     //    public Sender(FrontClient client)
     //    {
-    //        Client = client;    
+    //        NetworkProvider = client;    
     //    }
 
     //    /// <summary>
@@ -41,7 +41,7 @@ namespace WpfMessengerClient.Services
     //    //public void SendMessage(string message)
     //    //{
     //    //    byte[] data = Encoding.UTF8.GetBytes(message);
-    //    //    Client.Stream.Write(data, 0, data.Length);  
+    //    //    NetworkProvider.Stream.Write(data, 0, data.Length);  
     //    //}
 
     //    ///// <summary>
@@ -50,7 +50,7 @@ namespace WpfMessengerClient.Services
     //    ///// <param name="operationCode">Код операции</param>
     //    //public void SendOperarationCode(byte operationCode)
     //    //{
-    //    //    Client.Stream.WriteByte(operationCode);
+    //    //    NetworkProvider.Stream.WriteByte(operationCode);
     //    //}
     //}
 }

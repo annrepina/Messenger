@@ -16,7 +16,7 @@ namespace ConsoleMessengerServer.Entities.Configurations
 
             builder.Property(m => m.Text).IsRequired();
 
-            builder.HasOne(m => m.UserAccount).WithMany(acc => acc.Messages).HasForeignKey(m => m.UserAccountId).IsRequired();
+            builder.HasOne(m => m.UserData).WithMany(acc => acc.SentMessages).HasForeignKey(m => m.UserDataId).IsRequired();
 
             builder.HasOne(m => m.Dialog).WithMany(d => d.Messages).HasForeignKey(m => m.DialogId).IsRequired();
 

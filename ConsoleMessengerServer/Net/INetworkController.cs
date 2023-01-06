@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace ConsoleMessengerServer.Net
 {
     /// <summary>
-    /// Интерфейс, который отвечает за работу с сетью
+    /// Интерфейс, который управляет работой с сетью
     /// </summary>
-    public interface INetworkHandler : IBackNetworkMessageHandler
+    public interface INetworkController : IServerNetworkMessageHandler
     {
         public Task RunNewBackClientAsync(TcpClient tcpClient);
 

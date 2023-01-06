@@ -17,14 +17,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleMessengerServer
 {
-    public class AppLogic : INetworkHandler
+    public class AppLogic : INetworkController
     {
         public Server Server { get; set; }
 
         /// <summary>
-        /// Словарь, который содержит пары ключ - id Клиента и сам клиент
+        /// Словарь, который содержит пары ключ - id сетевого провайдера и самого провайдера
         /// </summary>
-        private Dictionary<int, ServerNetworkProvider> _clients;
+        private Dictionary<int, ServerNetworkProvider> _ServerNetworkProviders;
 
         private readonly IMapper _mapper;
 
@@ -35,7 +35,7 @@ namespace ConsoleMessengerServer
         public AppLogic()
         {
             Server = new Server(this);
-            _clients = new Dictionary<int, ServerNetworkProvider>();
+            _ServerNetworkProviders = new Dictionary<int, ServerNetworkProvider>();
 
             DataBaseMapper mapper = DataBaseMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
@@ -54,23 +54,23 @@ namespace ConsoleMessengerServer
             }
         }
 
-        public void AddNewClientToDictionary(int dbClientId, ServerNetworkProvider client)
+        public void AddNewClientToDictionary(int dbClientId, ServerNetworkProvider networkProvider)
         {
             Console.WriteLine($"{dbClientId} подключился ");
 
-            client.Id = dbClientId;
+            networkProvider.Id = dbClientId;
 
-            _clients.Add(client.Id, client);
+            _ServerNetworkProviders.Add(networkProvider.Id, networkProvider);
         }
 
-        public Client AddNewClientToDb()
+        public ServerNetworkProviderEntity AddNewClientToDb()
         {
             // ентити
-            Client? dbClient;
+            ServerNetworkProviderEntity? dbClient;
 
             using (var dbContext = new MessengerDbContext())
             {
-                dbClient = new Client();
+                dbClient = new ServerNetworkProviderEntity();
 
                 dbContext.Clients.Add(dbClient);
 
@@ -84,23 +84,21 @@ namespace ConsoleMessengerServer
 
         public async Task RunNewBackClientAsync(TcpClient tcpClient)
         {
-            ServerNetworkProvider client = new ServerNetworkProvider(tcpClient);
+            ServerNetworkProvider networkProvider = new ServerNetworkProvider(tcpClient, this);
 
-            client.NetworkHandler = this;
-
-            Client? dbClient = AddNewClientToDb();
+            ServerNetworkProviderEntity? dbClient = AddNewClientToDb();
 
             if (dbClient != null)
             {
-                AddNewClientToDictionary(dbClient.Id, client);
+                AddNewClientToDictionary(dbClient.Id, networkProvider);
 
-                await client.ProcessDataAsync();
+                await networkProvider.StartProcessingNetworkMessagesAsync();
             }
         }
 
         public void DisconnectClients()
         {
-            foreach (var client in _clients)
+            foreach (var client in _ServerNetworkProviders)
             {
                 client.Value.CloseConnection();
             }
@@ -108,34 +106,34 @@ namespace ConsoleMessengerServer
 
         public void RemoveClient(int clientId)
         {
-            if (_clients != null && _clients.Count > 0)
+            if (_ServerNetworkProviders != null && _ServerNetworkProviders.Count > 0)
             {
-                _clients.Remove(clientId);
+                _ServerNetworkProviders.Remove(clientId);
             }
         }
 
-        public async void ProcessNetworkMessage(NetworkMessage message, int clientId)
+        public async Task ProcessNetworkMessageAsync(NetworkMessage message, int networkProviderId)
         {
             switch (message.CurrentCode)
             {
                 case NetworkMessage.OperationCode.RegistrationCode:
                     {
- 
+                        await RegisterNewAccount(message, networkProviderId);
                     }
                     break;
             }
         }
 
-        public void ProcessNetworkMessage(NetworkMessage message)
+        public async Task ProcessNetworkMessageAsync(NetworkMessage message)
         {
             throw new NotImplementedException();
         }
 
         #endregion INetworkHandler Implementation
 
-        public async Task RegisterNewAccount(NetworkMessage message, int clientId)
+        public async Task RegisterNewAccount(NetworkMessage message, int networkProviderId)
         {
-            RegistrationAuthentificationDto userAccountRegistrationDto = new Deserializer<RegistrationAuthentificationDto>().Deserialize(message.Data);
+            RegistrationAuthentificationDto userAccountRegistrationDto = Deserializer.Deserialize<RegistrationAuthentificationDto>(message.Data);
 
             using (var dbContext = new MessengerDbContext())
             {
@@ -148,20 +146,20 @@ namespace ConsoleMessengerServer
                 if (res == null)
                 {
                     // Создаем акккунт и добавляем его в бд
-                    UserAccount userAcc = _mapper.Map<UserAccount>(userAccountRegistrationDto);
+                    UserData userAcc = _mapper.Map<UserData>(userAccountRegistrationDto);
 
                     // мапим клиента
-                    Client client = _mapper.Map<Client>(_clients[clientId]);
+                    ServerNetworkProviderEntity networkProvider = _mapper.Map<ServerNetworkProviderEntity>(_ServerNetworkProviders[networkProviderId]);
 
-                    userAcc.Clients.Add(client);
+                    userAcc.NetworkProviders.Add(networkProvider);
 
                     dbContext.UserAccounts.Add(userAcc);
 
                     dbContext.SaveChanges();
 
-                    SuccessfulRegistrationDto successfulRegistrDto = _mapper.Map<SuccessfulRegistrationDto>(userAcc);
+                    NetworkProviderDto networkProviderDto = _mapper.Map<NetworkProviderDto>(networkProvider);
 
-                    byte[] data = new Serializer<SuccessfulRegistrationDto>().Serialize(successfulRegistrDto);
+                    byte[] data = Serializer<NetworkProviderDto>.Serialize(networkProviderDto);
 
                     responseMessage = new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
 
@@ -174,7 +172,7 @@ namespace ConsoleMessengerServer
                     responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.RegistrationFailedCode);
                 }
 
-                await _clients[clientId].Sender.SendNetworkMessage(responseMessage);
+                await _ServerNetworkProviders[networkProviderId].Sender.SendNetworkMessageAsync(responseMessage);
 
             }//using
         }//method

@@ -9,48 +9,96 @@ using System.Windows;
 
 namespace WpfMessengerClient.Models
 {
-    public class Person : INotifyPropertyChanged, IDataErrorInfo
+    /// <summary>
+    /// Класс, представляющий модель человека
+    /// </summary>
+    public class Person : BaseNotifyPropertyChanged, IDataErrorInfo
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        #region Константы
 
+        /// <summary>
+        /// Длина мобильного телефона
+        /// </summary>
         private const int PhoneNumberLength = 12;
+
+        /// <summary>
+        /// Максимальная длина имени
+        /// </summary>
         private const int MaxNameLength = 50;
+
+        /// <summary>
+        /// Минимальная длина имени
+        /// </summary>
         private const int MinNameLength = 2;
 
+        #endregion Константы
+
+        #region Приватные поля
+
+        /// <summary>
+        /// Имя
+        /// </summary>
         private string _name;
+
+        /// <summary>
+        /// Фамилия
+        /// </summary>
         private string? _surname;
+
+        /// <summary>
+        /// Мобильный телефон
+        /// </summary>
         private string _phoneNumber;
+
+        /// <summary>
+        /// Текст ошибки, которая может возникнуть во время валидации данных
+        /// </summary>
         private string _error;
 
-        public string Name 
+        #endregion Приватные поля
+
+        #region Свойства
+
+        /// <summary>
+        /// Свойство - имя
+        /// </summary>
+        public string Name
         {
-            get => _name; 
+            get => _name;
 
             set
             {
-                if(!string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                 {
                     _name = value;
+
                     OnPropertyChanged(nameof(Name));
                 }
             }
         }
 
-        public string? Surname 
-        { 
-            get => _surname; 
-            
+        /// <summary>
+        /// Свойство - фамилия
+        /// </summary>
+        public string? Surname
+        {
+            get => _surname;
+
             set
             {
                 _surname = value;
+
                 OnPropertyChanged(nameof(Surname));
-            }             
+            }
         }
 
-        public string PhoneNumber 
-        { 
-            get => _phoneNumber; 
-            
+        /// <summary>
+        /// Свойство - номер телефона
+        /// </summary>
+        public string PhoneNumber
+        {
+            get => _phoneNumber;
+
             set
             {
                 _phoneNumber = value;
@@ -59,25 +107,28 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        #endregion Свойства
+
+        #region Конструкторы
+
         public Person()
         {
             _name = "";
             _surname = "";
             _phoneNumber = "";
-            _error = null;
+            _error = "";
         }
 
-        private void OnPropertyChanged(string propName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
+        #endregion Конструкторы
 
+        #region Реализация интерфейса IDataErrorInfo
+
+        /// <summary>
+        /// Свойство - ошибка, которая может возникнуть во время валидации
+        /// </summary>
         public string Error
         {
-            get
-            {
-                return _error;
-            }
+            get => _error;
 
             set
             {
@@ -87,6 +138,11 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        /// <summary>
+        /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
+        /// </summary>
+        /// <param name="propName">Имя свойства</param>
+        /// <returns></returns>
         public string this[string propName]
         {
             get
@@ -97,15 +153,18 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        #endregion Реализация интерфейса IDataErrorInfo
+
         #region Валидация
 
+        /// <summary>
+        /// Проверить номер телефона на корректность
+        /// </summary>
         private void ValidatePhoneNumber()
         {
-            //Regex regex = new Regex(@"^8\d{10}");
             Regex regex = new Regex(@"^\+7\d{10}");
-            //Regex regex = new Regex(@"^\d{10}");
 
-            Error = null;
+            Error = "";
 
             if (!regex.IsMatch(PhoneNumber))
                 Error = "Телефон должен начинаться с +7 и далее состоять из 10 цифр";
@@ -114,26 +173,35 @@ namespace WpfMessengerClient.Models
                 Error = "Номер телефон должнен состоять из 12 символов всего";
         }
 
+        /// <summary>
+        /// Проверить имя на корректность
+        /// </summary>
+        private void ValidateName()
+        {
+            Regex regex = new Regex(@"^\w+");
+
+            if (!regex.IsMatch(Name))
+                Error = "Недопустимые символы";
+
+            else if (Name.Length > MaxNameLength)
+                Error = "Имя не должно превышать 50ти символов";
+
+            else if (Name.Length < MinNameLength)
+                Error = "Имя должно быть не меньше 2х символов";
+        }
+
+        /// <summary>
+        /// Проверить свойство класса на корректность
+        /// </summary>
+        /// <param name="propName">Имя свойства</param>
         private void ValidateAllProperties(string propName)
         {
             switch (propName)
             {
-                //case nameof(Name):
-                //{
-                //    //Regex regex = new Regex(@"^8\d{10}");
-                //    Regex regex = new Regex(@"^\w+");
-                //    //Regex regex = new Regex(@"^\d{10}");                
+                case nameof(Name):
+                    ValidateName();
 
-                //    if (!regex.IsMatch(Name))
-                //        error = "Недопустимые символы";
-
-                //    else if (Name.Length > MaxNameLength)
-                //        error = "Имя не должно превышать 50ти символов";
-
-                //    else if(Name.Length < MinNameLength)
-                //        error = "Имя должно быть не меньше 2х символов";
-                //}
-                //break;
+                    break;
 
                 case nameof(PhoneNumber):
                     ValidatePhoneNumber();

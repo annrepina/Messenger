@@ -6,24 +6,49 @@ using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.Entities
 {
+    /// <summary>
+    /// Класс - сущность сообщения
+    /// </summary>
     public class Message
     {
+        /// <summary>
+        /// Свойство - идентификатор сообщения
+        /// </summary>
         public int Id { get; set; }
 
-        public string Text { get; set; }    
+        /// <summary>
+        /// Свойство - текст сообщения
+        /// </summary>
+        public string Text { get; set; }
 
-        public UserAccount UserAccount { get; set; }
+        /// <summary>
+        /// Свойство - данные о пользователе - отправителе сообщения
+        /// </summary>
+        public UserData UserData { get; set; }
 
-        public int UserAccountId { get; set; }
+        /// <summary>
+        /// Свойство - идентификатор данных о пользователе - отправителе сообщения
+        /// </summary>
+        public int UserDataId { get; set; }
 
-        //public UserAccount ReceivingUserAccount { get; set; }
-
+        /// <summary>
+        /// Свойство - диалог в котором существует сообщение
+        /// </summary>
         public Dialog Dialog { get; set; }
 
+        /// <summary>
+        /// Свойство - идентификатор диалога в котором существует сообщение
+        /// </summary>
         public int DialogId { get; set; }
 
+        /// <summary>
+        /// Свойство - прочитано сообщение?
+        /// </summary>
         public bool IsRead { get; set; }
 
+        /// <summary>
+        /// Свойство - дата и время отправки сообщения
+        /// </summary>
         public DateTime? DateTime { get; set; } 
     }
 }

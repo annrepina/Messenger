@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace DtoLib.NetworkServices
 {
     /// <summary>
-    /// Клиент, который подключается к серверу
+    /// Сетевой провайдер, который подключается к серверу
     /// </summary>
     public abstract class NetworkProvider
     {
         /// <summary>
-        /// Поток, по которому будет осуществляться передача данных
+        /// Сетевой поток, по которому будет осуществляться передача данных
         /// </summary>
         public NetworkStream NetworkStream { get; set; }
 
@@ -24,7 +24,7 @@ namespace DtoLib.NetworkServices
         public TcpClient TcpClient { get; set; }
 
         /// <summary>
-        /// Id
+        /// Идентификатор
         /// </summary>
         public int Id { get; set; }
 
@@ -38,34 +38,23 @@ namespace DtoLib.NetworkServices
         /// </summary>
         public Sender Sender { get; private set; }
 
-        //public INetworkMessageHandler NetworkMessageHandler { get; set; }
-
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public NetworkProvider()
         {
             Id = 0;
             Receiver = new Receiver(this);
             Sender = new Sender(this);
-            //NetworkMessageHandler = null;
+            NetworkStream = null;
+            TcpClient = null;
         }
 
-        ///// <summary>
-        ///// Констурктор по умолчанию
-        ///// </summary>
-        //public Client(INetworkMessageHandler networkMessageHandler) : this()
-        //{
-        //    NetworkMessageHandler = networkMessageHandler;
-        //}
-
+        /// <summary>
+        /// Асинхронный метод получения сетевого сообщения
+        /// </summary>
+        /// <param name="message">Сетевое сообщение</param>
+        /// <returns></returns>
         public abstract Task GetNetworkMessageAsync(NetworkMessage message);
-        //{ 
-            //if(NetworkMessageHandler != null)
-            //{
-            //    if(message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode || message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode)
-
-            //    await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message, Id));
-            //}
-
-
-        //}
     }
 }

@@ -7,84 +7,99 @@ using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models
 {
-    public class Message : INotifyPropertyChanged
+    /// <summary>
+    /// Сообщения отправляемые пользователями
+    /// </summary>
+    public class Message : BaseNotifyPropertyChanged
     {
+        #region Приватные поля
+
+        /// <summary>
+        /// Текст сообщения
+        /// </summary>
         private string _text;
-        //private int _sendingUserAccountId;
-        //private int _receivingUserAccountId;
+
+        /// <summary>
+        /// Прочитано сообщение?
+        /// </summary>
         private bool _isRead;
+
+        /// <summary>
+        /// Дата и время отправки сообщения
+        /// </summary>
         private DateTime? _dateTime;
-        private UserData _sendingUserAccount;
-        //private UserAccount _receivingUserAccount;
+
+        /// <summary>
+        /// Данные о пользователе - отправителе сообщения
+        /// </summary>
+        private UserData _senderUserData;
+
+        /// <summary>
+        /// Диалог, в котором существует сообщение
+        /// </summary>
         private Dialog _dialog;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        /// <summary>
+        /// Идентификатор сообщения
+        /// </summary>
+        private int _id;
 
-        public int Id { get; set; }
+        #endregion Приватные поля
 
+        #region Свойства
+
+        /// <summary>
+        /// Свойство - идентификатор сообщения
+        /// </summary>
+        public int Id 
+        { 
+            get => _id;
+
+            set 
+            { 
+                _id = value; 
+
+                OnPropertyChanged(nameof(Id));
+            } 
+        }
+
+        /// <summary>
+        /// Свойство - текст сообщения
+        /// </summary>
         public string Text
         {
             get => _text;
 
             set
             {
-                if(!string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                 {
                     _text = value;
+
                     OnPropertyChanged(nameof(Text));
                 }
             }
         }
 
-        //public int SendingUserAccountId
-        //{
-        //    get => _sendingUserAccountId;
-
-        //    set
-        //    {
-        //        _sendingUserAccountId = value;  
-
-        //        OnPropertyChanged(nameof(SendingUserAccountId));
-        //    }
-        //}
-
-        //public int ReceivingUserAccountId
-        //{
-        //    get => _receivingUserAccountId;
-
-        //    set
-        //    {
-        //        _receivingUserAccountId = value;
-
-        //        OnPropertyChanged(nameof(ReceivingUserAccountId));
-        //    }
-        //}
-
-        public UserData SendingUserAccount
+        /// <summary>
+        /// Свойство - данные о пользователе - отправителе сообщения
+        /// </summary>
+        public UserData SenderUserData
         {
-            get => _sendingUserAccount;
+            get => _senderUserData;
 
             set
             {
-                _sendingUserAccount = value;
+                _senderUserData = value;
 
-                OnPropertyChanged(nameof(SendingUserAccount));
+                OnPropertyChanged(nameof(SenderUserData));
             }
         }
 
-        //public UserAccount ReceivingUserAccount
-        //{
-        //    get => _receivingUserAccount;
-
-        //    set
-        //    {
-        //        _receivingUserAccount = value;
-
-        //        OnPropertyChanged(nameof(ReceivingUserAccount));
-        //    }
-        //}
-
-        public Dialog Dialog 
+        /// <summary>
+        /// Свойство - диалог в котором существует сообщение
+        /// </summary>
+        public Dialog Dialog
         {
             get => _dialog;
 
@@ -96,6 +111,9 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        /// <summary>
+        /// Свойство - прочитано сообщение?
+        /// </summary>
         public bool IsRead
         {
             get => _isRead;
@@ -103,10 +121,14 @@ namespace WpfMessengerClient.Models
             set
             {
                 _isRead = value;
+
                 OnPropertyChanged(nameof(IsRead));
             }
         }
 
+        /// <summary>
+        /// Свойство - дата и время отправки сообщения
+        /// </summary>
         public DateTime? DateTime
         {
             get => _dateTime;
@@ -118,31 +140,26 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public Message()
-        {
-            Id = 0;
-            _text = "";
-            _sendingUserAccount = null;
-            //_receivingUserAccount = null;
-            _isRead = false;
-            _dateTime = null;
-            _dialog = null;
-        }
+        #endregion Свойства
 
-        public Message(string text, UserData sendingUserAccount, UserData receivingUserAccount, Dialog dialog)
+        #region Конструкторы
+
+        /// <summary>
+        /// Конструктор с параметрами
+        /// </summary>
+        /// <param name="text">Текст сообщения</param>
+        /// <param name="senderUserAccount">Данные о пользователе - отправителе сообщения</param>
+        /// <param name="dialog">Диалог, в котором существует сообщение</param>
+        public Message(string text, UserData senderUserAccount, Dialog dialog)
         {
             Id = 0;
             _text = text;
-            _sendingUserAccount = sendingUserAccount;
-            //_receivingUserAccount = receivingUserAccount;
+            _senderUserData = senderUserAccount;
             _isRead = false;
             _dateTime = null;
             _dialog = dialog;
         }
 
-        private void OnPropertyChanged(string propName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
+        #endregion Конструкторы
     }
 }

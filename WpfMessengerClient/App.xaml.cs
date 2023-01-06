@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfMessengerClient;
+using WpfMessengerClient.ViewModels;
 
 namespace WpfChatClient
 {
@@ -13,5 +15,22 @@ namespace WpfChatClient
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// Свойство - Менеджер окон приложения
+        /// </summary>
+        public MessengerWindowsManager MessengerWindowsManager { get; set; }
+
+        /// <summary>
+        /// Переопределение метода
+        /// </summary>
+        /// <param name="e">Содержит аргументы события StartUp</param>
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            MessengerWindowsManager = new MessengerWindowsManager(this);
+
+            MessengerWindowsManager.OpenSignUpSignInWindow();
+        }
     }
 }

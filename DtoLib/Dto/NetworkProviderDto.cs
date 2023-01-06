@@ -8,25 +8,16 @@ using ProtoBuf;
 namespace DtoLib.Dto
 {
     /// <summary>
-    /// Data transfer object класса Client
+    /// Data transfer object класса NetworkProvider
     /// </summary>
     [ProtoContract]
-    public class ClientDto
+    public class NetworkProviderDto
     {
         /// <summary>
-        /// Свойство - id
+        /// Свойство - идентификатор
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
         public int Id { get; set; }
-
-        ///// <summary>
-        ///// Свойство - Аккаунт пользователя
-        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        ///// </summary>
-        //[ProtoMember(2)]
-        //public UserAccountDto UserAccount { get; set; }
-
-
     }
 }

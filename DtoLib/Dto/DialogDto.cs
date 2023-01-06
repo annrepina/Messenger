@@ -14,7 +14,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса Dialog
     /// </summary>
     [ProtoContract]
-    public class DialogDto /*: Serializable, IDeserializableDto*/
+    public class DialogDto
     {
         /// <summary>
         /// Свойство - id
@@ -23,45 +23,17 @@ namespace DtoLib.Dto
         [ProtoMember(1)]
         public int Id { get; set; }
 
-        ///// <summary>
-        ///// Свойство - аккаунт первого пользователя - участника диалога
-        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        ///// </summary>
-        //[ProtoMember(2)]
-        //public UserAccountDto UserAccount1 { get; set; }
-
-        ///// <summary>
-        ///// Свойство - аккаунт второго пользователя - участника диалога
-        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        ///// </summary>
-        //[ProtoMember(3)]
-        //public UserAccountDto UserAccount2 { get; set; }
-
+        /// <summary>
+        /// Свойство - массив данных пользователей, участвующих в диалоге
+        /// </summary>
         [ProtoMember(2)]
-        public UserAccountDto[] UserAccounts { get; set; }
+        public UserDataDto[] UsersData { get; set; }
 
         /// <summary>
-        /// Свойство - обозреваемая коллекция сообщения в диалоге
+        /// Свойство - обозреваемая коллекция сообщений в диалоге
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(3)]
         public ObservableCollection<MessageDto> Messages { get; set; }
-
-        //public IDeserializableDto Deserialize(byte[] buffer)
-        //{
-        //    try
-        //    {
-        //        using (var stream = new MemoryStream(buffer))
-        //        {
-        //            var obj = Serializer.Deserialize<MessageDto>(stream);
-        //            return obj;
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        //
-        //        throw;
-        //    }
-        //}
     }
 }

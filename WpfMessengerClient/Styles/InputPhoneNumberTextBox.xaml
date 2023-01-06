@@ -33,10 +33,12 @@
                                 </TextBox.Text>
                                 <!--KeyDown="OnPhoneNumberInputTextBoxBackspaceDown">-->
                                 <!--<TextBox.InputBindings>
-                                    --><!--<KeyBinding Command="{Binding OnRegisterInMessengerCommand}" Key="Return"/>--><!--
+                                    -->
+                                <!--<KeyBinding Command="{Binding OnRegisterInMessengerCommand}" Key="Return"/>-->
+                                <!--
                                     <KeyBinding Key="Backspace" Command="{Binding OnPhoneNumberInputTextBoxBackspaceDownCommand}" />
                                 </TextBox.InputBindings>-->
-                                
+
                             </TextBox>
 
 
@@ -64,13 +66,6 @@
 
                         </Grid>
                     </Border>
-
-                    <!--<ControlTemplate.Triggers>
-                        <Trigger >
-                            
-                        </Trigger>
-                    </ControlTemplate.Triggers>-->
-
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

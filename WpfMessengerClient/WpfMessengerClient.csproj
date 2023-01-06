@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Windows\5f50cf3d4869a94052c1cf18bcab280e.jpg" />
+    <None Remove="Windows\6254-r15.jpg" />
+    <None Remove="Windows\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
+    <None Remove="Windows\storm %282%29.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
@@ -21,6 +28,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DtoLib\DtoLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Windows\5f50cf3d4869a94052c1cf18bcab280e.jpg" />
+    <Resource Include="Windows\6254-r15.jpg" />
+    <Resource Include="Windows\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
+    <Resource Include="Windows\storm (2).png" />
   </ItemGroup>
 
 </Project>

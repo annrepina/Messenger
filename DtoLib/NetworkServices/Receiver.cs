@@ -12,11 +12,10 @@ namespace DtoLib.NetworkServices
     /// </summary>
     public class Receiver
     {
-
         /// <summary>
         /// Клиент, который подключается к серверу
         /// </summary>
-        public NetworkProvider Client { get; private set; }
+        public NetworkProvider NetworkProvider { get; private set; }
 
         //public NetworkMessage NetworkMessage { get; set; }
 
@@ -24,9 +23,9 @@ namespace DtoLib.NetworkServices
         /// Конструктор с параметром
         /// </summary>
         /// <param name="client">Клиент</param>
-        public Receiver(NetworkProvider client)
+        public Receiver(NetworkProvider networkProvider)
         {
-            Client = client;
+            NetworkProvider = networkProvider;
         }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace DtoLib.NetworkServices
                 {
                     bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
 
-                    //bytes = Client.NetworkStream.Read(data, 0, data.Length);
+                    //bytes = NetworkProvider.NetworkStream.Read(data, 0, data.Length);
 
                 } while (NetworkProvider.NetworkStream.DataAvailable);
 
@@ -80,15 +79,13 @@ namespace DtoLib.NetworkServices
                     // буфер для получаемых данных
                     byte[] data = await ReceiveBytesAsync();
 
-                    Deserializer<NetworkMessage> deserializer = new Deserializer<NetworkMessage>();
+                    NetworkMessage networkMessage = Deserializer.Deserialize<NetworkMessage>(data);
 
-                    NetworkMessage networkMessage = deserializer.Deserialize(data);
-
-                    await Client.GetNetworkMessageAsync(networkMessage);
+                    await NetworkProvider.GetNetworkMessageAsync(networkMessage);
                 }
                 catch (Exception)
                 {
-                    break;
+                    throw;
                 }
             }
         }

@@ -10,7 +10,7 @@ namespace WpfMessengerClient
     /// <summary>
     /// Базовый класс, который реализует интерфейс INotifyPropertyChanged
     /// </summary>
-    public class BaseNotifyPropertyChanged : INotifyPropertyChanged
+    public abstract class BaseNotifyPropertyChanged : INotifyPropertyChanged
     {
         /// <summary>
         /// Событие - изменение свойства класса

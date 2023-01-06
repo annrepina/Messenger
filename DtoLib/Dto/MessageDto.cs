@@ -13,7 +13,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса Message
     /// </summary>
     [ProtoContract]
-    public class MessageDto /*: Serializable, IDeserializableDto*/
+    public class MessageDto 
     {
         /// <summary>
         /// Свойство - id
@@ -30,19 +30,15 @@ namespace DtoLib.Dto
         public string Text { get; set; }
 
         /// <summary>
-        /// Свойство - отправляющий сообщение аккаунт пользователя
+        /// Свойство - данные о пользователе-отправителе сообщения
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(3)]
-        public UserAccountDto SendingUserAccount { get; set; }
+        public UserDataDto SenderUserData { get; set; }
 
-        ///// <summary>
-        ///// Свойство - получающий сообщение аккаунт пользователя
-        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        ///// </summary>
-        //[ProtoMember(4)]
-        //public UserAccountDto ReceivingUserAccount { get; set; }
-
+        /// <summary>
+        /// Диалог в котором существует сообщение
+        /// </summary>
         [ProtoMember(4)]
         public DialogDto Dialog { get; set; }
 

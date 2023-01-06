@@ -16,8 +16,8 @@ namespace DtoLib.Serialization
         /// <summary>
         /// Десериализует массив байтов в объект типа T
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="data">данные в виде массива байтов</param>
+        /// <typeparam name="T">Тип класса, объект которого возвращает метод</typeparam>
+        /// <param name="data">Данные в виде массива байтов</param>
         /// <returns></returns>
         public static T Deserialize<T>(byte[] data)
             where T : class
@@ -32,8 +32,7 @@ namespace DtoLib.Serialization
             }
             catch (Exception)
             {
-                //
-                throw;
+                throw new Exception("Массив байтов невозможно десериализовать");
             }
         }
     }

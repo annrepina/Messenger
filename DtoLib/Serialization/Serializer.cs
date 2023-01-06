@@ -10,7 +10,7 @@ namespace DtoLib.Serialization
     /// <summary>
     /// Статический класс - сериализатор
     /// </summary>
-    /// <typeparam name="T">Тип объекта, который нужно сериализовать</typeparam>
+    /// <typeparam name="T">Тип класса, объект которого нужно сериализовать</typeparam>
     public static class Serializer<T>
         where T : class
     {
@@ -30,7 +30,7 @@ namespace DtoLib.Serialization
             }
             catch (Exception ex)
             {
-                //
+                Console.WriteLine("Не существует протокола сериализации для объекта данного типа");
                 throw;
             }
         }

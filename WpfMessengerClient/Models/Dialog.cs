@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -8,62 +9,150 @@ using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models
 {
-    public class Dialog : INotifyPropertyChanged
+    /// <summary>
+    /// Класс, который представляет диалог между двумя юзерами в мессенджере
+    /// </summary>
+    public class Dialog : BaseNotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        #region Константы
 
+        /// <summary>
+        /// Константное кол-во пользователей в диалоге
+        /// </summary>
         private const int NumberOfAccounts = 2;
 
-        //private UserAccount _userAccount1;
-        //private UserAccount _userAccount2;
+        #endregion Константы
 
-        public int Id { get; set; }
+        #region Приватные поля
 
-        //public UserAccount UserAccount1
-        //{
-        //    get => _userAccount1;
+        /// <summary>
+        /// Поле - идентификатор диалога
+        /// </summary>
+        private int _id;
 
-        //    set
-        //    {
-        //        if(value != null)
-        //        {
-        //            _userAccount1 = value;
-        //            OnPropertyChanged(nameof(UserAccount1));
-        //        }
+        #endregion Приватные поля
 
-        //    }
-        //}
+        #region Свойства
 
-        //public UserAccount UserAccount2
-        //{
-        //    get => _userAccount2;
+        /// <summary>
+        /// Свойство - идентификатор диалога
+        /// </summary>
+        public int Id 
+        { 
+            get => _id;
 
-        //    set
-        //    {
-        //        if (value != null)
-        //        {
-        //            _userAccount2 = value;
-        //            OnPropertyChanged(nameof(UserAccount2));
-        //        }
-        //    }
-        //}
+            set
+            {
+                _id = value;
+                OnPropertyChanged(nameof(Id));
+            }
+        }
 
-        public UserData[] UserAccounts { get; init; }
+        /// <summary>
+        /// Свойство - обозреваемая коллекция данных о пользователях, участвующих в диалоге
+        /// </summary>
+        public ObservableCollection<UserData> UserDataCollection { get; set; }
 
+        /// <summary>
+        /// Обозреваемая коллекция сообщений в диалоге
+        /// </summary>
         public ObservableCollection<Message> Messages { get; set; }
 
-        public Dialog()
+        #endregion Свойства
+
+        #region Конструкторы
+
+        /// <summary>
+        /// Конструктор с параметрами
+        /// </summary>
+        public Dialog(UserData senderUser, UserData receiverUser)
         {
-            //_userAccount1 = null;
-            //_userAccount2 = null;
             Id = 0;
-            UserAccounts = new UserData[NumberOfAccounts];
+
+            UserDataCollection = new ObservableCollection<UserData>();
+            UserDataCollection.CollectionChanged += OnUserDataCollectionChanged;
+            UserDataCollection.Add(senderUser);
+            UserDataCollection.Add(receiverUser);   
+
             Messages = new ObservableCollection<Message>();
+            Messages.CollectionChanged += OnMessagesChanged;
         }
 
-        private void OnPropertyChanged(string propName)
+        #endregion Конструкторы
+
+        #region Обработчики событий
+
+        /// <summary>
+        /// Обработчик события изменения обозреваемой коллекции данных пользователей участвующих в диалоге
+        /// </summary>
+        /// <param name="sender">Объект, который вызвал событие</param>
+        /// <param name="e">Содержит информацию о событии</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void OnUserDataCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            if (e.OldItems != null)
+            {
+                foreach (INotifyPropertyChanged item in e.OldItems)
+                {
+                    item.PropertyChanged -= OnUserDataChanged;
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (INotifyPropertyChanged item in e.NewItems)
+                {
+                    item.PropertyChanged += OnUserDataChanged;
+                }
+            }
         }
+
+        /// <summary>
+        /// Обработчик события изменения данных конкретного пользователя участвующего в диалоге
+        /// </summary>
+        /// <param name="sender">Объект, который вызвал событие</param>
+        /// <param name="e">Содержит информацию о событии</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void OnUserDataChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Обработчик события изменения обозреваемой коллекции сообщений
+        /// </summary>
+        /// <param name="sender">Объект, который вызвал событие</param>
+        /// <param name="e">Содержит информацию о событии</param>
+        private void OnMessagesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (INotifyPropertyChanged item in e.OldItems)
+                {
+                    item.PropertyChanged -= OnMessageChanged;
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (INotifyPropertyChanged item in e.NewItems)
+                {
+                    item.PropertyChanged += OnMessageChanged;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Обработчик события измения конкретного сообщения в обозреваемой коллекции сообщений
+        /// </summary>
+        /// <param name="sender">Объект, который вызвал событие</param>
+        /// <param name="e">Содержит информацию о событии</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void OnMessageChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion Обработчики событий
     }
 }

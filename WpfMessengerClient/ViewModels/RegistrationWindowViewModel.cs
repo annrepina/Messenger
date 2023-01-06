@@ -16,22 +16,35 @@ using DtoLib.Dto;
 using WpfMessengerClient.Services;
 using DtoLib;
 using DtoLib.Serialization;
-//using DtoLib;
 
 namespace WpfMessengerClient.ViewModels
 {
-    public class RegistrationWindowViewModel : INotifyPropertyChanged, IDataErrorInfo
+    /// <summary>
+    /// Вьюмодель для окна регистрации
+    /// </summary>
+    public class RegistrationWindowViewModel : BaseNotifyPropertyChanged, IDataErrorInfo
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        #region Константы
 
+        /// <summary>
+        /// 
+        /// </summary>
         private const int PhoneNumberLength = 12;
         private const int MaxLengthOfPassword = 10;
         private const int MinLengthOfPassword = 6;
 
-        private NetworkProviderUserMediator _messenger;
+        #endregion Константы
+
+        private NetworkProviderUserDataMediator _messenger;
         private string _phoneNumber;
         private string _password;
         private string _error;
+
+        /// <summary>
+        /// Менеджер окон приложения
+        /// </summary>
+        public MessengerWindowsManager MessengerWindowsManager { get; init; }
+
 
         public string PhoneNumber
         {
@@ -57,7 +70,7 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        public NetworkProviderUserMediator Messenger
+        public NetworkProviderUserDataMediator Messenger
         {
             get => _messenger;
 
@@ -148,31 +161,27 @@ namespace WpfMessengerClient.ViewModels
                 Error = "Номер телефон должнен состоять из 12 символов всего";
         }
 
-        public RegistrationWindowViewModel()
+        #region Конструкторы
+
+        public RegistrationWindowViewModel(MessengerWindowsManager messengerWindowsManager)
         {
-            Messenger = new NetworkProviderUserMediator();
+            Messenger = new NetworkProviderUserDataMediator();
             Messenger.SignUp += ChangeWindowToChatWindow;
             OnRegisterInMessengerCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             _password = null;
             _phoneNumber = null;
             _error = null;
+            MessengerWindowsManager = messengerWindowsManager;
         }
 
-        /// <summary>
-        /// Метод, вызывающий событие PropertyChanged
-        /// </summary>
-        /// <param name="propName">Имя свойства</param>
-        private void OnPropertyChanged(string propName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
+        #endregion Конструкторы
 
         private async Task RegisterNewUserAsync()
         {
             // если ошибок нет
             if (String.IsNullOrEmpty(Error))
             {
-                await Messenger.SendRegistrationRequest(PhoneNumber, Password);
+                await Messenger.SendRegistrationRequestAsync(PhoneNumber, Password);
             }
         }
 

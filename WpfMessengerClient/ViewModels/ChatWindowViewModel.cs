@@ -14,20 +14,22 @@ namespace WpfMessengerClient.ViewModels
 {
     public class ChatWindowViewModel
     {
+        private NetworkProviderUserDataMediator _networkProviderUserDataMediator;
+
         /// <summary>
         /// Событие изменения свойств
         /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public NetworkProviderUserMediator Messenger
+        public NetworkProviderUserDataMediator NetworkProviderUserDataMediator
         {
-            get => _messenger;
+            get => _networkProviderUserDataMediator;
 
             set
             {
-                _messenger = value;
+                _networkProviderUserDataMediator = value;
 
-                OnPropertyChanged(nameof(Messenger));
+                OnPropertyChanged(nameof(NetworkProviderUserDataMediator));
             }
 
         }
@@ -140,9 +142,9 @@ namespace WpfMessengerClient.ViewModels
             //HasNotTextBoxSomeName = true;
         }
 
-        public ChatWindowViewModel(NetworkProviderUserMediator messenger)
+        public ChatWindowViewModel(NetworkProviderUserDataMediator networkProviderUserDataMediator)
         {
-            Messenger = messenger;
+            NetworkProviderUserDataMediator = networkProviderUserDataMediator;
         }
 
         /// <summary>

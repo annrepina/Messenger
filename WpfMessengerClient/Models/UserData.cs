@@ -12,19 +12,59 @@ using DtoLib;
 
 namespace WpfMessengerClient.Models
 {
-    public class UserData : INotifyPropertyChanged, IDataErrorInfo
+    /// <summary>
+    /// Класс - модель данных пользователя
+    /// </summary>
+    public class UserData : BaseNotifyPropertyChanged, IDataErrorInfo
     {
+        #region Константы
+
+        /// <summary>
+        /// Максимальная длина пароля
+        /// </summary>
         private const int MaxLengthOfPassword = 10;
+
+        /// <summary>
+        /// Минимальная длина пароля
+        /// </summary>
         private const int MinLengthOfPassword = 6;
 
+        #endregion Константы
+
+        #region Приватные поля
+
+        /// <summary>
+        /// Идентификатор
+        /// </summary>
         private int _id;
+
+        /// <summary>
+        /// Человек
+        /// </summary>
         private Person _person;
+
+        /// <summary>
+        /// Пароль
+        /// </summary>
         private string _password;
+
+        /// <summary>
+        /// Пользователь онлайн?
+        /// </summary>
         private bool _isOnline;
+
+        /// <summary>
+        /// Ошибка при валидации свойств
+        /// </summary>
         private string _error;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        #endregion Приватные поля
 
+        #region Свойства
+
+        /// <summary>
+        /// Свойство - идентификатор
+        /// </summary>
         public int Id 
         { 
             get => _id; 
@@ -32,10 +72,14 @@ namespace WpfMessengerClient.Models
             set
             {
                 _id = value;
+
                 OnPropertyChanged(nameof(Id));
             }
         }
 
+        /// <summary>
+        /// Свойство - человек
+        /// </summary>
         public Person Person 
         { 
             get => _person;
@@ -51,6 +95,9 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        /// <summary>
+        /// Свойство - пароль
+        /// </summary>
         public string Password
         {
             get => _password;
@@ -66,6 +113,9 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        /// <summary>
+        /// Свойство - пользователь онлайн?
+        /// </summary>
         public bool IsOnline
         {
             get => _isOnline;
@@ -78,18 +128,21 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        /// <summary>
+        /// Свойство - обозреваемая коллекция - список диалогов
+        /// </summary>
         public ObservableCollection<Dialog> Dialogs { get; set; }
 
-        public List<ClientNetworkProvider> Clients { get; set; }
+        #endregion Свойства
 
-        //public FrontClient CurrentClient { get; set; }
+        #region Реализация интерфейса IDataErrorInfo
 
+        /// <summary>
+        /// Ошибка при валидации свойства
+        /// </summary>
         public string Error
         {
-            get
-            {
-                return _error;
-            }
+            get => _error;
 
             set
             {
@@ -99,6 +152,11 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        /// <summary>
+        /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
+        /// </summary>
+        /// <param name="propName">Имя свойства</param>
+        /// <returns></returns>
         public string this[string propName]
         {
             get
@@ -113,6 +171,13 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        #endregion Реализация интерфейса IDataErrorInfo
+
+        #region Конструкторы
+
+        /// <summary>
+        /// Конструкторы по умолчанию
+        /// </summary>
         public UserData()
         {
             _id = 0;
@@ -121,22 +186,15 @@ namespace WpfMessengerClient.Models
             _isOnline = false;
             Dialogs = new ObservableCollection<Dialog>();
             _error = null;
-            Clients = new List<ClientNetworkProvider>();
-            //CurrentClient = null;
         }
 
-        private void OnPropertyChanged(string propName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
-
-        public void AddClient(ClientNetworkProvider client)
-        {
-            Clients.Add(client);
-        }
+        #endregion Конструкторы
 
         #region Валидация
 
+        /// <summary>
+        /// Проверить пароль на корректность
+        /// </summary>
         private void ValidatePassword()
         {
             Regex regex = new Regex(@"^\w{6}");
@@ -153,27 +211,14 @@ namespace WpfMessengerClient.Models
                 Error = "Пароль должен содержать не меньше 6ти символов";
         }
 
+        /// <summary>
+        /// Проверить все свойства на корректность
+        /// </summary>
+        /// <param name="propName">Имя свойства</param>
         private void ValidateAllProperties(string propName)
         {
             switch (propName)
             {
-                //case nameof(Name):
-                //{
-                //    //Regex regex = new Regex(@"^8\d{10}");
-                //    Regex regex = new Regex(@"^\w+");
-                //    //Regex regex = new Regex(@"^\d{10}");                
-
-                //    if (!regex.IsMatch(Name))
-                //        error = "Недопустимые символы";
-
-                //    else if (Name.Length > MaxNameLength)
-                //        error = "Имя не должно превышать 50ти символов";
-
-                //    else if(Name.Length < MinNameLength)
-                //        error = "Имя должно быть не меньше 2х символов";
-                //}
-                //break;
-
                 case nameof(Password):
                     ValidatePassword();
 
@@ -185,13 +230,5 @@ namespace WpfMessengerClient.Models
 
         }
         #endregion Валидация
-
-
-        //public void ProcessNetworkMessage(NetworkMessage message)
-        //{
-        //    Password = "kuku epta";
-        //}
-
-
     }
 }

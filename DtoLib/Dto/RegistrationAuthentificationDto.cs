@@ -9,20 +9,13 @@ using System.Threading.Tasks;
 namespace DtoLib.Dto
 {
     /// <summary>
-    /// Data transfer object класса UserAccount
+    /// Data transfer object который представляет информацию, необходимую для регистрации пользователя в мессенджере
     /// </summary>
     [ProtoContract]
     public class RegistrationAuthentificationDto
     {
-        ///// <summary>
-        ///// Свойство - id
-        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        ///// </summary>
-        //[ProtoMember(1)]
-        //public int Id { get; set; }
-
         /// <summary>
-        /// Свойство - объект клааса Person
+        /// Свойство - объект класса, который представляет человека
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]

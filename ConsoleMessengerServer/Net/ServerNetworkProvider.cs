@@ -11,39 +11,31 @@ using DtoLib;
 namespace ConsoleMessengerServer.Net
 {
     /// <summary>
-    /// Клиент, который подключается к серверу
+    /// Сетевой провайдер на стороне сервера
     /// </summary>
     public class ServerNetworkProvider : NetworkProvider
     {
-        public INetworkHandler NetworkHandler { get; set; }
+        /// <summary>
+        /// Отвечает за работу с сетью
+        /// </summary>
+        public INetworkController NetworkController { get; set; }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="tcpClient">TCP клиент</param>
-        public ServerNetworkProvider(TcpClient tcpClient) : base()
-        {
-            TcpClient = tcpClient;
-            //_server = server;
-            NetworkStream = TcpClient.GetStream();
-            //UserAccount = ;
-        }
-
-        /// <summary>
-        /// Конструктор с параметрами
-        /// </summary>
-        /// <param name="tcpClient">TCP клиент</param>
-        public ServerNetworkProvider(TcpClient tcpClient, /*Server server, */INetworkHandler networkHandler)
+        /// <param name="networkController">Отвечает за работу с сетью</param>
+        public ServerNetworkProvider(TcpClient tcpClient, INetworkController networkController)
         {
             TcpClient = tcpClient;
             NetworkStream = TcpClient.GetStream();
-            NetworkHandler = networkHandler;
+            NetworkController = networkController;
         }
 
         /// <summary>
-        /// Обработать данные
+        /// Начать обработку сетевых сообщений асинхронно
         /// </summary>
-        public async Task ProcessDataAsync()
+        public async Task StartProcessingNetworkMessagesAsync()
         {
             try
             {
@@ -56,48 +48,20 @@ namespace ConsoleMessengerServer.Net
                     }
                     catch (Exception)
                     {
-                        break;
+                        break;                      
                     }
                 }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
             }
 
             finally
             {
-                NetworkHandler.RemoveClient(Id);
+                NetworkController.RemoveClient(Id);
                 CloseConnection();
             }
         }
 
-
-
-        ///// <summary>
-        ///// Получить имя пользователя
-        ///// </summary>
-        //private void GetUserName()
-        //{
-        //    string message = GetMessage();
-
-        //    Name = message;
-
-        //    //message = $"{Name} вошел/вошла в чат";
-
-        //    // отправить всем сообщение о том, что добавляется новый человек
-        //    _server.BroadcastOperationCode(AddingNewUserCode, Id);
-
-        //    // Отправить всем имя этого человека
-        //    _server.BroadcastMessage(Name, Id);
-
-        //    Console.WriteLine($"{Name} вошел/вошла в чат");
-        //    //Console.WriteLine(message);
-        //}
-
         /// <summary>
-        /// Закрытие подлючения
+        /// Закрыть подлючения
         /// </summary>
         public void CloseConnection()
         {
@@ -105,19 +69,21 @@ namespace ConsoleMessengerServer.Net
                 NetworkStream.Close();
 
             if (TcpClient != null)
-            {
                 TcpClient.Close();
-            }
-
         }
 
+        /// <summary>
+        /// Асинхронный метод получения сетевого сообщения
+        /// </summary>
+        /// <param name="message">Сетевое сообщение</param>
+        /// <returns></returns>
         public override async Task GetNetworkMessageAsync(NetworkMessage message)
         {
             if(message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode || message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode)
-                await Task.Run(() => NetworkHandler.ProcessNetworkMessage(message, Id));
+                await NetworkController.ProcessNetworkMessageAsync(message, Id);
           
             else
-                await Task.Run(() => NetworkHandler.ProcessNetworkMessage(message));
+                await NetworkController.ProcessNetworkMessageAsync(message);
         }
     }
 }

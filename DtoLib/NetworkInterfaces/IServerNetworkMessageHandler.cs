@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DtoLib.NetworkInterfaces
 {
-    public interface IBackNetworkMessageHandler : INetworkMessageHandler
+    public interface IServerNetworkMessageHandler : INetworkMessageHandler
     {
-        public void ProcessNetworkMessage(NetworkMessage message, int clientId);
+        public Task ProcessNetworkMessageAsync(NetworkMessage message, int networkProviderId);
     }
 }

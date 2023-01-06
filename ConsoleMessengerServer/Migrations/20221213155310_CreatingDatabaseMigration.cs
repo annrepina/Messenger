@@ -62,7 +62,7 @@ namespace ConsoleMessengerServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Clients",
+                name: "NetworkProviders",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -104,7 +104,7 @@ namespace ConsoleMessengerServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Messages",
+                name: "SentMessages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -134,8 +134,8 @@ namespace ConsoleMessengerServer.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_UserAccountId",
-                table: "Clients",
-                column: "UserAccountId");
+                table: "NetworkProviders",
+                column: "UserDataId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DialogUserAccount_UserAccountsId",
@@ -144,26 +144,26 @@ namespace ConsoleMessengerServer.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_DialogId",
-                table: "Messages",
+                table: "SentMessages",
                 column: "DialogId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_UserAccountId",
-                table: "Messages",
-                column: "UserAccountId");
+                table: "SentMessages",
+                column: "UserDataId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Clients");
+                name: "NetworkProviders");
 
             migrationBuilder.DropTable(
                 name: "DialogUserAccount");
 
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "SentMessages");
 
             migrationBuilder.DropTable(
                 name: "Dialogs");

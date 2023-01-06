@@ -15,20 +15,18 @@ namespace ConsoleMessengerServer.Entities.Mapping
         {
             CreateMap<Person, PersonDto>().ReverseMap();
 
-            CreateMap<UserAccount, UserAccountDto>().ReverseMap();
+            CreateMap<UserData, UserDataDto>().ReverseMap();
 
-            CreateMap<Dialog, DialogDto>().ReverseMap();
+            CreateMap<Dialog, DialogDto>().ForMember(dest => dest.UsersData, exp => exp.MapFrom(d => d.UsersDataList)).ReverseMap();
 
-            CreateMap<Message, MessageDto>().ReverseMap();
+            CreateMap<Message, MessageDto>().ForMember(dest => dest.SenderUserData, exp => exp.MapFrom(m => m.UserData)).ReverseMap();
 
-            CreateMap<Client, ClientDto>().ReverseMap();
+            CreateMap<ServerNetworkProviderEntity, NetworkProviderDto>().ReverseMap();
 
-            CreateMap<ServerNetworkProvider, Client>().ReverseMap();
+            CreateMap<UserData, RegistrationAuthentificationDto>().ForMember(dest => dest.PhoneNumber, exp => exp.MapFrom(c => c.Person.PhoneNumber)).ReverseMap();
 
-            CreateMap<UserAccount, RegistrationAuthentificationDto>().ForMember(nameof(RegistrationAuthentificationDto.PhoneNumber), exp => exp.MapFrom(c => c.Person.PhoneNumber)).ReverseMap();
-
-            CreateMap<UserAccount, SuccessfulRegistrationDto>().ForMember(nameof(SuccessfulRegistrationDto.PhoneNumber), exp => exp.MapFrom(c => c.Person.PhoneNumber))
-                                                               .ForMember(nameof(SuccessfulRegistrationDto.ClientId), exp => exp.MapFrom(c => c.Clients.FirstOrDefault())).ReverseMap();
+            //CreateMap<UserData, SuccessfulRegistrationDto>().ForMember(nameof(SuccessfulRegistrationDto.PhoneNumber), exp => exp.MapFrom(c => c.Person.PhoneNumber))
+            //                                                   .ForMember(nameof(SuccessfulRegistrationDto.NetworkProviderId), exp => exp.MapFrom(c => c.NetworkProviders.FirstOrDefault())).ReverseMap();
         }
 
     }

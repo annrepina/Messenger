@@ -15,7 +15,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса Person
     /// </summary>
     [ProtoContract]
-    public class PersonDto /*: Serializable, IDeserializableDto*/
+    public class PersonDto 
     {
         /// <summary>
         /// Свойство - имя
@@ -37,39 +37,5 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(3)]
         public string PhoneNumber { get; set; }
-
-        //public IDeserializableDto Deserialize(byte[] buffer)
-        //{
-        //    try
-        //    {
-        //        using(var stream = new MemoryStream(buffer))
-        //        {
-        //            var obj = Serializer.Deserialize<PersonDto>(stream);
-        //            return obj;
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        //
-        //        throw;
-        //    }
-        //}
-
-        //public byte[] SerializeDto()
-        //{
-        //    try
-        //    {
-        //        using(var memoryStream = new MemoryStream())
-        //        {
-        //            Serializer.Serialize(memoryStream, this);
-        //            return memoryStream.ToArray();
-        //        }
-        //    }
-        //    catch (SerializationException ex)
-        //    {
-        //        //
-        //        throw;
-        //    }
-        //}
     }
 }

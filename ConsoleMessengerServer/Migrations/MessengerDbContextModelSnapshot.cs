@@ -22,7 +22,7 @@ namespace ConsoleMessengerServer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.Client", b =>
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.NetworkProvider", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,14 +30,14 @@ namespace ConsoleMessengerServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("UserAccountId")
+                    b.Property<int?>("UserDataId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserAccountId");
+                    b.HasIndex("UserDataId");
 
-                    b.ToTable("Clients");
+                    b.ToTable("NetworkProviders");
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Dialog", b =>
@@ -77,16 +77,16 @@ namespace ConsoleMessengerServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserAccountId")
+                    b.Property<int>("UserDataId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DialogId");
 
-                    b.HasIndex("UserAccountId");
+                    b.HasIndex("UserDataId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("SentMessages");
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Person", b =>
@@ -118,7 +118,7 @@ namespace ConsoleMessengerServer.Migrations
                     b.ToTable("Persons");
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserAccount", b =>
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -161,39 +161,39 @@ namespace ConsoleMessengerServer.Migrations
                     b.ToTable("DialogUserAccount");
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.Client", b =>
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.NetworkProvider", b =>
                 {
-                    b.HasOne("ConsoleMessengerServer.Entities.UserAccount", "UserAccount")
-                        .WithMany("Clients")
-                        .HasForeignKey("UserAccountId");
+                    b.HasOne("ConsoleMessengerServer.Entities.UserData", "UserData")
+                        .WithMany("NetworkProviders")
+                        .HasForeignKey("UserDataId");
 
-                    b.Navigation("UserAccount");
+                    b.Navigation("UserData");
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Message", b =>
                 {
                     b.HasOne("ConsoleMessengerServer.Entities.Dialog", "Dialog")
-                        .WithMany("Messages")
+                        .WithMany("SentMessages")
                         .HasForeignKey("DialogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConsoleMessengerServer.Entities.UserAccount", "UserAccount")
-                        .WithMany("Messages")
-                        .HasForeignKey("UserAccountId")
+                    b.HasOne("ConsoleMessengerServer.Entities.UserData", "UserData")
+                        .WithMany("SentMessages")
+                        .HasForeignKey("UserDataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Dialog");
 
-                    b.Navigation("UserAccount");
+                    b.Navigation("UserData");
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserAccount", b =>
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserData", b =>
                 {
                     b.HasOne("ConsoleMessengerServer.Entities.Person", "Person")
-                        .WithOne("UserAccount")
-                        .HasForeignKey("ConsoleMessengerServer.Entities.UserAccount", "PersonId")
+                        .WithOne("UserData")
+                        .HasForeignKey("ConsoleMessengerServer.Entities.UserData", "PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -208,7 +208,7 @@ namespace ConsoleMessengerServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConsoleMessengerServer.Entities.UserAccount", null)
+                    b.HasOne("ConsoleMessengerServer.Entities.UserData", null)
                         .WithMany()
                         .HasForeignKey("UserAccountsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -217,19 +217,19 @@ namespace ConsoleMessengerServer.Migrations
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Dialog", b =>
                 {
-                    b.Navigation("Messages");
+                    b.Navigation("SentMessages");
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Person", b =>
                 {
-                    b.Navigation("UserAccount");
+                    b.Navigation("UserData");
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserAccount", b =>
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserData", b =>
                 {
-                    b.Navigation("Clients");
+                    b.Navigation("NetworkProviders");
 
-                    b.Navigation("Messages");
+                    b.Navigation("SentMessages");
                 });
 #pragma warning restore 612, 618
         }

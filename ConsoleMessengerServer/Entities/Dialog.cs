@@ -7,16 +7,24 @@ using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.Entities
 {
+    /// <summary>
+    /// Класс, который представляет сущность диалога
+    /// </summary>
     public class Dialog
     {
+        /// <summary>
+        /// Свойство - Id
+        /// </summary>
         public int Id { get; set; }
 
-        //public UserAccount UserAccount1 { get; set; }
+        /// <summary>
+        /// Свойство - список данных пользователей, участвующих в диалоге
+        /// </summary>
+        public List<UserData> UsersDataList { get; set; }
 
-        //public UserAccount UserAccount2 { get; set; }
-
-        public List<UserAccount> UserAccounts { get; set; }
-
+        /// <summary>
+        /// Свойство - список сообщений
+        /// </summary>
         public List<Message> Messages { get; set; }
     }
 }

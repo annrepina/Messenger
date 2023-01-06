@@ -9,20 +9,20 @@ using DtoLib.Serialization;
 namespace DtoLib.Dto
 {
     /// <summary>
-    /// Data transfer object класса UserAccount
+    /// Data transfer object класса UserData
     /// </summary>
     [ProtoContract]
-    public class UserAccountDto 
+    public class UserDataDto 
     {
         /// <summary>
-        /// Свойство - id
+        /// Свойство - идентификатор
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
         public int Id { get; set; }
 
         /// <summary>
-        /// Свойство - объект клааса Person
+        /// Свойство - объект класса, представляющего человека
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(2)]
@@ -36,36 +36,30 @@ namespace DtoLib.Dto
         public string Password { get; set; }
 
         /// <summary>
-        /// Свойство - является ли онлайн аккаунт
+        /// Свойство - онлайн ли пользователь в текущий момент
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(4)]
         public bool IsOnline { get; set; }
 
         /// <summary>
-        /// Свойство - обозреваемая коллекция диалогов у аккаунта
+        /// Свойство - обозреваемая коллекция диалогов у пользователя
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(5)]
         public ObservableCollection<DialogDto> Dialogs { get; set; }
 
-        /// <summary>
-        /// Свойство - список клиентов у аккаунта, те клиенты на которых открыта учетка аккаунта
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(6)]
-        public List<ClientDto> Clients { get; set; }
-
-
-
         #region Debug
 
+        /// <summary>
+        /// Переопределение метода ToString
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"Id: {Id}. PhoneNumber: {Person.PhoneNumber}. Password: {Password}. IsOnline: {IsOnline}. DialogsNumber: {Dialogs.Count}";
         }
 
         #endregion Debug
-
     }
 }

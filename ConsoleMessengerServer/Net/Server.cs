@@ -18,7 +18,7 @@ namespace ConsoleMessengerServer.Net
     /// </summary>
     public class Server
     {
-        private INetworkHandler NetworkHandler;
+        private INetworkController NetworkHandler;
 
         /// <summary>
         /// Прослушиватель TCP подключений от клиентов
@@ -30,23 +30,16 @@ namespace ConsoleMessengerServer.Net
         /// </summary>
         private int _port;
 
-        ///// <summary>
-        ///// Словарь, который содержит пары ключ - id Клиента и сам клиент
-        ///// </summary>
-        //private Dictionary<int, BackClient> _clients;
-
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public Server(INetworkHandler iNetworkHandler)
+        public Server(INetworkController iNetworkHandler)
         {
             _port = 8888;
 
             _tcpListener = new TcpListener(IPAddress.Any, _port);
 
             NetworkHandler = iNetworkHandler;
-
-            //_clients = new Dictionary<int, BackClient>();
         }
 
         /// <summary>
@@ -85,7 +78,7 @@ namespace ConsoleMessengerServer.Net
         //{
         //    byte[] data = Encoding.UTF8.GetBytes(message);
 
-        //    foreach (var client in _clients)
+        //    foreach (var client in _ServerNetworkProviders)
         //    {
         //        // если id клиента не равно id отправляющего
         //        if (client.Id != id)
@@ -97,7 +90,7 @@ namespace ConsoleMessengerServer.Net
         //}
         //public void BroadcastOperationCode(byte operationCode, int id)
         //{
-        //    foreach (var client in _clients)
+        //    foreach (var client in _ServerNetworkProviders)
         //    {
         //        // если id клиента не равно id отправляющего
         //        if (client.Id != id)

@@ -54,7 +54,7 @@ using System.Windows.Markup;
 //        /// <summary>
 //        /// Клиент, который подключается к серверу
 //        /// </summary>
-//        public FrontClient Client { get; private set; }
+//        public FrontClient NetworkProvider { get; private set; }
 
 //        //public NetworkMessage NetworkMessage { get; set; }
 
@@ -64,7 +64,7 @@ using System.Windows.Markup;
 //        /// <param name="client">Клиент</param>
 //        public Receiver(FrontClient client)
 //        {
-//            Client = client;
+//            NetworkProvider = client;
 //        }
 
 //        ///// <summary>
@@ -80,7 +80,7 @@ using System.Windows.Markup;
 //        //        try
 //        //        {
 //        //            // буфер для получаемых данных
-//        //            operationCode = (byte)Client.Stream.ReadByte();
+//        //            operationCode = (byte)NetworkProvider.Stream.ReadByte();
 //        //            break;
 //        //        }
 //        //        catch
@@ -144,10 +144,10 @@ using System.Windows.Markup;
 
 //        //        do
 //        //        {
-//        //            bytes = Client.Stream.Read(data, 0, data.Length);
+//        //            bytes = NetworkProvider.Stream.Read(data, 0, data.Length);
 //        //            stringBuilder.Append(Encoding.UTF8.GetString(data, 0, bytes));
 
-//        //        } while (Client.Stream.DataAvailable);
+//        //        } while (NetworkProvider.Stream.DataAvailable);
 
 //        //        message = stringBuilder.ToString();
 //        //    }
@@ -179,7 +179,7 @@ using System.Windows.Markup;
 
 //                    NetworkMessage networkMessage = deserializer.Deserialize(data); 
 
-//                    await Client.GetNetworkMessageAsync(networkMessage);
+//                    await NetworkProvider.GetNetworkMessageAsync(networkMessage);
 //                }
 //                catch (Exception)
 //                {

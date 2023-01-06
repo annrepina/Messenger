@@ -18,10 +18,12 @@ using DtoLib.NetworkInterfaces;
 namespace WpfMessengerClient.Services
 {
     /// <summary>
-    /// Клиент, который подключается к серверу
+    /// Сетевой провайдер на стороне клиента
     /// </summary>
     public class ClientNetworkProvider : NetworkProvider
     {
+        #region Константы
+
         /// <summary>
         /// Ip хоста
         /// </summary>
@@ -32,26 +34,39 @@ namespace WpfMessengerClient.Services
         /// </summary>
         private const int Port = 8888;
 
-        public bool IsConnected { get; private set; }
+        #endregion Константы
 
+        #region Свойства
+
+        /// <summary>
+        /// Свойство - провайдер подключен к серверу?
+        /// </summary>
+        public bool IsConnected { get; set; }
+
+        /// <summary>
+        /// Свойство - обработчик сетевых сообщений
+        /// </summary>
         public INetworkMessageHandler NetworkMessageHandler { get; set; }
 
-        public ClientNetworkProvider() : base()
-        {
-            TcpClient = new TcpClient();
-        }
+        #endregion Свойства 
+
+        #region Конструкторы
 
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
-        public ClientNetworkProvider(INetworkMessageHandler networkMessageHandler)
+        public ClientNetworkProvider(INetworkMessageHandler networkMessageHandler) : base()
         {
             TcpClient = new TcpClient();
             NetworkMessageHandler = networkMessageHandler;
         }
 
+        #endregion Конструкторы
+
+        #region Методы связанные с сетью
+
         /// <summary>
-        /// Подключиться
+        /// Подключиться к серверу асинхронно 
         /// </summary>
         public async Task ConnectAsync(NetworkMessage message)
         {
@@ -62,17 +77,23 @@ namespace WpfMessengerClient.Services
 
                 if (message != null)
                 {
-                    await Sender.SendNetworkMessage(message);
+                    await Sender.SendNetworkMessageAsync(message);
                 }
 
-                Receiver.ReceiveNetworkMessageAsync();
+                await Receiver.ReceiveNetworkMessageAsync();
             }
         }
 
+        /// <summary>
+        /// Асинхронный метод получения сетевого сообщения
+        /// </summary>
+        /// <param name="message">Сетевое сообщение</param>
+        /// <returns></returns>
         public override async Task GetNetworkMessageAsync(NetworkMessage message)
         {
-            await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessage(message));
+            await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessageAsync(message));
         }
-    }
 
+        #endregion Методы связанные с сетью
+    }
 }

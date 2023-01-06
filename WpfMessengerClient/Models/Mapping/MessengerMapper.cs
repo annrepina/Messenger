@@ -11,8 +11,6 @@ namespace WpfMessengerClient.Models.Mapping
     {
         private static MessengerMapper _instance;
 
-        //public static IMapper IMapper { get; set;}
-
         private Profile _profile;
 
         private MessengerMapper() 

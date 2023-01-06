@@ -25,14 +25,14 @@ namespace DtoLib.NetworkServices
         }
 
         /// <summary>
-        /// Отправить сетевое сообщение серверу
+        /// Отправить сетевое сообщение серверу асинхронно
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
-        public void SendNetworkMessage(NetworkMessage message)
+        public async Task SendNetworkMessageAsync(NetworkMessage message)
         {
-            byte[] data = new Serializer<NetworkMessage>().Serialize(message);
+            byte[] data = Serializer<NetworkMessage>.Serialize(message);
 
-            NetworkProvider.NetworkStream.Write(data, 0, data.Length);
+            await NetworkProvider.NetworkStream.WriteAsync(data, 0, data.Length);
         }
     }
 }
