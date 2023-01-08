@@ -9,9 +9,7 @@ namespace ConsoleMessengerServer
             //using(App app = new App())
             App app = new App();
 
-            await app.LaunchAsync();
- 
-            
+            await app.LaunchAsync();            
         }
     }
 }

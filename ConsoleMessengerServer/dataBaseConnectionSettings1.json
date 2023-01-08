@@ -1,5 +1,0 @@
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=DESKTOP-BHIRPIK;Database=Messenger;Trusted_Connection=True;Encrypt=False;MultipleActiveResultSets=True;"
-  }
-}

@@ -1,5 +1,4 @@
 ﻿using DtoLib.Dto;
-using DtoLib.Interfaces;
 using DtoLib.Serialization;
 using ProtoBuf;
 using System;

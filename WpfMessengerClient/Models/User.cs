@@ -1,20 +1,33 @@
-﻿using System;
+﻿using Prism.Regions;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows;
+using WpfMessengerClient.Services;
+using DtoLib;
 
 namespace WpfMessengerClient.Models
 {
     /// <summary>
-    /// Класс, представляющий модель человека
+    /// Класс - модель данных пользователя
     /// </summary>
-    public class Person : BaseNotifyPropertyChanged, IDataErrorInfo
+    public class User : BaseNotifyPropertyChanged, IDataErrorInfo
     {
         #region Константы
+
+        /// <summary>
+        /// Максимальная длина пароля
+        /// </summary>
+        private const int MaxLengthOfPassword = 10;
+
+        /// <summary>
+        /// Минимальная длина пароля
+        /// </summary>
+        private const int MinLengthOfPassword = 6;
 
         /// <summary>
         /// Длина мобильного телефона
@@ -36,14 +49,14 @@ namespace WpfMessengerClient.Models
         #region Приватные поля
 
         /// <summary>
+        /// Идентификатор
+        /// </summary>
+        private int _id;
+
+        /// <summary>
         /// Имя
         /// </summary>
         private string _name;
-
-        /// <summary>
-        /// Фамилия
-        /// </summary>
-        private string? _surname;
 
         /// <summary>
         /// Мобильный телефон
@@ -51,13 +64,38 @@ namespace WpfMessengerClient.Models
         private string _phoneNumber;
 
         /// <summary>
-        /// Текст ошибки, которая может возникнуть во время валидации данных
+        /// Пароль
+        /// </summary>
+        private string _password;
+
+        /// <summary>
+        /// Пользователь онлайн?
+        /// </summary>
+        private bool _isOnline;
+
+        /// <summary>
+        /// Ошибка при валидации свойств
         /// </summary>
         private string _error;
 
         #endregion Приватные поля
 
         #region Свойства
+
+        /// <summary>
+        /// Свойство - идентификатор
+        /// </summary>
+        public int Id 
+        { 
+            get => _id; 
+            
+            set
+            {
+                _id = value;
+
+                OnPropertyChanged(nameof(Id));
+            }
+        }
 
         /// <summary>
         /// Свойство - имя
@@ -77,20 +115,6 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        /// <summary>
-        /// Свойство - фамилия
-        /// </summary>
-        public string? Surname
-        {
-            get => _surname;
-
-            set
-            {
-                _surname = value;
-
-                OnPropertyChanged(nameof(Surname));
-            }
-        }
 
         /// <summary>
         /// Свойство - номер телефона
@@ -107,24 +131,50 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        #endregion Свойства
-
-        #region Конструкторы
-
-        public Person()
+        /// <summary>
+        /// Свойство - пароль
+        /// </summary>
+        public string Password
         {
-            _name = "";
-            _surname = "";
-            _phoneNumber = "";
-            _error = "";
+            get => _password;
+
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _password = value;
+
+                    OnPropertyChanged(nameof(Password));
+                }
+            }
         }
 
-        #endregion Конструкторы
+        /// <summary>
+        /// Свойство - пользователь онлайн?
+        /// </summary>
+        public bool IsOnline
+        {
+            get => _isOnline;
+
+            set
+            {
+                _isOnline = value;
+
+                OnPropertyChanged(nameof(IsOnline));
+            }
+        }
+
+        /// <summary>
+        /// Свойство - обозреваемая коллекция - список диалогов
+        /// </summary>
+        public ObservableCollection<Dialog> Dialogs { get; set; }
+
+        #endregion Свойства
 
         #region Реализация интерфейса IDataErrorInfo
 
         /// <summary>
-        /// Свойство - ошибка, которая может возникнуть во время валидации
+        /// Ошибка при валидации свойства
         /// </summary>
         public string Error
         {
@@ -147,6 +197,7 @@ namespace WpfMessengerClient.Models
         {
             get
             {
+                // Потом проверяем есть ли у текущего объекта ошибка
                 ValidateAllProperties(propName);
 
                 return Error;
@@ -155,7 +206,44 @@ namespace WpfMessengerClient.Models
 
         #endregion Реализация интерфейса IDataErrorInfo
 
+        #region Конструкторы
+
+        /// <summary>
+        /// Конструкторы по умолчанию
+        /// </summary>
+        public User()
+        {
+            _id = 0;
+            _name = "";
+            _phoneNumber = "";
+            _password = "";
+            _isOnline = false;
+            Dialogs = new ObservableCollection<Dialog>();
+            _error = null;
+        }
+
+        #endregion Конструкторы
+
         #region Валидация
+
+        /// <summary>
+        /// Проверить пароль на корректность
+        /// </summary>
+        private void ValidatePassword()
+        {
+            Regex regex = new Regex(@"^\w{6}");
+
+            Error = null;
+
+            if (!regex.IsMatch(Password))
+                Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+
+            else if (Password.Length > MaxLengthOfPassword)
+                Error = "Пароль должен содержать не больше 10ти символов";
+
+            else if (Password.Length < MinLengthOfPassword)
+                Error = "Пароль должен содержать не меньше 6ти символов";
+        }
 
         /// <summary>
         /// Проверить номер телефона на корректность
@@ -191,21 +279,23 @@ namespace WpfMessengerClient.Models
         }
 
         /// <summary>
-        /// Проверить свойство класса на корректность
+        /// Проверить все свойства на корректность
         /// </summary>
         /// <param name="propName">Имя свойства</param>
         private void ValidateAllProperties(string propName)
         {
             switch (propName)
             {
-                case nameof(Name):
-                    ValidateName();
-
+                case nameof(Password):
+                    ValidatePassword();
                     break;
 
                 case nameof(PhoneNumber):
                     ValidatePhoneNumber();
+                    break;
 
+                case nameof(Name):
+                    ValidateName();
                     break;
 
                 default:
@@ -213,7 +303,6 @@ namespace WpfMessengerClient.Models
             }
 
         }
-
         #endregion Валидация
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System;
-using DtoLib.Interfaces;
 using ProtoBuf;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
@@ -12,7 +11,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса UserData
     /// </summary>
     [ProtoContract]
-    public class UserDataDto 
+    public class UserDto 
     {
         /// <summary>
         /// Свойство - идентификатор
@@ -22,31 +21,38 @@ namespace DtoLib.Dto
         public int Id { get; set; }
 
         /// <summary>
-        /// Свойство - объект класса, представляющего человека
+        /// Свойство - имя
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(2)]
-        public PersonDto Person { get; set; }
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Свойство - номер телефона
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(3)]
+        public string PhoneNumber { get; set; }
 
         /// <summary>
         /// Свойство - пароль
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
-        [ProtoMember(3)]
+        [ProtoMember(4)]
         public string Password { get; set; }
 
         /// <summary>
         /// Свойство - онлайн ли пользователь в текущий момент
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
-        [ProtoMember(4)]
+        [ProtoMember(5)]
         public bool IsOnline { get; set; }
 
         /// <summary>
         /// Свойство - обозреваемая коллекция диалогов у пользователя
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
-        [ProtoMember(5)]
+        [ProtoMember(6)]
         public ObservableCollection<DialogDto> Dialogs { get; set; }
 
         #region Debug
@@ -57,7 +63,7 @@ namespace DtoLib.Dto
         /// <returns></returns>
         public override string ToString()
         {
-            return $"Id: {Id}. PhoneNumber: {Person.PhoneNumber}. Password: {Password}. IsOnline: {IsOnline}. DialogsNumber: {Dialogs.Count}";
+            return $"Id: {Id}. PhoneNumber: {PhoneNumber}. Password: {Password}. IsOnline: {IsOnline}. DialogsNumber: {Dialogs.Count}";
         }
 
         #endregion Debug

@@ -167,7 +167,7 @@ namespace ConsoleMessengerServer
             using (var dbContext = new MessengerDbContext())
             {
                 // ищем есть ли аккаунт с таким номером уже в бд
-                var res = await dbContext.UserData.FirstOrDefaultAsync(acc => acc.Person.PhoneNumber == registrationDto.PhoneNumber);
+                var res = await dbContext.Users.FirstOrDefaultAsync(user => user.PhoneNumber == registrationDto.PhoneNumber);
 
                 NetworkMessage responseMessage = null;
 
@@ -175,7 +175,7 @@ namespace ConsoleMessengerServer
                 if (res == null)
                 {
                     // Создаем акккунт и добавляем его в бд
-                    UserData userData = _mapper.Map<UserData>(registrationDto);
+                    User userData = _mapper.Map<User>(registrationDto);
 
                     ServerNetworkProviderEntity networkProvider = dbContext.NetworkProviders.FirstOrDefault(n => n.Id == networkProviderId);
 
@@ -183,9 +183,9 @@ namespace ConsoleMessengerServer
                     {
                         userData.NetworkProviders.Add(networkProvider);
 
-                        dbContext.UserData.Add(userData);
+                        dbContext.Users.Add(userData);
 
-                        networkProvider.UserData = userData;
+                        networkProvider.User = userData;
 
                         try
                         {

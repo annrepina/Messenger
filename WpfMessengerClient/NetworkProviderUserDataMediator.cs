@@ -39,7 +39,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Данные о пользователе
         /// </summary>
-        private UserData _userData;
+        private User _userData;
 
         /// <summary>
         /// Маппер для мапинга моделей на DTO и обратно
@@ -58,7 +58,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Данные пользователя
         /// </summary>
-        public UserData UserData
+        public User UserData
         {
             get => _userData;
 
@@ -79,7 +79,7 @@ namespace WpfMessengerClient
         /// </summary>
         public NetworkProviderUserDataMediator()
         {
-            UserData = new UserData();
+            UserData = new User();
 
             ClientNetworkProvider = new ClientNetworkProvider(this);
 
@@ -164,7 +164,7 @@ namespace WpfMessengerClient
 
         public async Task SendRegistrationRequestAsync(RegistrationData registrationData)
         {
-            UserData userData = _mapper.Map<UserData>(registrationData);
+            User userData = _mapper.Map<User>(registrationData);
             UserData = userData;
 
             RegistrationDto registrationDto = _mapper.Map<RegistrationDto>(registrationData);
@@ -177,5 +177,10 @@ namespace WpfMessengerClient
         }
 
         #endregion Методы взаимодействия с сетью
+
+        public string GetRecipientName(int UserDataId, int DialogId)
+        {
+            return "Anna";
+        }
     }
 }

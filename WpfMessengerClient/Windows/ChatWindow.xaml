@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfMessengerClient"
+        xmlns:local="clr-namespace:WpfMessengerClient" xmlns:system="clr-namespace:System;assembly=netstandard"
         mc:Ignorable="d"
         Height="{Binding Source={x:Static SystemParameters.FullPrimaryScreenHeight}}" 
         Width="{Binding Source={x:Static SystemParameters.FullPrimaryScreenWidth}}"
@@ -28,20 +28,28 @@
         <!--#endregion Grid layout-->
 
         <!--#region Listviews-->
+        
+        <!--#region Labels-->
 
-        <Label>
-            
+        <Label Name="UserName" Grid.Row="0" Grid.Column="0" Content="{Binding NetworkProviderUserDataMediator.UserData.Person.Name}" FontSize="26" FontFamily="Tahoma" HorizontalAlignment="Left"
+               Padding="20, 5, 0, 0">
         </Label>
+
+        <Label Name="ChatUserName" Grid.Row="0" Grid.Column="1" Content="Соболь" FontSize="26" FontFamily="Tahoma" HorizontalAlignment="Left"
+               Padding="20, 5, 0, 0">
+        </Label>
+
+        <!--#endregion Labels-->        
 
         <DockPanel Background="LightGray" Grid.Row="1" Grid.Column="0" Margin="0">
 
             <TabControl Margin="0,5,0,0" Background="Transparent">
-                <TabItem Header="Chats">
+                <TabItem Header="Чаты" FontFamily="Tahoma" FontSize="20">
                     <ListView   
                       BorderBrush="{x:Null}" Foreground="#E50A0A0A"
-                    Margin="0,10,0,10" FontFamily="Bookman Old Style"
-                  SelectedItem="{Binding ActiveChat}" Grid.Column="0"
-                 Background="Transparent" ItemsSource="{Binding ChatList}"
+                    Margin="0,10,0,10" FontFamily="Tahoma"
+                  SelectedItem="{Binding ActiveDialog}" Grid.Column="0"
+                 Background="Transparent" ItemsSource="{Binding NetworkProviderUserDataMediator.UserData.Dialogs}"
                 Width="185" HorizontalAlignment="Left">
 
                         <ListView.ItemTemplate>
@@ -49,7 +57,7 @@
                                 <StackPanel Orientation="Horizontal" Margin="2">
                                     <TextBlock 
                                 TextWrapping="Wrap" Padding="2" 
-                                Text="{Binding Path=Addressee.PublicId}" 
+                                Text="Собеседник" 
                                 MaxWidth="{Binding RelativeSource=
                                 {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}" 
                                 />
@@ -60,7 +68,7 @@
                     </ListView>
                 </TabItem>
 
-                <TabItem Header="Online">
+                <TabItem Header="Online" FontFamily="Tahoma" FontSize="20">
                     <ListView   
                       Margin="0,10,0,0" FontFamily="Bookman Old Style"
                      BorderBrush="{x:Null}" Foreground="#E50A0A0A"
@@ -81,7 +89,7 @@
             </TabControl>
         </DockPanel>
 
-        <Grid Background="LightSteelBlue" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+        <Grid Background="LightSteelBlue" Grid.Column="1" Grid.Row="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
@@ -94,8 +102,7 @@
                     SelectedItem="{Binding SelectedMessage}"
                     ItemsSource="{Binding Path=ActiveChat.MessageList}" 
                     Margin="0,5,5,50" BorderBrush="{x:Null}" 
-                    Foreground="#FF0A0A0A" FontFamily="Bookman Old Style"
-             >
+                    Foreground="#FF0A0A0A" FontFamily="Bookman Old Style">
 
                 <ListView.InputBindings>
                     <KeyBinding Key="Delete" Command="{Binding DeleteMessageCommand}"/>

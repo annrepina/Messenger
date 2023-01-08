@@ -14,7 +14,7 @@ namespace ConsoleMessengerServer.Entities.Configurations
         {
             builder.HasKey(d => d.Id);
 
-            builder.HasMany(d => d.UsersData).WithMany(acc => acc.Dialogs);
+            builder.HasMany(d => d.Users).WithMany(acc => acc.Dialogs);
 
             builder.HasMany(d => d.Messages).WithOne(m => m.Dialog);
         }

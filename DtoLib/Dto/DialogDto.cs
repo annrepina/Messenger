@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DtoLib.Interfaces;
 using DtoLib.Serialization;
 using ProtoBuf;
 
@@ -27,7 +26,7 @@ namespace DtoLib.Dto
         /// Свойство - массив данных пользователей, участвующих в диалоге
         /// </summary>
         [ProtoMember(2)]
-        public UserDataDto[] UsersData { get; set; }
+        public List<UserDto> Users { get; set; }
 
         /// <summary>
         /// Свойство - обозреваемая коллекция сообщений в диалоге

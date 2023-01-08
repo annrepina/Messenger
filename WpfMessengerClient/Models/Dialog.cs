@@ -19,7 +19,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Константное кол-во пользователей в диалоге
         /// </summary>
-        private const int NumberOfAccounts = 2;
+        private const int NumberOfUsers = 2;
 
         #endregion Константы
 
@@ -48,10 +48,14 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        public string DialogName => Users.First(n => n.Id != _currentUser.Id).Name;
+
         /// <summary>
         /// Свойство - обозреваемая коллекция данных о пользователях, участвующих в диалоге
         /// </summary>
-        public ObservableCollection<UserData> UserDataCollection { get; set; }
+        public ObservableCollection<User> Users { get; set; }
+
+        private readonly User _currentUser;
 
         /// <summary>
         /// Обозреваемая коллекция сообщений в диалоге
@@ -65,14 +69,14 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        public Dialog(UserData senderUser, UserData receiverUser)
+        public Dialog(User senderUser, User receiverUser)
         {
             Id = 0;
 
-            UserDataCollection = new ObservableCollection<UserData>();
-            UserDataCollection.CollectionChanged += OnUserDataCollectionChanged;
-            UserDataCollection.Add(senderUser);
-            UserDataCollection.Add(receiverUser);   
+            Users = new ObservableCollection<User>();
+            Users.CollectionChanged += OnUserDataCollectionChanged;
+            Users.Add(senderUser);
+            Users.Add(receiverUser);   
 
             Messages = new ObservableCollection<Message>();
             Messages.CollectionChanged += OnMessagesChanged;

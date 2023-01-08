@@ -11,22 +11,22 @@ namespace ConsoleMessengerServer.Entities
     /// <summary>
     /// Класс - сущность данных пользователя
     /// </summary>
-    public class UserData
+    public class User
     {
         /// <summary>
         /// Идентификатор
         /// </summary>
-        public int Id { get; set; } 
+        public int Id { get; set; }
 
         /// <summary>
-        /// Человек
+        /// Имя
         /// </summary>
-        public Person Person { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// Идентификатор человека
+        /// Номер телефона
         /// </summary>
-        public int PersonId { get; set; }
+        public string PhoneNumber { get; set; }
 
         /// <summary>
         /// Пароль
@@ -56,7 +56,7 @@ namespace ConsoleMessengerServer.Entities
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public UserData()
+        public User()
         {
             Dialogs = new List<Dialog>();
             NetworkProviders = new List<ServerNetworkProviderEntity>();

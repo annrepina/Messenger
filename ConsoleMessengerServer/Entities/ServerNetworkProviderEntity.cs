@@ -20,11 +20,11 @@ namespace ConsoleMessengerServer.Entities
         /// <summary>
         /// Данные о текущем пользователе
         /// </summary>
-        public UserData? UserData { get; set; }    
+        public User? User { get; set; }    
 
         /// <summary>
         /// Идентификатор текущего пользователя
         /// </summary>
-        public int? UserDataId { get; set; } 
+        public int? UserId { get; set; } 
     }
 }

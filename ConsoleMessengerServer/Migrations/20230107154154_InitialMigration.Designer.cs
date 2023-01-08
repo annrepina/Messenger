@@ -62,14 +62,14 @@ namespace ConsoleMessengerServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserDataId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DialogId");
 
-                    b.HasIndex("UserDataId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
                 });
@@ -111,17 +111,17 @@ namespace ConsoleMessengerServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("UserDataId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserDataId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("NetworkProviders", (string)null);
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserData", b =>
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -146,7 +146,7 @@ namespace ConsoleMessengerServer.Migrations
 
                     b.HasAlternateKey("PersonId");
 
-                    b.ToTable("UserData");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("DialogUserData", b =>
@@ -172,31 +172,31 @@ namespace ConsoleMessengerServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConsoleMessengerServer.Entities.UserData", "UserData")
+                    b.HasOne("ConsoleMessengerServer.Entities.User", "User")
                         .WithMany("SentMessages")
-                        .HasForeignKey("UserDataId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Dialog");
 
-                    b.Navigation("UserData");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.ServerNetworkProviderEntity", b =>
                 {
-                    b.HasOne("ConsoleMessengerServer.Entities.UserData", "UserData")
+                    b.HasOne("ConsoleMessengerServer.Entities.User", "User")
                         .WithMany("NetworkProviders")
-                        .HasForeignKey("UserDataId");
+                        .HasForeignKey("UserId");
 
-                    b.Navigation("UserData");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserData", b =>
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.User", b =>
                 {
                     b.HasOne("ConsoleMessengerServer.Entities.Person", "Person")
-                        .WithOne("UserData")
-                        .HasForeignKey("ConsoleMessengerServer.Entities.UserData", "PersonId")
+                        .WithOne("User")
+                        .HasForeignKey("ConsoleMessengerServer.Entities.User", "PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -211,7 +211,7 @@ namespace ConsoleMessengerServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConsoleMessengerServer.Entities.UserData", null)
+                    b.HasOne("ConsoleMessengerServer.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UsersDataId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -225,10 +225,10 @@ namespace ConsoleMessengerServer.Migrations
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Person", b =>
                 {
-                    b.Navigation("UserData");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.UserData", b =>
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.User", b =>
                 {
                     b.Navigation("NetworkProviders");
 

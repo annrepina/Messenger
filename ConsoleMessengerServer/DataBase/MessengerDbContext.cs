@@ -21,14 +21,9 @@ namespace ConsoleMessengerServer.DataBase
         public DbSet<ServerNetworkProviderEntity> NetworkProviders { get; set; }
 
         /// <summary>
-        /// Коллекция для сущности UserData, которая будет являться таблицей в базе данных
+        /// Коллекция для сущности User, которая будет являться таблицей в базе данных
         /// </summary>
-        public DbSet<UserData> UserData { get; set; }
-
-        /// <summary>
-        /// Коллекция для сущности Person, которая будет являться таблицей в базе данных
-        /// </summary>
-        public DbSet<Person> Persons { get; set; }
+        public DbSet<User> Users { get; set; }
 
         /// <summary>
         /// Коллекция для сущности Dialog, которая будет являться таблицей в базе данных
@@ -73,8 +68,7 @@ namespace ConsoleMessengerServer.DataBase
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new PersonConfiguration());
-            modelBuilder.ApplyConfiguration(new UserDataConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new ServerNetworkProviderConfiguration());
             modelBuilder.ApplyConfiguration(new DialogConfiguration());
             modelBuilder.ApplyConfiguration(new MessageConfiguration());

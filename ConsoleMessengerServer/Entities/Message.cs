@@ -24,12 +24,12 @@ namespace ConsoleMessengerServer.Entities
         /// <summary>
         /// Свойство - данные о пользователе - отправителе сообщения
         /// </summary>
-        public UserData UserData { get; set; }
+        public User UserSender { get; set; }
 
         /// <summary>
         /// Свойство - идентификатор данных о пользователе - отправителе сообщения
         /// </summary>
-        public int UserDataId { get; set; }
+        public int UserSenderId { get; set; }
 
         /// <summary>
         /// Свойство - диалог в котором существует сообщение

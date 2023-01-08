@@ -40,7 +40,7 @@ namespace ConsoleMessengerServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserData",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -80,7 +80,7 @@ namespace ConsoleMessengerServer.Migrations
                     table.ForeignKey(
                         name: "FK_DialogUserData_UserData_UsersDataId",
                         column: x => x.UsersDataId,
-                        principalTable: "UserData",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -109,7 +109,7 @@ namespace ConsoleMessengerServer.Migrations
                     table.ForeignKey(
                         name: "FK_Messages_UserData_UserDataId",
                         column: x => x.UserDataId,
-                        principalTable: "UserData",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -128,7 +128,7 @@ namespace ConsoleMessengerServer.Migrations
                     table.ForeignKey(
                         name: "FK_NetworkProviders_UserData_UserDataId",
                         column: x => x.UserDataId,
-                        principalTable: "UserData",
+                        principalTable: "User",
                         principalColumn: "Id");
                 });
 
@@ -145,12 +145,12 @@ namespace ConsoleMessengerServer.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_UserDataId",
                 table: "Messages",
-                column: "UserDataId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NetworkProviders_UserDataId",
                 table: "NetworkProviders",
-                column: "UserDataId");
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -169,7 +169,7 @@ namespace ConsoleMessengerServer.Migrations
                 name: "Dialogs");
 
             migrationBuilder.DropTable(
-                name: "UserData");
+                name: "User");
 
             migrationBuilder.DropTable(
                 name: "Persons");

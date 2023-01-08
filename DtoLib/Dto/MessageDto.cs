@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DtoLib.Interfaces;
 using DtoLib.Serialization;
 using ProtoBuf;
 
@@ -34,7 +33,7 @@ namespace DtoLib.Dto
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(3)]
-        public UserDataDto SenderUserData { get; set; }
+        public UserDto UserSender { get; set; }
 
         /// <summary>
         /// Диалог в котором существует сообщение

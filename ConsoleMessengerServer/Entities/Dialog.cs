@@ -20,7 +20,7 @@ namespace ConsoleMessengerServer.Entities
         /// <summary>
         /// Свойство - список данных пользователей, участвующих в диалоге
         /// </summary>
-        public List<UserData> UsersData { get; set; }
+        public List<User> Users { get; set; }
 
         /// <summary>
         /// Свойство - список сообщений
@@ -32,7 +32,7 @@ namespace ConsoleMessengerServer.Entities
         /// </summary>
         public Dialog()
         {
-            UsersData = new List<UserData>();
+            Users = new List<User>();
             Messages = new List<Message>();
         }
     }

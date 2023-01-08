@@ -19,11 +19,15 @@ namespace WpfMessengerClient.ViewModels
     {
         #region Приватные поля
 
-
         /// <summary>
         /// Посредник между сетевым провайдером и данными пользователя
         /// </summary>
         private NetworkProviderUserDataMediator _networkProviderUserDataMediator;
+
+        /// <summary>
+        /// Активный диалог
+        /// </summary>
+        private Dialog _activeDialog;
 
         #endregion Приватные поля
 
@@ -49,6 +53,21 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
+        /// <summary>
+        /// Свойство - активный диалог
+        /// </summary>
+        public Dialog ActiveDialog 
+        { 
+            get => _activeDialog; 
+            
+            set
+            {
+                _activeDialog = value;
+
+                OnPropertyChanged(nameof(ActiveDialog));
+            }
+        }
+
         #endregion Свойства
 
         #region Конструкторы
@@ -65,5 +84,7 @@ namespace WpfMessengerClient.ViewModels
         }
 
         #endregion Конструкторы
+
+
     }
 }

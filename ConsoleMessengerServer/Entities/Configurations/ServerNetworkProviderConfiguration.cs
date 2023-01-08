@@ -21,7 +21,7 @@ namespace ConsoleMessengerServer.Entities.Configurations
 
             builder.HasKey(cl => cl.Id);
 
-            builder.HasOne(cl => cl.UserData).WithMany(acc => acc.NetworkProviders).HasForeignKey(cl => cl.UserDataId);
+            builder.HasOne(cl => cl.User).WithMany(acc => acc.NetworkProviders).HasForeignKey(cl => cl.UserId);
         }
     }
 }
