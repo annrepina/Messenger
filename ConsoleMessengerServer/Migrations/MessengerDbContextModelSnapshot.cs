@@ -22,24 +22,6 @@ namespace ConsoleMessengerServer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.NetworkProvider", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("UserDataId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserDataId");
-
-                    b.ToTable("NetworkProviders");
-                });
-
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Dialog", b =>
                 {
                     b.Property<int>("Id")
@@ -86,7 +68,7 @@ namespace ConsoleMessengerServer.Migrations
 
                     b.HasIndex("UserDataId");
 
-                    b.ToTable("SentMessages");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Person", b =>
@@ -118,6 +100,24 @@ namespace ConsoleMessengerServer.Migrations
                     b.ToTable("Persons");
                 });
 
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.ServerNetworkProviderEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("UserDataId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserDataId");
+
+                    b.ToTable("NetworkProviders", (string)null);
+                });
+
             modelBuilder.Entity("ConsoleMessengerServer.Entities.UserData", b =>
                 {
                     b.Property<int>("Id")
@@ -143,37 +143,28 @@ namespace ConsoleMessengerServer.Migrations
 
                     b.HasAlternateKey("PersonId");
 
-                    b.ToTable("UserAccounts");
+                    b.ToTable("UserData");
                 });
 
-            modelBuilder.Entity("DialogUserAccount", b =>
+            modelBuilder.Entity("DialogUserData", b =>
                 {
                     b.Property<int>("DialogsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserAccountsId")
+                    b.Property<int>("UsersDataId")
                         .HasColumnType("int");
 
-                    b.HasKey("DialogsId", "UserAccountsId");
+                    b.HasKey("DialogsId", "UsersDataId");
 
-                    b.HasIndex("UserAccountsId");
+                    b.HasIndex("UsersDataId");
 
-                    b.ToTable("DialogUserAccount");
-                });
-
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.NetworkProvider", b =>
-                {
-                    b.HasOne("ConsoleMessengerServer.Entities.UserData", "UserData")
-                        .WithMany("NetworkProviders")
-                        .HasForeignKey("UserDataId");
-
-                    b.Navigation("UserData");
+                    b.ToTable("DialogUserData");
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Message", b =>
                 {
                     b.HasOne("ConsoleMessengerServer.Entities.Dialog", "Dialog")
-                        .WithMany("SentMessages")
+                        .WithMany("Messages")
                         .HasForeignKey("DialogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -189,6 +180,15 @@ namespace ConsoleMessengerServer.Migrations
                     b.Navigation("UserData");
                 });
 
+            modelBuilder.Entity("ConsoleMessengerServer.Entities.ServerNetworkProviderEntity", b =>
+                {
+                    b.HasOne("ConsoleMessengerServer.Entities.UserData", "UserData")
+                        .WithMany("NetworkProviders")
+                        .HasForeignKey("UserDataId");
+
+                    b.Navigation("UserData");
+                });
+
             modelBuilder.Entity("ConsoleMessengerServer.Entities.UserData", b =>
                 {
                     b.HasOne("ConsoleMessengerServer.Entities.Person", "Person")
@@ -200,7 +200,7 @@ namespace ConsoleMessengerServer.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("DialogUserAccount", b =>
+            modelBuilder.Entity("DialogUserData", b =>
                 {
                     b.HasOne("ConsoleMessengerServer.Entities.Dialog", null)
                         .WithMany()
@@ -210,14 +210,14 @@ namespace ConsoleMessengerServer.Migrations
 
                     b.HasOne("ConsoleMessengerServer.Entities.UserData", null)
                         .WithMany()
-                        .HasForeignKey("UserAccountsId")
+                        .HasForeignKey("UsersDataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Dialog", b =>
                 {
-                    b.Navigation("SentMessages");
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Person", b =>

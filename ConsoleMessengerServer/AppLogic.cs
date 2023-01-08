@@ -14,10 +14,11 @@ using ConsoleMessengerServer.Entities.Mapping;
 using DtoLib.NetworkInterfaces;
 using System.Net.Sockets;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 
 namespace ConsoleMessengerServer
 {
-    public class AppLogic : INetworkController
+    public class AppLogic : INetworkController, IDisposable
     {
         public Server Server { get; set; }
 
@@ -27,10 +28,6 @@ namespace ConsoleMessengerServer
         private Dictionary<int, ServerNetworkProvider> _ServerNetworkProviders;
 
         private readonly IMapper _mapper;
-
-        //public delegate Task NetworkMessageSent(NetworkMessage message);
-
-        //public event NetworkMessageSent OnNetworkMessageSent;
 
         public AppLogic()
         {
@@ -45,11 +42,10 @@ namespace ConsoleMessengerServer
         {
             try
             {
-                await Task.Run(() => Server.ListenIncomingConnectionsAsync());
+                await Server.ListenIncomingConnectionsAsync();
             }
             catch (Exception ex)
             {
-                Server.DisconnectClients();
                 Console.WriteLine(ex.Message);
             }
         }
@@ -72,7 +68,7 @@ namespace ConsoleMessengerServer
             {
                 dbClient = new ServerNetworkProviderEntity();
 
-                dbContext.Clients.Add(dbClient);
+                dbContext.NetworkProviders.Add(dbClient);
 
                 dbContext.SaveChanges();
             }
@@ -82,7 +78,7 @@ namespace ConsoleMessengerServer
 
         #region INetworkHandler Implementation
 
-        public async Task RunNewBackClientAsync(TcpClient tcpClient)
+        public void RunNewBackClient(TcpClient tcpClient)
         {
             ServerNetworkProvider networkProvider = new ServerNetworkProvider(tcpClient, this);
 
@@ -92,39 +88,72 @@ namespace ConsoleMessengerServer
             {
                 AddNewClientToDictionary(dbClient.Id, networkProvider);
 
-                await networkProvider.StartProcessingNetworkMessagesAsync();
+                Task.Run(() => networkProvider.StartProcessingNetworkMessagesAsync());
             }
         }
 
+        /// <summary>
+        /// Отключить клиентов от сервера
+        /// </summary>
         public void DisconnectClients()
         {
+            DeleteNetworkProvidersFromDb();
+
             foreach (var client in _ServerNetworkProviders)
             {
                 client.Value.CloseConnection();
             }
         }
 
-        public void RemoveClient(int clientId)
+        /// <summary>
+        /// Удалить сетевых провайдеров из базы данных
+        /// </summary>
+        public void DeleteNetworkProvidersFromDb()
+        {
+            using (var dbContext = new MessengerDbContext())
+            {
+                //SqlCommand sqlCommand = new SqlCommand("DELETE FROM @tableName");           
+                //SqlParameter param = new SqlParameter("@tableName", nameof(dbContext.NetworkProviders));
+
+                // с параметрами почему-то не работает, поэтому пока без них
+                var a = dbContext.Database.ExecuteSqlRaw($"DELETE FROM {nameof(dbContext.NetworkProviders)}");
+
+                dbContext.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Отключить конкретного клиента
+        /// </summary>
+        /// <param name="clientId">Идентификатор клиента</param>
+        public void DisconnectClient(int clientId)
         {
             if (_ServerNetworkProviders != null && _ServerNetworkProviders.Count > 0)
             {
                 _ServerNetworkProviders.Remove(clientId);
             }
+
+            using(var dbContext = new MessengerDbContext())
+            {
+                var provider = dbContext.NetworkProviders.First(prov => prov.Id == clientId);
+
+                dbContext.NetworkProviders.Remove(provider);
+            }
         }
 
-        public async Task ProcessNetworkMessageAsync(NetworkMessage message, int networkProviderId)
+        public void ProcessNetworkMessage(NetworkMessage message, int networkProviderId)
         {
             switch (message.CurrentCode)
             {
                 case NetworkMessage.OperationCode.RegistrationCode:
                     {
-                        await RegisterNewAccount(message, networkProviderId);
+                        RegisterNewAccount(message, networkProviderId);
                     }
                     break;
             }
         }
 
-        public async Task ProcessNetworkMessageAsync(NetworkMessage message)
+        public void ProcessNetworkMessage(NetworkMessage message)
         {
             throw new NotImplementedException();
         }
@@ -133,12 +162,12 @@ namespace ConsoleMessengerServer
 
         public async Task RegisterNewAccount(NetworkMessage message, int networkProviderId)
         {
-            RegistrationAuthentificationDto userAccountRegistrationDto = Deserializer.Deserialize<RegistrationAuthentificationDto>(message.Data);
+            RegistrationDto registrationDto = Deserializer.Deserialize<RegistrationDto>(message.Data);
 
             using (var dbContext = new MessengerDbContext())
             {
                 // ищем есть ли аккаунт с таким номером уже в бд
-                var res = await dbContext.UserAccounts.FirstOrDefaultAsync(acc => acc.Person.PhoneNumber == userAccountRegistrationDto.PhoneNumber);
+                var res = await dbContext.UserData.FirstOrDefaultAsync(acc => acc.Person.PhoneNumber == registrationDto.PhoneNumber);
 
                 NetworkMessage responseMessage = null;
 
@@ -146,24 +175,39 @@ namespace ConsoleMessengerServer
                 if (res == null)
                 {
                     // Создаем акккунт и добавляем его в бд
-                    UserData userAcc = _mapper.Map<UserData>(userAccountRegistrationDto);
+                    UserData userData = _mapper.Map<UserData>(registrationDto);
 
-                    // мапим клиента
-                    ServerNetworkProviderEntity networkProvider = _mapper.Map<ServerNetworkProviderEntity>(_ServerNetworkProviders[networkProviderId]);
+                    ServerNetworkProviderEntity networkProvider = dbContext.NetworkProviders.FirstOrDefault(n => n.Id == networkProviderId);
 
-                    userAcc.NetworkProviders.Add(networkProvider);
+                    if (networkProvider != null)
+                    {
+                        userData.NetworkProviders.Add(networkProvider);
 
-                    dbContext.UserAccounts.Add(userAcc);
+                        dbContext.UserData.Add(userData);
 
-                    dbContext.SaveChanges();
+                        networkProvider.UserData = userData;
 
-                    NetworkProviderDto networkProviderDto = _mapper.Map<NetworkProviderDto>(networkProvider);
+                        try
+                        {
+                            dbContext.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            throw;
+                        }
 
-                    byte[] data = Serializer<NetworkProviderDto>.Serialize(networkProviderDto);
+                        NetworkProviderDto networkProviderDto = _mapper.Map<NetworkProviderDto>(networkProvider);
 
-                    responseMessage = new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
+                        byte[] data = Serializer<NetworkProviderDto>.Serialize(networkProviderDto);
 
-                    Console.WriteLine($"Код операции: {NetworkMessage.OperationCode.RegistrationCode}. Id: {userAcc.Id}. Телефон: {userAccountRegistrationDto.PhoneNumber}. Пароль: {userAccountRegistrationDto.Password}");
+                        responseMessage = new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
+
+                        Console.WriteLine($"Код операции: {NetworkMessage.OperationCode.RegistrationCode}. Id: {userData.Id}. Телефон: {registrationDto.PhoneNumber}. Пароль: {registrationDto.Password}");
+                    }
+
+                    else
+                        responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.RegistrationFailedCode);
 
                 }//if
 
@@ -176,5 +220,12 @@ namespace ConsoleMessengerServer
 
             }//using
         }//method
+
+        public void Dispose()
+        {
+            DisconnectClients();
+
+            Server.Stop();
+        }
     }
 }

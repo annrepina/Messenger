@@ -20,12 +20,12 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Команда по нажатию на кнопку регистрации
         /// </summary>
-        public DelegateCommand OnSignUpCommand { get; set; }
+        public DelegateCommand OnSignUpCommand { get; init; }
 
         /// <summary>
         /// Команда по нажатию на кнопку входа
         /// </summary>
-        public DelegateCommand OnSignInCommand { get; set; }
+        public DelegateCommand OnSignInCommand { get; init; }
 
         /// <summary>
         /// Конструктор с параметром

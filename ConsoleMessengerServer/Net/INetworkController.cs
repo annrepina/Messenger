@@ -13,7 +13,7 @@ namespace ConsoleMessengerServer.Net
     /// </summary>
     public interface INetworkController : IServerNetworkMessageHandler
     {
-        public Task RunNewBackClientAsync(TcpClient tcpClient);
+        public void RunNewBackClient(TcpClient tcpClient);
 
         public void DisconnectClients();
 
@@ -21,6 +21,6 @@ namespace ConsoleMessengerServer.Net
         /// Удалить клиента
         /// </summary>
         /// <param name="clientId">Id клиента</param>
-        public void RemoveClient(int clientId);
+        public void DisconnectClient(int clientId);
     }
 }

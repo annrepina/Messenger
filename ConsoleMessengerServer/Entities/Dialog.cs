@@ -20,11 +20,20 @@ namespace ConsoleMessengerServer.Entities
         /// <summary>
         /// Свойство - список данных пользователей, участвующих в диалоге
         /// </summary>
-        public List<UserData> UsersDataList { get; set; }
+        public List<UserData> UsersData { get; set; }
 
         /// <summary>
         /// Свойство - список сообщений
         /// </summary>
         public List<Message> Messages { get; set; }
+
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
+        public Dialog()
+        {
+            UsersData = new List<UserData>();
+            Messages = new List<Message>();
+        }
     }
 }

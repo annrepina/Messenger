@@ -17,12 +17,10 @@ namespace DtoLib.NetworkServices
         /// </summary>
         public NetworkProvider NetworkProvider { get; private set; }
 
-        //public NetworkMessage NetworkMessage { get; set; }
-
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        /// <param name="client">Клиент</param>
+        /// <param name="networkProvider">Сетевой провайдер</param>
         public Receiver(NetworkProvider networkProvider)
         {
             NetworkProvider = networkProvider;
@@ -32,29 +30,18 @@ namespace DtoLib.NetworkServices
         /// Получить сообщение
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<byte[]> ReceiveBytesAsync()
+        public async Task<byte[]> ReceiveBytesAsync()
         {
             //// буфер для получаемых данных
             byte[] data = new byte[256];
 
             int bytes = 0;
 
-            try
+            do
             {
-                do
-                {
-                    bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
+                bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
 
-                    //bytes = NetworkProvider.NetworkStream.Read(data, 0, data.Length);
-
-                } while (NetworkProvider.NetworkStream.DataAvailable);
-
-            }
-            catch (Exception)
-            {
-                //MessageBox.Show("Соединение прервано");
-                Disconnect();
-            }
+            } while (NetworkProvider.NetworkStream.DataAvailable);
 
             byte[] cutData = new byte[bytes];
 
@@ -74,19 +61,12 @@ namespace DtoLib.NetworkServices
         {
             while (true)
             {
-                try
-                {
-                    // буфер для получаемых данных
-                    byte[] data = await ReceiveBytesAsync();
+                // буфер для получаемых данных
+                byte[] data = await ReceiveBytesAsync();
 
-                    NetworkMessage networkMessage = Deserializer.Deserialize<NetworkMessage>(data);
+                NetworkMessage networkMessage = Deserializer.Deserialize<NetworkMessage>(data);
 
-                    await NetworkProvider.GetNetworkMessageAsync(networkMessage);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+                NetworkProvider.GetNetworkMessage(networkMessage);
             }
         }
 
@@ -102,9 +82,6 @@ namespace DtoLib.NetworkServices
             // Отключение клиента
             if (NetworkProvider.TcpClient != null)
                 NetworkProvider.TcpClient.Close();
-
-            //завершение процесса
-            Environment.Exit(0);
         }
     }
 }

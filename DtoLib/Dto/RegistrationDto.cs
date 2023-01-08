@@ -12,7 +12,7 @@ namespace DtoLib.Dto
     /// Data transfer object который представляет информацию, необходимую для регистрации пользователя в мессенджере
     /// </summary>
     [ProtoContract]
-    public class RegistrationAuthentificationDto
+    public class RegistrationDto
     {
         /// <summary>
         /// Свойство - объект класса, который представляет человека
@@ -27,5 +27,12 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(2)]
         public string Password { get; set; }
+
+        /// <summary>
+        /// Свойство - имя
+        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
+        /// </summary>
+        [ProtoMember(3)]
+        public string Name { get; set; }
     }
 }

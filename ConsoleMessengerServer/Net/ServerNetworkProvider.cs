@@ -39,37 +39,17 @@ namespace ConsoleMessengerServer.Net
         {
             try
             {
-                // в бесконечном цикле получаем сообщения от клиента
-                while (true)
-                {
-                    try
-                    {
-                        await Receiver.ReceiveNetworkMessageAsync();
-                    }
-                    catch (Exception)
-                    {
-                        break;                      
-                    }
-                }
+                await Receiver.ReceiveNetworkMessageAsync();
             }
-
+            catch (Exception)
+            {
+                Console.WriteLine($"Клиент Id {Id} отключился");
+            }
             finally
             {
-                NetworkController.RemoveClient(Id);
+                NetworkController.DisconnectClient(Id);
                 CloseConnection();
             }
-        }
-
-        /// <summary>
-        /// Закрыть подлючения
-        /// </summary>
-        public void CloseConnection()
-        {
-            if (NetworkStream != null)
-                NetworkStream.Close();
-
-            if (TcpClient != null)
-                TcpClient.Close();
         }
 
         /// <summary>
@@ -77,13 +57,13 @@ namespace ConsoleMessengerServer.Net
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
         /// <returns></returns>
-        public override async Task GetNetworkMessageAsync(NetworkMessage message)
+        public override void GetNetworkMessage(NetworkMessage message)
         {
             if(message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode || message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode)
-                await NetworkController.ProcessNetworkMessageAsync(message, Id);
+                NetworkController.ProcessNetworkMessage(message, Id);
           
             else
-                await NetworkController.ProcessNetworkMessageAsync(message);
+                NetworkController.ProcessNetworkMessage(message);
         }
     }
 }

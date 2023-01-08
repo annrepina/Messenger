@@ -23,7 +23,13 @@ namespace WpfMessengerClient.Models.Mapping
 
             CreateMap<ClientNetworkProvider, NetworkProviderDto>().ReverseMap();
 
-            CreateMap<UserData, RegistrationAuthentificationDto>().ForMember(dest => dest.PhoneNumber, exp => exp.MapFrom(c => c.Person.PhoneNumber)).ReverseMap();
+            CreateMap<RegistrationData, RegistrationDto>().ReverseMap();
+
+            //CreateMap<RegistrationData, UserData>().ForMember(dest => dest.Person.Name, exp => exp.MapFrom(reg => reg.Name))
+            //                                       .ForMember(dest => dest.Person.PhoneNumber, exp => exp.MapFrom(reg => reg.PhoneNumber));
+
+            CreateMap<RegistrationData, UserData>().ForPath(dest => dest.Person.Name, exp => exp.MapFrom(reg => reg.Name))
+                                                   .ForPath(dest => dest.Person.PhoneNumber, exp => exp.MapFrom(reg => reg.PhoneNumber)).ReverseMap();
 
             //CreateMap<UserData, SuccessfulRegistrationDto>().ForMember(nameof(SuccessfulRegistrationDto.PhoneNumber), exp => exp.MapFrom(c => c.Person.PhoneNumber)).ReverseMap();
         }

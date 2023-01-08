@@ -10,7 +10,6 @@
                 <ControlTemplate TargetType="TextBox">
                     <Border CornerRadius="8"
                             Background="#FFC8C7C7" BorderThickness="0">
-
                         <Grid>
                             <TextBox VerticalAlignment="Stretch"
                                      VerticalContentAlignment="Center"
@@ -21,20 +20,24 @@
                                      BorderThickness="0"
                                      Foreground="Gray"
                                      CaretBrush="Gray"
-                                     Margin="8,0,0,0"
-                                     Text="{Binding CurrentUser.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <TextBox.InputBindings>
-                                    <KeyBinding Command="{Binding OnEnterChatCommand}" Key="Return"/>
-                                </TextBox.InputBindings>
+                                     Margin="8,0,0,0">
+                                <TextBox.Text>
+                                    <Binding Path="RegistrationData.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <DataErrorValidationRule />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
                             </TextBox>
 
-
                             <TextBlock IsHitTestVisible="False"
-                                       Text="Имя или ник"
+                                       Text="Введите имя"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Left"
                                        Margin="10,0,0,0"
-                                       Foreground="#FF5F5D5D">
+                                       Foreground="#FF5F5D5D"
+                                       FontFamily="Tahoma"
+                                       FontSize="20">
 
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
@@ -46,21 +49,14 @@
                                         </Style.Triggers>
                                     </Style>
                                 </TextBlock.Style>
-
                             </TextBlock>
-
                         </Grid>
                     </Border>
-
-                    <!--<ControlTemplate.Triggers>
-                        <Trigger >
-                            
-                        </Trigger>
-                    </ControlTemplate.Triggers>-->
-                    
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
+
     </Style>
-    
+
 </ResourceDictionary>

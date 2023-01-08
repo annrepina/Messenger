@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models
@@ -10,19 +11,23 @@ namespace WpfMessengerClient.Models
     /// <summary>
     /// Данные, необходимые при регистрации в мессенджере
     /// </summary>
-    public class RegistrationData : BaseNotifyPropertyChanged, IDataErrorInfo
+    public class RegistrationData : LoginData
     {
+        #region Константы
+
+        /// <summary>
+        /// Максимальная длина имени
+        /// </summary>
+        private const int MaxNameLength = 50;
+
+        /// <summary>
+        /// Минимальная длина имени
+        /// </summary>
+        private const int MinNameLength = 2;
+
+        #endregion Константы
+
         #region Приватные поля
-
-        /// <summary>
-        /// Номер телефона
-        /// </summary>
-        private string _phoneNumber;
-
-        /// <summary>
-        /// Пароль
-        /// </summary>
-        private string _password;
 
         /// <summary>
         /// Повторяющийся пароль
@@ -30,48 +35,13 @@ namespace WpfMessengerClient.Models
         private string _repeatedPassword;
 
         /// <summary>
-        /// Логин
+        /// Имя
         /// </summary>
-        private string _login;
-
-        /// <summary>
-        /// Ошибка, которая может возникнуть при валидации данных класса
-        /// </summary>
-        private string _error;
+        private string _name;
 
         #endregion Приватные поля
 
         #region Свойства
-
-        /// <summary>
-        /// Свойство - номер телефона
-        /// </summary>
-        public string PhoneNumber
-        {
-            get => _phoneNumber;
-
-            set
-            {
-                _phoneNumber = value;
-
-                OnPropertyChanged(nameof(PhoneNumber));
-            }
-        }
-
-        /// <summary>
-        /// Свойство - пароль
-        /// </summary>
-        public string Password
-        {
-            get => _password;
-
-            set
-            {
-                _password = value;
-
-                OnPropertyChanged(nameof(Password));
-            }
-        }
 
         /// <summary>
         /// Свойство - повторяйющийся пароль
@@ -84,22 +54,24 @@ namespace WpfMessengerClient.Models
             {
                 _repeatedPassword = value;
 
+                ValidatePassword();
+
                 OnPropertyChanged(nameof(RepeatedPassword));
             }
         }
 
         /// <summary>
-        /// Свойство - логин
+        /// Свойство - имя
         /// </summary>
-        public string Login 
+        public string Name 
         { 
-            get => _login; 
+            get => _name; 
 
             set
             {
-                _login = value;
+                _name = value;
 
-                OnPropertyChanged(nameof(Login));
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -107,12 +79,10 @@ namespace WpfMessengerClient.Models
 
         #region Конструкторы 
 
-        public RegistrationData()
+        public RegistrationData() : base()
         {
-            Login = "";
-            Password = "";
+            Name = "";
             RepeatedPassword = "";
-            PhoneNumber = "";
         }
 
         #endregion Конструкторы
@@ -120,26 +90,11 @@ namespace WpfMessengerClient.Models
         #region Реализация интерфейса IDataErrorInfo
 
         /// <summary>
-        /// Ошибка при валидации свойства
-        /// </summary>
-        public string Error
-        {
-            get => _error;
-
-            set
-            {
-                _error = value;
-
-                OnPropertyChanged(nameof(Error));
-            }
-        }
-
-        /// <summary>
         /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
         /// </summary>
         /// <param name="propName">Имя свойства</param>
         /// <returns></returns>
-        public string this[string propName]
+        public override string this[string propName]
         {
             get
             {
@@ -158,17 +113,18 @@ namespace WpfMessengerClient.Models
         /// Проверить все свойства класса на корректность
         /// </summary>
         /// <param name="propName">Имя свойства</param>
-        private void ValidateAllProperties(string propName)
+        protected override void ValidateAllProperties(string propName)
         {
+            base.ValidateAllProperties(propName);
+
             switch (propName)
             {
-                case nameof(PhoneNumber):
-                    ValidatePhoneNumber();
+                case nameof(Name):
+                    ValidateName();
                     break;
 
-                case nameof(Password):
+                case nameof(RepeatedPassword):
                     ValidatePassword();
-
                     break;
 
                 default:
@@ -176,14 +132,41 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        private void ValidatePassword()
+        /// <summary>
+        /// Проверить на корректность повторяемый пароль
+        /// </summary>
+        protected override void ValidatePassword()
         {
-            throw new NotImplementedException();
+            Regex regex = new Regex(@"^\w{6}");
+
+            if (!regex.IsMatch(Password) || !regex.IsMatch(RepeatedPassword))
+                Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+
+            else if (Password.Length > MaxLengthOfPassword || RepeatedPassword.Length > MaxLengthOfPassword)
+                Error = "Пароль должен содержать не больше 10ти символов";
+
+            else if (Password.Length < MinLengthOfPassword || RepeatedPassword.Length < MinLengthOfPassword)
+                Error = "Пароль должен содержать не меньше 6ти символов";
+
+            else if (Password != RepeatedPassword)
+                Error = "Пароли должны совпадать";
         }
 
-        private void ValidatePhoneNumber()
+        /// <summary>
+        /// Проверить на корретность имя
+        /// </summary>
+        private void ValidateName()
         {
-            throw new NotImplementedException();
+            Regex regex = new Regex(@"^\w+");
+
+            if (!regex.IsMatch(Name))
+                Error = "Недопустимые символы";
+
+            else if (Name.Length > MaxNameLength)
+                Error = "Имя не должно превышать 50ти символов";
+
+            else if (Name.Length < MinNameLength)
+                Error = "Имя должно быть не меньше 2х символов";
         }
 
         #endregion Валидация

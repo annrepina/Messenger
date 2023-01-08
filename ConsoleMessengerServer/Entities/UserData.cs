@@ -52,5 +52,15 @@ namespace ConsoleMessengerServer.Entities
         /// Список отправленных сообщений
         /// </summary>
         public List<Message> SentMessages { get; set; }
+
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
+        public UserData()
+        {
+            Dialogs = new List<Dialog>();
+            NetworkProviders = new List<ServerNetworkProviderEntity>();
+            SentMessages = new List<Message>();
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace ConsoleMessengerServer.Entities.Configurations
         /// <param name="builder">Строитель для конфигурации</param>
         public void Configure(EntityTypeBuilder<ServerNetworkProviderEntity> builder)
         {
-            builder.ToTable(nameof(NetworkProvider));
+            builder.ToTable(nameof(NetworkProvider) + 's');
 
             builder.HasKey(cl => cl.Id);
 

@@ -24,8 +24,11 @@ namespace WpfMessengerClient
         public ChatWindow()
         {
             InitializeComponent();
+        }
 
-            //DataContext = new ChatWindowViewModel();
+        public ChatWindow(ChatWindowViewModel chatWindowViewModel) : this()
+        {
+            DataContext = chatWindowViewModel;
         }
     }
 }

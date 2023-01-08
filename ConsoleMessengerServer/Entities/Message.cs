@@ -49,6 +49,6 @@ namespace ConsoleMessengerServer.Entities
         /// <summary>
         /// Свойство - дата и время отправки сообщения
         /// </summary>
-        public DateTime? DateTime { get; set; } 
+        public DateTime? DateTime { get; set; }
     }
 }

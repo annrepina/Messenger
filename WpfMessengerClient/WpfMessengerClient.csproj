@@ -31,10 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Windows\5f50cf3d4869a94052c1cf18bcab280e.jpg" />
-    <Resource Include="Windows\6254-r15.jpg" />
-    <Resource Include="Windows\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
-    <Resource Include="Windows\storm (2).png" />
+    <Resource Include="Windows\Images\5f50cf3d4869a94052c1cf18bcab280e.jpg" />
+    <Resource Include="Windows\Images\6254-r15.jpg" />
+    <Resource Include="Windows\Images\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
+    <Resource Include="Windows\Images\storm %282%29.png" />
   </ItemGroup>
 
 </Project>

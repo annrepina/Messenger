@@ -70,17 +70,29 @@ namespace WpfMessengerClient.Services
         /// </summary>
         public async Task ConnectAsync(NetworkMessage message)
         {
-            if (!TcpClient.Connected)
+            try
             {
-                TcpClient.Connect(Host, Port);
-                NetworkStream = TcpClient.GetStream();
-
-                if (message != null)
+                if (!TcpClient.Connected)
                 {
-                    await Sender.SendNetworkMessageAsync(message);
-                }
+                    TcpClient.Connect(Host, Port);
+                    NetworkStream = TcpClient.GetStream();
 
-                await Receiver.ReceiveNetworkMessageAsync();
+                    if (message != null)
+                    {
+                        await Sender.SendNetworkMessageAsync(message);
+                    }
+
+                    await Receiver.ReceiveNetworkMessageAsync();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Подключение прервано...");
+                //throw;
+            }
+            finally
+            {
+                CloseConnection();
             }
         }
 
@@ -89,9 +101,9 @@ namespace WpfMessengerClient.Services
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
         /// <returns></returns>
-        public override async Task GetNetworkMessageAsync(NetworkMessage message)
+        public override void GetNetworkMessage(NetworkMessage message)
         {
-            await Task.Run(() => NetworkMessageHandler.ProcessNetworkMessageAsync(message));
+            NetworkMessageHandler.ProcessNetworkMessage(message);
         }
 
         #endregion Методы связанные с сетью

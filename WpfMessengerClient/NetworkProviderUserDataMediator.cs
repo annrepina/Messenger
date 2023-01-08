@@ -95,7 +95,7 @@ namespace WpfMessengerClient
         /// Обработать сетевое сообщение
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
-        public async Task ProcessNetworkMessageAsync(NetworkMessage message)
+        public void ProcessNetworkMessage(NetworkMessage message)
         {
             switch (message.CurrentCode)
             {
@@ -103,7 +103,7 @@ namespace WpfMessengerClient
                     break;
                 case NetworkMessage.OperationCode.SuccessfulRegistrationCode:
                     {
-                        ProcessRegistrationNetworkMessageAsync(message);
+                        ProcessSuccessfulRegistrationNetworkMessage(message);
                     }
                     break;
 
@@ -129,7 +129,7 @@ namespace WpfMessengerClient
         /// Обаработать сетевое сообщение о регистрации пользователя асинхронно
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
-        public async Task ProcessRegistrationNetworkMessageAsync(NetworkMessage message)
+        public void ProcessSuccessfulRegistrationNetworkMessage(NetworkMessage message)
         {
             var data = message.Data;
 
@@ -137,7 +137,7 @@ namespace WpfMessengerClient
             {
                 NetworkProviderDto networkProviderDto = Deserializer.Deserialize<NetworkProviderDto>(data);
 
-                await RegisterNewUserAsync(networkProviderDto);
+                RegisterNewUser(networkProviderDto);
             }
             catch (Exception ex)
             {
@@ -149,11 +149,10 @@ namespace WpfMessengerClient
         /// <summary>
         /// Зарегистрировать нового пользователя асинхронно
         /// </summary>
-        /// <param name="networkProviderDto">DTO, которое представляет данные о зарегистрированном пользователе</param>
-        public async Task RegisterNewUserAsync(NetworkProviderDto networkProviderDto)
+        /// <param name="networkProviderDto">DTO, сетевого провайдера с Id из базы данных</param>
+        /// 
+        public void RegisterNewUser(NetworkProviderDto networkProviderDto)
         {
-            UserData = _mapper.Map<UserData>(networkProviderDto);
-
             ClientNetworkProvider.Id = networkProviderDto.Id;
 
             SignUp?.Invoke();
@@ -163,11 +162,14 @@ namespace WpfMessengerClient
 
         #region Методы взаимодействия с сетью
 
-        public async Task SendRegistrationRequestAsync(string phoneNumber, string password)
+        public async Task SendRegistrationRequestAsync(RegistrationData registrationData)
         {
-            RegistrationAuthentificationDto userAccountRegistrationDto = new RegistrationAuthentificationDto() { PhoneNumber = phoneNumber, Password = password};
+            UserData userData = _mapper.Map<UserData>(registrationData);
+            UserData = userData;
 
-            byte[] data = Serializer<RegistrationAuthentificationDto>.Serialize(userAccountRegistrationDto);
+            RegistrationDto registrationDto = _mapper.Map<RegistrationDto>(registrationData);
+
+            byte[] data = Serializer<RegistrationDto>.Serialize(registrationDto);
 
             NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.RegistrationCode);
 

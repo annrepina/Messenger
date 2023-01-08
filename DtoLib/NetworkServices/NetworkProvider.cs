@@ -51,10 +51,22 @@ namespace DtoLib.NetworkServices
         }
 
         /// <summary>
+        /// Закрыть подлючения
+        /// </summary>
+        public void CloseConnection()
+        {
+            if (NetworkStream != null)
+                NetworkStream.Close();
+
+            if (TcpClient != null)
+                TcpClient.Close();
+        }
+
+        /// <summary>
         /// Асинхронный метод получения сетевого сообщения
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
         /// <returns></returns>
-        public abstract Task GetNetworkMessageAsync(NetworkMessage message);
+        public abstract void GetNetworkMessage(NetworkMessage message);
     }
 }

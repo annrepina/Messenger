@@ -7,7 +7,7 @@ using ConsoleMessengerServer.Net;
 
 namespace ConsoleMessengerServer
 {
-    public class App
+    public class App : IDisposable
     {
         private AppLogic _appLogic;
 
@@ -16,8 +16,15 @@ namespace ConsoleMessengerServer
             _appLogic = new AppLogic();
         }
 
+        public void Dispose()
+        {
+            _appLogic.Dispose();
+        }
+
         public async Task LaunchAsync()
         {
+            _appLogic.DeleteNetworkProvidersFromDb();
+
             await _appLogic.StartListeningConnectionsAsync();
         }
     }

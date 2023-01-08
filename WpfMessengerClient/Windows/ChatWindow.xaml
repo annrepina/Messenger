@@ -11,42 +11,28 @@
         Title="ChatWindow"
         WindowState="Normal">
 
-    <Grid Background="#FFFAFAFA">
+    <Grid Background="#FF021F38">
 
 
         <!--#region Grid layout-->
 
         <Grid.ColumnDefinitions>
-
             <ColumnDefinition Width="*"/>
-
             <ColumnDefinition Width="3*"/>
-
         </Grid.ColumnDefinitions>
 
-
-
         <Grid.RowDefinitions>
-
             <RowDefinition Height="*"/>
-
         </Grid.RowDefinitions>
 
         <!--#endregion Grid layout-->
 
-
-
         <!--#region Listviews-->
 
-        <DockPanel Background="LightGray" Grid.Column="0" Margin="0"
-                    >
+        <DockPanel Background="LightGray" Grid.Column="0" Margin="0">
 
             <TabControl Margin="0,5,0,0" Background="Transparent">
                 <TabItem Header="Chats">
-
-
-
-
                     <ListView   
                       BorderBrush="{x:Null}" Foreground="#E50A0A0A"
                     Margin="0,10,0,10" FontFamily="Bookman Old Style"
@@ -137,7 +123,6 @@
             <TextBox 
                     Margin="10,0,90,10" VerticalAlignment="Bottom"
                     Text="{Binding Message}" Height="30"
-                    Style="{StaticResource SendMessageTextBox}"
              />
 
             <Button 

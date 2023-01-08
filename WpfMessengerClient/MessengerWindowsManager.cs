@@ -70,5 +70,21 @@ namespace WpfMessengerClient
         {
 
         }
+
+        /// <summary>
+        /// Переключиться на окно чата
+        /// </summary>
+        public void SwitchToChatWindow(NetworkProviderUserDataMediator networkProviderUserDataMediator)
+        {
+            ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(networkProviderUserDataMediator, this);
+
+            ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
+
+            CurrentWindow.Hide();
+
+            CurrentWindow = chatWindow;
+
+            CurrentWindow.Show();
+        }
     }
 }

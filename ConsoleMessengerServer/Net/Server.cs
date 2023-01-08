@@ -47,72 +47,23 @@ namespace ConsoleMessengerServer.Net
         /// </summary>
         public async Task ListenIncomingConnectionsAsync()
         {
-            try
-            {
-                _tcpListener.Start();
-                Console.WriteLine("Сервер запущен. Ожидание подключений...");
+            _tcpListener.Start();
+            Console.WriteLine("Сервер запущен. Ожидание подключений...");
 
-                while (true)
-                {
-                    TcpClient tcpClient = await _tcpListener.AcceptTcpClientAsync();
+            while (true)
+            {
+                TcpClient tcpClient = await _tcpListener.AcceptTcpClientAsync();
 
-                    await NetworkHandler.RunNewBackClientAsync(tcpClient);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                DisconnectClients();
+                NetworkHandler.RunNewBackClient(tcpClient);
             }
         }
 
-        ///// <summary>
-        ///// Трансляция сообщения подлюченным клиентам
-        ///// </summary>
-        ///// <param name="message">Сообщение</param>
-        ///// <param name="id">Id клиента, который отправил данное сообщение</param>
-        //public async Task BroadcastMessageAsync(string message, int id)
-        //{
-        //    byte[] data = Encoding.UTF8.GetBytes(message);
-
-        //    foreach (var client in _ServerNetworkProviders)
-        //    {
-        //        // если id клиента не равно id отправляющего
-        //        if (client.Id != id)
-        //        {
-        //            // передача данных
-        //            await client.NetworkStream.WriteAsync(data, 0, data.Length);
-        //        }
-        //    }
-        //}
-        //public void BroadcastOperationCode(byte operationCode, int id)
-        //{
-        //    foreach (var client in _ServerNetworkProviders)
-        //    {
-        //        // если id клиента не равно id отправляющего
-        //        if (client.Id != id)
-        //        {
-        //            // передача данных
-        //            client.NetworkStream.WriteByte(operationCode);
-        //        }
-        //    }
-        //}
-
         /// <summary>
-        /// Отключение всех клиентов
+        /// Остановка сервера
         /// </summary>
-        public void DisconnectClients()
+        public void Stop()
         {
-            NetworkHandler.DisconnectClients();
-
-            /// Остановка сервера
             _tcpListener.Stop();
-
-            //завершение процесса
-            Environment.Exit(0);
         }
     }
 }

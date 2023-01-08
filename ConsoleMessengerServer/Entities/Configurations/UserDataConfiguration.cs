@@ -22,7 +22,7 @@ namespace ConsoleMessengerServer.Entities.Configurations
 
             builder.Property(acc => acc.IsOnline).IsRequired().HasDefaultValue(false);
 
-            builder.HasMany(acc => acc.Dialogs).WithMany(d => d.UsersDataList);
+            builder.HasMany(acc => acc.Dialogs).WithMany(d => d.UsersData);
 
             builder.HasMany(acc => acc.NetworkProviders).WithOne(cl => cl.UserData);
 

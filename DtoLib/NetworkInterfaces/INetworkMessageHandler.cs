@@ -8,6 +8,6 @@ namespace DtoLib.NetworkInterfaces
 {
     public interface INetworkMessageHandler
     {
-        public Task ProcessNetworkMessageAsync(NetworkMessage message);
+        public void ProcessNetworkMessage(NetworkMessage message);
     }
 }

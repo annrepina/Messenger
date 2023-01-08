@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+   
     <Style TargetType="TextBox" x:Key="InputPhoneNumberTextBox">
         <Setter Property="Foreground" Value="Gray"/>
         <Setter Property="FontWeight" Value="Medium"/>
@@ -25,7 +26,7 @@
                                      CaretBrush="Gray"
                                      Margin="8,0,0,0">
                                 <TextBox.Text>
-                                    <Binding Path="Messenger.CurrentUserAccount.Person.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                    <Binding Path="RegistrationData.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" NotifyOnValidationError="True" ValidatesOnExceptions="True">
                                         <Binding.ValidationRules>
                                             <DataErrorValidationRule />
                                         </Binding.ValidationRules>
@@ -38,6 +39,16 @@
                                 <!--
                                     <KeyBinding Key="Backspace" Command="{Binding OnPhoneNumberInputTextBoxBackspaceDownCommand}" />
                                 </TextBox.InputBindings>-->
+
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <Trigger Property="Validation.HasError" Value="true">
+                                                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)[0].ErrorContent}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
 
                             </TextBox>
 
@@ -67,6 +78,10 @@
                         </Grid>
                     </Border>
                 </ControlTemplate>
+
+
+
+
             </Setter.Value>
         </Setter>
     </Style>

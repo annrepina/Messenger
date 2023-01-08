@@ -18,12 +18,12 @@ namespace ConsoleMessengerServer.DataBase
         /// <summary>
         /// Коллекция для сущности NetworkProvider, которая будет являться таблицей в базе данных
         /// </summary>
-        public DbSet<ServerNetworkProviderEntity> Clients { get; set; }
+        public DbSet<ServerNetworkProviderEntity> NetworkProviders { get; set; }
 
         /// <summary>
         /// Коллекция для сущности UserData, которая будет являться таблицей в базе данных
         /// </summary>
-        public DbSet<UserData> UserAccounts { get; set; }
+        public DbSet<UserData> UserData { get; set; }
 
         /// <summary>
         /// Коллекция для сущности Person, которая будет являться таблицей в базе данных
