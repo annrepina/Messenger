@@ -53,6 +53,6 @@ namespace DtoLib.Dto
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(6)]
-        public DateTime? DateTime { get; set; }
+        public DateTime DateTime { get; set; }
     }
 }

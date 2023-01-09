@@ -7,6 +7,9 @@ using ConsoleMessengerServer.Net;
 
 namespace ConsoleMessengerServer
 {
+    /// <summary>
+    /// Приложение - серверная часть мессенжера
+    /// </summary>
     public class App : IDisposable
     {
         private AppLogic _appLogic;
@@ -23,9 +26,22 @@ namespace ConsoleMessengerServer
 
         public async Task LaunchAsync()
         {
-            _appLogic.DeleteNetworkProvidersFromDb();
+            //_appLogic.DeleteNetworkProvidersFromDb();
 
             await _appLogic.StartListeningConnectionsAsync();
+        }
+
+        /// <summary>
+        /// Считывать клавишу ESC, которая может закрыть сервер
+        /// </summary>
+        public void ReadStopKey()
+        {
+            Console.WriteLine();
+
+            var keyInfo = Console.ReadKey();
+
+            if (keyInfo.Key == ConsoleKey.Escape)
+                Dispose();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace ConsoleMessengerServer.Entities.Configurations
 
             builder.Property(m => m.IsRead).IsRequired().HasDefaultValue(false);
 
-            builder.Property(m => m.DateTime).ValueGeneratedOnAdd();
+            builder.Property(m => m.DateTime).IsRequired();
         }
     }
 }

@@ -27,7 +27,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Дата и время отправки сообщения
         /// </summary>
-        private DateTime? _dateTime;
+        private DateTime _dateTime;
 
         /// <summary>
         /// Данные о пользователе - отправителе сообщения
@@ -129,7 +129,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Свойство - дата и время отправки сообщения
         /// </summary>
-        public DateTime? DateTime
+        public DateTime DateTime
         {
             get => _dateTime;
 
@@ -156,7 +156,7 @@ namespace WpfMessengerClient.Models
             _text = text;
             _senderUserData = senderUserAccount;
             _isRead = false;
-            _dateTime = null;
+            _dateTime = DateTime.Now;
             _dialog = dialog;
         }
 

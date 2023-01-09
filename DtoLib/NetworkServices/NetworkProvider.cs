@@ -14,6 +14,13 @@ namespace DtoLib.NetworkServices
     public abstract class NetworkProvider
     {
         /// <summary>
+        /// Счетчик, на основе которого, объекту присваивается id
+        /// </summary>
+        private static int _counter = 0;
+
+        #region Свойства
+
+        /// <summary>
         /// Сетевой поток, по которому будет осуществляться передача данных
         /// </summary>
         public NetworkStream NetworkStream { get; set; }
@@ -38,12 +45,14 @@ namespace DtoLib.NetworkServices
         /// </summary>
         public Sender Sender { get; private set; }
 
+        #endregion Свойства 
+
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
         public NetworkProvider()
         {
-            Id = 0;
+            Id = ++_counter;
             Receiver = new Receiver(this);
             Sender = new Sender(this);
             NetworkStream = null;
@@ -63,7 +72,7 @@ namespace DtoLib.NetworkServices
         }
 
         /// <summary>
-        /// Асинхронный метод получения сетевого сообщения
+        /// Метод получения сетевого сообщения
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
         /// <returns></returns>

@@ -15,29 +15,44 @@ using DtoLib.NetworkInterfaces;
 using System.Net.Sockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
+using ConsoleMessengerServer.Net.Interfaces;
 
 namespace ConsoleMessengerServer
 {
     public class AppLogic : INetworkController, IDisposable
     {
+        /// <summary>
+        /// Словарь, который содержит пары: ключ - id агрегатора соединений пользователя 
+        /// и значение - самого агрегатора
+        /// </summary>
+        private Dictionary<int, UserProxy> _userProxyList;
+
+        /// <summary>
+        /// Маппер для мапинга ентити на DTO и обратно
+        /// </summary>
+        private readonly IMapper _mapper;
+
+        /// <summary>
+        /// Сервер, который прослушивает входящие подключения
+        /// </summary>
         public Server Server { get; set; }
 
         /// <summary>
-        /// Словарь, который содержит пары ключ - id сетевого провайдера и самого провайдера
+        /// Конструктор по умолчанию
         /// </summary>
-        private Dictionary<int, ServerNetworkProvider> _ServerNetworkProviders;
-
-        private readonly IMapper _mapper;
-
         public AppLogic()
         {
             Server = new Server(this);
-            _ServerNetworkProviders = new Dictionary<int, ServerNetworkProvider>();
+            _userProxyList = new Dictionary<int, UserProxy>();
 
             DataBaseMapper mapper = DataBaseMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
         }
 
+        /// <summary>
+        /// Асинхронный метод - начать прослушивание входящих подключений
+        /// </summary>
+        /// <returns></returns>
         public async Task StartListeningConnectionsAsync()
         {
             try
@@ -56,40 +71,37 @@ namespace ConsoleMessengerServer
 
             networkProvider.Id = dbClientId;
 
-            _ServerNetworkProviders.Add(networkProvider.Id, networkProvider);
+            _userProxyList.Add(networkProvider.Id, networkProvider);
         }
 
-        public ServerNetworkProviderEntity AddNewClientToDb()
-        {
-            // ентити
-            ServerNetworkProviderEntity? dbClient;
+        //public ServerNetworkProviderEntity AddNewClientToDb()
+        //{
+        //    // ентити
+        //    ServerNetworkProviderEntity? dbClient;
 
-            using (var dbContext = new MessengerDbContext())
-            {
-                dbClient = new ServerNetworkProviderEntity();
+        //    using (var dbContext = new MessengerDbContext())
+        //    {
+        //        dbClient = new ServerNetworkProviderEntity();
 
-                dbContext.NetworkProviders.Add(dbClient);
+        //        dbContext.NetworkProviders.Add(dbClient);
 
-                dbContext.SaveChanges();
-            }
+        //        dbContext.SaveChanges();
+        //    }
 
-            return dbClient;
-        }
+        //    return dbClient;
+        //}
 
         #region INetworkHandler Implementation
 
-        public void RunNewBackClient(TcpClient tcpClient)
+        /// <summary>
+        /// Инициализировать новое подключение
+        /// </summary>
+        /// <param name="tcpClient">TCP клиент</param>
+        public void InitializeNewConnection(TcpClient tcpClient)
         {
             ServerNetworkProvider networkProvider = new ServerNetworkProvider(tcpClient, this);
 
-            ServerNetworkProviderEntity? dbClient = AddNewClientToDb();
-
-            if (dbClient != null)
-            {
-                AddNewClientToDictionary(dbClient.Id, networkProvider);
-
-                Task.Run(() => networkProvider.StartProcessingNetworkMessagesAsync());
-            }
+            Task.Run(() => networkProvider.ProcessNetworkMessagesAsync());
         }
 
         /// <summary>
@@ -99,7 +111,7 @@ namespace ConsoleMessengerServer
         {
             DeleteNetworkProvidersFromDb();
 
-            foreach (var client in _ServerNetworkProviders)
+            foreach (var client in _userProxyList)
             {
                 client.Value.CloseConnection();
             }
@@ -128,9 +140,9 @@ namespace ConsoleMessengerServer
         /// <param name="clientId">Идентификатор клиента</param>
         public void DisconnectClient(int clientId)
         {
-            if (_ServerNetworkProviders != null && _ServerNetworkProviders.Count > 0)
+            if (_userProxyList != null && _userProxyList.Count > 0)
             {
-                _ServerNetworkProviders.Remove(clientId);
+                _userProxyList.Remove(clientId);
             }
 
             using(var dbContext = new MessengerDbContext())
@@ -141,13 +153,18 @@ namespace ConsoleMessengerServer
             }
         }
 
-        public void ProcessNetworkMessage(NetworkMessage message, int networkProviderId)
+        /// <summary>
+        /// Обработать сетевое сообщение
+        /// </summary>
+        /// <param name="message">Сетевое сообщение</param>
+        /// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
+        public void ProcessNetworkMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
         {
             switch (message.CurrentCode)
             {
                 case NetworkMessage.OperationCode.RegistrationCode:
                     {
-                        RegisterNewAccount(message, networkProviderId);
+                        RegisterNewUser(message, serverNetworkProvider);
                     }
                     break;
             }
@@ -160,66 +177,103 @@ namespace ConsoleMessengerServer
 
         #endregion INetworkHandler Implementation
 
-        public async Task RegisterNewAccount(NetworkMessage message, int networkProviderId)
+        /// <summary>
+        /// Зарегистрировать нового пользователя в мессенджере
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="networkProviderId"></param>
+        /// <returns></returns>
+        public async Task RegisterNewUser(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
         {
             RegistrationDto registrationDto = Deserializer.Deserialize<RegistrationDto>(message.Data);
+
+            int userId = TryAddNewUserToDb(registrationDto, serverNetworkProvider);
+
+            NetworkMessage responseMessage = null;
+
+            if(userId != 0)
+            {
+                CreateUserProxy(userId, serverNetworkProvider);
+
+                responseMessage = CreateSuccessfulRegistrationResponse(serverNetworkProvider);
+
+
+            }
+            else
+                responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.RegistrationFailedCode);
+
+            await _userProxyList[networkProviderId].Sender.SendNetworkMessageAsync(responseMessage);
+
+        }//method
+
+        /// <summary>
+        /// Попытаться добавить нового пользователя в базу данных, 
+        /// вернуть id пользователя, при успешном добавлении, ноль - при неудаче
+        /// </summary>
+        /// <param name="registrationDto">DTO, который содержит данные о регистрации</param>
+        /// <returns></returns>
+        public int TryAddNewUserToDb(RegistrationDto registrationDto, ServerNetworkProvider serverNetworkProvider)
+        {
+            int userId = 0;
 
             using (var dbContext = new MessengerDbContext())
             {
                 // ищем есть ли аккаунт с таким номером уже в бд
-                var res = await dbContext.Users.FirstOrDefaultAsync(user => user.PhoneNumber == registrationDto.PhoneNumber);
-
-                NetworkMessage responseMessage = null;
+                var res = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == registrationDto.PhoneNumber);
 
                 // если вернули null значит аккаунта под таким номером еще нет
                 if (res == null)
                 {
-                    // Создаем акккунт и добавляем его в бд
-                    User userData = _mapper.Map<User>(registrationDto);
+                    User user = _mapper.Map<User>(registrationDto);
+                    dbContext.Users.Add(user);
 
-                    ServerNetworkProviderEntity networkProvider = dbContext.NetworkProviders.FirstOrDefault(n => n.Id == networkProviderId);
-
-                    if (networkProvider != null)
+                    try
                     {
-                        userData.NetworkProviders.Add(networkProvider);
-
-                        dbContext.Users.Add(userData);
-
-                        networkProvider.User = userData;
-
-                        try
-                        {
-                            dbContext.SaveChanges();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                            throw;
-                        }
-
-                        NetworkProviderDto networkProviderDto = _mapper.Map<NetworkProviderDto>(networkProvider);
-
-                        byte[] data = Serializer<NetworkProviderDto>.Serialize(networkProviderDto);
-
-                        responseMessage = new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
-
-                        Console.WriteLine($"Код операции: {NetworkMessage.OperationCode.RegistrationCode}. Id: {userData.Id}. Телефон: {registrationDto.PhoneNumber}. Пароль: {registrationDto.Password}");
+                        dbContext.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        throw;
                     }
 
-                    else
-                        responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.RegistrationFailedCode);
+                    Console.WriteLine($"Код операции: {NetworkMessage.OperationCode.RegistrationCode}. {user.ToString()}");
 
-                }//if
+                    userId = user.Id;
 
-                else
-                {
-                    responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.RegistrationFailedCode);
-                }
-
-                await _ServerNetworkProviders[networkProviderId].Sender.SendNetworkMessageAsync(responseMessage);
+                }//if                    
 
             }//using
-        }//method
+
+            return userId;
+        }
+
+        /// <summary>
+        /// Создать агрегатора всех подключений определенного пользователя
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
+        public void CreateUserProxy(int userId, ServerNetworkProvider serverNetworkProvider)
+        {
+            UserProxy userProxy = new UserProxy(userId);
+            userProxy.AddConnection(serverNetworkProvider);
+
+            _userProxyList.Add(userId, userProxy);
+        }
+
+        /// <summary>
+        /// Создать ответ об успешной регистрации
+        /// </summary>
+        public NetworkMessage CreateSuccessfulRegistrationResponse(ServerNetworkProvider serverNetworkProvider)
+        {
+            NetworkProviderDto networkProviderDto = _mapper.Map<NetworkProviderDto>(serverNetworkProvider);
+
+            byte[] data = Serializer<NetworkProviderDto>.Serialize(networkProviderDto);
+
+            return new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
+        }
+
+
 
         public void Dispose()
         {

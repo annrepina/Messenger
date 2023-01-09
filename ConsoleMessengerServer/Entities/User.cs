@@ -43,10 +43,10 @@ namespace ConsoleMessengerServer.Entities
         /// </summary>
         public List<Dialog> Dialogs { get; set; }
 
-        /// <summary>
-        /// Список сетевых провайдеров
-        /// </summary>
-        public List<ServerNetworkProviderEntity> NetworkProviders { get; init; }
+        ///// <summary>
+        ///// Список сетевых провайдеров
+        ///// </summary>
+        //public List<ServerNetworkProviderEntity> NetworkProviders { get; init; }
 
         /// <summary>
         /// Список отправленных сообщений
@@ -59,8 +59,17 @@ namespace ConsoleMessengerServer.Entities
         public User()
         {
             Dialogs = new List<Dialog>();
-            NetworkProviders = new List<ServerNetworkProviderEntity>();
+            //NetworkProviders = new List<ServerNetworkProviderEntity>();
             SentMessages = new List<Message>();
+        }
+
+        /// <summary>
+        /// Перегрузка метода приведение объекта класса к строке
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Id: {Id}. Имя: {Name}. Телефон: {PhoneNumber}. Пароль: {Password}";
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ConsoleMessengerServer.DataBase;
 using ConsoleMessengerServer.Entities;
+using ConsoleMessengerServer.Net.Interfaces;
 using DtoLib;
 using DtoLib.Dto;
 using DtoLib.Serialization;
@@ -54,7 +55,7 @@ namespace ConsoleMessengerServer.Net
             {
                 TcpClient tcpClient = await _tcpListener.AcceptTcpClientAsync();
 
-                NetworkHandler.RunNewBackClient(tcpClient);
+                NetworkHandler.InitializeNewConnection(tcpClient);
             }
         }
 

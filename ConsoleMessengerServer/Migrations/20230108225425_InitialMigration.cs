@@ -24,63 +24,42 @@ namespace ConsoleMessengerServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Persons",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Persons", x => x.Id);
-                    table.UniqueConstraint("AK_Persons_PhoneNumber", x => x.PhoneNumber);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PersonId = table.Column<int>(type: "int", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     IsOnline = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserData", x => x.Id);
-                    table.UniqueConstraint("AK_UserData_PersonId", x => x.PersonId);
-                    table.ForeignKey(
-                        name: "FK_UserData_Persons_PersonId",
-                        column: x => x.PersonId,
-                        principalTable: "Persons",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.UniqueConstraint("AK_Users_PhoneNumber", x => x.PhoneNumber);
                 });
 
             migrationBuilder.CreateTable(
-                name: "DialogUserData",
+                name: "DialogUser",
                 columns: table => new
                 {
                     DialogsId = table.Column<int>(type: "int", nullable: false),
-                    UsersDataId = table.Column<int>(type: "int", nullable: false)
+                    UsersId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DialogUserData", x => new { x.DialogsId, x.UsersDataId });
+                    table.PrimaryKey("PK_DialogUser", x => new { x.DialogsId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_DialogUserData_Dialogs_DialogsId",
+                        name: "FK_DialogUser_Dialogs_DialogsId",
                         column: x => x.DialogsId,
                         principalTable: "Dialogs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DialogUserData_UserData_UsersDataId",
-                        column: x => x.UsersDataId,
-                        principalTable: "User",
+                        name: "FK_DialogUser_Users_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -92,10 +71,10 @@ namespace ConsoleMessengerServer.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserDataId = table.Column<int>(type: "int", nullable: false),
+                    UserSenderId = table.Column<int>(type: "int", nullable: false),
                     DialogId = table.Column<int>(type: "int", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -107,9 +86,9 @@ namespace ConsoleMessengerServer.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Messages_UserData_UserDataId",
-                        column: x => x.UserDataId,
-                        principalTable: "User",
+                        name: "FK_Messages_Users_UserSenderId",
+                        column: x => x.UserSenderId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -120,22 +99,22 @@ namespace ConsoleMessengerServer.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserDataId = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NetworkProviders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NetworkProviders_UserData_UserDataId",
-                        column: x => x.UserDataId,
-                        principalTable: "User",
+                        name: "FK_NetworkProviders_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DialogUserData_UsersDataId",
-                table: "DialogUserData",
-                column: "UsersDataId");
+                name: "IX_DialogUser_UsersId",
+                table: "DialogUser",
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_DialogId",
@@ -143,12 +122,12 @@ namespace ConsoleMessengerServer.Migrations
                 column: "DialogId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_UserDataId",
+                name: "IX_Messages_UserSenderId",
                 table: "Messages",
-                column: "UserId");
+                column: "UserSenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NetworkProviders_UserDataId",
+                name: "IX_NetworkProviders_UserId",
                 table: "NetworkProviders",
                 column: "UserId");
         }
@@ -157,7 +136,7 @@ namespace ConsoleMessengerServer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DialogUserData");
+                name: "DialogUser");
 
             migrationBuilder.DropTable(
                 name: "Messages");
@@ -169,10 +148,7 @@ namespace ConsoleMessengerServer.Migrations
                 name: "Dialogs");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
-                name: "Persons");
+                name: "Users");
         }
     }
 }

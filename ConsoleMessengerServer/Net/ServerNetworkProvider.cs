@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DtoLib.NetworkServices;
 using DtoLib.NetworkInterfaces;
 using DtoLib;
+using ConsoleMessengerServer.Net.Interfaces;
 
 namespace ConsoleMessengerServer.Net
 {
@@ -33,9 +34,9 @@ namespace ConsoleMessengerServer.Net
         }
 
         /// <summary>
-        /// Начать обработку сетевых сообщений асинхронно
+        /// Обрабатывает сетевые сообщений асинхронно
         /// </summary>
-        public async Task StartProcessingNetworkMessagesAsync()
+        public async Task ProcessNetworkMessagesAsync()
         {
             try
             {
@@ -53,14 +54,14 @@ namespace ConsoleMessengerServer.Net
         }
 
         /// <summary>
-        /// Асинхронный метод получения сетевого сообщения
+        /// Метод получения сетевого сообщения
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
         /// <returns></returns>
         public override void GetNetworkMessage(NetworkMessage message)
         {
             if(message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode || message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode)
-                NetworkController.ProcessNetworkMessage(message, Id);
+                NetworkController.ProcessNetworkMessage(message, this);
           
             else
                 NetworkController.ProcessNetworkMessage(message);
