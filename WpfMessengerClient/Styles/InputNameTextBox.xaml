@@ -22,7 +22,7 @@
                                      CaretBrush="Gray"
                                      Margin="8,0,0,0">
                                 <TextBox.Text>
-                                    <Binding Path="RegistrationData.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding Path="RegistrationRequestData.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                         <Binding.ValidationRules>
                                             <DataErrorValidationRule />
                                         </Binding.ValidationRules>

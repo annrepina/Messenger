@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using DtoLib.NetworkServices;
 using DtoLib.NetworkInterfaces;
-using DtoLib;
 using ConsoleMessengerServer.Net.Interfaces;
 
 namespace ConsoleMessengerServer.Net
@@ -60,7 +59,8 @@ namespace ConsoleMessengerServer.Net
         /// <returns></returns>
         public override void GetNetworkMessage(NetworkMessage message)
         {
-            if(message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode || message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode)
+            if(message.CurrentCode == NetworkMessage.OperationCode.AuthorizationCode || message.CurrentCode == NetworkMessage.OperationCode.RegistrationCode
+                || message.CurrentCode == NetworkMessage.OperationCode.SearchUserCode)
                 NetworkController.ProcessNetworkMessage(message, this);
           
             else

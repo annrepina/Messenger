@@ -30,6 +30,11 @@ namespace WpfMessengerClient.Models
         /// </summary>
         private int _id;
 
+        /// <summary>
+        /// Текущий пользователь
+        /// </summary>
+        private User _currentUser;
+
         #endregion Приватные поля
 
         #region Свойства
@@ -37,8 +42,8 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Свойство - идентификатор диалога
         /// </summary>
-        public int Id 
-        { 
+        public int Id
+        {
             get => _id;
 
             set
@@ -48,14 +53,29 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        public string DialogName => Users.First(n => n.Id != _currentUser.Id).Name;
+        /// <summary>
+        /// Текущий пользователь
+        /// </summary>
+        private User CurrentUser
+        {
+            get => _currentUser;
+
+            set
+            {
+                _currentUser = value;
+                OnPropertyChanged(nameof(CurrentUser));
+            }
+        }
+
+        /// <summary>
+        /// Свойство - название диалога, которым явдляется имя пользователя, которым не является текущий пользователь
+        /// </summary>
+        public string Title => Users.First(n => n.Id != _currentUser.Id).Name;
 
         /// <summary>
         /// Свойство - обозреваемая коллекция данных о пользователях, участвующих в диалоге
         /// </summary>
         public ObservableCollection<User> Users { get; set; }
-
-        private readonly User _currentUser;
 
         /// <summary>
         /// Обозреваемая коллекция сообщений в диалоге
@@ -69,14 +89,14 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        public Dialog(User senderUser, User receiverUser)
+        public Dialog(User user1, User user2)
         {
             Id = 0;
 
             Users = new ObservableCollection<User>();
             Users.CollectionChanged += OnUserDataCollectionChanged;
-            Users.Add(senderUser);
-            Users.Add(receiverUser);   
+            Users.Add(user1);
+            Users.Add(user2);
 
             Messages = new ObservableCollection<Message>();
             Messages.CollectionChanged += OnMessagesChanged;
@@ -89,8 +109,8 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Обработчик события изменения обозреваемой коллекции данных пользователей участвующих в диалоге
         /// </summary>
-        /// <param name="sender">Объект, который вызвал событие</param>
-        /// <param name="e">Содержит информацию о событии</param>
+        /// <param _name="sender">Объект, который вызвал событие</param>
+        /// <param _name="e">Содержит информацию о событии</param>
         /// <exception cref="NotImplementedException"></exception>
         private void OnUserDataCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -114,8 +134,8 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Обработчик события изменения данных конкретного пользователя участвующего в диалоге
         /// </summary>
-        /// <param name="sender">Объект, который вызвал событие</param>
-        /// <param name="e">Содержит информацию о событии</param>
+        /// <param _name="sender">Объект, который вызвал событие</param>
+        /// <param _name="e">Содержит информацию о событии</param>
         /// <exception cref="NotImplementedException"></exception>
         private void OnUserDataChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -125,8 +145,8 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Обработчик события изменения обозреваемой коллекции сообщений
         /// </summary>
-        /// <param name="sender">Объект, который вызвал событие</param>
-        /// <param name="e">Содержит информацию о событии</param>
+        /// <param _name="sender">Объект, который вызвал событие</param>
+        /// <param _name="e">Содержит информацию о событии</param>
         private void OnMessagesChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
@@ -149,8 +169,8 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Обработчик события измения конкретного сообщения в обозреваемой коллекции сообщений
         /// </summary>
-        /// <param name="sender">Объект, который вызвал событие</param>
-        /// <param name="e">Содержит информацию о событии</param>
+        /// <param _name="sender">Объект, который вызвал событие</param>
+        /// <param _name="e">Содержит информацию о событии</param>
         /// <exception cref="NotImplementedException"></exception>
         private void OnMessageChanged(object? sender, PropertyChangedEventArgs e)
         {

@@ -1,5 +1,4 @@
-﻿using DtoLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -85,10 +84,10 @@ namespace WpfMessengerClient.Services
                     await Receiver.ReceiveNetworkMessageAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show("Подключение прервано...");
-                //throw;
+                throw;
             }
             finally
             {
@@ -99,7 +98,7 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Асинхронный метод получения сетевого сообщения
         /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
+        /// <param _name="message">Сетевое сообщение</param>
         /// <returns></returns>
         public override void GetNetworkMessage(NetworkMessage message)
         {

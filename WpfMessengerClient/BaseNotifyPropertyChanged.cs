@@ -20,7 +20,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Метод, вызывающий событие PropertyChanged
         /// </summary>
-        /// <param name="propName">Имя свойства</param>
+        /// <param _name="propName">Имя свойства</param>
         protected void OnPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

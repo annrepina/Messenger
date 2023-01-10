@@ -1,5 +1,5 @@
-﻿using DtoLib;
-using DtoLib.NetworkInterfaces;
+﻿using DtoLib.NetworkInterfaces;
+using DtoLib.NetworkServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,6 @@ namespace ConsoleMessengerServer.Net.Interfaces
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
         /// <param name="serverNetworkProvider">Сетевой провайдер на стороне сервера</param>
-        public void ProcessNetworkMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider);
+        public Task ProcessNetworkMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider);
     }
 }

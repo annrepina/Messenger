@@ -23,7 +23,7 @@ namespace WpfChatClient
         /// <summary>
         /// Переопределение метода
         /// </summary>
-        /// <param name="e">Содержит аргументы события StartUp</param>
+        /// <param _name="e">Содержит аргументы события StartUp</param>
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);

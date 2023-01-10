@@ -11,7 +11,7 @@ namespace WpfMessengerClient.Models
     /// <summary>
     /// Информация необходимая для входа в мессенджер
     /// </summary>
-    public class LoginData : BaseNotifyPropertyChanged, IDataErrorInfo
+    public class LoginRequestData : BaseNotifyPropertyChanged, IDataErrorInfo
     {
         #region Константы
 
@@ -90,7 +90,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public LoginData()
+        public LoginRequestData()
         {
             Password = "";
             PhoneNumber = "";
@@ -119,7 +119,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
         /// </summary>
-        /// <param name="propName">Имя свойства</param>
+        /// <param _name="propName">Имя свойства</param>
         /// <returns></returns>
         public virtual string this[string propName]
         {
@@ -139,7 +139,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Проверить все свойства класса на корректность
         /// </summary>
-        /// <param name="propName">Имя свойства</param>
+        /// <param _name="propName">Имя свойства</param>
         protected virtual void ValidateAllProperties(string propName)
         {
             switch (propName)
@@ -164,6 +164,8 @@ namespace WpfMessengerClient.Models
         protected virtual void ValidatePassword()
         {
             Regex regex = new Regex(@"^\w{6}");
+
+            Error = "";
 
             if (!regex.IsMatch(Password))
                 Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";

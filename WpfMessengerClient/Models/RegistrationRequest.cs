@@ -11,7 +11,7 @@ namespace WpfMessengerClient.Models
     /// <summary>
     /// Данные, необходимые при регистрации в мессенджере
     /// </summary>
-    public class RegistrationData : LoginData
+    public class RegistrationRequest : LoginRequestData
     {
         #region Константы
 
@@ -46,19 +46,19 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Свойство - повторяйющийся пароль
         /// </summary>
-        public string RepeatedPassword
-        {
-            get => _repeatedPassword;
+        //public string RepeatedPassword
+        //{
+        //    get => _repeatedPassword;
 
-            set
-            {
-                _repeatedPassword = value;
+        //    set
+        //    {
+        //        _repeatedPassword = value;
 
-                ValidatePassword();
+        //        ValidatePassword();
 
-                OnPropertyChanged(nameof(RepeatedPassword));
-            }
-        }
+        //        OnPropertyChanged(nameof(RepeatedPassword));
+        //    }
+        //}
 
         /// <summary>
         /// Свойство - имя
@@ -79,10 +79,10 @@ namespace WpfMessengerClient.Models
 
         #region Конструкторы 
 
-        public RegistrationData() : base()
+        public RegistrationRequest() : base()
         {
             Name = "";
-            RepeatedPassword = "";
+            //RepeatedPassword = "";
         }
 
         #endregion Конструкторы
@@ -92,7 +92,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
         /// </summary>
-        /// <param name="propName">Имя свойства</param>
+        /// <param _name="propName">Имя свойства</param>
         /// <returns></returns>
         public override string this[string propName]
         {
@@ -112,7 +112,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Проверить все свойства класса на корректность
         /// </summary>
-        /// <param name="propName">Имя свойства</param>
+        /// <param _name="propName">Имя свойства</param>
         protected override void ValidateAllProperties(string propName)
         {
             base.ValidateAllProperties(propName);
@@ -123,9 +123,9 @@ namespace WpfMessengerClient.Models
                     ValidateName();
                     break;
 
-                case nameof(RepeatedPassword):
-                    ValidatePassword();
-                    break;
+                //case nameof(RepeatedPassword):
+                //    ValidatePassword();
+                //    break;
 
                 default:
                     break;
@@ -139,17 +139,19 @@ namespace WpfMessengerClient.Models
         {
             Regex regex = new Regex(@"^\w{6}");
 
-            if (!regex.IsMatch(Password) || !regex.IsMatch(RepeatedPassword))
+            Error = "";
+
+            if (!regex.IsMatch(Password) /*|| !regex.IsMatch(RepeatedPassword)*/)
                 Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
 
-            else if (Password.Length > MaxLengthOfPassword || RepeatedPassword.Length > MaxLengthOfPassword)
+            else if (Password.Length > MaxLengthOfPassword /*|| RepeatedPassword.Length > MaxLengthOfPassword*/)
                 Error = "Пароль должен содержать не больше 10ти символов";
 
-            else if (Password.Length < MinLengthOfPassword || RepeatedPassword.Length < MinLengthOfPassword)
+            else if (Password.Length < MinLengthOfPassword /*|| RepeatedPassword.Length < MinLengthOfPassword*/)
                 Error = "Пароль должен содержать не меньше 6ти символов";
 
-            else if (Password != RepeatedPassword)
-                Error = "Пароли должны совпадать";
+            //else if (Password != RepeatedPassword)
+            //    Error = "Пароли должны совпадать";
         }
 
         /// <summary>
@@ -158,6 +160,8 @@ namespace WpfMessengerClient.Models
         private void ValidateName()
         {
             Regex regex = new Regex(@"^\w+");
+
+            Error = "";
 
             if (!regex.IsMatch(Name))
                 Error = "Недопустимые символы";

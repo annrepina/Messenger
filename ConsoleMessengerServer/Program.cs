@@ -9,7 +9,7 @@ namespace ConsoleMessengerServer
             //using(App app = new App())
             App app = new App();
 
-            Task.Run(() => app.ReadStopKey());
+            //Task.Run(() => app.ReadStopKey());
 
             await app.LaunchAsync();            
         }

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfMessengerClient.ViewModels;
 
-namespace WpfMessengerClient
+namespace WpfMessengerClient.Windows
 {
     /// <summary>
     /// Логика взаимодействия для AuthorizationWindow.xaml

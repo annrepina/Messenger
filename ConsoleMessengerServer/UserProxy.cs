@@ -1,5 +1,5 @@
 ﻿using ConsoleMessengerServer.Net;
-using DtoLib;
+using DtoLib.NetworkServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,14 +44,25 @@ namespace ConsoleMessengerServer
         }
 
         /// <summary>
-        /// Транслировать сетевое сообщение всем сетевым провайдерам на которых подключен пользователь
+        /// Транслировать асинхронно сетевое сообщение всем сетевым провайдерам на которых подключен пользователь
         /// </summary>
         /// <param name="networkMessage"></param>
-        public async Task BroadcastNetworkMessage(NetworkMessage networkMessage)
+        public async Task BroadcastNetworkMessageAsync(NetworkMessage networkMessage)
         {
             foreach (ServerNetworkProvider serverNetworkProvider in _connections)
             {
                 await serverNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
+            }
+        }
+
+        /// <summary>
+        /// Закрыть все соединения
+        /// </summary>
+        public void CloseAll()
+        {
+            foreach (var provider in _connections)
+            {
+                provider.CloseConnection();
             }
         }
     }

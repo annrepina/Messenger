@@ -27,7 +27,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        /// <param name="currentApplication"></param>
+        /// <param _name="currentApplication"></param>
         public MessengerWindowsManager(Application currentApplication)
         {
             CurrentWindow = null;

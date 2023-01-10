@@ -147,9 +147,9 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param name="text">Текст сообщения</param>
-        /// <param name="senderUserAccount">Данные о пользователе - отправителе сообщения</param>
-        /// <param name="dialog">Диалог, в котором существует сообщение</param>
+        /// <param _name="text">Текст сообщения</param>
+        /// <param _name="senderUserAccount">Данные о пользователе - отправителе сообщения</param>
+        /// <param _name="dialog">Диалог, в котором существует сообщение</param>
         public Message(string text, User senderUserAccount, Dialog dialog)
         {
             Id = 0;

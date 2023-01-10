@@ -1,9 +1,9 @@
-﻿<Window x:Class="WpfMessengerClient.ChatWindow"
+﻿<Window x:Class="WpfMessengerClient.Windows.ChatWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfMessengerClient" xmlns:system="clr-namespace:System;assembly=netstandard"
+        xmlns:local="clr-namespace:WpfMessengerClient" xmlns:system="clr-namespace:System;assembly=netstandard" xmlns:viewmodels="clr-namespace:WpfMessengerClient.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ChatWindowViewModel}"
         mc:Ignorable="d"
         Height="{Binding Source={x:Static SystemParameters.FullPrimaryScreenHeight}}" 
         Width="{Binding Source={x:Static SystemParameters.FullPrimaryScreenWidth}}"
@@ -28,28 +28,59 @@
         <!--#endregion Grid layout-->
 
         <!--#region Listviews-->
-        
+
         <!--#region Labels-->
 
-        <Label Name="UserName" Grid.Row="0" Grid.Column="0" Content="{Binding NetworkProviderUserDataMediator.UserData.Person.Name}" FontSize="26" FontFamily="Tahoma" HorizontalAlignment="Left"
+        <Label Name="UserName" Grid.Row="0" Grid.Column="0" Content="{Binding NetworkProviderUserDataMediator.User.Name}" FontSize="26" FontFamily="Tahoma" HorizontalAlignment="Left"
                Padding="20, 5, 0, 0">
         </Label>
 
-        <Label Name="ChatUserName" Grid.Row="0" Grid.Column="1" Content="Соболь" FontSize="26" FontFamily="Tahoma" HorizontalAlignment="Left"
+        <Label Name="DialogName" Grid.Row="0" Grid.Column="1" Content="{Binding ActiveDialog.Title}"  FontSize="26" FontFamily="Tahoma" HorizontalAlignment="Left"
                Padding="20, 5, 0, 0">
         </Label>
 
-        <!--#endregion Labels-->        
+        <!--#endregion Labels-->
 
-        <DockPanel Background="LightGray" Grid.Row="1" Grid.Column="0" Margin="0">
+        <DockPanel Background="#FF021F38"  Grid.Row="1" Grid.Column="0" Margin="0">
 
             <TabControl Margin="0,5,0,0" Background="Transparent">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Border
+                                    Name="Border"
+                                    Margin="2,0"
+                                    BorderBrush="Gainsboro"
+                                    BorderThickness="1,1,1,0"
+                                    CornerRadius="0,0,4,4">
+                                        <ContentPresenter
+                                        x:Name="ContentSite"
+                                        Margin="10,2"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        ContentSource="Header" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="LightSkyBlue" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="False">
+                                            <Setter TargetName="Border" Property="Background" Value="GhostWhite" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
                 <TabItem Header="Чаты" FontFamily="Tahoma" FontSize="20">
                     <ListView   
                       BorderBrush="{x:Null}" Foreground="#E50A0A0A"
                     Margin="0,10,0,10" FontFamily="Tahoma"
                   SelectedItem="{Binding ActiveDialog}" Grid.Column="0"
-                 Background="Transparent" ItemsSource="{Binding NetworkProviderUserDataMediator.UserData.Dialogs}"
+                 Background="Transparent" ItemsSource="{Binding Dialogs}"
                 Width="185" HorizontalAlignment="Left">
 
                         <ListView.ItemTemplate>
@@ -68,28 +99,55 @@
                     </ListView>
                 </TabItem>
 
-                <TabItem Header="Online" FontFamily="Tahoma" FontSize="20">
-                    <ListView   
-                      Margin="0,10,0,0" FontFamily="Bookman Old Style"
-                     BorderBrush="{x:Null}" Foreground="#E50A0A0A"
-                   SelectedItem="{Binding SelectedOnlineMember}" Grid.Column="0"
-                 Background="Transparent" ItemsSource="{Binding OnlineMembers}"
-                 >
+
+                <TabItem Header="Поиск собеседников" FontFamily="Tahoma" FontSize="20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Text="Имя" FontFamily="Tahoma" FontSize="20" 
+                                   HorizontalAlignment="Left" VerticalAlignment="Center" Padding="15" Foreground="White" Grid.ColumnSpan="2"/>
+                        <TextBox Grid.Row="1" Style="{StaticResource InputSearchingNameTextBox}" Grid.ColumnSpan="5" Margin="5,5,5,5" />
+
+                        <TextBlock Grid.Row="2" Text="Номер телефона" FontFamily="Tahoma" FontSize="20" 
+                                   HorizontalAlignment="Left" VerticalAlignment="Center" Padding="15" Foreground="White" Grid.ColumnSpan="2" />
+                        <TextBox Grid.Row="3" Style="{StaticResource InputSearchingPhoneNumberTextBox}" Grid.ColumnSpan="5" Margin="5,5,5,5" />
+
+                        <Button Grid.Row="4" Background="#FF355D9A" Content="Найти" Command="{Binding SearchCommand}" IsEnabled="{Binding IsSearchingButtonFree}" Style="{StaticResource RoundedButton}"/>
+
+                        <ListView Grid.Row="5" Margin="0,10,0,0" Padding="15" FontFamily="Tahoma" 
+                                    BorderBrush="{x:Null}" Foreground="White"
+                                    SelectedItem="{Binding SelectedUser}" 
+                                    Background="Transparent" ItemsSource="{Binding SearchUserResults}">
+                            
                         <ListView.ItemTemplate>
 
                             <DataTemplate>
 
-                                <TextBlock Text="{Binding UserName}"/>
+                                <TextBlock Text="{Binding Name}"/>
 
                             </DataTemplate>
 
                         </ListView.ItemTemplate>
                     </ListView>
+
+                    </Grid>
+
+
                 </TabItem>
             </TabControl>
         </DockPanel>
 
-        <Grid Background="LightSteelBlue" Grid.Column="1" Grid.Row="1" >
+        <Grid Background="#FF355D9A" Grid.Column="1" Grid.Row="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
@@ -163,35 +221,6 @@
 
     </Grid>
 
-    <!--<Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="4*"/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Участники" FontWeight="Bold" Foreground="AntiqueWhite" Background="#FF021F38"/>
-
-        <Grid Grid.Column="2" Grid.RowSpan="2" Background="#FF021F38">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="Вход ЧитЧат" FontWeight="DemiBold" FontFamily="Arial" FontSize="17" Padding="10" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFA3AAB1"/>
-            <TextBox Style="{StaticResource InputNameTextBox}" Grid.Row="1"/>
-            <TextBlock Grid.Row="2" Text="Не указаны имя или ник" Foreground="Red" FontSize="9" FontWeight="Light" HorizontalAlignment="Left" Margin="5" Visibility="{Binding WasAttemptToEnterEmptyName, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Style="{StaticResource RoundedButton}" Grid.Row="3" Content="Войти" IsEnabled="{Binding DidUserNotEnteredChat}" Command="{Binding OnEnterChatCommand}" >
-            </Button>
-            --><!--<Button Style="{StaticResource RoundedButton}"/>--><!--
-        </Grid>
 
 
-    </Grid>-->
 </Window>

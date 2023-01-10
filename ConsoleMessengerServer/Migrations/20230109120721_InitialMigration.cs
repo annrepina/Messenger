@@ -93,24 +93,6 @@ namespace ConsoleMessengerServer.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "NetworkProviders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NetworkProviders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_NetworkProviders_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_DialogUser_UsersId",
                 table: "DialogUser",
@@ -125,11 +107,6 @@ namespace ConsoleMessengerServer.Migrations
                 name: "IX_Messages_UserSenderId",
                 table: "Messages",
                 column: "UserSenderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_NetworkProviders_UserId",
-                table: "NetworkProviders",
-                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -140,9 +117,6 @@ namespace ConsoleMessengerServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Messages");
-
-            migrationBuilder.DropTable(
-                name: "NetworkProviders");
 
             migrationBuilder.DropTable(
                 name: "Dialogs");

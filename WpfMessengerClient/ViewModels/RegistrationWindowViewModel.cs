@@ -31,7 +31,10 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private NetworkProviderUserDataMediator _networkProviderUserDataMediator;
 
-        private bool _isFree;
+        /// <summary>
+        /// Доступна ли кнопка регистрации для нажатия
+        /// </summary>
+        private bool _isRegistrationButtonFree;
 
         /// <summary>
         /// Менеджер окон приложения
@@ -46,17 +49,20 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Данные о регистрации нового пользователя
         /// </summary>
-        public RegistrationData RegistrationData { get; init; }
+        public RegistrationRequest RegistrationRequestData { get; init; }
 
-        public bool IsFree
+        /// <summary>
+        /// Доступна ли кнопка регистрации для нажатия
+        /// </summary>
+        public bool IsRegistrationButtonFree
         {
-            get => _isFree;
+            get => _isRegistrationButtonFree;
 
             set
             {
-                _isFree = value;
+                _isRegistrationButtonFree = value;
 
-                OnPropertyChanged(nameof(IsFree));
+                OnPropertyChanged(nameof(IsRegistrationButtonFree));
             }
         }
 
@@ -65,7 +71,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        /// <param name="messengerWindowsManager">Менеджер окон в приложении</param>
+        /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
         public RegistrationWindowViewModel(MessengerWindowsManager messengerWindowsManager)
         {
             _networkProviderUserDataMediator = new NetworkProviderUserDataMediator();
@@ -73,9 +79,9 @@ namespace WpfMessengerClient.ViewModels
 
             OnSignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             MessengerWindowsManager = messengerWindowsManager;
-            RegistrationData = new RegistrationData(); 
+            RegistrationRequestData = new RegistrationRequest(); 
 
-            IsFree = true;
+            IsRegistrationButtonFree = true;
         }
 
         #endregion Конструкторы
@@ -87,24 +93,31 @@ namespace WpfMessengerClient.ViewModels
         private async Task RegisterNewUserAsync()
         {
             //// если ошибок нет
-            //if (String.IsNullOrEmpty(RegistrationData.Error))
+            //if (String.IsNullOrEmpty(RegistrationRequest.Error))
             //{
-                IsFree = false;
+
+            try
+            {
+                IsRegistrationButtonFree = false;
 
                 TaskCompletionSource completionSource = new TaskCompletionSource();
 
                 new SignUpObserver(_networkProviderUserDataMediator, completionSource);
 
-                await _networkProviderUserDataMediator.SendRegistrationRequestAsync(RegistrationData);
+                await _networkProviderUserDataMediator.SendRegistrationRequestAsync(RegistrationRequestData);
 
                 await completionSource.Task;
+            }
 
-                IsFree = true;
+            finally
+            {
+                IsRegistrationButtonFree = true;
+            }
             //}
 
             //else
             //{
-            //    MessageBox.Show(RegistrationData.Error);
+            //    MessageBox.Show(RegistrationRequest.Error);
             //}
 
             ChangeWindowToChatWindow();

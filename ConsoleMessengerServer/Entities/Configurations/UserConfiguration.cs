@@ -29,8 +29,6 @@ namespace ConsoleMessengerServer.Entities.Configurations
 
             builder.HasMany(acc => acc.Dialogs).WithMany(d => d.Users);
 
-            builder.HasMany(acc => acc.NetworkProviders).WithOne(cl => cl.User);
-
             builder.HasMany(acc => acc.SentMessages).WithOne(m => m.UserSender);
         }
     }

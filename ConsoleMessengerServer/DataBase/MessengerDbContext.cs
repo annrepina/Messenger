@@ -15,11 +15,6 @@ namespace ConsoleMessengerServer.DataBase
     /// </summary>
     public class MessengerDbContext : DbContext
     {
-        ///// <summary>
-        ///// Коллекция для сущности NetworkProvider, которая будет являться таблицей в базе данных
-        ///// </summary>
-        //public DbSet<ServerNetworkProviderEntity> NetworkProviders { get; set; }
-
         /// <summary>
         /// Коллекция для сущности User, которая будет являться таблицей в базе данных
         /// </summary>
@@ -69,11 +64,8 @@ namespace ConsoleMessengerServer.DataBase
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new ServerNetworkProviderConfiguration());
             modelBuilder.ApplyConfiguration(new DialogConfiguration());
             modelBuilder.ApplyConfiguration(new MessageConfiguration());
         }
-
-
     }
 }

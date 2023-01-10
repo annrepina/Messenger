@@ -13,7 +13,7 @@ using DtoLib;
 namespace WpfMessengerClient.Models
 {
     /// <summary>
-    /// Класс - модель данных пользователя
+    /// Класс - модель пользователя
     /// </summary>
     public class User : BaseNotifyPropertyChanged, IDataErrorInfo
     {
@@ -191,7 +191,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
         /// </summary>
-        /// <param name="propName">Имя свойства</param>
+        /// <param _name="propName">Имя свойства</param>
         /// <returns></returns>
         public string this[string propName]
         {
@@ -281,7 +281,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Проверить все свойства на корректность
         /// </summary>
-        /// <param name="propName">Имя свойства</param>
+        /// <param _name="propName">Имя свойства</param>
         private void ValidateAllProperties(string propName)
         {
             switch (propName)

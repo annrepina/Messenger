@@ -43,11 +43,6 @@ namespace ConsoleMessengerServer.Entities
         /// </summary>
         public List<Dialog> Dialogs { get; set; }
 
-        ///// <summary>
-        ///// Список сетевых провайдеров
-        ///// </summary>
-        //public List<ServerNetworkProviderEntity> NetworkProviders { get; init; }
-
         /// <summary>
         /// Список отправленных сообщений
         /// </summary>
@@ -59,7 +54,6 @@ namespace ConsoleMessengerServer.Entities
         public User()
         {
             Dialogs = new List<Dialog>();
-            //NetworkProviders = new List<ServerNetworkProviderEntity>();
             SentMessages = new List<Message>();
         }
 

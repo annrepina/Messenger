@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 namespace DtoLib.Dto
 {
     /// <summary>
-    /// Data transfer object класса NetworkProvider
+    /// Data transfer object класса, который представляет собой результат поиска пользователей
     /// </summary>
     [ProtoContract]
-    public class NetworkProviderDto
+    public class UserSearchResultDto
     {
         /// <summary>
-        /// Свойство - id
+        /// Пользователи, удовлетворяющие поиску
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
-        public int Id { get; set; }
+        List<UserDto> RelevantUsers { get; set; }
     }
 }

@@ -32,7 +32,8 @@ namespace DtoLib.Serialization
             }
             catch (Exception)
             {
-                throw new Exception("Массив байтов невозможно десериализовать");
+                throw;
+                //throw new Exception("Массив байтов невозможно десериализовать");
             }
         }
     }

@@ -30,7 +30,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        /// <param name="messengerWindowsManager">Менеджер окон для приложения</param>
+        /// <param _name="messengerWindowsManager">Менеджер окон для приложения</param>
         public SignUpSignInWindowViewModel(MessengerWindowsManager messengerWindowsManager)
         {
             MessengerWindowsManager = messengerWindowsManager;

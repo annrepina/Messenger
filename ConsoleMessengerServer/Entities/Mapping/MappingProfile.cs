@@ -20,9 +20,6 @@ namespace ConsoleMessengerServer.Entities.Mapping
 
             CreateMap<Message, MessageDto>().ReverseMap();
 
-            //CreateMap<ServerNetworkProviderEntity, NetworkProviderDto>().ReverseMap();
-            //CreateMap<ServerNetworkProvider, ServerNetworkProviderEntity>().ReverseMap();
-
             CreateMap<ServerNetworkProvider, NetworkProviderDto>().ReverseMap();
         }
 

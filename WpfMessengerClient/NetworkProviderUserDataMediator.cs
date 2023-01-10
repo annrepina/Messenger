@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DtoLib;
 using DtoLib.Dto;
 using DtoLib.NetworkInterfaces;
+using DtoLib.NetworkServices;
 using DtoLib.Serialization;
 using System;
 using System.Collections.Generic;
@@ -32,14 +32,21 @@ namespace WpfMessengerClient
         /// </summary>
         public event Action SignIn;
 
+        public event Action SignOut;
+
+        /// <summary>
+        /// Событие получение успешного результата поиска пользователя
+        /// </summary>
+        public event Action<UserSearchResult> SearchResultReceived;
+
         #endregion События
 
         #region Приватные поля
 
         /// <summary>
-        /// Данные о пользователе
+        /// Пользователь
         /// </summary>
-        private User _userData;
+        private User _user;
 
         /// <summary>
         /// Маппер для мапинга моделей на DTO и обратно
@@ -56,17 +63,17 @@ namespace WpfMessengerClient
         public ClientNetworkProvider ClientNetworkProvider { get; set; }
 
         /// <summary>
-        /// Данные пользователя
+        /// Пользователь
         /// </summary>
-        public User UserData
+        public User User
         {
-            get => _userData;
+            get => _user;
 
             set
             {
-                _userData = value;
+                _user = value;
 
-                OnPropertyChanged(nameof(UserData));
+                OnPropertyChanged(nameof(User));
             }
         }
 
@@ -79,7 +86,7 @@ namespace WpfMessengerClient
         /// </summary>
         public NetworkProviderUserDataMediator()
         {
-            UserData = new User();
+            User = new User();
 
             ClientNetworkProvider = new ClientNetworkProvider(this);
 
@@ -94,17 +101,17 @@ namespace WpfMessengerClient
         /// <summary>
         /// Обработать сетевое сообщение
         /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
+        /// <param _name="message">Сетевое сообщение</param>
         public void ProcessNetworkMessage(NetworkMessage message)
         {
             switch (message.CurrentCode)
             {
                 case NetworkMessage.OperationCode.RegistrationCode:
                     break;
+
                 case NetworkMessage.OperationCode.SuccessfulRegistrationCode:
-                    {
-                        ProcessSuccessfulRegistrationNetworkMessage(message);
-                    }
+                    ProcessSuccessfulRegistrationNetworkMessage(message);
+
                     break;
 
                 case NetworkMessage.OperationCode.RegistrationFailedCode:
@@ -112,6 +119,12 @@ namespace WpfMessengerClient
 
                 case NetworkMessage.OperationCode.AuthorizationCode:
                     break;
+
+                case NetworkMessage.OperationCode.SuccessfulSearchCode:
+                    ProcessSuccessfulSearchNetworkMessage(message);
+
+                    break;
+
                 case NetworkMessage.OperationCode.SendingMessageCode:
                     break;
                 case NetworkMessage.OperationCode.ExitCode:
@@ -121,14 +134,16 @@ namespace WpfMessengerClient
             }
         }
 
+
+
         #endregion Реализация INetworkMessageHandler
 
-        #region Методы управления данными пользователя
+        #region Методы обработки сетевых сообщений
 
         /// <summary>
         /// Обаработать сетевое сообщение о регистрации пользователя асинхронно
         /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
+        /// <param _name="message">Сетевое сообщение</param>
         public void ProcessSuccessfulRegistrationNetworkMessage(NetworkMessage message)
         {
             var data = message.Data;
@@ -147,9 +162,26 @@ namespace WpfMessengerClient
         }
 
         /// <summary>
+        /// Обработать сетвое сообщение об успешном поиске пользователя
+        /// </summary>
+        /// <param name="message">Сетевое сообщение</param>
+        private void ProcessSuccessfulSearchNetworkMessage(NetworkMessage message)
+        {
+            var data = message.Data;
+
+            UserSearchResultDto userSearchResultDto = Deserializer.Deserialize<UserSearchResultDto>(data);
+
+            UserSearchResult userSearchResult = _mapper.Map<UserSearchResult>(userSearchResultDto);
+
+            SearchResultReceived?.Invoke(userSearchResult);
+        }
+
+        #endregion Методы обработки сетевых сообщений
+
+        /// <summary>
         /// Зарегистрировать нового пользователя асинхронно
         /// </summary>
-        /// <param name="networkProviderDto">DTO, сетевого провайдера с Id из базы данных</param>
+        /// <param _name="networkProviderDto">DTO, сетевого провайдера с Id из базы данных</param>
         /// 
         public void RegisterNewUser(NetworkProviderDto networkProviderDto)
         {
@@ -158,14 +190,19 @@ namespace WpfMessengerClient
             SignUp?.Invoke();
         }
 
-        #endregion Методы управления данными пользователя
+
 
         #region Методы взаимодействия с сетью
 
-        public async Task SendRegistrationRequestAsync(RegistrationData registrationData)
+        /// <summary>
+        /// Отправить регистрационный запрос асинхронно
+        /// </summary>
+        /// <param _name="searchingData">Данные о регистрации</param>
+        /// <returns></returns>
+        public async Task SendRegistrationRequestAsync(RegistrationRequest registrationData)
         {
-            User userData = _mapper.Map<User>(registrationData);
-            UserData = userData;
+            User user = _mapper.Map<User>(registrationData);
+            User = user;
 
             RegistrationDto registrationDto = _mapper.Map<RegistrationDto>(registrationData);
 
@@ -176,11 +213,22 @@ namespace WpfMessengerClient
             await ClientNetworkProvider.ConnectAsync(message);
         }
 
-        #endregion Методы взаимодействия с сетью
-
-        public string GetRecipientName(int UserDataId, int DialogId)
+        /// <summary>
+        /// Отправить запрос на поиск пользователя асинхронно
+        /// </summary>
+        /// <param _name="searchingData">Данные о запросе поиска пользователя</param>
+        /// <returns></returns>
+        public async Task SendSearchRequestAsync(UserSearchRequest searchingData)
         {
-            return "Anna";
+            UserSearchRequestDto searchRequestDto = _mapper.Map<UserSearchRequestDto>(searchingData);
+
+            byte[] data = Serializer<UserSearchRequestDto>.Serialize(searchRequestDto);
+
+            NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.SearchUserCode);
+
+            await ClientNetworkProvider.Sender.SendNetworkMessageAsync(message);
         }
+
+        #endregion Методы взаимодействия с сетью
     }
 }

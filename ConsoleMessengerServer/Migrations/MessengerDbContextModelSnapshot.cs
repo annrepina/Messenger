@@ -70,24 +70,6 @@ namespace ConsoleMessengerServer.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.ServerNetworkProviderEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("NetworkProviders", (string)null);
-                });
-
             modelBuilder.Entity("ConsoleMessengerServer.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -157,15 +139,6 @@ namespace ConsoleMessengerServer.Migrations
                     b.Navigation("UserSender");
                 });
 
-            modelBuilder.Entity("ConsoleMessengerServer.Entities.ServerNetworkProviderEntity", b =>
-                {
-                    b.HasOne("ConsoleMessengerServer.Entities.User", "User")
-                        .WithMany("NetworkProviders")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DialogUser", b =>
                 {
                     b.HasOne("ConsoleMessengerServer.Entities.Dialog", null)
@@ -188,8 +161,6 @@ namespace ConsoleMessengerServer.Migrations
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.User", b =>
                 {
-                    b.Navigation("NetworkProviders");
-
                     b.Navigation("SentMessages");
                 });
 #pragma warning restore 612, 618

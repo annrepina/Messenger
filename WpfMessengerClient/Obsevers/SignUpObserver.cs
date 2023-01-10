@@ -9,23 +9,23 @@ namespace WpfMessengerClient.Obsevers
     /// <summary>
     /// Класс, который наблюдает за событием SignUp у NetworkProviderUserDataMediator
     /// </summary>
-    public class SignUpObserver
+    public class SignUpObserver : Observer
     {
-        private readonly NetworkProviderUserDataMediator _networkProviderUserDataMediator;
-        private readonly TaskCompletionSource _completionSource;
-
-        public SignUpObserver(NetworkProviderUserDataMediator networkProviderUserDataMediator, TaskCompletionSource completionSource)
+        /// <summary>
+        /// Конструктор с параметрами
+        /// </summary>
+        /// <param _name="networkProviderUserDataMediator"></param>
+        /// <param _name="completionSource"></param>
+        public SignUpObserver(NetworkProviderUserDataMediator networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
         {
-            _networkProviderUserDataMediator = networkProviderUserDataMediator;
-            _completionSource = completionSource;
-            _networkProviderUserDataMediator.SignUp += OnSignUp;
+            _networkProviderUserDataMediator.SignUp += OnEventOccured;
         }
 
-        private void OnSignUp()
+        protected override void OnEventOccured()
         {
             _completionSource.SetResult();
 
-            _networkProviderUserDataMediator.SignUp -= OnSignUp;
+            _networkProviderUserDataMediator.SignUp -= OnEventOccured;
         }
     }
 }
