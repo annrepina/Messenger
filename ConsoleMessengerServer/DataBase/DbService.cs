@@ -2,8 +2,10 @@
 using ConsoleMessengerServer.Entities;
 using ConsoleMessengerServer.Entities.Mapping;
 using ConsoleMessengerServer.Net;
+using ConsoleMessengerServer.Responses;
 using DtoLib;
 using DtoLib.Dto;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,12 +34,12 @@ namespace ConsoleMessengerServer.DataBase
         }
 
         /// <summary>
-        /// Попытаться добавить нового пользователя в базу данных, 
-        /// вернуть id пользователя, при успешном добавлении, ноль - при неудаче
+        /// Добавить нового пользователя в базу данных, 
+        /// вернуть пользователя, при успешном добавлении, ноль - при неудаче
         /// </summary>
         /// <param name="registrationDto">DTO, который содержит данные о регистрации</param>
         /// <returns></returns>
-        public User? TryAddNewUser(RegistrationDto registrationDto)
+        public User? AddNewUser(RegistrationDto registrationDto)
         {
             User? user = null;
 
@@ -70,11 +72,11 @@ namespace ConsoleMessengerServer.DataBase
         }
 
         /// <summary>
-        /// Пробует найти пользователей удовлетворяющих поиску, при удаче возвращает список, при неудаче null
+        /// Пробует найти пользователей удовлетворяющих поиску, при удаче возвращает пустой список
         /// </summary>
         /// <param name="searchRequestDto">Dto поискового запроса</param>
         /// <returns></returns>
-        public List<User> TrySearchUsers(UserSearchRequestDto searchRequestDto)
+        public List<User> SearchUsers(UserSearchRequestDto searchRequestDto)
         {
             List<User> users = new List<User>();
 
@@ -84,6 +86,49 @@ namespace ConsoleMessengerServer.DataBase
             }
 
             return users;
+        }
+
+        public Dialog CreateDialog(CreateDialogRequestDto dto)
+        {
+            CreateDialogResponse createDialogResponse;
+
+            try
+            {
+                using (var dbContext = new MessengerDbContext())
+                {
+                    Dialog dialog = _mapper.Map<Dialog>(dto);
+
+                    //User user1 = dbContext.Users.First(user => user.Id == dialog.Messages.First().UserSenderId);
+
+                    //dbContext.Add(dialog);
+
+                    //dbContext.SaveChanges();
+
+                    foreach (var userId in dto.UsersId)
+                    {
+                        User user = dbContext.Users.First(user => user.Id == userId);
+                        dialog.Users.Add(user);
+                        //dialog.Messages.First().UserSender = user;
+                        //user.Dialogs.Add(dialog);
+                    }
+
+                    dialog.Messages.First().UserSender = dialog.Users.First();
+
+                    dbContext.Add(dialog);
+
+
+
+                    dbContext.SaveChanges();
+
+                    //createDialogResponse = _mapper.Map<CreateDialogResponse>(dialog);
+                    return dialog;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

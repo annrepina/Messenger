@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleMessengerServer
+namespace ConsoleMessengerServer.Responses
 {
     /// <summary>
     /// Результат поиска пользователей в мессенджере
     /// </summary>
-    public class UserSearchResult
+    public class UserSearchResponse
     {
         /// <summary>
         /// Пользователи удовлетворяющие поиску
@@ -20,7 +20,7 @@ namespace ConsoleMessengerServer
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public UserSearchResult()
+        public UserSearchResponse()
         {
             RelevantUsers = new List<User>();
         }
@@ -28,7 +28,7 @@ namespace ConsoleMessengerServer
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public UserSearchResult(List<User> relevantUsers)
+        public UserSearchResponse(List<User> relevantUsers)
         {
             RelevantUsers = relevantUsers;
         }

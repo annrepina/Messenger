@@ -15,6 +15,8 @@ namespace DtoLib.NetworkServices
         SearchUserCode,
         SuccessfulSearchCode,
         SearchFailedCode,
+        CreateDialogCode,
+        SuccessfulCreatingDialogCode,
         SendingMessageCode,
         ExitCode,
     }

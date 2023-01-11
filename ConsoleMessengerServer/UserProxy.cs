@@ -49,9 +49,17 @@ namespace ConsoleMessengerServer
         /// <param name="networkMessage"></param>
         public async Task BroadcastNetworkMessageAsync(NetworkMessage networkMessage)
         {
-            foreach (ServerNetworkProvider serverNetworkProvider in _connections)
+            try
             {
-                await serverNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
+                foreach (ServerNetworkProvider serverNetworkProvider in _connections)
+                {
+                    await serverNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
             }
         }
 

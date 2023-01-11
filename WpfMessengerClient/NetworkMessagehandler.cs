@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
+using WpfMessengerClient.Models.Responses;
 using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient
@@ -39,7 +39,12 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие получение успешного результата поиска пользователя
         /// </summary>
-        public event Action<UserSearchResult?> SearchResultReceived;
+        public event Action<UserSearchResponse?> SearchResultReceived;
+
+        /// <summary>
+        /// Событие - диалог создан, обработчик принимает в качестве аргумента Id диалога
+        /// </summary>
+        public event Action<int> DialogCreated;
 
         #endregion События
 
@@ -150,9 +155,9 @@ namespace WpfMessengerClient
         {
             byte[]? data = message.Data;
 
-            UserSearchResultDto userSearchResultDto = Deserializer.Deserialize<UserSearchResultDto>(data);
+            UserSearchResponseDto userSearchResultDto = Deserializer.Deserialize<UserSearchResponseDto>(data);
 
-            UserSearchResult userSearchResult = _mapper.Map<UserSearchResult>(userSearchResultDto);
+            UserSearchResponse userSearchResult = _mapper.Map<UserSearchResponse>(userSearchResultDto);
 
             SearchResultReceived?.Invoke(userSearchResult);
         }
@@ -162,7 +167,7 @@ namespace WpfMessengerClient
         /// </summary>
         private void ProcessFailedSearchNetworkMessage()
         {
-            UserSearchResult userSearchResult = null;
+            UserSearchResponse userSearchResult = null;
 
             SearchResultReceived?.Invoke(userSearchResult);
         }
@@ -202,21 +207,25 @@ namespace WpfMessengerClient
         }
 
         /// <summary>
-        /// Отправить запрос на поиск пользователя асинхронно
+        /// Обобщенный метод асинхронной отправки сетевого сообщеия
         /// </summary>
-        /// <param _name="searchingData">Данные о запросе поиска пользователя</param>
+        /// <typeparam name="Treq">Тип объекта, представляющего запрос на сервер</typeparam>
+        /// <typeparam name="Tdto">Тип dto объекта, представляющего запрос на сервер</typeparam>
+        /// <param name="requestData">Данные запроса на сервер</param>
+        /// <param name="code">Код сетевого сообщения</param>
         /// <returns></returns>
-        public async Task SendSearchRequestAsync(UserSearchRequest searchingData)
+        public async Task SenRequestAsync<Treq, Tdto>(Treq requestData, NetworkMessageCode code)
+                    where Tdto : class
         {
             try
             {
-                UserSearchRequestDto searchRequestDto = _mapper.Map<UserSearchRequestDto>(searchingData);
+                Tdto dto = _mapper.Map<Tdto>(requestData);
 
-                byte[] data = Serializer<UserSearchRequestDto>.Serialize(searchRequestDto);
+                byte[] data = Serializer<Tdto>.Serialize(dto);
 
-                NetworkMessage message = new NetworkMessage(data, NetworkMessageCode.SearchUserCode);
+                NetworkMessage networkMessage = new NetworkMessage(data, code);
 
-                await ClientNetworkProvider.Sender.SendNetworkMessageAsync(message);
+                await ClientNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
             }
             catch (Exception ex)
             {

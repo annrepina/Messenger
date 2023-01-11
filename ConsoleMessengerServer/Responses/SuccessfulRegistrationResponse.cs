@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleMessengerServer
+namespace ConsoleMessengerServer.Responses
 {
     /// <summary>
     /// Класс, который представляет данные представляющихе ответ на успешную регистрацию пользователя в мессенджере

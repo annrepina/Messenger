@@ -1,9 +1,11 @@
-﻿using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DtoLib.Serialization;
+using ProtoBuf;
 
 namespace DtoLib.Dto
 {
@@ -11,7 +13,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса Dialog
     /// </summary>
     [ProtoContract]
-    public class DialogDto
+    public class CreateDialogRequestDto
     {
         /// <summary>
         /// Свойство - id
@@ -20,11 +22,17 @@ namespace DtoLib.Dto
         [ProtoMember(1)]
         public int Id { get; set; }
 
+        ///// <summary>
+        ///// Свойство - массив данных пользователей, участвующих в диалоге
+        ///// </summary>
+        //[ProtoMember(2)]
+        //public List<UserDto> Users { get; set; }
+
         /// <summary>
         /// Свойство - массив данных пользователей, участвующих в диалоге
         /// </summary>
         [ProtoMember(2)]
-        public List<UserDto> Users { get; set; }
+        public List<int> UsersId { get; set; }
 
         /// <summary>
         /// Свойство - обозреваемая коллекция сообщений в диалоге
@@ -33,9 +41,9 @@ namespace DtoLib.Dto
         [ProtoMember(3)]
         public List<MessageDto> Messages { get; set; }
 
-        public DialogDto()
+        public CreateDialogRequestDto()
         {
-            Users = new List<UserDto>();
+            UsersId = new List<int>();
             Messages = new List<MessageDto>();
         }
     }

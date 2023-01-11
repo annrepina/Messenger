@@ -59,6 +59,8 @@ namespace ConsoleMessengerServer.DataBase
             string connectionString = config.GetConnectionString("DefaultConnection");
 
             optionsBuilder.UseSqlServer(connectionString, builder => builder.EnableRetryOnFailure());
+
+            optionsBuilder.EnableSensitiveDataLogging(true);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

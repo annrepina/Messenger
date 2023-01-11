@@ -4,30 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfMessengerClient.Models
+namespace WpfMessengerClient.Models.Responses
 {
     /// <summary>
-    /// Класс, который представляет результат поиска пользователя
+    /// Класс, который представляет ответ на запрос поиска пользователя с удачным результатом 
     /// </summary>
-    public class UserSearchResult
+    public class UserSearchResponse
     {
         /// <summary>
         /// Пользователи удовлетворяющие поиску
         /// </summary>
-        public List<User> RelevantUsers { get; set; }
-
-        /// <summary>
-        /// Конструктор по умолчанию
-        /// </summary>
-        public UserSearchResult()
-        {
-
-        }
+        public List<User> RelevantUsers { get; init; }
 
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        public UserSearchResult(List<User> relevantUsers)
+        public UserSearchResponse(List<User> relevantUsers)
         {
             RelevantUsers = relevantUsers;
         }

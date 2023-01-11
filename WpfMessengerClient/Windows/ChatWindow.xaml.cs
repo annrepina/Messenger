@@ -29,6 +29,9 @@ namespace WpfMessengerClient.Windows
         public ChatWindow(ChatWindowViewModel chatWindowViewModel) : this()
         {
             DataContext = chatWindowViewModel;
+            Closing += chatWindowViewModel.OnWindowClosing;
         }
+
+        
     }
 }

@@ -9,7 +9,7 @@ namespace WpfMessengerClient.Obsevers
     /// <summary>
     /// Класс, который наблюдает за событием SignUp у NetworkMessageHandler
     /// </summary>
-    public class SignUpObserver 
+    public class SignUpObserver : Observer
     {
         /// <summary>
         /// Свойство - идентификатор зарегистрированного пользователя
@@ -17,25 +17,13 @@ namespace WpfMessengerClient.Obsevers
         public int UserId { get; set; }
 
         /// <summary>
-        /// Посредник между пользователем и сетью
-        /// </summary>
-        protected readonly NetworkMessageHandler _networkProviderUserDataMediator;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected readonly TaskCompletionSource _completionSource;
-
-        /// <summary>
         /// Конструктор с параметрами
         /// </summary>
         /// <param _name="networkProviderUserDataMediator"></param>
         /// <param _name="completionSource"></param>
-        public SignUpObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) /*: base(networkProviderUserDataMediator, completionSource)*/
+        public SignUpObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
         {
-            _networkProviderUserDataMediator = networkProviderUserDataMediator;
-            _completionSource = completionSource;
-            _networkProviderUserDataMediator.SignUp += OnSignUp;
+            _networkMessageHandler.SignUp += OnSignUp;
         }
 
         /// <summary>
@@ -46,7 +34,7 @@ namespace WpfMessengerClient.Obsevers
         {
             UserId = userId;
 
-            _networkProviderUserDataMediator.SignUp -= OnSignUp;
+            _networkMessageHandler.SignUp -= OnSignUp;
 
             _completionSource.SetResult();
         }

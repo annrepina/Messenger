@@ -11,7 +11,7 @@ namespace DtoLib.Dto
     /// Data transfer object класса, который представляет собой результат поиска пользователей
     /// </summary>
     [ProtoContract]
-    public class UserSearchResultDto
+    public class UserSearchResponseDto
     {
         /// <summary>
         /// Пользователи, удовлетворяющие поиску

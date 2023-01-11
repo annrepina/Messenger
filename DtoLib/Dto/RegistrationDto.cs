@@ -34,5 +34,10 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(3)]
         public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return $"Телефон: {PhoneNumber}. Имя: {Name}";
+        }
     }
 }

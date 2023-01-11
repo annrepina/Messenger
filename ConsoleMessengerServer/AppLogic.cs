@@ -16,6 +16,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using ConsoleMessengerServer.Net.Interfaces;
 using DtoLib.NetworkServices;
+using ConsoleMessengerServer.Responses;
+using System.Formats.Asn1;
 
 namespace ConsoleMessengerServer
 {
@@ -125,12 +127,12 @@ namespace ConsoleMessengerServer
             switch (message.Code)
             {
                 case NetworkMessageCode.RegistrationCode:
-                    ProcessRegistrationNewUser(message, serverNetworkProvider);
+                    ProcessRegistrationNewUserMessage(message, serverNetworkProvider);
 
                     break;
 
                 case NetworkMessageCode.SearchUserCode:
-                    ProcessSearchUser(message, serverNetworkProvider);
+                    ProcessSearchUserMessage(message, serverNetworkProvider);
 
                     break;
 
@@ -141,10 +143,13 @@ namespace ConsoleMessengerServer
         {
             switch (message.Code)
             {
-
-
+                case NetworkMessageCode.CreateDialogCode:
+                    ProcessCreateDialogMessage(message);
+                    break;
             }
         }
+
+
 
         #endregion INetworkHandler Implementation
 
@@ -154,10 +159,10 @@ namespace ConsoleMessengerServer
         /// <param name="message"></param>
         /// <param name="networkProviderId"></param>
         /// <returns></returns>
-        public async Task ProcessRegistrationNewUser(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
+        public async Task ProcessRegistrationNewUserMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
         {
             RegistrationDto registrationDto = Deserializer.Deserialize<RegistrationDto>(message.Data);
-            User? user = _dbService.TryAddNewUser(registrationDto);
+            User? user = _dbService.AddNewUser(registrationDto);
 
             string resultOfOperation;
             NetworkMessage responseMessage;
@@ -175,7 +180,7 @@ namespace ConsoleMessengerServer
             {
                 responseMessage = new NetworkMessage(null, NetworkMessageCode.RegistrationFailedCode);
 
-                resultOfOperation = $"Код операции: {NetworkMessageCode.RegistrationFailedCode}. {user.ToString()}";
+                resultOfOperation = $"Код операции: {NetworkMessageCode.RegistrationFailedCode}. {registrationDto.ToString()}";
             }
 
             await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
@@ -202,20 +207,20 @@ namespace ConsoleMessengerServer
         /// <param name="message">Сетевое сообщение</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        private async Task ProcessSearchUser(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
+        private async Task ProcessSearchUserMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
         {
             UserSearchRequestDto searchRequestDto = Deserializer.Deserialize<UserSearchRequestDto>(message.Data);
 
-            List<User> usersList = _dbService.TrySearchUsers(searchRequestDto);
+            List<User> usersList = _dbService.SearchUsers(searchRequestDto);
 
             NetworkMessage responseMessage = null;
             string resultOfOperation = "";
 
             if (usersList?.Count > 0)
             {
-                UserSearchResult userSearchResult = new UserSearchResult(usersList);
+                UserSearchResponse userSearchResult = new UserSearchResponse(usersList);
 
-                responseMessage = CreateResponse(userSearchResult, out UserSearchResultDto dto, NetworkMessageCode.SuccessfulSearchCode);
+                responseMessage = CreateResponse(userSearchResult, out UserSearchResponseDto dto, NetworkMessageCode.SuccessfulSearchCode);
 
                 resultOfOperation = $"Код операции: {NetworkMessageCode.SuccessfulSearchCode}. Список составлен на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber}";
             }
@@ -229,6 +234,32 @@ namespace ConsoleMessengerServer
             await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
 
             Console.WriteLine(resultOfOperation);
+        }
+
+        /// <summary>
+        /// Обработать 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private async Task ProcessCreateDialogMessage(NetworkMessage message)
+        {
+            CreateDialogRequestDto createDialogRequest = Deserializer.Deserialize<CreateDialogRequestDto>(message.Data);
+
+            Dialog dialog = _dbService.CreateDialog(createDialogRequest);
+
+            CreateDialogResponse createDialogResponse = _mapper.Map<CreateDialogResponse>(dialog);
+
+            NetworkMessage responseMessageForSender = CreateResponse(createDialogResponse, out CreateDialogResponseDto dto, NetworkMessageCode.SuccessfulCreatingDialogCode);
+
+            await _userProxyList[createDialogRequest.UsersId[0]].BroadcastNetworkMessageAsync(responseMessageForSender);
+
+            if(_userProxyList.ContainsKey(createDialogRequest.UsersId[1]))
+            {
+                NetworkMessage responseForRecipient = CreateResponse(dialog, out DialogDto dialogDto, NetworkMessageCode.CreateDialogCode);
+                await _userProxyList[createDialogRequest.UsersId[1]].BroadcastNetworkMessageAsync(responseForRecipient);
+            }
+
+            Console.WriteLine($"Код операции: {NetworkMessageCode.SuccessfulCreatingDialogCode}. Диалог с Id {createDialogResponse.DialogId} создан."); 
         }
 
         #region Методы создания ответов на запросы
@@ -263,8 +294,6 @@ namespace ConsoleMessengerServer
         }
 
         #endregion Методы создания ответов на запросы
-
-
 
         public void Dispose()
         {

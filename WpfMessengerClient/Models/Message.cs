@@ -32,7 +32,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Данные о пользователе - отправителе сообщения
         /// </summary>
-        private User _senderUserData;
+        private User _userSender;
 
         ///// <summary>
         ///// Диалог, в котором существует сообщение
@@ -72,27 +72,24 @@ namespace WpfMessengerClient.Models
 
             set
             {
-                //if (!string.IsNullOrEmpty(value))
-                //{
-                    _text = value;
+                _text = value;
 
-                    OnPropertyChanged(nameof(Text));
-                //}
+                OnPropertyChanged(nameof(Text));
             }
         }
 
         /// <summary>
         /// Свойство - данные о пользователе - отправителе сообщения
         /// </summary>
-        public User SenderUserData
+        public User UserSender
         {
-            get => _senderUserData;
+            get => _userSender;
 
             set
             {
-                _senderUserData = value;
+                _userSender = value;
 
-                OnPropertyChanged(nameof(SenderUserData));
+                OnPropertyChanged(nameof(UserSender));
             }
         }
 
@@ -154,7 +151,7 @@ namespace WpfMessengerClient.Models
         {
             Id = 0;
             _text = text;
-            _senderUserData = senderUserAccount;
+            _userSender = senderUserAccount;
             _isRead = false;
             _dateTime = DateTime.Now;
             //_dialog = dialog;

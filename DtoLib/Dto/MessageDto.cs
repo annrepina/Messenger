@@ -39,7 +39,7 @@ namespace DtoLib.Dto
         ///// Диалог в котором существует сообщение
         ///// </summary>
         //[ProtoMember(4)]
-        //public DialogDto Dialog { get; set; }
+        //public CreateDialogRequestDto Dialog { get; set; }
 
         /// <summary>
         /// Свойство - прочитано ли сообщение 

@@ -6,12 +6,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace WpfMessengerClient.Models
+namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
     /// Информация необходимая для входа в мессенджер
     /// </summary>
-    public class LoginRequestData : BaseNotifyPropertyChanged, IDataErrorInfo
+    public class LoginRequest : BaseNotifyPropertyChanged, IDataErrorInfo
     {
         #region Константы
 
@@ -90,7 +90,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public LoginRequestData()
+        public LoginRequest()
         {
             Password = "";
             PhoneNumber = "";
@@ -124,7 +124,7 @@ namespace WpfMessengerClient.Models
         public virtual string this[string propName]
         {
             get
-            {            
+            {
                 // Проверяем есть ли у текущего объекта ошибка
                 ValidateAllProperties(propName);
 

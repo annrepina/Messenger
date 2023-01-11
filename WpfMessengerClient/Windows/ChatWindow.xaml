@@ -154,8 +154,8 @@
                                      IsEnabled="{Binding IsGreetingMessageTextBoxAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                      Visibility="{Binding IsGreetingMessageTextBoxAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
 
-                            <Button Grid.Row="1" Content="{Binding OpenDialogButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                    IsEnabled="{Binding WasUserSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            <Button Grid.Row="1" Name="OpenDialogButton" Content="{Binding OpenDialogButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    IsEnabled="{Binding IsOpenDialogButtonAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                     Visibility="{Binding WasUserSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="50" VerticalAlignment="Bottom"
                                     Command="{Binding OpenDialogCommand}"/>
 

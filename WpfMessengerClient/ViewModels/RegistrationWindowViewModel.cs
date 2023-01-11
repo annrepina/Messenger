@@ -81,7 +81,7 @@ namespace WpfMessengerClient.ViewModels
         public RegistrationWindowViewModel(MessengerWindowsManager messengerWindowsManager)
         {
             _networkProviderUserDataMediator = new NetworkMessageHandler();
-            //_networkProviderUserDataMediator.SignUp += ChangeWindowToChatWindow;
+            //_networkMessageHandler.SignUp += ChangeWindowToChatWindow;
 
             OnSignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             MessengerWindowsManager = messengerWindowsManager;

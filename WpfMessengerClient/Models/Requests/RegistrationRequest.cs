@@ -11,7 +11,7 @@ namespace WpfMessengerClient.Models.Requests
     /// <summary>
     /// Данные, необходимые при регистрации в мессенджере
     /// </summary>
-    public class RegistrationRequest : LoginRequestData
+    public class RegistrationRequest : LoginRequest
     {
         #region Константы
 
