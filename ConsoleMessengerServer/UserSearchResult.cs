@@ -20,6 +20,14 @@ namespace ConsoleMessengerServer
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
+        public UserSearchResult()
+        {
+            RelevantUsers = new List<User>();
+        }
+
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public UserSearchResult(List<User> relevantUsers)
         {
             RelevantUsers = relevantUsers;

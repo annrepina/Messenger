@@ -164,10 +164,10 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        /// <summary>
-        /// Свойство - обозреваемая коллекция - список диалогов
-        /// </summary>
-        public ObservableCollection<Dialog> Dialogs { get; set; }
+        ///// <summary>
+        ///// Свойство - обозреваемая коллекция - список диалогов
+        ///// </summary>
+        //public ObservableCollection<Dialog> Dialogs { get; set; }
 
         #endregion Свойства
 
@@ -218,7 +218,6 @@ namespace WpfMessengerClient.Models
             _phoneNumber = "";
             _password = "";
             _isOnline = false;
-            Dialogs = new ObservableCollection<Dialog>();
             _error = null;
         }
 

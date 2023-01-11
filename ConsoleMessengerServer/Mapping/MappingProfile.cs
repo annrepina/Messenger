@@ -15,12 +15,15 @@ namespace ConsoleMessengerServer.Entities.Mapping
         {
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, RegistrationDto>().ReverseMap();
+            CreateMap<UserSearchResult, UserSearchResultDto>().ReverseMap();
 
             CreateMap<Dialog, DialogDto>().ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
 
             CreateMap<ServerNetworkProvider, NetworkProviderDto>().ReverseMap();
+
+            CreateMap<SuccessfulRegistrationResponse, SuccessfulRegistrationResponseDto>().ReverseMap();
         }
 
     }

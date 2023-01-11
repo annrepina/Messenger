@@ -48,12 +48,6 @@ namespace DtoLib.Dto
         [ProtoMember(5)]
         public bool IsOnline { get; set; }
 
-        /// <summary>
-        /// Свойство - обозреваемая коллекция диалогов у пользователя
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(6)]
-        public ObservableCollection<DialogDto> Dialogs { get; set; }
 
         #region Debug
 
@@ -63,7 +57,7 @@ namespace DtoLib.Dto
         /// <returns></returns>
         public override string ToString()
         {
-            return $"Id: {Id}. PhoneNumber: {PhoneNumber}. Password: {Password}. IsOnline: {IsOnline}. DialogsNumber: {Dialogs.Count}";
+            return $"Id: {Id}. PhoneNumber: {PhoneNumber}. Password: {Password}. IsOnline: {IsOnline}.";
         }
 
         #endregion Debug

@@ -18,6 +18,7 @@ using DtoLib;
 using DtoLib.Serialization;
 using WpfMessengerClient.Obsevers;
 using System.Windows;
+using WpfMessengerClient.Models.Requests;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -29,12 +30,17 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Посредник между сетевым провайдером и данными ипользователя
         /// </summary>
-        private NetworkProviderUserDataMediator _networkProviderUserDataMediator;
+        private NetworkMessageHandler _networkProviderUserDataMediator;
 
         /// <summary>
         /// Доступна ли кнопка регистрации для нажатия
         /// </summary>
         private bool _isRegistrationButtonFree;
+
+        /// <summary>
+        /// Маппер для мапинга моделей на DTO и обратно
+        /// </summary>
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Менеджер окон приложения
@@ -52,9 +58,9 @@ namespace WpfMessengerClient.ViewModels
         public RegistrationRequest RegistrationRequestData { get; init; }
 
         /// <summary>
-        /// Доступна ли кнопка регистрации для нажатия
+        /// Доступны ли контролы на вьюхе
         /// </summary>
-        public bool IsRegistrationButtonFree
+        public bool IsControlsFree
         {
             get => _isRegistrationButtonFree;
 
@@ -62,7 +68,7 @@ namespace WpfMessengerClient.ViewModels
             {
                 _isRegistrationButtonFree = value;
 
-                OnPropertyChanged(nameof(IsRegistrationButtonFree));
+                OnPropertyChanged(nameof(IsControlsFree));
             }
         }
 
@@ -74,14 +80,17 @@ namespace WpfMessengerClient.ViewModels
         /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
         public RegistrationWindowViewModel(MessengerWindowsManager messengerWindowsManager)
         {
-            _networkProviderUserDataMediator = new NetworkProviderUserDataMediator();
-            _networkProviderUserDataMediator.SignUp += ChangeWindowToChatWindow;
+            _networkProviderUserDataMediator = new NetworkMessageHandler();
+            //_networkProviderUserDataMediator.SignUp += ChangeWindowToChatWindow;
 
             OnSignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             MessengerWindowsManager = messengerWindowsManager;
             RegistrationRequestData = new RegistrationRequest(); 
 
-            IsRegistrationButtonFree = true;
+            IsControlsFree = true;
+
+            MessengerMapper mapper = MessengerMapper.GetInstance();
+            _mapper = mapper.CreateIMapper();
         }
 
         #endregion Конструкторы
@@ -96,23 +105,23 @@ namespace WpfMessengerClient.ViewModels
             //if (String.IsNullOrEmpty(RegistrationRequest.Error))
             //{
 
-            try
-            {
-                IsRegistrationButtonFree = false;
+            IsControlsFree = false;
 
-                TaskCompletionSource completionSource = new TaskCompletionSource();
+            TaskCompletionSource completionSource = new TaskCompletionSource();
 
-                new SignUpObserver(_networkProviderUserDataMediator, completionSource);
+            var observer = new SignUpObserver(_networkProviderUserDataMediator, completionSource);
 
-                await _networkProviderUserDataMediator.SendRegistrationRequestAsync(RegistrationRequestData);
+            _networkProviderUserDataMediator.SendRegistrationRequestAsync(RegistrationRequestData);
 
-                await completionSource.Task;
-            }
+            await completionSource.Task;
 
-            finally
-            {
-                IsRegistrationButtonFree = true;
-            }
+            User user = _mapper.Map<User>(RegistrationRequestData);
+            user.Id = observer.UserId;
+
+            IsControlsFree = true;
+
+            ChangeWindowToChatWindow(user);
+
             //}
 
             //else
@@ -120,15 +129,15 @@ namespace WpfMessengerClient.ViewModels
             //    MessageBox.Show(RegistrationRequest.Error);
             //}
 
-            ChangeWindowToChatWindow();
+
         }
 
         /// <summary>
         /// Изменить окно на окно чата
         /// </summary>
-        public void ChangeWindowToChatWindow()
+        public void ChangeWindowToChatWindow(User user)
         {
-            MessengerWindowsManager.SwitchToChatWindow(_networkProviderUserDataMediator);
+            MessengerWindowsManager.SwitchToChatWindow(_networkProviderUserDataMediator, user);
         }
     }
 }

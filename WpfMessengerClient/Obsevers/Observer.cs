@@ -14,7 +14,7 @@ namespace WpfMessengerClient.Obsevers
         /// <summary>
         /// Посредник между пользователем и сетью
         /// </summary>
-        protected readonly NetworkProviderUserDataMediator _networkProviderUserDataMediator;
+        protected readonly NetworkMessageHandler _networkProviderUserDataMediator;
 
         /// <summary>
         /// 
@@ -26,15 +26,15 @@ namespace WpfMessengerClient.Obsevers
         /// </summary>
         /// <param _name="networkProviderUserDataMediator"></param>
         /// <param _name="completionSource"></param>
-        public Observer(NetworkProviderUserDataMediator networkProviderUserDataMediator, TaskCompletionSource completionSource)
+        public Observer(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource)
         {
             _networkProviderUserDataMediator = networkProviderUserDataMediator;
             _completionSource = completionSource;
         }
 
-        /// <summary>
-        /// Обработчик события NetworkProviderUserDataMediator
-        /// </summary>
-        protected abstract void OnEventOccured();
+        ///// <summary>
+        ///// Обработчик события NetworkMessageHandler
+        ///// </summary>
+        //protected abstract void OnEventOccured();
     }
 }

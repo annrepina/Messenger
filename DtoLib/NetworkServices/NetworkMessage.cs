@@ -16,32 +16,32 @@ namespace DtoLib.NetworkServices
     public class NetworkMessage
     {
         [ProtoMember(1)]
-        public OperationCode CurrentCode { get; set; }
+        public NetworkMessageCode Code { get; set; }
 
         [ProtoMember(2)]
         public byte[]? Data { get; set; }
 
-        public enum OperationCode : byte
-        {
-            RegistrationCode,
-            SuccessfulRegistrationCode,
-            RegistrationFailedCode,
-            AuthorizationCode,
-            SearchUserCode,
-            SuccessfulSearchCode,
-            SearchFailedCode,
-            SendingMessageCode,
-            ExitCode,
-        }
+        //public enum OperationCode : byte
+        //{
+        //    RegistrationCode,
+        //    SuccessfulRegistrationCode,
+        //    RegistrationFailedCode,
+        //    AuthorizationCode,
+        //    SearchUserCode,
+        //    SuccessfulSearchCode,
+        //    SearchFailedCode,
+        //    SendingMessageCode,
+        //    ExitCode,
+        //}
 
         public NetworkMessage()
         {
 
         }
 
-        public NetworkMessage(byte[]? data, OperationCode operationCode)
+        public NetworkMessage(byte[]? data, NetworkMessageCode code)
         {
-            CurrentCode = operationCode;
+            Code = code;
             Data = data;
         }
     }

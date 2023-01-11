@@ -54,11 +54,11 @@
                 <TextBlock Grid.Row="0" Text="Регистрация" FontSize="32" FontFamily="Tahoma" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="1" Text="Ваш номер телефона будет использоваться &#x0a;для входа в аккаунт" FontSize="16" FontFamily="Tahoma" HorizontalAlignment="Center" TextAlignment="Center" Foreground="#6f7378"/>
             </Grid>
-            <TextBox Grid.Row="1" Style="{StaticResource InputPhoneNumberTextBox}"/>
-            <TextBox Grid.Row="2" Style="{StaticResource InputNameTextBox}" />
-            <TextBox Grid.Row="3" Style="{StaticResource InputPasswordTextBox}"/>
+            <TextBox Grid.Row="1" IsEnabled="{Binding IsControlsFree}" Style="{StaticResource InputPhoneNumberTextBox}" Height="90" Margin="5,0,5,5" VerticalAlignment="Bottom"/>
+            <TextBox Grid.Row="2" IsEnabled="{Binding IsControlsFree}" Style="{StaticResource InputNameTextBox}" />
+            <TextBox Grid.Row="3" IsEnabled="{Binding IsControlsFree}" Style="{StaticResource InputPasswordTextBox}"/>
             <!--<TextBox Grid.Row="3" Style="{StaticResource InputSecondPasswordTextBox}" />-->
-            <Button Grid.Row="5" Style="{StaticResource RoundedButton}" IsEnabled="{Binding IsFree}" Content="Зарегистрироваться" Command="{Binding OnSignUpCommand}"/>
+            <Button Grid.Row="5" Style="{StaticResource RoundedButton}" IsEnabled="{Binding IsControlsFree}" Content="Зарегистрироваться" Command="{Binding OnSignUpCommand}"/>
             <Border CornerRadius="18"/>
         </Grid>   
     </Grid>

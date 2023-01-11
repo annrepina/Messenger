@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient.Models.Mapping
@@ -23,9 +24,12 @@ namespace WpfMessengerClient.Models.Mapping
 
             CreateMap<RegistrationRequest, RegistrationDto>().ReverseMap();        
             CreateMap<RegistrationRequest, User>().ReverseMap();
+            CreateMap<SuccessfulRegistrationResponse, SuccessfulRegistrationResponseDto>().ReverseMap();
 
             CreateMap<UserSearchRequest, UserSearchRequestDto>().ReverseMap();
             CreateMap<UserSearchResult, UserSearchResultDto>().ReverseMap();
+
+
         }
     }
 }

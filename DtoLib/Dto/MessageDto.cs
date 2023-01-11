@@ -35,24 +35,24 @@ namespace DtoLib.Dto
         [ProtoMember(3)]
         public UserDto UserSender { get; set; }
 
-        /// <summary>
-        /// Диалог в котором существует сообщение
-        /// </summary>
-        [ProtoMember(4)]
-        public DialogDto Dialog { get; set; }
+        ///// <summary>
+        ///// Диалог в котором существует сообщение
+        ///// </summary>
+        //[ProtoMember(4)]
+        //public DialogDto Dialog { get; set; }
 
         /// <summary>
         /// Свойство - прочитано ли сообщение 
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
-        [ProtoMember(5)]
+        [ProtoMember(4)]
         public bool IsRead { get; set; }
 
         /// <summary>
         /// Свойство - дата и время отправки сообщения
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
-        [ProtoMember(6)]
+        [ProtoMember(5)]
         public DateTime DateTime { get; set; }
     }
 }

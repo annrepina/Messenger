@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfMessengerClient.Models;
 using WpfMessengerClient.ViewModels;
 using WpfMessengerClient.Windows;
 
@@ -74,9 +75,9 @@ namespace WpfMessengerClient
         /// <summary>
         /// Переключиться на окно чата
         /// </summary>
-        public void SwitchToChatWindow(NetworkProviderUserDataMediator networkProviderUserDataMediator)
+        public void SwitchToChatWindow(NetworkMessageHandler networkProviderUserDataMediator, User user)
         {
-            ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(networkProviderUserDataMediator, this);
+            ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(networkProviderUserDataMediator, this, user);
 
             ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
 

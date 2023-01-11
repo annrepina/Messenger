@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfMessengerClient.Models
+namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
     /// Данные о поисковом запросе

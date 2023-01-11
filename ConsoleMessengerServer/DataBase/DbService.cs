@@ -74,13 +74,13 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="searchRequestDto">Dto поискового запроса</param>
         /// <returns></returns>
-        public List<User>? TrySearchUsers(UserSearchRequestDto searchRequestDto)
+        public List<User> TrySearchUsers(UserSearchRequestDto searchRequestDto)
         {
-            List<User>? users = null;
+            List<User> users = new List<User>();
 
             using (var dbContext = new MessengerDbContext())
             {
-                users = dbContext.Users.Where(u => u.PhoneNumber == searchRequestDto.PhoneNumber || u.Name.Contains(searchRequestDto.Name)).ToList();
+                users = dbContext.Users.Where(u => u.PhoneNumber == searchRequestDto.PhoneNumber || (searchRequestDto.Name != "" && u.Name.ToLower().Contains(searchRequestDto.Name.ToLower()))).ToList();
             }
 
             return users;

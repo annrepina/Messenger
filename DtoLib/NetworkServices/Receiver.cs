@@ -33,7 +33,7 @@ namespace DtoLib.NetworkServices
         public async Task<byte[]> ReceiveBytesAsync()
         {
             //// буфер для получаемых данных
-            byte[] data = new byte[256];
+            byte[] data = new byte[1024];
 
             int bytes = 0;
 
@@ -47,7 +47,7 @@ namespace DtoLib.NetworkServices
 
             var list = data.ToList();
 
-            list.RemoveRange(bytes, 256 - bytes);
+            list.RemoveRange(bytes, 1024 - bytes);
 
             list.CopyTo(cutData);
 
@@ -59,15 +59,24 @@ namespace DtoLib.NetworkServices
         /// </summary>
         public async Task ReceiveNetworkMessageAsync()
         {
-            while (true)
+            try
             {
-                // буфер для получаемых данных
-                byte[] data = await ReceiveBytesAsync();
+                while (true)
+                {
+                    // буфер для получаемых данных
+                    byte[] data = await ReceiveBytesAsync();
 
-                NetworkMessage networkMessage = Deserializer.Deserialize<NetworkMessage>(data);
+                    NetworkMessage networkMessage = Deserializer.Deserialize<NetworkMessage>(data);
 
-                NetworkProvider.GetNetworkMessage(networkMessage);
+                    NetworkProvider.GetNetworkMessage(networkMessage);
+                }
             }
+            catch (Exception ex)
+            {
+                var s = ex.ToString();
+                throw;
+            }
+
         }
 
         /// <summary>

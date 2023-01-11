@@ -56,7 +56,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Текущий пользователь
         /// </summary>
-        private User CurrentUser
+        public User CurrentUser
         {
             get => _currentUser;
 

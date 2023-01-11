@@ -19,6 +19,14 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
+        public UserSearchResult()
+        {
+
+        }
+
+        /// <summary>
+        /// Конструктор с параметром
+        /// </summary>
         public UserSearchResult(List<User> relevantUsers)
         {
             RelevantUsers = relevantUsers;

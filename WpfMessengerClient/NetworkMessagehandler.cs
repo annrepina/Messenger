@@ -9,8 +9,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
+using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient
@@ -18,14 +20,14 @@ namespace WpfMessengerClient
     /// <summary>
     /// Класс, который является посредником между сетевым провайдероми и данными пользователя
     /// </summary>
-    public class NetworkProviderUserDataMediator : BaseNotifyPropertyChanged, INetworkMessageHandler
+    public class NetworkMessageHandler : BaseNotifyPropertyChanged, INetworkMessageHandler
     {
         #region События
 
         /// <summary>
         /// Событие регистрации пользователя
         /// </summary>
-        public event Action SignUp;
+        public event Action<int> SignUp;
 
         /// <summary>
         /// Событие входа пользователя
@@ -37,16 +39,11 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие получение успешного результата поиска пользователя
         /// </summary>
-        public event Action<UserSearchResult> SearchResultReceived;
+        public event Action<UserSearchResult?> SearchResultReceived;
 
         #endregion События
 
         #region Приватные поля
-
-        /// <summary>
-        /// Пользователь
-        /// </summary>
-        private User _user;
 
         /// <summary>
         /// Маппер для мапинга моделей на DTO и обратно
@@ -62,21 +59,6 @@ namespace WpfMessengerClient
         /// </summary>
         public ClientNetworkProvider ClientNetworkProvider { get; set; }
 
-        /// <summary>
-        /// Пользователь
-        /// </summary>
-        public User User
-        {
-            get => _user;
-
-            set
-            {
-                _user = value;
-
-                OnPropertyChanged(nameof(User));
-            }
-        }
-
         #endregion Свойства
 
         #region Конструкторы
@@ -84,10 +66,8 @@ namespace WpfMessengerClient
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public NetworkProviderUserDataMediator()
+        public NetworkMessageHandler()
         {
-            User = new User();
-
             ClientNetworkProvider = new ClientNetworkProvider(this);
 
             MessengerMapper mapper = MessengerMapper.GetInstance();
@@ -104,37 +84,40 @@ namespace WpfMessengerClient
         /// <param _name="message">Сетевое сообщение</param>
         public void ProcessNetworkMessage(NetworkMessage message)
         {
-            switch (message.CurrentCode)
+            switch (message.Code)
             {
-                case NetworkMessage.OperationCode.RegistrationCode:
+                case NetworkMessageCode.RegistrationCode:
                     break;
 
-                case NetworkMessage.OperationCode.SuccessfulRegistrationCode:
+                case NetworkMessageCode.SuccessfulRegistrationCode:
                     ProcessSuccessfulRegistrationNetworkMessage(message);
 
                     break;
 
-                case NetworkMessage.OperationCode.RegistrationFailedCode:
+                case NetworkMessageCode.RegistrationFailedCode:
                     break;
 
-                case NetworkMessage.OperationCode.AuthorizationCode:
+                case NetworkMessageCode.AuthorizationCode:
                     break;
 
-                case NetworkMessage.OperationCode.SuccessfulSearchCode:
+                case NetworkMessageCode.SuccessfulSearchCode:
                     ProcessSuccessfulSearchNetworkMessage(message);
 
                     break;
 
-                case NetworkMessage.OperationCode.SendingMessageCode:
+                case NetworkMessageCode.SearchFailedCode:
+                    ProcessFailedSearchNetworkMessage();
+
                     break;
-                case NetworkMessage.OperationCode.ExitCode:
+
+                case NetworkMessageCode.SendingMessageCode:
+                    break;
+                case NetworkMessageCode.ExitCode:
                     break;
                 default:
                     break;
             }
         }
-
-
 
         #endregion Реализация INetworkMessageHandler
 
@@ -146,13 +129,11 @@ namespace WpfMessengerClient
         /// <param _name="message">Сетевое сообщение</param>
         public void ProcessSuccessfulRegistrationNetworkMessage(NetworkMessage message)
         {
-            var data = message.Data;
-
             try
             {
-                NetworkProviderDto networkProviderDto = Deserializer.Deserialize<NetworkProviderDto>(data);
+                SuccessfulRegistrationResponseDto successfulRegistrationDto = Deserializer.Deserialize<SuccessfulRegistrationResponseDto>(message.Data);
 
-                RegisterNewUser(networkProviderDto);
+                RegisterNewUser(successfulRegistrationDto);
             }
             catch (Exception ex)
             {
@@ -167,11 +148,21 @@ namespace WpfMessengerClient
         /// <param name="message">Сетевое сообщение</param>
         private void ProcessSuccessfulSearchNetworkMessage(NetworkMessage message)
         {
-            var data = message.Data;
+            byte[]? data = message.Data;
 
             UserSearchResultDto userSearchResultDto = Deserializer.Deserialize<UserSearchResultDto>(data);
 
             UserSearchResult userSearchResult = _mapper.Map<UserSearchResult>(userSearchResultDto);
+
+            SearchResultReceived?.Invoke(userSearchResult);
+        }
+
+        /// <summary>
+        /// Обработать сетевое сообщение о неудачном поиске
+        /// </summary>
+        private void ProcessFailedSearchNetworkMessage()
+        {
+            UserSearchResult userSearchResult = null;
 
             SearchResultReceived?.Invoke(userSearchResult);
         }
@@ -183,14 +174,14 @@ namespace WpfMessengerClient
         /// </summary>
         /// <param _name="networkProviderDto">DTO, сетевого провайдера с Id из базы данных</param>
         /// 
-        public void RegisterNewUser(NetworkProviderDto networkProviderDto)
+        public void RegisterNewUser(SuccessfulRegistrationResponseDto successfulRegistrationDto)
         {
-            ClientNetworkProvider.Id = networkProviderDto.Id;
+            SuccessfulRegistrationResponse registrationResponse = _mapper.Map<SuccessfulRegistrationResponse>(successfulRegistrationDto);
 
-            SignUp?.Invoke();
+            ClientNetworkProvider.Id = registrationResponse.NetworkProviderId;
+
+            SignUp?.Invoke(registrationResponse.UserId);
         }
-
-
 
         #region Методы взаимодействия с сетью
 
@@ -201,14 +192,11 @@ namespace WpfMessengerClient
         /// <returns></returns>
         public async Task SendRegistrationRequestAsync(RegistrationRequest registrationData)
         {
-            User user = _mapper.Map<User>(registrationData);
-            User = user;
-
             RegistrationDto registrationDto = _mapper.Map<RegistrationDto>(registrationData);
 
             byte[] data = Serializer<RegistrationDto>.Serialize(registrationDto);
 
-            NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.RegistrationCode);
+            NetworkMessage message = new NetworkMessage(data, NetworkMessageCode.RegistrationCode);
 
             await ClientNetworkProvider.ConnectAsync(message);
         }
@@ -220,13 +208,21 @@ namespace WpfMessengerClient
         /// <returns></returns>
         public async Task SendSearchRequestAsync(UserSearchRequest searchingData)
         {
-            UserSearchRequestDto searchRequestDto = _mapper.Map<UserSearchRequestDto>(searchingData);
+            try
+            {
+                UserSearchRequestDto searchRequestDto = _mapper.Map<UserSearchRequestDto>(searchingData);
 
-            byte[] data = Serializer<UserSearchRequestDto>.Serialize(searchRequestDto);
+                byte[] data = Serializer<UserSearchRequestDto>.Serialize(searchRequestDto);
 
-            NetworkMessage message = new NetworkMessage(data, NetworkMessage.OperationCode.SearchUserCode);
+                NetworkMessage message = new NetworkMessage(data, NetworkMessageCode.SearchUserCode);
 
-            await ClientNetworkProvider.Sender.SendNetworkMessageAsync(message);
+                await ClientNetworkProvider.Sender.SendNetworkMessageAsync(message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
+            }
         }
 
         #endregion Методы взаимодействия с сетью

@@ -81,11 +81,12 @@ namespace WpfMessengerClient.Services
                         await Sender.SendNetworkMessageAsync(message);
                     }
 
-                    await Receiver.ReceiveNetworkMessageAsync();
+                    await Task.Run(() => Receiver.ReceiveNetworkMessageAsync());
                 }
             }
             catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
                 MessageBox.Show("Подключение прервано...");
                 throw;
             }

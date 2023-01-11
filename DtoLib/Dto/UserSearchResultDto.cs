@@ -18,6 +18,6 @@ namespace DtoLib.Dto
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
-        List<UserDto> RelevantUsers { get; set; }
+        public List<UserDto> RelevantUsers { get; set; }
     }
 }

@@ -34,10 +34,10 @@ namespace WpfMessengerClient.Models
         /// </summary>
         private User _senderUserData;
 
-        /// <summary>
-        /// Диалог, в котором существует сообщение
-        /// </summary>
-        private Dialog _dialog;
+        ///// <summary>
+        ///// Диалог, в котором существует сообщение
+        ///// </summary>
+        //private Dialog? _dialog;
 
         /// <summary>
         /// Идентификатор сообщения
@@ -72,12 +72,12 @@ namespace WpfMessengerClient.Models
 
             set
             {
-                if (!string.IsNullOrEmpty(value))
-                {
+                //if (!string.IsNullOrEmpty(value))
+                //{
                     _text = value;
 
                     OnPropertyChanged(nameof(Text));
-                }
+                //}
             }
         }
 
@@ -96,20 +96,20 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        /// <summary>
-        /// Свойство - диалог в котором существует сообщение
-        /// </summary>
-        public Dialog Dialog
-        {
-            get => _dialog;
+        ///// <summary>
+        ///// Свойство - диалог в котором существует сообщение
+        ///// </summary>
+        //public Dialog? Dialog
+        //{
+        //    get => _dialog;
 
-            set
-            {
-                _dialog = value;
+        //    set
+        //    {
+        //        _dialog = value;
 
-                OnPropertyChanged(nameof(Dialog));
-            }
-        }
+        //        OnPropertyChanged(nameof(Dialog));
+        //    }
+        //}
 
         /// <summary>
         /// Свойство - прочитано сообщение?
@@ -150,14 +150,14 @@ namespace WpfMessengerClient.Models
         /// <param _name="text">Текст сообщения</param>
         /// <param _name="senderUserAccount">Данные о пользователе - отправителе сообщения</param>
         /// <param _name="dialog">Диалог, в котором существует сообщение</param>
-        public Message(string text, User senderUserAccount, Dialog dialog)
+        public Message(string text, User senderUserAccount/*, Dialog? dialog*/)
         {
             Id = 0;
             _text = text;
             _senderUserData = senderUserAccount;
             _isRead = false;
             _dateTime = DateTime.Now;
-            _dialog = dialog;
+            //_dialog = dialog;
         }
 
         #endregion Конструкторы

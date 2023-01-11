@@ -122,15 +122,15 @@ namespace ConsoleMessengerServer
         /// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
         public async Task ProcessNetworkMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
         {
-            switch (message.CurrentCode)
+            switch (message.Code)
             {
-                case NetworkMessage.OperationCode.RegistrationCode:
-                    RegisterNewUser(message, serverNetworkProvider);
+                case NetworkMessageCode.RegistrationCode:
+                    ProcessRegistrationNewUser(message, serverNetworkProvider);
 
                     break;
 
-                case NetworkMessage.OperationCode.SearchUserCode:
-                    await SearchUser(message, serverNetworkProvider);
+                case NetworkMessageCode.SearchUserCode:
+                    ProcessSearchUser(message, serverNetworkProvider);
 
                     break;
 
@@ -139,7 +139,7 @@ namespace ConsoleMessengerServer
 
         public void ProcessNetworkMessage(NetworkMessage message)
         {
-            switch (message.CurrentCode)
+            switch (message.Code)
             {
 
 
@@ -154,33 +154,31 @@ namespace ConsoleMessengerServer
         /// <param name="message"></param>
         /// <param name="networkProviderId"></param>
         /// <returns></returns>
-        public async Task RegisterNewUser(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
+        public async Task ProcessRegistrationNewUser(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
         {
             RegistrationDto registrationDto = Deserializer.Deserialize<RegistrationDto>(message.Data);
             User? user = _dbService.TryAddNewUser(registrationDto);
 
-            NetworkMessage responseMessage = null;
+            string resultOfOperation;
+            NetworkMessage responseMessage;
 
-            string resultOfOperation = "";
-
-            if(user != null)
+            if (user != null)
             {
                 CreateUserProxy(user.Id, serverNetworkProvider);
 
-                responseMessage = CreateResponse<ServerNetworkProvider, NetworkProviderDto>(serverNetworkProvider, out NetworkProviderDto dto, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
+                SuccessfulRegistrationResponse registrationResponse = new SuccessfulRegistrationResponse(user.Id, serverNetworkProvider.Id);
+                responseMessage = CreateResponse(registrationResponse, out SuccessfulRegistrationResponseDto dto, NetworkMessageCode.SuccessfulRegistrationCode);
 
-                await _userProxyList[user.Id].BroadcastNetworkMessageAsync(responseMessage);
-
-                resultOfOperation = $"Код операции: {NetworkMessage.OperationCode.RegistrationCode}. {user.ToString()}";
+                resultOfOperation = $"Код операции: {NetworkMessageCode.RegistrationCode}. {user.ToString()}";
             }
             else
             {
-                responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.RegistrationFailedCode);
+                responseMessage = new NetworkMessage(null, NetworkMessageCode.RegistrationFailedCode);
 
-                await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
-
-                resultOfOperation = $"Код операции: {NetworkMessage.OperationCode.RegistrationFailedCode}. {user.ToString()}";
+                resultOfOperation = $"Код операции: {NetworkMessageCode.RegistrationFailedCode}. {user.ToString()}";
             }
+
+            await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
 
             Console.WriteLine(resultOfOperation);
         }//method
@@ -204,45 +202,36 @@ namespace ConsoleMessengerServer
         /// <param name="message">Сетевое сообщение</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        private async Task SearchUser(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
+        private async Task ProcessSearchUser(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
         {
             UserSearchRequestDto searchRequestDto = Deserializer.Deserialize<UserSearchRequestDto>(message.Data);
 
-            List<User>? usersList = _dbService.TrySearchUsers(searchRequestDto);
+            List<User> usersList = _dbService.TrySearchUsers(searchRequestDto);
 
             NetworkMessage responseMessage = null;
             string resultOfOperation = "";
 
-            if (usersList != null)
+            if (usersList?.Count > 0)
             {
                 UserSearchResult userSearchResult = new UserSearchResult(usersList);
 
-                responseMessage = CreateResponse<UserSearchResult, UserSearchResultDto>(userSearchResult, out UserSearchResultDto dto, NetworkMessage.OperationCode.SuccessfulSearchCode);
+                responseMessage = CreateResponse(userSearchResult, out UserSearchResultDto dto, NetworkMessageCode.SuccessfulSearchCode);
 
-                await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
-
-                resultOfOperation = $"Код операции: {NetworkMessage.OperationCode.SuccessfulSearchCode}. Список составлен на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber}";
+                resultOfOperation = $"Код операции: {NetworkMessageCode.SuccessfulSearchCode}. Список составлен на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber}";
             }
             else
             {
-                responseMessage = new NetworkMessage(null, NetworkMessage.OperationCode.SearchFailedCode);
-                resultOfOperation = $"Код операции: {NetworkMessage.OperationCode.SearchFailedCode}. Поиск на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber} не дал результатов";
+                responseMessage = new NetworkMessage(null, NetworkMessageCode.SearchFailedCode);
+
+                resultOfOperation = $"Код операции: {NetworkMessageCode.SearchFailedCode}. Поиск на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber} не дал результатов";
             }
+
+            await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
 
             Console.WriteLine(resultOfOperation);
         }
 
         #region Методы создания ответов на запросы
-
-        ///// <summary>
-        ///// Создать ответное сетевое сообщение об успешной регистрации
-        ///// </summary>
-        //public NetworkMessage CreateSuccessfulRegistrationResponse(ServerNetworkProvider serverNetworkProvider)
-        //{
-        //    NetworkProviderDto networkProviderDto = _mapper.Map<NetworkProviderDto>(serverNetworkProvider);
-        //    byte[] data = Serializer<NetworkProviderDto>.Serialize(networkProviderDto);
-        //    return new NetworkMessage(data, NetworkMessage.OperationCode.SuccessfulRegistrationCode);
-        //}
 
         /// <summary>
         /// Обобщенный метод создания ответного сетевого сообщения
@@ -251,16 +240,24 @@ namespace ConsoleMessengerServer
         /// <typeparam name="Tdto">Тип конкретного dto</typeparam>
         /// <param name="tsource">Объект - сточник для мапинга на dto</param>
         /// <param name="dto">Объект, представляющий dto</param>
-        /// <param name="operationCode">Код операции</param>
+        /// <param name="code">Код операции</param>
         /// <returns></returns>
-        public NetworkMessage CreateResponse<Tsource, Tdto>(Tsource tsource, out Tdto dto, NetworkMessage.OperationCode operationCode)
+        public NetworkMessage CreateResponse<Tsource, Tdto>(Tsource tsource, out Tdto dto, NetworkMessageCode code)
             where Tdto : class
         {
-            dto = _mapper.Map<Tdto>(tsource);
+            try
+            {
+                dto = _mapper.Map<Tdto>(tsource);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
 
             byte[] data = Serializer<Tdto>.Serialize(dto);
 
-            var message = new NetworkMessage(data, operationCode);
+            var message = new NetworkMessage(data, code);
 
             return message;
         }

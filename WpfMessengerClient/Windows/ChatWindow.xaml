@@ -31,7 +31,7 @@
 
         <!--#region Labels-->
 
-        <Label Name="UserName" Grid.Row="0" Grid.Column="0" Content="{Binding NetworkProviderUserDataMediator.User.Name}" FontSize="26" FontFamily="Tahoma" HorizontalAlignment="Left"
+        <Label Name="UserName" Grid.Row="0" Grid.Column="0" Content="{Binding CurrentUser.Name}" FontSize="26" FontFamily="Tahoma" HorizontalAlignment="Left"
                Padding="20, 5, 0, 0">
         </Label>
 
@@ -101,45 +101,70 @@
 
 
                 <TabItem Header="Поиск собеседников" FontFamily="Tahoma" FontSize="20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-
-                        </Grid.ColumnDefinitions>
+                    <Grid Background="#FF021F38">
+   
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
                             <RowDefinition Height="50"/>
-                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="40"/>
                             <RowDefinition Height="50"/>
-                            <RowDefinition Height="60"/>
-                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="50"/>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="120"/>
                         </Grid.RowDefinitions>
-                        
-                        <TextBlock Grid.Row="0" Text="Имя" FontFamily="Tahoma" FontSize="20" 
+
+                        <TextBlock Text="Имя" FontFamily="Tahoma" FontSize="18" 
                                    HorizontalAlignment="Left" VerticalAlignment="Center" Padding="15" Foreground="White" Grid.ColumnSpan="2"/>
-                        <TextBox Grid.Row="1" Style="{StaticResource InputSearchingNameTextBox}" Grid.ColumnSpan="5" Margin="5,5,5,5" />
+                        <TextBox Grid.Row="1" Style="{StaticResource InputSearchingNameTextBox}" Grid.ColumnSpan="2" Margin="5,5,5,5" />
 
-                        <TextBlock Grid.Row="2" Text="Номер телефона" FontFamily="Tahoma" FontSize="20" 
+                        <TextBlock Grid.Row="2" Text="Номер телефона" FontFamily="Tahoma" FontSize="18" 
                                    HorizontalAlignment="Left" VerticalAlignment="Center" Padding="15" Foreground="White" Grid.ColumnSpan="2" />
-                        <TextBox Grid.Row="3" Style="{StaticResource InputSearchingPhoneNumberTextBox}" Grid.ColumnSpan="5" Margin="5,5,5,5" />
+                        <TextBox Grid.Row="3" Style="{StaticResource InputSearchingPhoneNumberTextBox}" Grid.ColumnSpan="2" Margin="5,5,5,5" />
 
-                        <Button Grid.Row="4" Background="#FF355D9A" Content="Найти" Command="{Binding SearchCommand}" IsEnabled="{Binding IsSearchingButtonFree}" Style="{StaticResource RoundedButton}"/>
+                        <Button Grid.Row="4" Background="#FF355D9A" Content="Найти" Command="{Binding SearchCommand}" IsEnabled="{Binding IsSearchingButtonFree}" Style="{StaticResource RoundedButton}" Grid.ColumnSpan="2" Margin="5,5,5,5"/>
 
-                        <ListView Grid.Row="5" Margin="0,10,0,0" Padding="15" FontFamily="Tahoma" 
+                        <ListView Grid.Row="5" Margin="0,10,0,0" Padding="15" FontFamily="Tahoma" FontSize="18"  
                                     BorderBrush="{x:Null}" Foreground="White"
                                     SelectedItem="{Binding SelectedUser}" 
-                                    Background="Transparent" ItemsSource="{Binding SearchUserResults}">
+                                    Background="Transparent" ItemsSource="{Binding SearchUserResults}" Grid.ColumnSpan="2">
+
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                        <TextBlock Grid.Row="5" Height="80" Text="По Вашему запросу никто не найден" 
+                                       Visibility="{Binding HasNotSearchResult, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                       FontFamily="Tahoma" FontSize="18" Foreground="#FFDCD7D7"
+                                       HorizontalAlignment="Center" VerticalAlignment="Top" Padding="20"/>
+
+                        <!--<TextBox Grid.Row="6"></TextBox>-->
+                        <Grid Grid.Row="6" Height="100">
                             
-                        <ListView.ItemTemplate>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
-                            <DataTemplate>
+                            <TextBox Grid.Row="0" Style="{StaticResource InputGreetingMessageTextBox}"
+                                             Visibility="{Binding IsGreetingMessageTextBoxVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <!--<TextBox Grid.Row="0" Text="{Binding GreetingMessage.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                     IsEnabled="{Binding IsGreetingMessageTextBoxAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                     Visibility="{Binding IsGreetingMessageTextBoxAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
 
-                                <TextBlock Text="{Binding Name}"/>
+                            <Button Grid.Row="1" Content="{Binding OpenDialogButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    IsEnabled="{Binding WasUserSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    Visibility="{Binding WasUserSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="50" VerticalAlignment="Bottom"
+                                    Command="{Binding OpenDialogCommand}"/>
 
-                            </DataTemplate>
-
-                        </ListView.ItemTemplate>
-                    </ListView>
-
+                            <!--<TextBlock Grid.Row="1" Text="По Вашему запросу никто не найден" 
+                                       Visibility="{Binding HasNotSearchResult, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                       FontFamily="Tahoma" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+                            <!--<Grid Grid.Row="0" Grid.RowSpan="2" Background="#FF021F38" Panel.ZIndex="2"></Grid>-->
+                        </Grid>
+                        
                     </Grid>
 
 

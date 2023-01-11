@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace WpfMessengerClient.Models
+namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
     /// Данные, необходимые при регистрации в мессенджере
@@ -63,9 +63,9 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Свойство - имя
         /// </summary>
-        public string Name 
-        { 
-            get => _name; 
+        public string Name
+        {
+            get => _name;
 
             set
             {
