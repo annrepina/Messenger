@@ -19,6 +19,8 @@ using DtoLib.Serialization;
 using WpfMessengerClient.Obsevers;
 using System.Windows;
 using WpfMessengerClient.Models.Requests;
+using WpfMessengerClient.Models.Responses;
+using DtoLib.NetworkServices;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -115,12 +117,9 @@ namespace WpfMessengerClient.ViewModels
 
             await completionSource.Task;
 
-            User user = _mapper.Map<User>(RegistrationRequestData);
-            user.Id = observer.UserId;
+            ProcessRegistrationResponse(observer.RegistrationResponse);
 
             IsControlsFree = true;
-
-            ChangeWindowToChatWindow(user);
 
             //}
 
@@ -130,6 +129,24 @@ namespace WpfMessengerClient.ViewModels
             //}
 
 
+        }
+
+        /// <summary>
+        /// Обработать ответ на запрос о регистрации
+        /// </summary>
+        private void ProcessRegistrationResponse(RegistrationResponse response)
+        {
+            if(response.Status == NetworkResponseStatus.Successful)
+            {
+                User user = _mapper.Map<User>(RegistrationRequestData);
+                user.Id = response.UserId;
+
+                ChangeWindowToChatWindow(user);
+            }
+            else
+            {
+                //
+            }
         }
 
         /// <summary>

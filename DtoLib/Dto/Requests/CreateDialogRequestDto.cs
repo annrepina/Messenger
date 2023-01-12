@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using DtoLib.Serialization;
 using ProtoBuf;
 
-namespace DtoLib.Dto
+namespace DtoLib.Dto.Requests
 {
     /// <summary>
     /// Data transfer object класса Dialog

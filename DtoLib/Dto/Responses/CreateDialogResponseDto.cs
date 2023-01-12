@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.Dto
+namespace DtoLib.Dto.Responses
 {
     /// <summary>
     /// Data transfer object класса, который представляет ответ на запрос о создании нового диалога
@@ -24,11 +24,5 @@ namespace DtoLib.Dto
         /// </summary>
         [ProtoMember(2)]
         public int MessageId { get; set; }
-
-        ///// <summary>
-        ///// Время отправки сообщения
-        ///// </summary>
-        //[ProtoMember(3)]
-        //public DateTime? MessageSendingDateTime { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ConsoleMessengerServer.Entities;
+using DtoLib.NetworkServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,11 @@ namespace ConsoleMessengerServer.Responses
         public List<User> RelevantUsers { get; set; }
 
         /// <summary>
+        /// Статус ответа на сетевой запрос
+        /// </summary>
+        public NetworkResponseStatus Status { get; init; }
+
+        /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
         public UserSearchResponse()
@@ -28,9 +34,10 @@ namespace ConsoleMessengerServer.Responses
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public UserSearchResponse(List<User> relevantUsers)
+        public UserSearchResponse(List<User> relevantUsers, NetworkResponseStatus status)
         {
             RelevantUsers = relevantUsers;
+            Status = status;
         }
     }
 }

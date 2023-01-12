@@ -43,7 +43,7 @@
 
         <DockPanel Background="#FF021F38"  Grid.Row="1" Grid.Column="0" Margin="0">
 
-            <TabControl Margin="0,5,0,0" Background="Transparent">
+            <TabControl Margin="0,5,5,0" Background="Transparent" BorderThickness="0">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -73,10 +73,16 @@
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
+                        <Setter Property="Width" Value="{Binding    
+                     Path=ActualWidth,    
+                     RelativeSource={RelativeSource    
+                     Mode=FindAncestor,    
+                     AncestorType={x:Type TabControl}}}"/>
                     </Style>
                 </TabControl.Resources>
-                
+
                 <TabItem Header="Чаты" FontFamily="Tahoma" FontSize="20">
+
                     <ListView   
                       BorderBrush="{x:Null}" Foreground="#E50A0A0A"
                     Margin="0,10,0,10" FontFamily="Tahoma"
@@ -105,7 +111,6 @@
 
                 <TabItem Header="Поиск собеседников" FontFamily="Tahoma" FontSize="20">
                     <Grid Background="#FF021F38">
-
                         <Grid.RowDefinitions>
                             <RowDefinition Height="40"/>
                             <RowDefinition Height="50"/>
@@ -177,13 +182,23 @@
 
         <Grid Background="#FF355D9A" Grid.Column="1" Grid.Row="1" >
 
-            <ListView  
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <ListView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     Background="Transparent"
                     SelectedItem="{Binding SelectedMessage}"
                     ItemsSource="{Binding ActiveDialog.Messages}" 
                     Margin="0,5,5,50" BorderBrush="{x:Null}" 
-                    Foreground="#FFDCD7D7" FontFamily="Tahoma" Grid.ColumnSpan="3"
+                    Foreground="#FFDCD7D7" FontFamily="Tahoma"
                     HorizontalContentAlignment="Stretch">
 
                 <ListView.InputBindings>
@@ -193,27 +208,24 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Border HorizontalAlignment="{Binding HorizontalAlignment}">
-                             <StackPanel Orientation="Vertical" Margin="2" HorizontalAlignment="{Binding HorizontalAlignment}">
+                            <StackPanel Orientation="Vertical" Margin="2" HorizontalAlignment="{Binding HorizontalAlignment}">
+
                                 <TextBlock TextWrapping="Wrap" Padding="2"
                                     Text="{Binding Time}"
                                     FontFamily="Tahoma"
                                     HorizontalAlignment="{Binding HorizontalAlignment}"
-
                                     MaxWidth="{Binding RelativeSource=
-                                    {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"
-                                    />
+                                    {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"/>
+
                                 <TextBlock TextWrapping="Wrap" Padding="2" 
                                     Text="{Binding Text}"
                                     FontFamily="Tahoma" FontSize="18"     
                                     HorizontalAlignment="{Binding HorizontalAlignment}"
-
-                                       
                                     MaxWidth="{Binding RelativeSource=
                                     {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"/>
-                             </StackPanel>                           
+
+                            </StackPanel>
                         </Border>
-
-
                     </DataTemplate>
                 </ListView.ItemTemplate>
 
@@ -221,17 +233,15 @@
             </ListView>
 
 
-            <TextBox 
-                    Margin="10,0,90,10" VerticalAlignment="Bottom"
-                    Text="{Binding Message.Text}" Height="30" Grid.ColumnSpan="3"
-             />
+            <TextBox Grid.Row="1" Grid.Column="0" Margin="10,0,90,10" VerticalAlignment="Bottom"
+                    Text="{Binding Message.Text}" IsEnabled="{Binding IsMainMessageBoxAvailable}"
+                    Height="30" Grid.ColumnSpan="3"/>
 
-            <Button 
-                   VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                   Margin="0,0,10,10"
-                   Content="Send" Command="{Binding SendMessageCommand}" 
-                   Height="30" Width="74" Grid.Column="2"
-             />
+            <Button Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    Margin="0,0,10,10"
+                    Content="Отправить" Command="{Binding SendMessageCommand}" 
+                    IsEnabled="{Binding IsSendButtonAvailable}"
+                    Height="30" Width="74"/>
 
         </Grid>
 

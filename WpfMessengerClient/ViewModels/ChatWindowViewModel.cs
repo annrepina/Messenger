@@ -13,9 +13,9 @@ using WpfMessengerClient.Models;
 using System.Windows;
 using WpfMessengerClient.Obsevers;
 using WpfMessengerClient.Models.Requests;
-using DtoLib.Dto;
 using DtoLib.NetworkServices;
 using WpfMessengerClient.Models.Responses;
+using DtoLib.Dto.Requests;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -90,6 +90,10 @@ namespace WpfMessengerClient.ViewModels
 
         /// <inheritdoc cref="Message"/>
         private Message _message;
+
+        /// <inheritdoc cref="IsMainMessageBoxAvailable"/>
+        private bool _isMainMessageBoxAvailable;
+        private bool _isSendButtonAvailable;
 
         #endregion Приватные поля
 
@@ -300,9 +304,9 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Текущее сообщение
         /// </summary>
-        public Message Message 
-        { 
-            get => _message; 
+        public Message Message
+        {
+            get => _message;
 
             set
             {
@@ -357,6 +361,36 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
+        /// <summary>
+        /// Главный текст бокс доступен?
+        /// </summary>
+        public bool IsMainMessageBoxAvailable
+        {
+            get => _isMainMessageBoxAvailable;
+
+            set
+            {
+                _isMainMessageBoxAvailable = value;
+
+                OnPropertyChanged(nameof(IsMainMessageBoxAvailable));
+            }
+        }
+
+        /// <summary>
+        /// Кнопка отправки сообщения доступна?
+        /// </summary>
+        public bool IsSendButtonAvailable 
+        { 
+            get => _isSendButtonAvailable; 
+
+            set
+            {
+                _isSendButtonAvailable = value;
+
+                OnPropertyChanged(nameof(IsSendButtonAvailable));
+            }
+        }
+
         #endregion Свойства
 
         #region Конструкторы
@@ -375,7 +409,6 @@ namespace WpfMessengerClient.ViewModels
 
             Dialogs = new ObservableCollection<Dialog>();
             Dialogs.CollectionChanged += OnDialogsChanged;
-            //Dialogs = new List<Dialog>();
             ActiveDialog = Dialogs.FirstOrDefault();
 
             SearchUserResults = new ObservableCollection<User>();
@@ -399,6 +432,9 @@ namespace WpfMessengerClient.ViewModels
             GreetingMessage = new Message("", CurrentUser, true);
             IsGreetingMessageTextBoxAvailable = false;
             IsGreetingMessageTextBoxVisible = false;
+
+            IsMainMessageBoxAvailable = true;
+            IsSendButtonAvailable = true;
         }
 
 
@@ -481,7 +517,12 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="dialog">Диалог</param>
         private void OnGotCreateDialogRequest(Dialog dialog)
         {
-            dialog.Messages.First().IsCurrentUserMessage = false;
+            if(dialog.Messages.First().UserSender.Id == CurrentUser.Id)
+                dialog.Messages.First().IsCurrentUserMessage = false;
+
+            else
+                dialog.Messages.First().IsCurrentUserMessage = true;
+
             dialog.CurrentUser = CurrentUser;
             Application.Current.Dispatcher.Invoke(() => Dialogs.Insert(0, dialog));
 
@@ -504,7 +545,7 @@ namespace WpfMessengerClient.ViewModels
 
                 var observer = new SearchResultReceivedObserver(_networkMessageHandler, completionSource);
 
-                await _networkMessageHandler.SenRequestAsync<UserSearchRequest, UserSearchRequestDto>(SearchingRequest, NetworkMessageCode.SearchUserCode);
+                await _networkMessageHandler.SenRequestAsync<UserSearchRequest, UserSearchRequestDto>(SearchingRequest, NetworkMessageCode.SearchUserRequestCode);
 
                 await completionSource.Task;
 
@@ -546,7 +587,6 @@ namespace WpfMessengerClient.ViewModels
                     var observer = new DialogCreatedObserver(_networkMessageHandler, completionSource);
 
                     await _networkMessageHandler.SenRequestAsync<Dialog, CreateDialogRequestDto>(dialog, NetworkMessageCode.CreateDialogCode);
-
                     await completionSource.Task;
 
                     ProcessSuccessfulDialogCreatedResponse(observer.CreateDialogResponse, dialog);
@@ -566,12 +606,43 @@ namespace WpfMessengerClient.ViewModels
             throw new NotImplementedException();
         }
 
-        private Task OnSendMessageCommand()
+        #endregion Обработчики событий
+
+        /// <summary>
+        /// Обработать нажатие кнопки отправки сообщения
+        /// </summary>
+        /// <returns></returns>
+        private async Task OnSendMessageCommand()
+        {
+            if (string.IsNullOrEmpty(Message.Text))
+                MessageBox.Show("Сначала введите сообщение =)");
+
+            else
+            {
+                IsMainMessageBoxAvailable = false;
+                IsSendButtonAvailable = false;
+
+                Message newMessage = (Message)Message.Clone();
+
+                SendMessageRequest sendMessageRequest = new SendMessageRequest(newMessage, ActiveDialog.Id);
+
+                TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
+                var observer = new MessageDeliveredObserver(_networkMessageHandler, taskCompletionSource);
+
+                await _networkMessageHandler.SenRequestAsync<SendMessageRequest, SendMessageRequestDto>(sendMessageRequest, NetworkMessageCode.SendMessageCode);
+                await taskCompletionSource.Task;
+
+                ProcessMessageDeliveredResponse(observer.MessageId);
+
+                IsMainMessageBoxAvailable = true;
+                IsSendButtonAvailable = true;
+            }
+        }
+
+        private void ProcessMessageDeliveredResponse(int messageId)
         {
             throw new NotImplementedException();
         }
-
-        #endregion Обработчики событий
 
         /// <summary>
         /// Добавляет список найденных пользователей в список результатов поиска пользователя

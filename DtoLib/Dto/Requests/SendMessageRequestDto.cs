@@ -5,26 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.Dto
+namespace DtoLib.Dto.Requests
 {
     /// <summary>
-    /// Data transfer object который представляет информацию, необходимую для поиска пользователя в мессенджере
+    /// Data transfer object класса SendMessageRequest
     /// </summary>
     [ProtoContract]
-    public class UserSearchRequestDto
+    public class SendMessageRequestDto
     {
         /// <summary>
-        /// Свойство - имя
+        /// Сообщение
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
-        public string Name { get; set; }
+        public MessageDto Message { get; set; }
 
         /// <summary>
-        /// Свойство - номер телефона
+        /// Идентификатор диалога, в котором существует сообщение
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(2)]
-        public string PhoneNumber { get; set; }
+        public int DialogId { get; set; }
     }
 }

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ConsoleMessengerServer.Net;
 using ConsoleMessengerServer.Responses;
+using DtoLib.Dto.Requests;
+using DtoLib.Dto.Responses;
+using ConsoleMessengerServer.Requests;
 
 namespace ConsoleMessengerServer.Entities.Mapping
 {
@@ -26,13 +29,13 @@ namespace ConsoleMessengerServer.Entities.Mapping
             CreateMap<Dialog, CreateDialogResponse>().ForMember(dest => dest.DialogId, exp => exp.MapFrom(dial => dial.Id))
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
 
-
-
             CreateMap<Message, MessageDto>().ReverseMap();
+            CreateMap<SendMessageRequestDto, SendMessageRequest>().ReverseMap();
+            CreateMap<SendMessageResponse, SendMessageResponseDto>().ReverseMap();
 
             CreateMap<ServerNetworkProvider, NetworkProviderDto>().ReverseMap();
 
-            CreateMap<SuccessfulRegistrationResponse, SuccessfulRegistrationResponseDto>().ReverseMap();
+            CreateMap<RegistrationResponse, RegistrationResponseDto>().ReverseMap();
 
         }
     }

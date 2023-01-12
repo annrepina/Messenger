@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfMessengerClient.Models.Responses;
 
 namespace WpfMessengerClient.Obsevers
 {
@@ -12,16 +13,16 @@ namespace WpfMessengerClient.Obsevers
     public class SignUpObserver : Observer
     {
         /// <summary>
-        /// Свойство - идентификатор зарегистрированного пользователя
+        /// Ответ на запрос о регистрации пользователя
         /// </summary>
-        public int UserId { get; set; }
+        public RegistrationResponse RegistrationResponse { get; set; }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param _name="networkProviderUserDataMediator"></param>
+        /// <param _name="networkMessageHandler"></param>
         /// <param _name="completionSource"></param>
-        public SignUpObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
+        public SignUpObserver(NetworkMessageHandler networkMessageHandler, TaskCompletionSource completionSource) : base(networkMessageHandler, completionSource)
         {
             _networkMessageHandler.SignUp += OnSignUp;
         }
@@ -29,10 +30,10 @@ namespace WpfMessengerClient.Obsevers
         /// <summary>
         /// Обработчик события регистрации пользователя в мессенджере
         /// </summary>
-        /// <param name="userId">Идентификатор зарегистрированного пользователя</param>
-        private void OnSignUp(int userId)
+        /// <param name="response">Ответ на запрос о регистрации пользователя</param>
+        private void OnSignUp(RegistrationResponse response)
         {
-            UserId = userId;
+            RegistrationResponse = response;
 
             _networkMessageHandler.SignUp -= OnSignUp;
 

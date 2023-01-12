@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DtoLib.NetworkServices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,11 +18,17 @@ namespace WpfMessengerClient.Models.Responses
         public List<User> RelevantUsers { get; init; }
 
         /// <summary>
+        /// Статус ответа на сетевой запрос
+        /// </summary>
+        public NetworkResponseStatus Status { get; init; }
+
+        /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        public UserSearchResponse(List<User> relevantUsers)
+        public UserSearchResponse(List<User> relevantUsers, NetworkResponseStatus status)
         {
             RelevantUsers = relevantUsers;
+            Status = status;
         }
     }
 }

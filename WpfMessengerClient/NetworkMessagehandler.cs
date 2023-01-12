@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DtoLib.Dto;
+using DtoLib.Dto.Responses;
 using DtoLib.NetworkInterfaces;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +17,7 @@ using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
 using WpfMessengerClient.Services;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WpfMessengerClient
 {
@@ -28,7 +31,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие регистрации пользователя
         /// </summary>
-        public event Action<int> SignUp;
+        public event Action<RegistrationResponse> SignUp;
 
         /// <summary>
         /// Событие входа пользователя
@@ -51,6 +54,11 @@ namespace WpfMessengerClient
         /// Событие - получили запрос на создание нового диалога
         /// </summary>
         public event Action<Dialog> GotCreateDialogRequest;
+
+        /// <summary>
+        /// Событие - получили ответ, что сообщение доставлено
+        /// </summary>
+        public event Action<int> MessageDelivered;
 
         #endregion События
 
@@ -97,48 +105,51 @@ namespace WpfMessengerClient
         {
             switch (message.Code)
             {
-                case NetworkMessageCode.RegistrationCode:
-                    break;
-
-                case NetworkMessageCode.SuccessfulRegistrationCode:
-                    ProcessSuccessfulRegistrationNetworkMessage(message);
-
+                case NetworkMessageCode.RegistrationResponseCode:
+                    //ProcessSuccessfulRegistrationNetworkMessage(message);
+                    ProcessMessage<RegistrationResponseDto, RegistrationResponse>(message, SignUp);
                     break;
 
                 case NetworkMessageCode.RegistrationFailedCode:
                     break;
 
-                case NetworkMessageCode.AuthorizationCode:
+                case NetworkMessageCode.SuccessfulAuthorizationCode:
                     break;
 
-                case NetworkMessageCode.SuccessfulSearchCode:
-                    ProcessSuccessfulSearchNetworkMessage(message);
+                case NetworkMessageCode.AuthorizationFailedCode:
+                    break;
 
+                case NetworkMessageCode.SearchUserResponseCode:
+                    ProcessSuccessfulSearchNetworkMessage(message);
                     break;
 
                 case NetworkMessageCode.SearchFailedCode:
                     ProcessFailedSearchNetworkMessage();
-
                     break;
 
                 case NetworkMessageCode.CreateDialogCode:
                     ProcessCreateDialogRequest(message);
-
                     break;
 
                 case NetworkMessageCode.SuccessfulCreatingDialogCode:
                     ProcessSuccessfulCreatingDialogNetworkMessage(message);
-
                     break;
 
-                case NetworkMessageCode.SendingMessageCode:
+                case NetworkMessageCode.SendMessageCode:
                     break;
+
+                case NetworkMessageCode.MessageDeliveredCode:
+                    ProcessMessageDeliveredResponse(message);
+                    break;
+
                 case NetworkMessageCode.ExitCode:
                     break;
                 default:
                     break;
             }
         }
+
+        
 
 
 
@@ -156,7 +167,7 @@ namespace WpfMessengerClient
         {
             try
             {
-                SuccessfulRegistrationResponseDto successfulRegistrationDto = Deserializer.Deserialize<SuccessfulRegistrationResponseDto>(message.Data);
+                RegistrationResponseDto successfulRegistrationDto = Deserializer.Deserialize<RegistrationResponseDto>(message.Data);
 
                 RegisterNewUser(successfulRegistrationDto);
             }
@@ -216,6 +227,38 @@ namespace WpfMessengerClient
             GotCreateDialogRequest?.Invoke(dialog);
         }
 
+        /// <summary>
+        /// Обобщенный метод обработки сетевого сообщения
+        /// </summary>
+        /// <typeparam name="Tdto">Тип представляющий dto ожидаемого объекта в сетевом сообщении</typeparam>
+        /// <typeparam name="Tdest">Тип представляющий ожидаемый объект  в сетевом сообщении</typeparam>
+        /// <param name="message">Сетевое сообщение</param>
+        /// <param name="action">Событие, которое необходимо вызывать</param>
+        private void ProcessMessage<Tdto, Tdest>(NetworkMessage message, Action<Tdest> action)
+            where Tdto : class
+            where Tdest : class
+        {
+            Tdest destination;
+
+            if (message.Data != null)
+            {
+                Tdto dto = Deserializer.Deserialize<Tdto>(message.Data);
+                destination = _mapper.Map<Tdest>(dto);
+            }
+            else
+                destination = null;
+
+            action?.Invoke(destination);
+        }
+
+        /// <summary>
+        /// Обработать ответ об успешной отпрвке сообщения
+        /// </summary>
+        private void ProcessMessageDeliveredResponse(NetworkMessage message)
+        {
+            //Send
+        }
+
         #endregion Методы обработки сетевых сообщений
 
         /// <summary>
@@ -223,13 +266,13 @@ namespace WpfMessengerClient
         /// </summary>
         /// <param _name="networkProviderDto">DTO, сетевого провайдера с Id из базы данных</param>
         /// 
-        public void RegisterNewUser(SuccessfulRegistrationResponseDto successfulRegistrationDto)
+        public void RegisterNewUser(RegistrationResponseDto successfulRegistrationDto)
         {
-            SuccessfulRegistrationResponse registrationResponse = _mapper.Map<SuccessfulRegistrationResponse>(successfulRegistrationDto);
+            RegistrationResponse registrationResponse = _mapper.Map<RegistrationResponse>(successfulRegistrationDto);
 
-            ClientNetworkProvider.Id = registrationResponse.NetworkProviderId;
+            //ClientNetworkProvider.Id = registrationResponse.NetworkProviderId;
 
-            SignUp?.Invoke(registrationResponse.UserId);
+            //SignUp?.Invoke(registrationResponse.UserId);
         }
 
         #region Методы взаимодействия с сетью
@@ -245,7 +288,7 @@ namespace WpfMessengerClient
 
             byte[] data = Serializer<RegistrationDto>.Serialize(registrationDto);
 
-            NetworkMessage message = new NetworkMessage(data, NetworkMessageCode.RegistrationCode);
+            NetworkMessage message = new NetworkMessage(data, NetworkMessageCode.RegistrationRequestCode);
 
             await ClientNetworkProvider.ConnectAsync(message);
         }

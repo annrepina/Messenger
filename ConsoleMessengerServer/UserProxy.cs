@@ -46,7 +46,7 @@ namespace ConsoleMessengerServer
         /// <summary>
         /// Транслировать асинхронно сетевое сообщение всем сетевым провайдерам на которых подключен пользователь
         /// </summary>
-        /// <param name="networkMessage"></param>
+        /// <param name="networkMessage">Сетевое сообщение</param>
         public async Task BroadcastNetworkMessageAsync(NetworkMessage networkMessage)
         {
             try
@@ -54,6 +54,30 @@ namespace ConsoleMessengerServer
                 foreach (ServerNetworkProvider serverNetworkProvider in _connections)
                 {
                     await serverNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Перегрузка метода BroadcastNetworkMessageAsync
+        /// Транслировать асинхронно сетевое сообщение всем сетевым провайдерам на которых подключен пользователь, кроме того, который передан в метод
+        /// </summary>
+        /// <param name="networkMessage">Сетевое сообщение</param>
+        /// <param name="networkProvider">Сетевой провайдер на стороне сервера</param>
+        /// <returns></returns>
+        public async Task BroadcastNetworkMessageAsync(NetworkMessage networkMessage, ServerNetworkProvider networkProvider)
+        {
+            try
+            {
+                foreach (ServerNetworkProvider serverNetworkProvider in _connections)
+                {
+                    if(serverNetworkProvider != networkProvider)
+                        await serverNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
                 }
             }
             catch (Exception ex)

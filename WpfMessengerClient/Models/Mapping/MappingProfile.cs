@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using DtoLib.Dto;
+using DtoLib.Dto.Requests;
+using DtoLib.Dto.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,16 +28,17 @@ namespace WpfMessengerClient.Models.Mapping
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
+            CreateMap<SendMessageRequest, SendMessageRequestDto>().ReverseMap();
+            CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();   
 
             CreateMap<ClientNetworkProvider, NetworkProviderDto>().ReverseMap();
 
             CreateMap<RegistrationRequest, RegistrationDto>().ReverseMap();        
             CreateMap<RegistrationRequest, User>().ReverseMap();
-            CreateMap<SuccessfulRegistrationResponse, SuccessfulRegistrationResponseDto>().ReverseMap();
+            CreateMap<RegistrationResponse, RegistrationResponseDto>().ReverseMap();
 
             CreateMap<UserSearchRequest, UserSearchRequestDto>().ReverseMap();
             CreateMap<UserSearchResponse, UserSearchResponseDto>().ReverseMap();
-
         }
     }
 }

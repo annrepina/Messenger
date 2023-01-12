@@ -24,11 +24,11 @@ namespace WpfMessengerClient.Obsevers
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param _name="networkProviderUserDataMediator"></param>
+        /// <param _name="networkMessageHandler"></param>
         /// <param _name="completionSource"></param>
-        public Observer(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource)
+        public Observer(NetworkMessageHandler networkMessageHandler, TaskCompletionSource completionSource)
         {
-            _networkMessageHandler = networkProviderUserDataMediator;
+            _networkMessageHandler = networkMessageHandler;
             _completionSource = completionSource;
         }
     }

@@ -35,12 +35,6 @@ namespace DtoLib.Dto
         [ProtoMember(3)]
         public UserDto UserSender { get; set; }
 
-        ///// <summary>
-        ///// Диалог в котором существует сообщение
-        ///// </summary>
-        //[ProtoMember(4)]
-        //public CreateDialogRequestDto Dialog { get; set; }
-
         /// <summary>
         /// Свойство - прочитано ли сообщение 
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства

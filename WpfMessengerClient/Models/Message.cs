@@ -160,7 +160,7 @@ namespace WpfMessengerClient.Models
             get => IsCurrentUserMessage ? HorizontalAlignment.Right : HorizontalAlignment.Left;
         }
 
-        public string MessagePresentation => $"{Time}\n{Text}";
+        //public string MessagePresentation => $"{Time}\n{Text}";
 
         #endregion Свойства
 

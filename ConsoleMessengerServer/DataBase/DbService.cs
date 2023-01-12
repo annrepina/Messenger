@@ -2,9 +2,11 @@
 using ConsoleMessengerServer.Entities;
 using ConsoleMessengerServer.Entities.Mapping;
 using ConsoleMessengerServer.Net;
+using ConsoleMessengerServer.Requests;
 using ConsoleMessengerServer.Responses;
 using DtoLib;
 using DtoLib.Dto;
+using DtoLib.Dto.Requests;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -97,31 +99,81 @@ namespace ConsoleMessengerServer.DataBase
                 using (var dbContext = new MessengerDbContext())
                 {
                     Dialog dialog = _mapper.Map<Dialog>(dto);
-
-                    //User user1 = dbContext.Users.First(user => user.Id == dialog.Messages.First().UserSenderId);
-
-                    //dbContext.Add(dialog);
-
-                    //dbContext.SaveChanges();
+                    int senderId = dialog.Messages.First().UserSenderId;
 
                     foreach (var userId in dto.UsersId)
                     {
                         User user = dbContext.Users.First(user => user.Id == userId);
                         dialog.Users.Add(user);
-                        //dialog.Messages.First().UserSender = user;
-                        //user.Dialogs.Add(dialog);
                     }
 
-                    dialog.Messages.First().UserSender = dialog.Users.First();
+                    dialog.Messages.First().UserSender = dialog.Users.First(user => user.Id == senderId);
 
                     dbContext.Add(dialog);
-
-
-
                     dbContext.SaveChanges();
 
-                    //createDialogResponse = _mapper.Map<CreateDialogResponse>(dialog);
                     return dialog;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Создает сообщение и помещает его в базу данных
+        /// </summary>
+        /// <param name="sendMessageRequestDto">Dto для запроса на отправку сообщения</param>
+        /// <returns></returns>
+        public Message AddMessage(SendMessageRequestDto sendMessageRequestDto)
+        {
+            Message message;
+
+            try
+            {
+                using(var dbContext = new MessengerDbContext())
+                {
+                    SendMessageRequest request = _mapper.Map<SendMessageRequest>(sendMessageRequestDto);
+
+                    message = request.Message;
+
+                    var user = dbContext.Users.First(user => user.Id == message.UserSender.Id);
+                    var dialog = dbContext.Dialogs.First(dialog => dialog.Id == request.DialogId);
+
+                    message.UserSender = user;
+                    message.Dialog = dialog;
+
+                    dbContext.Messages.Add(message);    
+                    dbContext.SaveChanges();
+
+                    return message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Возвращает идентификатор пользователя, которому отправлено сообщение
+        /// </summary>
+        /// <param name="message">Сообщение</param>
+        /// <returns></returns>
+        public int GetRecipientUserId(Message message)
+        {
+            try
+            {
+                int userId;
+
+                using(var dbContext = new MessengerDbContext())
+                {
+                    userId = dbContext.Messages.First(mes => mes.Id == message.Id).Dialog.Users.First(user => user.Id != message.UserSenderId).Id;
+
+                    return userId;
                 }
             }
             catch (Exception ex)

@@ -8,16 +8,17 @@ namespace DtoLib.NetworkServices
 {
     public enum NetworkMessageCode : byte
     {
-        RegistrationCode,
-        SuccessfulRegistrationCode,
-        RegistrationFailedCode,
+        RegistrationRequestCode,
+        RegistrationResponseCode,
         AuthorizationCode,
-        SearchUserCode,
-        SuccessfulSearchCode,
-        SearchFailedCode,
+        SuccessfulAuthorizationCode,
+        AuthorizationFailedCode,
+        SearchUserRequestCode,
+        SearchUserResponseCode,
         CreateDialogCode,
         SuccessfulCreatingDialogCode,
-        SendingMessageCode,
+        SendMessageCode,
+        MessageDeliveredCode,
         ExitCode,
     }
 }
