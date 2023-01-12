@@ -28,13 +28,13 @@ namespace WpfMessengerClient.Obsevers
             _networkMessageHandler.SearchResultReceived += OnSearchResultReceived;
         }
 
-        private void OnSearchResultReceived(UserSearchResponse? userSearchResult)
+        private void OnSearchResultReceived(UserSearchResponse? userSearchResponse)
         {
             try
             {
                 _networkMessageHandler.SearchResultReceived -= OnSearchResultReceived;
 
-                UserSearchResult = userSearchResult;
+                UserSearchResult = userSearchResponse;
 
                 _completionSource.SetResult();
             }

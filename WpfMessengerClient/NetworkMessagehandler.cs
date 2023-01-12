@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
@@ -42,9 +43,14 @@ namespace WpfMessengerClient
         public event Action<UserSearchResponse?> SearchResultReceived;
 
         /// <summary>
-        /// Событие - диалог создан, обработчик принимает в качестве аргумента Id диалога
+        /// Событие - диалог создан, обработчик принимает в качестве аргумента ответ на создание нового диалога
         /// </summary>
-        public event Action<int> DialogCreated;
+        public event Action<CreateDialogResponse> DialogCreated;
+
+        /// <summary>
+        /// Событие - получили запрос на создание нового диалога
+        /// </summary>
+        public event Action<Dialog> GotCreateDialogRequest;
 
         #endregion События
 
@@ -86,7 +92,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Обработать сетевое сообщение
         /// </summary>
-        /// <param _name="message">Сетевое сообщение</param>
+        /// <param _name="_message">Сетевое сообщение</param>
         public void ProcessNetworkMessage(NetworkMessage message)
         {
             switch (message.Code)
@@ -115,6 +121,16 @@ namespace WpfMessengerClient
 
                     break;
 
+                case NetworkMessageCode.CreateDialogCode:
+                    ProcessCreateDialogRequest(message);
+
+                    break;
+
+                case NetworkMessageCode.SuccessfulCreatingDialogCode:
+                    ProcessSuccessfulCreatingDialogNetworkMessage(message);
+
+                    break;
+
                 case NetworkMessageCode.SendingMessageCode:
                     break;
                 case NetworkMessageCode.ExitCode:
@@ -124,6 +140,10 @@ namespace WpfMessengerClient
             }
         }
 
+
+
+
+
         #endregion Реализация INetworkMessageHandler
 
         #region Методы обработки сетевых сообщений
@@ -131,7 +151,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Обаработать сетевое сообщение о регистрации пользователя асинхронно
         /// </summary>
-        /// <param _name="message">Сетевое сообщение</param>
+        /// <param _name="_message">Сетевое сообщение</param>
         public void ProcessSuccessfulRegistrationNetworkMessage(NetworkMessage message)
         {
             try
@@ -170,6 +190,30 @@ namespace WpfMessengerClient
             UserSearchResponse userSearchResult = null;
 
             SearchResultReceived?.Invoke(userSearchResult);
+        }
+
+        /// <summary>
+        /// Обрработать сетевое сообщение об успешном создании диалога
+        /// </summary>
+        /// <param name="message">Сетевое сообщение</param>
+        private void ProcessSuccessfulCreatingDialogNetworkMessage(NetworkMessage message)
+        {
+            CreateDialogResponseDto createDialogResponseDto = Deserializer.Deserialize<CreateDialogResponseDto>(message.Data);
+            CreateDialogResponse createDialogResponse = _mapper.Map<CreateDialogResponse>(createDialogResponseDto);
+
+            DialogCreated?.Invoke(createDialogResponse);
+        }
+
+        /// <summary>
+        /// Метод, который обрабатывает запрос на создание диалога от другого пользователя
+        /// </summary>
+        /// <param name="message">Сетевое сообщение</param>
+        private void ProcessCreateDialogRequest(NetworkMessage message)
+        {
+            DialogDto dialogDto = Deserializer.Deserialize<DialogDto>(message.Data);
+            Dialog dialog = _mapper.Map<Dialog>(dialogDto);
+
+            GotCreateDialogRequest?.Invoke(dialog);
         }
 
         #endregion Методы обработки сетевых сообщений

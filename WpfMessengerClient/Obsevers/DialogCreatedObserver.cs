@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WpfMessengerClient.Models;
+using WpfMessengerClient.Models.Responses;
 
 namespace WpfMessengerClient.Obsevers
 {
@@ -15,7 +16,7 @@ namespace WpfMessengerClient.Obsevers
         /// <summary>
         /// Идентификатор диалога
         /// </summary>
-        public int DialogId { get; private set; }
+        public CreateDialogResponse CreateDialogResponse { get; private set; }
 
         public DialogCreatedObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
         {
@@ -25,12 +26,12 @@ namespace WpfMessengerClient.Obsevers
         /// <summary>
         /// Обработчик события создания диалога
         /// </summary>
-        /// <param name="dialogId">Идентификатор диалога</param>
-        private void OnDialogCreated(int dialogId)
+        /// <param name="createDialogResponse">Ответ на запрос о создании диалога</param>
+        private void OnDialogCreated(CreateDialogResponse createDialogResponse)
         {
-            DialogId = dialogId;
+            CreateDialogResponse = createDialogResponse;
 
-            _networkMessageHandler.SignUp -= OnDialogCreated;
+            _networkMessageHandler.DialogCreated -= OnDialogCreated;
 
             _completionSource.SetResult();
         }

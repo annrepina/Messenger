@@ -23,7 +23,6 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<Dialog, CreateDialogRequestDto>().ForMember(dest => dest.UsersId, exp => exp.MapFrom(dial => dial.Users)).ReverseMap();
             CreateMap<CreateDialogResponse, CreateDialogResponseDto>().ReverseMap();
             CreateMap<Dialog, CreateDialogResponse>().ForMember(dest => dest.DialogId, exp => exp.MapFrom(dial => dial.Id))
-                                                     .ForMember(dest => dest.MessageSendingDateTime, exp => exp.MapFrom(dial => dial.Messages.First().DateTime))
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();

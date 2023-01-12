@@ -99,7 +99,7 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Асинхронный метод получения сетевого сообщения
         /// </summary>
-        /// <param _name="message">Сетевое сообщение</param>
+        /// <param _name="_message">Сетевое сообщение</param>
         /// <returns></returns>
         public override void GetNetworkMessage(NetworkMessage message)
         {

@@ -25,10 +25,10 @@ namespace DtoLib.Dto
         [ProtoMember(2)]
         public int MessageId { get; set; }
 
-        /// <summary>
-        /// Время отправки сообщения
-        /// </summary>
-        [ProtoMember(3)]
-        public DateTime? MessageSendingDateTime { get; set; }
+        ///// <summary>
+        ///// Время отправки сообщения
+        ///// </summary>
+        //[ProtoMember(3)]
+        //public DateTime? MessageSendingDateTime { get; set; }
     }
 }

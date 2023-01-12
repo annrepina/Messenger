@@ -72,19 +72,40 @@ namespace WpfMessengerClient.Models
         /// </summary>
         public string Title => Users.First(n => n.Id != _currentUser.Id).Name;
 
+        ///// <summary>
+        ///// Свойство - обозреваемая коллекция данных о пользователях, участвующих в диалоге
+        ///// </summary>
+        //public ObservableCollection<User> Users { get; set; }
+
         /// <summary>
         /// Свойство - обозреваемая коллекция данных о пользователях, участвующих в диалоге
         /// </summary>
-        public ObservableCollection<User> Users { get; set; }
+        public List<User> Users { get; set; }
 
         /// <summary>
         /// Обозреваемая коллекция сообщений в диалоге
         /// </summary>
         public ObservableCollection<Message> Messages { get; set; }
 
+        ///// <summary>
+        ///// Обозреваемая коллекция сообщений в диалоге
+        ///// </summary>
+        //public List<Message> Messages { get; set; }
+
         #endregion Свойства
 
         #region Конструкторы
+
+        public Dialog()
+        {
+            Id = 0;
+            //Users = new ObservableCollection<User>();
+            //Users.CollectionChanged += OnUserDataCollectionChanged;
+            Users = new List<User>();
+
+            Messages = new ObservableCollection<Message>();
+            Messages.CollectionChanged += OnMessagesChanged;
+        }
 
         /// <summary>
         /// Конструктор с параметрами
@@ -93,54 +114,56 @@ namespace WpfMessengerClient.Models
         {
             Id = 0;
 
-            Users = new ObservableCollection<User>();
-            Users.CollectionChanged += OnUserDataCollectionChanged;
+            //Users = new ObservableCollection<User>();
+            //Users.CollectionChanged += OnUserDataCollectionChanged;
+            Users = new List<User>();
             Users.Add(user1);
             Users.Add(user2);
 
             Messages = new ObservableCollection<Message>();
             Messages.CollectionChanged += OnMessagesChanged;
+            //Messages = new List<Message>();
         }
 
         #endregion Конструкторы
 
         #region Обработчики событий
 
-        /// <summary>
-        /// Обработчик события изменения обозреваемой коллекции данных пользователей участвующих в диалоге
-        /// </summary>
-        /// <param _name="sender">Объект, который вызвал событие</param>
-        /// <param _name="e">Содержит информацию о событии</param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void OnUserDataCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.OldItems)
-                {
-                    item.PropertyChanged -= OnUserDataChanged;
-                }
-            }
+        ///// <summary>
+        ///// Обработчик события изменения обозреваемой коллекции данных пользователей участвующих в диалоге
+        ///// </summary>
+        ///// <param _name="sender">Объект, который вызвал событие</param>
+        ///// <param _name="e">Содержит информацию о событии</param>
+        ///// <exception cref="NotImplementedException"></exception>
+        //private void OnUserDataCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.OldItems != null)
+        //    {
+        //        foreach (INotifyPropertyChanged item in e.OldItems)
+        //        {
+        //            item.PropertyChanged -= OnUserDataChanged;
+        //        }
+        //    }
 
-            if (e.NewItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.NewItems)
-                {
-                    item.PropertyChanged += OnUserDataChanged;
-                }
-            }
-        }
+        //    if (e.NewItems != null)
+        //    {
+        //        foreach (INotifyPropertyChanged item in e.NewItems)
+        //        {
+        //            item.PropertyChanged += OnUserDataChanged;
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// Обработчик события изменения данных конкретного пользователя участвующего в диалоге
-        /// </summary>
-        /// <param _name="sender">Объект, который вызвал событие</param>
-        /// <param _name="e">Содержит информацию о событии</param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void OnUserDataChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+        ///// <summary>
+        ///// Обработчик события изменения данных конкретного пользователя участвующего в диалоге
+        ///// </summary>
+        ///// <param _name="sender">Объект, который вызвал событие</param>
+        ///// <param _name="e">Содержит информацию о событии</param>
+        ///// <exception cref="NotImplementedException"></exception>
+        //private void OnUserDataChanged(object? sender, PropertyChangedEventArgs e)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
         /// Обработчик события изменения обозреваемой коллекции сообщений
@@ -174,7 +197,7 @@ namespace WpfMessengerClient.Models
         /// <exception cref="NotImplementedException"></exception>
         private void OnMessageChanged(object? sender, PropertyChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         #endregion Обработчики событий

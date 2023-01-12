@@ -4,13 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace WpfMessengerClient.Models
 {
     /// <summary>
     /// Сообщения отправляемые пользователями
     /// </summary>
-    public class Message : BaseNotifyPropertyChanged
+    public class Message : BaseNotifyPropertyChanged, ICloneable
     {
         #region Приватные поля
 
@@ -32,17 +33,15 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Данные о пользователе - отправителе сообщения
         /// </summary>
-        private User _userSender;
-
-        ///// <summary>
-        ///// Диалог, в котором существует сообщение
-        ///// </summary>
-        //private Dialog? _dialog;
+        private User? _userSender;
 
         /// <summary>
         /// Идентификатор сообщения
         /// </summary>
         private int _id;
+
+        /// <inheritdoc cref="IsCurrentUserMessage"/>
+        private bool _isCurrentUserMessage;
 
         #endregion Приватные поля
 
@@ -51,16 +50,16 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Свойство - идентификатор сообщения
         /// </summary>
-        public int Id 
-        { 
+        public int Id
+        {
             get => _id;
 
-            set 
-            { 
-                _id = value; 
+            set
+            {
+                _id = value;
 
                 OnPropertyChanged(nameof(Id));
-            } 
+            }
         }
 
         /// <summary>
@@ -81,7 +80,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Свойство - данные о пользователе - отправителе сообщения
         /// </summary>
-        public User UserSender
+        public User? UserSender
         {
             get => _userSender;
 
@@ -92,21 +91,6 @@ namespace WpfMessengerClient.Models
                 OnPropertyChanged(nameof(UserSender));
             }
         }
-
-        ///// <summary>
-        ///// Свойство - диалог в котором существует сообщение
-        ///// </summary>
-        //public Dialog? Dialog
-        //{
-        //    get => _dialog;
-
-        //    set
-        //    {
-        //        _dialog = value;
-
-        //        OnPropertyChanged(nameof(Dialog));
-        //    }
-        //}
 
         /// <summary>
         /// Свойство - прочитано сообщение?
@@ -137,9 +121,63 @@ namespace WpfMessengerClient.Models
             }
         }
 
+        /// <summary>
+        /// Время отправки сообщения
+        /// </summary>
+        public string Time
+        {
+            get => DateTime.ToString("dd-MM-yyyy hh:mm:ss");
+        }
+
+        /// <summary>
+        /// Является ли это сообщение сообщением текущего пользователя
+        /// </summary>
+        public bool IsCurrentUserMessage 
+        { 
+            get => _isCurrentUserMessage;
+            
+            set
+            {
+                _isCurrentUserMessage = value;
+
+                OnPropertyChanged(nameof(IsCurrentUserMessage));
+            }
+        }
+
+        /// <summary>
+        /// Горизонтальное выравнивание
+        /// </summary>
+        public TextAlignment TextAlignment
+        {
+            get => IsCurrentUserMessage ? TextAlignment.Right : TextAlignment.Left;
+        }
+
+        /// <summary>
+        /// Горизонтальное выравнивание
+        /// </summary>
+        public HorizontalAlignment HorizontalAlignment
+        {
+            get => IsCurrentUserMessage ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+        }
+
+        public string MessagePresentation => $"{Time}\n{Text}";
+
         #endregion Свойства
 
         #region Конструкторы
+
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
+        public Message()
+        {
+            Id = 0;
+            _text = "";
+            _userSender = null;
+            _isRead = false;
+            _dateTime = DateTime.Now;
+            IsCurrentUserMessage = false;
+        }
 
         /// <summary>
         /// Конструктор с параметрами
@@ -147,14 +185,24 @@ namespace WpfMessengerClient.Models
         /// <param _name="text">Текст сообщения</param>
         /// <param _name="senderUserAccount">Данные о пользователе - отправителе сообщения</param>
         /// <param _name="dialog">Диалог, в котором существует сообщение</param>
-        public Message(string text, User senderUserAccount/*, Dialog? dialog*/)
+        public Message(string text, User senderUserAccount, bool isCurrentUserMessage)
         {
             Id = 0;
             _text = text;
             _userSender = senderUserAccount;
             _isRead = false;
             _dateTime = DateTime.Now;
-            //_dialog = dialog;
+            IsCurrentUserMessage = isCurrentUserMessage;
+        }
+
+        public object Clone()
+        {
+            Message message = new Message(_text, _userSender, _isCurrentUserMessage);
+            message.Id = Id;
+            message.IsRead = IsRead;
+            message.DateTime = DateTime.Now;
+
+            return message;
         }
 
         #endregion Конструкторы

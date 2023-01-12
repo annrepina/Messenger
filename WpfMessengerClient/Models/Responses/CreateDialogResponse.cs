@@ -21,22 +21,20 @@ namespace WpfMessengerClient.Models.Responses
         /// </summary>
         public int MessageId { get; init; }
 
-        /// <summary>
-        /// Время отправки сообщения
-        /// </summary>
-        public DateTime? MessageSendingDateTime { get; init; }
+        ///// <summary>
+        ///// Время отправки сообщения
+        ///// </summary>
+        //public DateTime? MessageSendingDateTime { get; init; }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="dialogId">Идентификатор созданного диалога</param>
         /// <param name="messageId">Идентификатор первого сообщения</param>
-        /// <param name="messageSendingDateTime">Время отправки сообщения</param>
-        public CreateDialogResponse(int dialogId, int messageId, DateTime? messageSendingDateTime = null)
+        public CreateDialogResponse(int dialogId, int messageId)
         {
             DialogId = dialogId;
             MessageId = messageId;
-            MessageSendingDateTime = messageSendingDateTime;
         }
     }
 }

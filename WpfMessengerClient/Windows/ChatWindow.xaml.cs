@@ -31,7 +31,5 @@ namespace WpfMessengerClient.Windows
             DataContext = chatWindowViewModel;
             Closing += chatWindowViewModel.OnWindowClosing;
         }
-
-        
     }
 }

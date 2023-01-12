@@ -34,13 +34,12 @@ namespace WpfMessengerClient.ViewModels
         /// <inheritdoc cref="ActiveDialog"/>
         private Dialog? _activeDialog;
 
-        /// <summary>
-        /// Выбранный во время поиска пользователь
-        /// </summary>
+        /// <inheritdoc cref="SelectedUser"/>
         private User? _selectedUser;
 
         /// <summary>
         /// Данные о поисковом запросе
+        /// <inheritdoc cref="SearchingRequest"/>
         /// </summary>
         private UserSearchRequest _searchingRequest;
 
@@ -79,11 +78,18 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private bool _hasNotSearchResult;
 
+
         /// <inheritdoc cref="IsGreetingMessageTextBoxVisible"/>
         private bool _isGreetingMessageTextBoxVisible;
 
         /// <inheritdoc cref="IsOpenDialogButtonAvailable"/>
         private bool _isOpenDialogButtonAvailable;
+
+        /// <inheritdoc cref="SelectedMessage"/>
+        private Message _selectedMessage;
+
+        /// <inheritdoc cref="Message"/>
+        private Message _message;
 
         #endregion Приватные поля
 
@@ -129,6 +135,11 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public ObservableCollection<Dialog> Dialogs { get; set; }
 
+        ///// <summary>
+        ///// Обозреваемая коллекция 
+        ///// </summary>
+        //public List<Dialog> Dialogs { get; set; }
+
         /// <summary>
         /// Выбранный пользователь 
         /// </summary>
@@ -140,8 +151,8 @@ namespace WpfMessengerClient.ViewModels
             {
                 _selectedUser = value;
 
-                WasUserSelected = true;
-                IsOpenDialogButtonAvailable = true;
+                //WasUserSelected = true;
+                //IsOpenDialogButtonAvailable = true;
 
                 CheckSelectedUser();
 
@@ -150,9 +161,30 @@ namespace WpfMessengerClient.ViewModels
         }
 
         /// <summary>
+        /// Выбранное сообщение
+        /// </summary>
+        public Message SelectedMessage
+        {
+            get => _selectedMessage;
+
+            set
+            {
+                _selectedMessage = value;
+
+                OnPropertyChanged(nameof(SelectedMessage));
+            }
+
+        }
+
+        /// <summary>
         /// Обозреваемая коллекция пользователей, которых ищет текущий пользователь
         /// </summary>
         public ObservableCollection<User> SearchUserResults { get; set; }
+
+        /// <summary>
+        /// Обозреваемая коллекция пользователей, которых ищет текущий пользователь
+        /// </summary>
+        //public List<User> SearchUserResults { get; set; }
 
         /// <summary>
         /// Данные о поисковом запросе
@@ -180,6 +212,16 @@ namespace WpfMessengerClient.ViewModels
         public DelegateCommand OpenDialogCommand { get; init; }
 
         /// <summary>
+        /// Команда по нажатию Delete на выбранном сообщении
+        /// </summary>
+        public DelegateCommand DeleteMessageCommand { get; init; }
+
+        /// <summary>
+        /// Команда по нажатию на кнопку "отпрвить сообщение"
+        /// </summary>
+        public DelegateCommand SendMessageCommand { get; init; }
+
+        /// <summary>
         /// Есть текст поискового запроса?
         /// </summary>
         public bool IsSearchingButtonFree
@@ -193,7 +235,6 @@ namespace WpfMessengerClient.ViewModels
                 OnPropertyChanged(nameof(IsSearchingButtonFree));
             }
         }
-
 
         /// <summary>
         /// Был выбран пользователь среди найденных результатов поиска?
@@ -213,16 +254,16 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Кнопка открытия нового диалога доступна?
         /// </summary>
-        public bool IsOpenDialogButtonAvailable 
-        { 
-            get => _isOpenDialogButtonAvailable; 
+        public bool IsOpenDialogButtonAvailable
+        {
+            get => _isOpenDialogButtonAvailable;
 
             set
             {
                 _isOpenDialogButtonAvailable = value;
 
                 OnPropertyChanged(nameof(IsOpenDialogButtonAvailable));
-            } 
+            }
         }
 
         /// <summary>
@@ -253,6 +294,21 @@ namespace WpfMessengerClient.ViewModels
                 _greetingMessage = value;
 
                 OnPropertyChanged(nameof(GreetingMessage));
+            }
+        }
+
+        /// <summary>
+        /// Текущее сообщение
+        /// </summary>
+        public Message Message 
+        { 
+            get => _message; 
+
+            set
+            {
+                _message = value;
+
+                OnPropertyChanged(nameof(Message));
             }
         }
 
@@ -313,15 +369,18 @@ namespace WpfMessengerClient.ViewModels
         public ChatWindowViewModel(NetworkMessageHandler networkProviderUserDataMediator, MessengerWindowsManager messengerWindowsManager, User user)
         {
             _networkMessageHandler = networkProviderUserDataMediator;
+            _networkMessageHandler.GotCreateDialogRequest += OnGotCreateDialogRequest;
             MessengerWindowsManager = messengerWindowsManager;
             CurrentUser = user;
 
             Dialogs = new ObservableCollection<Dialog>();
             Dialogs.CollectionChanged += OnDialogsChanged;
+            //Dialogs = new List<Dialog>();
             ActiveDialog = Dialogs.FirstOrDefault();
 
             SearchUserResults = new ObservableCollection<User>();
-            SearchUserResults.CollectionChanged += OnSearchUserResultsChanged;
+            //SearchUserResults.CollectionChanged += OnSearchUserResultsChanged;
+            //SearchUserResults = new List<User>();
             SelectedUser = SearchUserResults.FirstOrDefault();
             SearchCommand = new DelegateCommand(async () => await OnSearchCommandAsync());
             IsSearchingButtonFree = true;
@@ -333,10 +392,16 @@ namespace WpfMessengerClient.ViewModels
             OpenDialogButtonText = "Поприветствовать";
             IsOpenDialogButtonAvailable = false;
 
-            GreetingMessage = new Message("", CurrentUser);
+            Message = new Message("", CurrentUser, true);
+            DeleteMessageCommand = new DelegateCommand(async () => await OnDeleteMessageCommand());
+            SendMessageCommand = new DelegateCommand(async () => await OnSendMessageCommand());
+
+            GreetingMessage = new Message("", CurrentUser, true);
             IsGreetingMessageTextBoxAvailable = false;
             IsGreetingMessageTextBoxVisible = false;
         }
+
+
 
         #endregion Конструкторы
 
@@ -373,41 +438,54 @@ namespace WpfMessengerClient.ViewModels
         /// <param _name="e">Содержит информацию о событии</param>
         private void OnDialogChanged(object? sender, PropertyChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Обрабатывает события измения обозреваемой коллекции результатов поиска пользователей
-        /// </summary>
-        /// <param name="sender">Объект, вызвавший событие</param>
-        /// <param name="e">Содержит информацию о событии</param>
-        private void OnSearchUserResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.OldItems)
-                {
-                    item.PropertyChanged -= OnUserResultChanged;
-                }
-            }
+        ///// <summary>
+        ///// Обрабатывает события измения обозреваемой коллекции результатов поиска пользователей
+        ///// </summary>
+        ///// <param name="sender">Объект, вызвавший событие</param>
+        ///// <param name="e">Содержит информацию о событии</param>
+        //private void OnSearchUserResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.OldItems != null)
+        //    {
+        //        foreach (INotifyPropertyChanged item in e.OldItems)
+        //        {
+        //            item.PropertyChanged -= OnUserResultChanged;
+        //        }
+        //    }
 
-            if (e.NewItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.NewItems)
-                {
-                    item.PropertyChanged += OnUserResultChanged;
-                }
-            }
-        }
+        //    if (e.NewItems != null)
+        //    {
+        //        foreach (INotifyPropertyChanged item in e.NewItems)
+        //        {
+        //            item.PropertyChanged += OnUserResultChanged;
+        //        }
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Обрабатывает изменение конкретного результата поиска пользователя
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private void OnUserResultChanged(object? sender, PropertyChangedEventArgs e)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
-        /// Обрабатывает изменение конкретного результата поиска пользователя
+        /// Обрабатывает событие обработчика сетевых сообщений - получен запрос на создание нового диалога
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnUserResultChanged(object? sender, PropertyChangedEventArgs e)
+        /// <param name="dialog">Диалог</param>
+        private void OnGotCreateDialogRequest(Dialog dialog)
         {
-            throw new NotImplementedException();
+            dialog.Messages.First().IsCurrentUserMessage = false;
+            dialog.CurrentUser = CurrentUser;
+            Application.Current.Dispatcher.Invoke(() => Dialogs.Insert(0, dialog));
+
+            //Dialogs.Insert(0, dialog);
         }
 
         /// <summary>
@@ -447,7 +525,6 @@ namespace WpfMessengerClient.ViewModels
             {
                 IsGreetingMessageTextBoxAvailable = false;
 
-
                 if (String.IsNullOrEmpty(GreetingMessage.Text))
                 {
                     MessageBox.Show("Сначала введите приветственное сообщение =)");
@@ -462,7 +539,7 @@ namespace WpfMessengerClient.ViewModels
                     Dialog dialog = new Dialog(CurrentUser, SelectedUser);
                     dialog.CurrentUser = CurrentUser;
 
-                    Message message = GreetingMessage;
+                    Message message = (Message)GreetingMessage.Clone();
                     dialog.Messages.Add(message);
 
                     TaskCompletionSource completionSource = new TaskCompletionSource();
@@ -472,24 +549,26 @@ namespace WpfMessengerClient.ViewModels
 
                     await completionSource.Task;
 
-                    //Dialog.
+                    ProcessSuccessfulDialogCreatedResponse(observer.CreateDialogResponse, dialog);
 
-                    //Dialogs.Add
+                    CheckSelectedUser();
 
-
-
-                    //var observer = 
-
-                }
-
-
+                }//else
             }
             else
             {
                 //
             }
+        }
 
+        private async Task OnDeleteMessageCommand()
+        {
+            throw new NotImplementedException();
+        }
 
+        private Task OnSendMessageCommand()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Обработчики событий
@@ -500,18 +579,27 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="userSearchResult">Представляет результат поиска пользователя</param>
         private void AddSearchResults(UserSearchResponse userSearchResult)
         {
-            List<User> relevantUsers = userSearchResult.RelevantUsers;
-
-            relevantUsers.RemoveAll(user => user.Id == CurrentUser.Id);
-
-            SearchUserResults.Clear();
-
-            foreach (User user in relevantUsers)
+            try
             {
-                SearchUserResults.Add(user);
+                List<User> relevantUsers = userSearchResult.RelevantUsers;
+
+                relevantUsers.RemoveAll(user => user.Id == CurrentUser.Id);
+
+                SearchUserResults.Clear();
+
+                foreach (User user in relevantUsers)
+                {
+                    SearchUserResults.Add(user);
+                }
+
+                HasNotSearchResult = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
             }
 
-            HasNotSearchResult = false;
         }
 
         /// <summary>
@@ -525,6 +613,19 @@ namespace WpfMessengerClient.ViewModels
 
             else
                 ResetSearchResults();
+        }
+
+        /// <summary>
+        /// Обработать ответ на запрос о создании диалога
+        /// </summary>
+        /// <param name="createDialogResponse">Ответ на запрос о создании диалога</param>
+        private void ProcessSuccessfulDialogCreatedResponse(CreateDialogResponse createDialogResponse, Dialog dialog)
+        {
+            dialog.Id = createDialogResponse.DialogId;
+            dialog.Messages.First().Id = createDialogResponse.MessageId;
+
+            Dialogs.Insert(0, dialog);
+            ActiveDialog = dialog;
         }
 
         /// <summary>
@@ -546,12 +647,15 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private void CheckSelectedUser()
         {
-            if(_selectedUser != null)
+            if (_selectedUser != null)
             {
+                IsOpenDialogButtonAvailable = true;
+                WasUserSelected = true;
+
                 // если уже общаемся с этим пользователем
-                if (_selectedUser != null && Dialogs.FirstOrDefault(d => d.Users.Contains(_selectedUser)) != null)
+                if (Dialogs.FirstOrDefault(d => d.Users.Any(user => user.Id == _selectedUser.Id)) != null)
                 {
-                    IsGreetingMessageTextBoxAvailable = false;
+                    IsGreetingMessageTextBoxVisible = false;
                     OpenDialogButtonText = "Открыть диалог";
                 }
 
@@ -561,6 +665,11 @@ namespace WpfMessengerClient.ViewModels
                     IsGreetingMessageTextBoxVisible = true;
                     OpenDialogButtonText = "Поприветствовать";
                 }
+            }
+            else
+            {
+                IsGreetingMessageTextBoxVisible = false;
+                WasUserSelected = false;
             }
         }
 

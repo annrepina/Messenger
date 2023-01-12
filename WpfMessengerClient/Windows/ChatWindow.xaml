@@ -54,7 +54,7 @@
                                     Margin="2,0"
                                     BorderBrush="Gainsboro"
                                     BorderThickness="1,1,1,0"
-                                    CornerRadius="0,0,4,4">
+                                    CornerRadius="4,4,4,4">
                                         <ContentPresenter
                                         x:Name="ContentSite"
                                         Margin="10,2"
@@ -75,6 +75,7 @@
                         </Setter>
                     </Style>
                 </TabControl.Resources>
+                
                 <TabItem Header="Чаты" FontFamily="Tahoma" FontSize="20">
                     <ListView   
                       BorderBrush="{x:Null}" Foreground="#E50A0A0A"
@@ -87,8 +88,10 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="2">
                                     <TextBlock 
-                                TextWrapping="Wrap" Padding="2" 
-                                Text="Собеседник" 
+                                TextWrapping="Wrap" Padding="2"
+                                Foreground="#FFDCD7D7"
+                                 
+                                Text="{Binding Title}" 
                                 MaxWidth="{Binding RelativeSource=
                                 {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}" 
                                 />
@@ -102,7 +105,7 @@
 
                 <TabItem Header="Поиск собеседников" FontFamily="Tahoma" FontSize="20">
                     <Grid Background="#FF021F38">
-   
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="40"/>
                             <RowDefinition Height="50"/>
@@ -142,7 +145,7 @@
 
                         <!--<TextBox Grid.Row="6"></TextBox>-->
                         <Grid Grid.Row="6" Height="100">
-                            
+
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
@@ -164,7 +167,7 @@
                                        FontFamily="Tahoma" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
                             <!--<Grid Grid.Row="0" Grid.RowSpan="2" Background="#FF021F38" Panel.ZIndex="2"></Grid>-->
                         </Grid>
-                        
+
                     </Grid>
 
 
@@ -173,19 +176,15 @@
         </DockPanel>
 
         <Grid Background="#FF355D9A" Grid.Column="1" Grid.Row="1" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-
 
             <ListView  
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     Background="Transparent"
                     SelectedItem="{Binding SelectedMessage}"
-                    ItemsSource="{Binding Path=ActiveChat.MessageList}" 
+                    ItemsSource="{Binding ActiveDialog.Messages}" 
                     Margin="0,5,5,50" BorderBrush="{x:Null}" 
-                    Foreground="#FF0A0A0A" FontFamily="Bookman Old Style">
+                    Foreground="#FFDCD7D7" FontFamily="Tahoma" Grid.ColumnSpan="3"
+                    HorizontalContentAlignment="Stretch">
 
                 <ListView.InputBindings>
                     <KeyBinding Key="Delete" Command="{Binding DeleteMessageCommand}"/>
@@ -193,37 +192,45 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="2">
-                            <TextBlock 
-                                TextWrapping="Wrap" Padding="2" 
-                                Text="{Binding .}"                               
-                                MaxWidth="{Binding RelativeSource=
-                                {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}" 
-                                />
-                        </StackPanel>
+                        <Border HorizontalAlignment="{Binding HorizontalAlignment}">
+                             <StackPanel Orientation="Vertical" Margin="2" HorizontalAlignment="{Binding HorizontalAlignment}">
+                                <TextBlock TextWrapping="Wrap" Padding="2"
+                                    Text="{Binding Time}"
+                                    FontFamily="Tahoma"
+                                    HorizontalAlignment="{Binding HorizontalAlignment}"
+
+                                    MaxWidth="{Binding RelativeSource=
+                                    {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"
+                                    />
+                                <TextBlock TextWrapping="Wrap" Padding="2" 
+                                    Text="{Binding Text}"
+                                    FontFamily="Tahoma" FontSize="18"     
+                                    HorizontalAlignment="{Binding HorizontalAlignment}"
+
+                                       
+                                    MaxWidth="{Binding RelativeSource=
+                                    {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"/>
+                             </StackPanel>                           
+                        </Border>
+
 
                     </DataTemplate>
                 </ListView.ItemTemplate>
 
-                <!--ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel-->
 
             </ListView>
 
 
             <TextBox 
                     Margin="10,0,90,10" VerticalAlignment="Bottom"
-                    Text="{Binding Message}" Height="30"
+                    Text="{Binding Message.Text}" Height="30" Grid.ColumnSpan="3"
              />
 
             <Button 
                    VerticalAlignment="Bottom" HorizontalAlignment="Right"
                    Margin="0,0,10,10"
                    Content="Send" Command="{Binding SendMessageCommand}" 
-                   Height="30" Width="74"
+                   Height="30" Width="74" Grid.Column="2"
              />
 
         </Grid>

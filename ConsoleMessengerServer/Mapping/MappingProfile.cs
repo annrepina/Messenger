@@ -24,7 +24,6 @@ namespace ConsoleMessengerServer.Entities.Mapping
             CreateMap<CreateDialogRequestDto, Dialog>();
             CreateMap<CreateDialogResponse, CreateDialogResponseDto>().ReverseMap();
             CreateMap<Dialog, CreateDialogResponse>().ForMember(dest => dest.DialogId, exp => exp.MapFrom(dial => dial.Id))
-                                                     .ForMember(dest => dest.MessageSendingDateTime, exp => exp.MapFrom(dial => dial.Messages.First().DateTime))
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
 
 
