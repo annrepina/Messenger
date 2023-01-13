@@ -138,11 +138,11 @@ namespace ConsoleMessengerServer
                     ProcessSearchUserMessage(message, serverNetworkProvider);
                     break;
 
-                case NetworkMessageCode.CreateDialogCode:
+                case NetworkMessageCode.CreateDialogRequestCode:
                     ProcessCreateDialogRequest(message, serverNetworkProvider);
                     break;
 
-                case NetworkMessageCode.SendMessageCode:
+                case NetworkMessageCode.SendMessageRequestCode:
                     ProcessSendMessageRequest(message, serverNetworkProvider);
                     break;
 
@@ -244,7 +244,7 @@ namespace ConsoleMessengerServer
 
                 //responseMessage = new NetworkMessage(null, NetworkMessageCode.SearchFailedCode);
 
-                resultOfOperation = $"Код операции: {NetworkMessageCode.SearchUserRequestCode}. Статус ответа: {NetworkResponseStatus.Successful}. Поиск на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber} не дал результатов";
+                resultOfOperation = $"Код операции: {NetworkMessageCode.SearchUserRequestCode}. Статус ответа: {NetworkResponseStatus.Failed}. Поиск на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber} не дал результатов";
             }
 
             NetworkMessage responseMessage = CreateResponse(userSearchResult, out UserSearchResponseDto dto, NetworkMessageCode.SearchUserResponseCode);
@@ -269,16 +269,16 @@ namespace ConsoleMessengerServer
 
             CreateDialogResponse createDialogResponse = _mapper.Map<CreateDialogResponse>(dialog);
 
-            NetworkMessage responseMessageForSenderServer = CreateResponse(createDialogResponse, out CreateDialogResponseDto dto, NetworkMessageCode.SuccessfulCreatingDialogCode);
+            NetworkMessage responseMessageForSenderServer = CreateResponse(createDialogResponse, out CreateDialogResponseDto dto, NetworkMessageCode.CreateDialogResponseCode);
             await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessageForSenderServer);
 
-            NetworkMessage responseWithFullDialog = CreateResponse(dialog, out DialogDto dialogDto, NetworkMessageCode.CreateDialogCode);
+            NetworkMessage responseWithFullDialog = CreateResponse(dialog, out DialogDto dialogDto, NetworkMessageCode.CreateDialogRequestCode);
             await _userProxyList[senderId].BroadcastNetworkMessageAsync(responseWithFullDialog, serverNetworkProvider);
 
             if (_userProxyList.ContainsKey(recipientId))
                 await _userProxyList[recipientId].BroadcastNetworkMessageAsync(responseWithFullDialog);
 
-            Console.WriteLine($"Код операции: {NetworkMessageCode.SuccessfulCreatingDialogCode}. Диалог с Id {createDialogResponse.DialogId} создан."); 
+            Console.WriteLine($"Код операции: {NetworkMessageCode.CreateDialogResponseCode}. Диалог с Id {createDialogResponse.DialogId} создан."); 
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace ConsoleMessengerServer
         /// </summary>
         /// <param name="networkMessage">Сетевое сообщение</param>
         /// <param name="serverNetworkProvider">Сетевой провайдер на стороне сервера</param>
-        private async void ProcessSendMessageRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
+        private async Task ProcessSendMessageRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
         {
             SendMessageRequestDto sendMessageRequestDto = Deserializer.Deserialize<SendMessageRequestDto>(networkMessage.Data);
 
@@ -294,7 +294,7 @@ namespace ConsoleMessengerServer
             int recipietUserId = _dbService.GetRecipientUserId(message);
 
             SendMessageRequest sendMessageRequest = new SendMessageRequest(message, message.DialogId);
-            NetworkMessage newMessage = CreateResponse(sendMessageRequest, out SendMessageRequestDto dto, NetworkMessageCode.SendMessageCode);
+            NetworkMessage newMessage = CreateResponse(sendMessageRequest, out SendMessageRequestDto dto, NetworkMessageCode.SendMessageRequestCode);
             await _userProxyList[message.UserSenderId].BroadcastNetworkMessageAsync(newMessage, serverNetworkProvider);
 
             if(_userProxyList.ContainsKey(recipietUserId))
@@ -304,7 +304,7 @@ namespace ConsoleMessengerServer
             NetworkMessage responseMessage = CreateResponse(response, out SendMessageResponseDto responseDto, NetworkMessageCode.MessageDeliveredCode);
             await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
 
-            Console.WriteLine($"Код операции {NetworkMessageCode.SendMessageCode}. Сообщение от пользователя с Id: {message.UserSenderId} доставлено пользователю с Id: {recipietUserId}.\n"
+            Console.WriteLine($"Код операции {NetworkMessageCode.SendMessageRequestCode}. Сообщение от пользователя с Id: {message.UserSenderId} доставлено пользователю с Id: {recipietUserId}.\n"
                 + $"Текст сообщения: {message.Text}");
         }
 

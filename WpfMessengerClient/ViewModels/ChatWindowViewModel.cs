@@ -31,6 +31,12 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private readonly NetworkMessageHandler _networkMessageHandler;
 
+        private const double MinFontSizeForUserName = 13;
+        private const double MidFontSizeForUserName = 18;
+        private const double MaxFontSizeForUserName = 26;
+        private const int SecondTerminalNameLength = 20;
+        private const int FirstTerminalNameLength = 15;
+
         /// <inheritdoc cref="ActiveDialog"/>
         private Dialog? _activeDialog;
 
@@ -53,9 +59,7 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private Message _greetingMessage;
 
-        /// <summary>
-        /// Текущий пользователь
-        /// </summary>
+        /// <inheritdoc cref="CurrentUser"/>
         private User _currentUser;
 
         /// <summary>
@@ -93,6 +97,8 @@ namespace WpfMessengerClient.ViewModels
 
         /// <inheritdoc cref="IsMainMessageBoxAvailable"/>
         private bool _isMainMessageBoxAvailable;
+
+        /// <inheritdoc cref="IsSendButtonAvailable"/>
         private bool _isSendButtonAvailable;
 
         #endregion Приватные поля
@@ -105,7 +111,7 @@ namespace WpfMessengerClient.ViewModels
         public MessengerWindowsManager MessengerWindowsManager { get; init; }
 
         /// <summary>
-        /// Свойство - текущий пользователь
+        /// Текущий пользователь
         /// </summary>
         public User CurrentUser
         {
@@ -118,6 +124,30 @@ namespace WpfMessengerClient.ViewModels
                 OnPropertyChanged(nameof(CurrentUser));
             }
         }
+
+        public double CurrentUserNameFontSize
+        {
+            get
+            {
+                if (CurrentUser.Name.Length >= SecondTerminalNameLength)
+                {
+                    return MinFontSizeForUserName;
+                }
+
+                else if (CurrentUser.Name.Length < SecondTerminalNameLength && CurrentUser.Name.Length > FirstTerminalNameLength)
+                    return MidFontSizeForUserName;
+
+                else
+                    return MaxFontSizeForUserName;
+
+                //CurrentUser.Name.Length > TerminalNameLength ? MinFontSizeForUserName : MaxFontSizeForUserName;
+
+  
+            }
+
+
+        }
+ 
 
         /// <summary>
         /// Свойство - активный диалог
@@ -139,11 +169,6 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public ObservableCollection<Dialog> Dialogs { get; set; }
 
-        ///// <summary>
-        ///// Обозреваемая коллекция 
-        ///// </summary>
-        //public List<Dialog> Dialogs { get; set; }
-
         /// <summary>
         /// Выбранный пользователь 
         /// </summary>
@@ -154,9 +179,6 @@ namespace WpfMessengerClient.ViewModels
             set
             {
                 _selectedUser = value;
-
-                //WasUserSelected = true;
-                //IsOpenDialogButtonAvailable = true;
 
                 CheckSelectedUser();
 
@@ -184,11 +206,6 @@ namespace WpfMessengerClient.ViewModels
         /// Обозреваемая коллекция пользователей, которых ищет текущий пользователь
         /// </summary>
         public ObservableCollection<User> SearchUserResults { get; set; }
-
-        /// <summary>
-        /// Обозреваемая коллекция пользователей, которых ищет текущий пользователь
-        /// </summary>
-        //public List<User> SearchUserResults { get; set; }
 
         /// <summary>
         /// Данные о поисковом запросе
@@ -404,6 +421,8 @@ namespace WpfMessengerClient.ViewModels
         {
             _networkMessageHandler = networkProviderUserDataMediator;
             _networkMessageHandler.GotCreateDialogRequest += OnGotCreateDialogRequest;
+            _networkMessageHandler.DialogReceivedNewMessage += OnDialogReceivedNewMessage;
+
             MessengerWindowsManager = messengerWindowsManager;
             CurrentUser = user;
 
@@ -436,6 +455,8 @@ namespace WpfMessengerClient.ViewModels
             IsMainMessageBoxAvailable = true;
             IsSendButtonAvailable = true;
         }
+
+
 
 
 
@@ -500,7 +521,6 @@ namespace WpfMessengerClient.ViewModels
         //        }
         //    }
         //}
-
         ///// <summary>
         ///// Обрабатывает изменение конкретного результата поиска пользователя
         ///// </summary>
@@ -518,15 +538,49 @@ namespace WpfMessengerClient.ViewModels
         private void OnGotCreateDialogRequest(Dialog dialog)
         {
             if(dialog.Messages.First().UserSender.Id == CurrentUser.Id)
-                dialog.Messages.First().IsCurrentUserMessage = false;
+                dialog.Messages.First().IsCurrentUserMessage = true;
 
             else
-                dialog.Messages.First().IsCurrentUserMessage = true;
+                dialog.Messages.First().IsCurrentUserMessage = false;
 
             dialog.CurrentUser = CurrentUser;
             Application.Current.Dispatcher.Invoke(() => Dialogs.Insert(0, dialog));
 
             //Dialogs.Insert(0, dialog);
+        }
+
+        /// <summary>
+        /// Обрабатывает событие обработчика сетевых сообщений - диалог получил новое сообщение
+        /// </summary>
+        /// <param name="sendMessageRequest">Запрос на отправку сообещения</param>
+        private void OnDialogReceivedNewMessage(SendMessageRequest sendMessageRequest)
+        {
+            Message message = sendMessageRequest.Message;
+
+            if(message.UserSender.Id != CurrentUser.Id)
+                message.IsCurrentUserMessage = false;
+
+            else
+                message.IsCurrentUserMessage = true;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Dialog dialog = Dialogs.First(dial => dial.Id == sendMessageRequest.DialogId);
+
+                int dialogIndex = Dialogs.IndexOf(dialog);
+
+                dialog.Messages.Add(message);
+
+                if (ActiveDialog.Id == dialog.Id)
+                {
+                    Dialogs.Move(dialogIndex, 0);
+                    ActiveDialog = dialog;
+                }
+
+                else
+                    Dialogs.Move(dialogIndex, 0);
+
+            });
         }
 
         /// <summary>
@@ -545,7 +599,7 @@ namespace WpfMessengerClient.ViewModels
 
                 var observer = new SearchResultReceivedObserver(_networkMessageHandler, completionSource);
 
-                await _networkMessageHandler.SenRequestAsync<UserSearchRequest, UserSearchRequestDto>(SearchingRequest, NetworkMessageCode.SearchUserRequestCode);
+                await _networkMessageHandler.SendRequestAsync<UserSearchRequest, UserSearchRequestDto>(SearchingRequest, NetworkMessageCode.SearchUserRequestCode);
 
                 await completionSource.Task;
 
@@ -580,13 +634,14 @@ namespace WpfMessengerClient.ViewModels
                     Dialog dialog = new Dialog(CurrentUser, SelectedUser);
                     dialog.CurrentUser = CurrentUser;
 
-                    Message message = (Message)GreetingMessage.Clone();
+                    Message message = GreetingMessage;
                     dialog.Messages.Add(message);
+                    GreetingMessage = new Message("", CurrentUser, true);
 
                     TaskCompletionSource completionSource = new TaskCompletionSource();
                     var observer = new DialogCreatedObserver(_networkMessageHandler, completionSource);
 
-                    await _networkMessageHandler.SenRequestAsync<Dialog, CreateDialogRequestDto>(dialog, NetworkMessageCode.CreateDialogCode);
+                    await _networkMessageHandler.SendRequestAsync<Dialog, CreateDialogRequestDto>(dialog, NetworkMessageCode.CreateDialogRequestCode);
                     await completionSource.Task;
 
                     ProcessSuccessfulDialogCreatedResponse(observer.CreateDialogResponse, dialog);
@@ -622,26 +677,22 @@ namespace WpfMessengerClient.ViewModels
                 IsMainMessageBoxAvailable = false;
                 IsSendButtonAvailable = false;
 
-                Message newMessage = (Message)Message.Clone();
+                Message newMessage = Message;
+                Message = new Message("", CurrentUser, true);
 
                 SendMessageRequest sendMessageRequest = new SendMessageRequest(newMessage, ActiveDialog.Id);
 
                 TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
                 var observer = new MessageDeliveredObserver(_networkMessageHandler, taskCompletionSource);
 
-                await _networkMessageHandler.SenRequestAsync<SendMessageRequest, SendMessageRequestDto>(sendMessageRequest, NetworkMessageCode.SendMessageCode);
+                await _networkMessageHandler.SendRequestAsync<SendMessageRequest, SendMessageRequestDto>(sendMessageRequest, NetworkMessageCode.SendMessageRequestCode);
                 await taskCompletionSource.Task;
 
-                ProcessMessageDeliveredResponse(observer.MessageId);
+                ProcessMessageDeliveredResponse(observer.SendMessageResponse, newMessage);
 
                 IsMainMessageBoxAvailable = true;
                 IsSendButtonAvailable = true;
             }
-        }
-
-        private void ProcessMessageDeliveredResponse(int messageId)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -679,7 +730,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="userSearchResult">Результат поиска пользователей</param>
         private void ProcessSearchResult(UserSearchResponse? userSearchResult)
         {
-            if (userSearchResult != null)
+            if (userSearchResult.Status == NetworkResponseStatus.Successful)
                 AddSearchResults(userSearchResult);
 
             else
@@ -697,6 +748,29 @@ namespace WpfMessengerClient.ViewModels
 
             Dialogs.Insert(0, dialog);
             ActiveDialog = dialog;
+        }
+
+
+        /// <summary>
+        /// Обработать ответ, который означает, что отправленное сообщение доставлено
+        /// </summary>
+        /// <param name="response">Ответ на запрос об отправке сообщения</param>
+        /// <param name="message">Сообщение, которое отправили</param>
+        private void ProcessMessageDeliveredResponse(SendMessageResponse response, Message message)
+        {
+            message.Id = response.MessageId;
+
+            ActiveDialog.Messages.Add(message);
+
+            var dialo = Dialogs;
+
+            int dialogIndex = Dialogs.IndexOf(ActiveDialog);
+
+            Dialogs.Move(dialogIndex, 0);
+
+            ActiveDialog = Dialogs.First();
+
+            var a = ActiveDialog;
         }
 
         /// <summary>

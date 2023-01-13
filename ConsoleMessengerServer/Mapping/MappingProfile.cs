@@ -20,7 +20,8 @@ namespace ConsoleMessengerServer.Entities.Mapping
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, RegistrationDto>().ReverseMap();
             CreateMap<UserSearchResponse, UserSearchResponseDto>().ReverseMap();
-            CreateMap<User, int>().ConvertUsing(source => source.Id);
+            //CreateMap<User, int>().ConvertUsing(source => source.Id);
+            CreateMap<int, User>().ForMember(dest => dest.Id, exp => exp.MapFrom(integ => integ.GetHashCode()));
 
             CreateMap<Dialog, DialogDto>().ReverseMap();
             CreateMap<Dialog, CreateDialogRequestDto>().ForMember(dest => dest.UsersId, exp => exp.MapFrom(dial => dial.Users));

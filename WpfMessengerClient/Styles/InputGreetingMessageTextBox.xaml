@@ -24,7 +24,7 @@
                                      Foreground="Gray"
                                      CaretBrush="Gray"
                                      Margin="8,0,0,0"
-                                     FontSize="18">
+                                     FontSize="16">
                                 <TextBox.Text>
                                     <Binding Path="GreetingMessage.Text" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                         <Binding.ValidationRules>
@@ -41,7 +41,7 @@
                                        Margin="10,0,0,0"
                                        Foreground="#FF5F5D5D"
                                        FontFamily="Tahoma"
-                                       FontSize="18">
+                                       FontSize="16">
 
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">

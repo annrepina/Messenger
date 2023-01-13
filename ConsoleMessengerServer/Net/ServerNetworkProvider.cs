@@ -59,9 +59,9 @@ namespace ConsoleMessengerServer.Net
         /// <returns></returns>
         public override void GetNetworkMessage(NetworkMessage message)
         {
-            if(message.Code == NetworkMessageCode.AuthorizationCode || message.Code == NetworkMessageCode.RegistrationRequestCode
-            || message.Code == NetworkMessageCode.SearchUserRequestCode || message.Code == NetworkMessageCode.CreateDialogCode
-            || message.Code == NetworkMessageCode.SendMessageCode)
+            if(message.Code == NetworkMessageCode.AuthorizationRequestCode || message.Code == NetworkMessageCode.RegistrationRequestCode
+                || message.Code == NetworkMessageCode.SearchUserRequestCode || message.Code == NetworkMessageCode.SendMessageRequestCode
+                || message.Code == NetworkMessageCode.CreateDialogRequestCode)
                 NetworkController.ProcessNetworkMessage(message, this);
           
             else

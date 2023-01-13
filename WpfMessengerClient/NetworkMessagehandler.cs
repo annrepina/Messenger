@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DtoLib.Dto;
+using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
 using DtoLib.NetworkInterfaces;
 using DtoLib.NetworkServices;
@@ -58,7 +59,13 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие - получили ответ, что сообщение доставлено
         /// </summary>
-        public event Action<int> MessageDelivered;
+        public event Action<SendMessageResponse> MessageDelivered;
+
+        /// <summary>
+        /// Событие - в диалоге появилось новое сообщение
+        /// Либо сообщение получено от собеседника, либо сообщение отправил текущий пользователь с другого устройства
+        /// </summary>
+        public event Action<SendMessageRequest> DialogReceivedNewMessage;
 
         #endregion События
 
@@ -110,36 +117,35 @@ namespace WpfMessengerClient
                     ProcessMessage<RegistrationResponseDto, RegistrationResponse>(message, SignUp);
                     break;
 
-                case NetworkMessageCode.RegistrationFailedCode:
-                    break;
-
-                case NetworkMessageCode.SuccessfulAuthorizationCode:
-                    break;
-
-                case NetworkMessageCode.AuthorizationFailedCode:
+                case NetworkMessageCode.AuthorizationResponseCode:
                     break;
 
                 case NetworkMessageCode.SearchUserResponseCode:
-                    ProcessSuccessfulSearchNetworkMessage(message);
+                    ProcessMessage<UserSearchResponseDto, UserSearchResponse>(message, SearchResultReceived);
+                    //ProcessSuccessfulSearchNetworkMessage(message);
                     break;
 
-                case NetworkMessageCode.SearchFailedCode:
-                    ProcessFailedSearchNetworkMessage();
+                //case NetworkMessageCode.SearchFailedCode:
+                //    ProcessFailedSearchNetworkMessage();
+                //    break;
+
+                case NetworkMessageCode.CreateDialogRequestCode:
+                    ProcessMessage<DialogDto, Dialog>(message, GotCreateDialogRequest);
+                    //ProcessCreateDialogRequest(message);
                     break;
 
-                case NetworkMessageCode.CreateDialogCode:
-                    ProcessCreateDialogRequest(message);
+                case NetworkMessageCode.CreateDialogResponseCode:
+                    ProcessMessage<CreateDialogResponseDto, CreateDialogResponse>(message, DialogCreated);
+                    //ProcessSuccessfulCreatingDialogNetworkMessage(message);
                     break;
 
-                case NetworkMessageCode.SuccessfulCreatingDialogCode:
-                    ProcessSuccessfulCreatingDialogNetworkMessage(message);
-                    break;
-
-                case NetworkMessageCode.SendMessageCode:
+                case NetworkMessageCode.SendMessageRequestCode:
+                    ProcessMessage<SendMessageRequestDto, SendMessageRequest>(message, DialogReceivedNewMessage);
                     break;
 
                 case NetworkMessageCode.MessageDeliveredCode:
-                    ProcessMessageDeliveredResponse(message);
+                    ProcessMessage<SendMessageResponseDto, SendMessageResponse>(message, MessageDelivered);
+                    //ProcessMessageDeliveredResponse(message);
                     break;
 
                 case NetworkMessageCode.ExitCode:
@@ -159,49 +165,49 @@ namespace WpfMessengerClient
 
         #region Методы обработки сетевых сообщений
 
-        /// <summary>
-        /// Обаработать сетевое сообщение о регистрации пользователя асинхронно
-        /// </summary>
-        /// <param _name="_message">Сетевое сообщение</param>
-        public void ProcessSuccessfulRegistrationNetworkMessage(NetworkMessage message)
-        {
-            try
-            {
-                RegistrationResponseDto successfulRegistrationDto = Deserializer.Deserialize<RegistrationResponseDto>(message.Data);
+        ///// <summary>
+        ///// Обаработать сетевое сообщение о регистрации пользователя асинхронно
+        ///// </summary>
+        ///// <param _name="_message">Сетевое сообщение</param>
+        //public void ProcessSuccessfulRegistrationNetworkMessage(NetworkMessage message)
+        //{
+        //    try
+        //    {
+        //        RegistrationResponseDto successfulRegistrationDto = Deserializer.Deserialize<RegistrationResponseDto>(message.Data);
 
-                RegisterNewUser(successfulRegistrationDto);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
-        }
+        //        RegisterNewUser(successfulRegistrationDto);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //        throw;
+        //    }
+        //}
 
-        /// <summary>
-        /// Обработать сетвое сообщение об успешном поиске пользователя
-        /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
-        private void ProcessSuccessfulSearchNetworkMessage(NetworkMessage message)
-        {
-            byte[]? data = message.Data;
+        ///// <summary>
+        ///// Обработать сетвое сообщение об успешном поиске пользователя
+        ///// </summary>
+        ///// <param name="message">Сетевое сообщение</param>
+        //private void ProcessSuccessfulSearchNetworkMessage(NetworkMessage message)
+        //{
+        //    byte[]? data = message.Data;
 
-            UserSearchResponseDto userSearchResultDto = Deserializer.Deserialize<UserSearchResponseDto>(data);
+        //    UserSearchResponseDto userSearchResultDto = Deserializer.Deserialize<UserSearchResponseDto>(data);
 
-            UserSearchResponse userSearchResult = _mapper.Map<UserSearchResponse>(userSearchResultDto);
+        //    UserSearchResponse userSearchResult = _mapper.Map<UserSearchResponse>(userSearchResultDto);
 
-            SearchResultReceived?.Invoke(userSearchResult);
-        }
+        //    SearchResultReceived?.Invoke(userSearchResult);
+        //}
 
-        /// <summary>
-        /// Обработать сетевое сообщение о неудачном поиске
-        /// </summary>
-        private void ProcessFailedSearchNetworkMessage()
-        {
-            UserSearchResponse userSearchResult = null;
+        ///// <summary>
+        ///// Обработать сетевое сообщение о неудачном поиске
+        ///// </summary>
+        //private void ProcessFailedSearchNetworkMessage()
+        //{
+        //    UserSearchResponse userSearchResult = null;
 
-            SearchResultReceived?.Invoke(userSearchResult);
-        }
+        //    SearchResultReceived?.Invoke(userSearchResult);
+        //}
 
         /// <summary>
         /// Обрработать сетевое сообщение об успешном создании диалога
@@ -240,13 +246,8 @@ namespace WpfMessengerClient
         {
             Tdest destination;
 
-            if (message.Data != null)
-            {
-                Tdto dto = Deserializer.Deserialize<Tdto>(message.Data);
-                destination = _mapper.Map<Tdest>(dto);
-            }
-            else
-                destination = null;
+            Tdto dto = Deserializer.Deserialize<Tdto>(message.Data);
+            destination = _mapper.Map<Tdest>(dto);
 
             action?.Invoke(destination);
         }
@@ -301,7 +302,7 @@ namespace WpfMessengerClient
         /// <param name="requestData">Данные запроса на сервер</param>
         /// <param name="code">Код сетевого сообщения</param>
         /// <returns></returns>
-        public async Task SenRequestAsync<Treq, Tdto>(Treq requestData, NetworkMessageCode code)
+        public async Task SendRequestAsync<Treq, Tdto>(Treq requestData, NetworkMessageCode code)
                     where Tdto : class
         {
             try

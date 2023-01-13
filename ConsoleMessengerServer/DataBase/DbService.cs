@@ -139,8 +139,8 @@ namespace ConsoleMessengerServer.DataBase
 
                     message = request.Message;
 
-                    var user = dbContext.Users.First(user => user.Id == message.UserSender.Id);
-                    var dialog = dbContext.Dialogs.First(dialog => dialog.Id == request.DialogId);
+                    var user = dbContext.Users.Include(user => user.Dialogs).First(user => user.Id == message.UserSender.Id);
+                    var dialog = dbContext.Dialogs.Include(dial => dial.Users).First(dialog => dialog.Id == request.DialogId);
 
                     message.UserSender = user;
                     message.Dialog = dialog;
@@ -171,7 +171,13 @@ namespace ConsoleMessengerServer.DataBase
 
                 using(var dbContext = new MessengerDbContext())
                 {
-                    userId = dbContext.Messages.First(mes => mes.Id == message.Id).Dialog.Users.First(user => user.Id != message.UserSenderId).Id;
+                    //Message mes = dbContext.Messages.Include(m => m.Dialog).First(mes => mes.Id == message.Id);
+
+                    //Dialog dial = mes.Dialog;
+
+                    //User us = dial.Users.First();
+
+                    userId = dbContext.Messages.Include(m => m.Dialog).ThenInclude(d => d.Users).First(mes => mes.Id == message.Id).Dialog.Users.First(user => user.Id != message.UserSenderId).Id;
 
                     return userId;
                 }

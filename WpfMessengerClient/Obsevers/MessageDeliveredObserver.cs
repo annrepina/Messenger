@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfMessengerClient.Models.Responses;
 
 namespace WpfMessengerClient.Obsevers
 {
@@ -14,7 +15,7 @@ namespace WpfMessengerClient.Obsevers
         /// <summary>
         /// Идентификатор сообщения
         /// </summary>
-        public int MessageId;
+        public SendMessageResponse SendMessageResponse;
 
         public MessageDeliveredObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
         {
@@ -25,9 +26,9 @@ namespace WpfMessengerClient.Obsevers
         /// Обработчик события MessageDelivered у NetworkMessageHandler
         /// </summary>
         /// <param name="messageId">Идентификатор сообщения</param>
-        private void OnMessageDelivered(int messageId)
+        private void OnMessageDelivered(SendMessageResponse sendMessageResponse)
         {
-            MessageId = messageId;
+            SendMessageResponse = sendMessageResponse;
 
             _networkMessageHandler.MessageDelivered -= OnMessageDelivered;
 

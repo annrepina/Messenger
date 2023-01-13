@@ -37,7 +37,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Максимальная длина имени
         /// </summary>
-        private const int MaxNameLength = 50;
+        public const int MaxNameLength = 30;
 
         /// <summary>
         /// Минимальная длина имени
