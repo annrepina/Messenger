@@ -36,14 +36,14 @@ namespace DtoLib.NetworkServices
         public int Id { get; set; }
 
         /// <summary>
-        /// Получатель сообщений от сервера
+        /// Отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>
-        public Receiver Receiver { get; private set; }
+        public Transmitter Transmitter { get; private set; }
 
-        /// <summary>
-        /// Отправитель сообщений на сервер
-        /// </summary>
-        public Sender Sender { get; private set; }
+        ///// <summary>
+        ///// Отправитель сообщений на сервер
+        ///// </summary>
+        //public Sender Sender { get; private set; }
 
         #endregion Свойства 
 
@@ -53,8 +53,8 @@ namespace DtoLib.NetworkServices
         public NetworkProvider()
         {
             Id = ++_counter;
-            Receiver = new Receiver(this);
-            Sender = new Sender(this);
+            Transmitter = new Transmitter(this);
+            //Sender = new Sender(this);
             NetworkStream = null;
             TcpClient = null;
         }

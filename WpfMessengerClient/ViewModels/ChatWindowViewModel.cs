@@ -675,8 +675,10 @@ namespace WpfMessengerClient.ViewModels
         /// <returns></returns>
         private async Task OnOpenDialogAsync()
         {
+            //var a = Dialogs.FirstOrDefault(d => d.Users.Find(user => user.Id == _selectedUser.Id) != null);
+
             // если еще не общаемся с этим пользователем
-            if (Dialogs.FirstOrDefault(d => d.Users.Contains(SelectedUser)) == null)
+            if (Dialogs.FirstOrDefault(d => d.Users.Find(user => user.Id == _selectedUser.Id) != null) == null)
             {
                 IsGreetingMessageTextBoxAvailable = false;
 
@@ -712,7 +714,7 @@ namespace WpfMessengerClient.ViewModels
             }
             else
             {
-                ActiveDialog = Dialogs.First(dial => dial.Users.Contains(_selectedUser));
+                ActiveDialog = Dialogs.First(dial => dial.Users.Find(user => user.Id == _selectedUser.Id) != null);
             }
         }
 

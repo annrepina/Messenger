@@ -32,7 +32,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие регистрации пользователя
         /// </summary>
-        public event Action<RegistrationResponse> SignUp;
+        public event Action<RegistrationResponse> GotSignUpResponse;
 
         /// <summary>
         /// Событие входа пользователя
@@ -124,7 +124,7 @@ namespace WpfMessengerClient
             {
                 case NetworkMessageCode.RegistrationResponseCode:
                     //ProcessSuccessfulRegistrationNetworkMessage(message);
-                    ProcessMessage<RegistrationResponseDto, RegistrationResponse>(message, SignUp);
+                    ProcessMessage<RegistrationResponseDto, RegistrationResponse>(message, GotSignUpResponse);
                     break;
 
                 case NetworkMessageCode.AuthorizationResponseCode:
@@ -204,17 +204,19 @@ namespace WpfMessengerClient
         /// <summary>
         /// Отправить регистрационный запрос асинхронно
         /// </summary>
-        /// <param _name="searchingData">Данные о регистрации</param>
+        /// <param _name="registrationRequest">Запрос на регистрацию</param>
         /// <returns></returns>
-        public async Task SendRegistrationRequestAsync(RegistrationRequest registrationData)
+        public async Task SendRegistrationRequestAsync(RegistrationRequest registrationRequest)
         {
-            RegistrationDto registrationDto = _mapper.Map<RegistrationDto>(registrationData);
+            RegistrationDto registrationDto = _mapper.Map<RegistrationDto>(registrationRequest);
 
             byte[] data = SerializationHelper.Serialize(registrationDto);
 
             NetworkMessage message = new NetworkMessage(data, NetworkMessageCode.RegistrationRequestCode);
 
-            await ClientNetworkProvider.ConnectAsync(message);
+            byte[] messageBytes = SerializationHelper.Serialize(message);
+
+            await ClientNetworkProvider.ConnectAsync(messageBytes);
         }
 
         /// <summary>
@@ -236,7 +238,9 @@ namespace WpfMessengerClient
 
                 NetworkMessage networkMessage = new NetworkMessage(data, code);
 
-                await ClientNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
+                byte[] messageBytes = SerializationHelper.Serialize(networkMessage);
+
+                await ClientNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
             }
             catch (Exception ex)
             {

@@ -39,7 +39,7 @@ namespace ConsoleMessengerServer.Net
         {
             try
             {
-                await Receiver.ReceiveNetworkMessageAsync();
+                await Transmitter.ReceiveNetworkMessageAsync();
             }
             catch (Exception ex)
             {

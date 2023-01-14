@@ -9,7 +9,7 @@ using WpfMessengerClient.Models.Responses;
 namespace WpfMessengerClient.Obsevers
 {
     /// <summary>
-    /// Класс, который наблюдает за событием SignUp у NetworkMessageHandler
+    /// Класс, который наблюдает за событием GotSignUpResponse у NetworkMessageHandler
     /// </summary>
     public class SearchResultReceivedObserver : Observer
     {

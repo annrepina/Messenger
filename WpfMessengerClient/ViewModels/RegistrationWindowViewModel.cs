@@ -30,9 +30,9 @@ namespace WpfMessengerClient.ViewModels
     public class RegistrationWindowViewModel : BaseNotifyPropertyChanged
     {
         /// <summary>
-        /// Посредник между сетевым провайдером и данными ипользователя
+        /// Обработчик сетевых сообщений
         /// </summary>
-        private NetworkMessageHandler _networkProviderUserDataMediator;
+        private NetworkMessageHandler _networkMessageHandler;
 
         /// <summary>
         /// Доступна ли кнопка регистрации для нажатия
@@ -82,8 +82,8 @@ namespace WpfMessengerClient.ViewModels
         /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
         public RegistrationWindowViewModel(MessengerWindowsManager messengerWindowsManager)
         {
-            _networkProviderUserDataMediator = new NetworkMessageHandler();
-            //_networkMessageHandler.SignUp += ChangeWindowToChatWindow;
+            _networkMessageHandler = new NetworkMessageHandler();
+            //_networkMessageHandler.GotSignUpResponse += ChangeWindowToChatWindow;
 
             OnSignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             MessengerWindowsManager = messengerWindowsManager;
@@ -111,9 +111,9 @@ namespace WpfMessengerClient.ViewModels
 
             TaskCompletionSource completionSource = new TaskCompletionSource();
 
-            var observer = new SignUpObserver(_networkProviderUserDataMediator, completionSource);
+            var observer = new SignUpObserver(_networkMessageHandler, completionSource);
 
-            _networkProviderUserDataMediator.SendRegistrationRequestAsync(RegistrationRequestData);
+            _networkMessageHandler.SendRegistrationRequestAsync(RegistrationRequestData);
 
             await completionSource.Task;
 
@@ -154,7 +154,7 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public void ChangeWindowToChatWindow(User user)
         {
-            MessengerWindowsManager.SwitchToChatWindow(_networkProviderUserDataMediator, user);
+            MessengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, user);
         }
     }
 }

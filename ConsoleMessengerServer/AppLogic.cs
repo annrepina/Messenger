@@ -131,7 +131,7 @@ namespace ConsoleMessengerServer
             switch (message.Code)
             {
                 case NetworkMessageCode.RegistrationRequestCode:
-                    ProcessRegistrationNewUserMessage(message, serverNetworkProvider);
+                    ProcessRegistrationRequest(message, serverNetworkProvider);
                     break;
 
                 case NetworkMessageCode.SearchUserRequestCode:
@@ -173,12 +173,12 @@ namespace ConsoleMessengerServer
         /// <summary>
         /// Зарегистрировать нового пользователя в мессенджере
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="networkProviderId"></param>
+        /// <param name="networkMessage">Сетевое сообщение</param>
+        /// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
         /// <returns></returns>
-        public async Task ProcessRegistrationNewUserMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
+        public async Task ProcessRegistrationRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
         {
-            RegistrationDto registrationDto = SerializationHelper.Deserialize<RegistrationDto>(message.Data);
+            RegistrationDto registrationDto = SerializationHelper.Deserialize<RegistrationDto>(networkMessage.Data);
             User? user = _dbService.AddNewUser(registrationDto);
 
             string resultOfOperation;
@@ -198,7 +198,8 @@ namespace ConsoleMessengerServer
             }
 
             NetworkMessage responseMessage = CreateResponse(registrationResponse, out RegistrationResponseDto dto, NetworkMessageCode.RegistrationResponseCode);
-            await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
+            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
 
             Console.WriteLine(resultOfOperation);
         }//method
@@ -243,8 +244,8 @@ namespace ConsoleMessengerServer
             }
 
             NetworkMessage responseMessage = CreateResponse(userSearchResult, out UserSearchResponseDto dto, NetworkMessageCode.SearchUserResponseCode);
-
-            await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
+            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
 
             Console.WriteLine(resultOfOperation);
         }
@@ -265,13 +266,15 @@ namespace ConsoleMessengerServer
             CreateDialogResponse createDialogResponse = _mapper.Map<CreateDialogResponse>(dialog);
 
             NetworkMessage responseMessageForSenderServer = CreateResponse(createDialogResponse, out CreateDialogResponseDto dto, NetworkMessageCode.CreateDialogResponseCode);
-            await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessageForSenderServer);
+            byte[] responseMessageForSenderServerBytes = SerializationHelper.Serialize(responseMessageForSenderServer);
+            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseMessageForSenderServerBytes);
 
             NetworkMessage responseWithFullDialog = CreateResponse(dialog, out DialogDto dialogDto, NetworkMessageCode.CreateDialogRequestCode);
-            await _userProxyList[senderId].BroadcastNetworkMessageAsync(responseWithFullDialog, serverNetworkProvider);
+            byte[] responseWithFullDialogBytes = SerializationHelper.Serialize(responseWithFullDialog);
+            await _userProxyList[senderId].BroadcastNetworkMessageAsync(responseWithFullDialogBytes, serverNetworkProvider);
 
             if (_userProxyList.ContainsKey(recipientId))
-                await _userProxyList[recipientId].BroadcastNetworkMessageAsync(responseWithFullDialog);
+                await _userProxyList[recipientId].BroadcastNetworkMessageAsync(responseWithFullDialogBytes);
 
             Console.WriteLine($"Код операции: {NetworkMessageCode.CreateDialogResponseCode}. Диалог с Id {createDialogResponse.DialogId} создан."); 
         }
@@ -291,14 +294,16 @@ namespace ConsoleMessengerServer
 
             MessageRequest sendMessageRequest = new MessageRequest(message, message.DialogId);
             NetworkMessage newMessage = CreateResponse(sendMessageRequest, out MessageRequestDto dto, NetworkMessageCode.SendMessageRequestCode);
-            await _userProxyList[message.UserSenderId].BroadcastNetworkMessageAsync(newMessage, serverNetworkProvider);
+            byte[] newMessageBytes = SerializationHelper.Serialize(newMessage);
+            await _userProxyList[message.UserSenderId].BroadcastNetworkMessageAsync(newMessageBytes, serverNetworkProvider);
 
             if(_userProxyList.ContainsKey(recipietUserId))
-                await _userProxyList[recipietUserId].BroadcastNetworkMessageAsync(newMessage);
+                await _userProxyList[recipietUserId].BroadcastNetworkMessageAsync(newMessageBytes);
 
             SendMessageResponse response = new SendMessageResponse(message.Id);
             NetworkMessage responseMessage = CreateResponse(response, out SendMessageResponseDto responseDto, NetworkMessageCode.MessageDeliveredCode);
-            await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
+            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
 
             Console.WriteLine($"Код операции {NetworkMessageCode.SendMessageRequestCode}. Сообщение от пользователя с Id: {message.UserSenderId} доставлено пользователю с Id: {recipietUserId}.\n"
                 + $"Текст сообщения: {message.Text}");
@@ -322,13 +327,15 @@ namespace ConsoleMessengerServer
 
             _dbService.DeleteMessage(message);
 
-            await _userProxyList[deleteMessageRequestDto.UserId].BroadcastNetworkMessageAsync(networkMessage, serverNetworkProvider);
+            byte[] requestDeleteMessageBytes = SerializationHelper.Serialize(networkMessage);
+            await _userProxyList[deleteMessageRequestDto.UserId].BroadcastNetworkMessageAsync(requestDeleteMessageBytes, serverNetworkProvider);
 
             if (_userProxyList.ContainsKey(interlocutorId))
-                await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(networkMessage);
+                await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(requestDeleteMessageBytes);
 
-            NetworkMessage responseMessage = new NetworkMessage(null, NetworkMessageCode.DeleteMessageResponseCode);
-            await serverNetworkProvider.Sender.SendNetworkMessageAsync(responseMessage);
+            NetworkMessage responseDeleteMessage = new NetworkMessage(null, NetworkMessageCode.DeleteMessageResponseCode);
+            byte[] responseDeleteMessageBytes = SerializationHelper.Serialize(responseDeleteMessage);    
+            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseDeleteMessageBytes);
 
             Console.WriteLine($"Код операции {NetworkMessageCode.DeleteMessageRequestCode}. Пользователь с Id: {deleteMessageRequestDto.UserId} удалил сообщение с Id:{message.Id}.\n"
                             + $"Текст сообщения: {message.Text}");

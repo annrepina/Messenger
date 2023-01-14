@@ -67,7 +67,7 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Подключиться к серверу асинхронно 
         /// </summary>
-        public async Task ConnectAsync(NetworkMessage message)
+        public async Task ConnectAsync(/*NetworkMessage message*/byte[] messageBytes)
         {
             try
             {
@@ -76,12 +76,12 @@ namespace WpfMessengerClient.Services
                     TcpClient.Connect(Host, Port);
                     NetworkStream = TcpClient.GetStream();
 
-                    if (message != null)
+                    if (messageBytes != null)
                     {
-                        await Sender.SendNetworkMessageAsync(message);
+                        await Transmitter.SendNetworkMessageAsync(messageBytes);
                     }
 
-                    await Task.Run(() => Receiver.ReceiveNetworkMessageAsync());
+                    await Task.Run(() => Transmitter.ReceiveNetworkMessageAsync());
                 }
             }
             catch (Exception ex)

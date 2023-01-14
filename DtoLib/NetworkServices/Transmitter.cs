@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace DtoLib.NetworkServices
 {
     /// <summary>
-    /// Получает сообщения от сервера
+    /// Класс, который отвечает за пересылку байтов между клиентом и сервером.
     /// </summary>
-    public class Receiver
+    public class Transmitter
     {
         /// <summary>
-        /// Клиент, который подключается к серверу
+        /// Сетевой провайдер, который подключается к серверу
         /// </summary>
         public NetworkProvider NetworkProvider { get; private set; }
 
@@ -21,7 +21,7 @@ namespace DtoLib.NetworkServices
         /// Конструктор с параметром
         /// </summary>
         /// <param name="networkProvider">Сетевой провайдер</param>
-        public Receiver(NetworkProvider networkProvider)
+        public Transmitter(NetworkProvider networkProvider)
         {
             NetworkProvider = networkProvider;
         }
@@ -34,7 +34,6 @@ namespace DtoLib.NetworkServices
         {
             byte[] lengthBuffer = new byte[4];
             List<byte> bytesList = new List<byte>();
-
             int bytes = 0;
 
             bytes = await NetworkProvider.NetworkStream.ReadAsync(lengthBuffer, 0, lengthBuffer.Length);
@@ -42,8 +41,8 @@ namespace DtoLib.NetworkServices
             if (bytes == 0)
                 throw new Exception("Удаленный хост разорвал соединение.");
 
-            //int length = BitConverter.ToInt32(lengthBuffer, 0);
-            int length = SerializationHelper.Deserialize<int>(lengthBuffer);
+            int length = BitConverter.ToInt32(lengthBuffer, 0);
+            //int length = SerializationHelper.Deserialize<int>(lengthBuffer);
 
             byte[] data = new byte[length];
 
@@ -113,17 +112,67 @@ namespace DtoLib.NetworkServices
         }
 
         /// <summary>
-        /// Прервать подключение
+        /// Отправить сетевое сообщение серверу асинхронно
         /// </summary>
-        public void Disconnect()
+        /// <param name="networkMessage">Сетевое сообщение в виде байтов</param>
+        public async Task SendNetworkMessageAsync(byte[] networkMessage)
         {
-            // Отключение потока
-            if (NetworkProvider.NetworkStream != null)
-                NetworkProvider.NetworkStream.Close();
+            try
+            {
+                //byte[] data = SerializationHelper.Serialize(message);
 
-            // Отключение клиента
-            if (NetworkProvider.TcpClient != null)
-                NetworkProvider.TcpClient.Close();
+                Int32 bytesNumber = networkMessage.Length;
+                //Int32 bytesNumber = 2147483647;
+
+                byte[] length = BitConverter.GetBytes(bytesNumber);
+
+                //byte[] length = SerializationHelper.Serialize((Int32)bytesNumber);
+
+
+
+                byte[] messageWithLength = new byte[networkMessage.Length + length.Length];
+
+                length.CopyTo(messageWithLength, 0);
+                networkMessage.CopyTo(messageWithLength, length.Length);
+
+                await NetworkProvider.NetworkStream.WriteAsync(messageWithLength, 0, messageWithLength.Length);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
+
+        //public async Task SendNetworkMessageAsync(NetworkMessage message)
+        //{
+        //    try
+        //    {
+        //        byte[] data = SerializationHelper.Serialize(message);
+
+        //        Int32 bytesNumber = data.Length;
+        //        //Int32 bytesNumber = 2147483647;
+
+        //        //byte[] length = BitConverter.GetBytes(bytesNumber);
+
+        //        byte[] length = SerializationHelper.Serialize((Int32)bytesNumber);
+
+
+
+        //        byte[] messageWithLength = new byte[data.Length + length.Length];
+
+        //        length.CopyTo(messageWithLength, 0);
+        //        data.CopyTo(messageWithLength, length.Length);
+
+        //        await NetworkProvider.NetworkStream.WriteAsync(messageWithLength, 0, messageWithLength.Length);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //        throw;
+        //    }
+        //}
+
+
     }
 }

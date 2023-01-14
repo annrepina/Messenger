@@ -47,13 +47,13 @@ namespace ConsoleMessengerServer
         /// Транслировать асинхронно сетевое сообщение всем сетевым провайдерам на которых подключен пользователь
         /// </summary>
         /// <param name="networkMessage">Сетевое сообщение</param>
-        public async Task BroadcastNetworkMessageAsync(NetworkMessage networkMessage)
+        public async Task BroadcastNetworkMessageAsync(/*NetworkMessage networkMessage*/byte[] messageBytes) 
         {
             try
             {
                 foreach (ServerNetworkProvider serverNetworkProvider in _connections)
                 {
-                    await serverNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
+                    await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
                 }
             }
             catch (Exception ex)
@@ -70,14 +70,14 @@ namespace ConsoleMessengerServer
         /// <param name="networkMessage">Сетевое сообщение</param>
         /// <param name="networkProvider">Сетевой провайдер на стороне сервера</param>
         /// <returns></returns>
-        public async Task BroadcastNetworkMessageAsync(NetworkMessage networkMessage, ServerNetworkProvider networkProvider)
+        public async Task BroadcastNetworkMessageAsync(/*NetworkMessage networkMessage*/byte[] messageBytes, ServerNetworkProvider networkProvider)
         {
             try
             {
                 foreach (ServerNetworkProvider serverNetworkProvider in _connections)
                 {
                     if(serverNetworkProvider != networkProvider)
-                        await serverNetworkProvider.Sender.SendNetworkMessageAsync(networkMessage);
+                        await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
                 }
             }
             catch (Exception ex)

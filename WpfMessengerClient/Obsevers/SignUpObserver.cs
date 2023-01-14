@@ -8,7 +8,7 @@ using WpfMessengerClient.Models.Responses;
 namespace WpfMessengerClient.Obsevers
 {
     /// <summary>
-    /// Класс, который наблюдает за событием SignUp у NetworkMessageHandler
+    /// Класс, который наблюдает за событием GotSignUpResponse у NetworkMessageHandler
     /// </summary>
     public class SignUpObserver : Observer
     {
@@ -24,7 +24,7 @@ namespace WpfMessengerClient.Obsevers
         /// <param _name="completionSource"></param>
         public SignUpObserver(NetworkMessageHandler networkMessageHandler, TaskCompletionSource completionSource) : base(networkMessageHandler, completionSource)
         {
-            _networkMessageHandler.SignUp += OnSignUp;
+            _networkMessageHandler.GotSignUpResponse += OnSignUp;
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace WpfMessengerClient.Obsevers
         {
             RegistrationResponse = response;
 
-            _networkMessageHandler.SignUp -= OnSignUp;
+            _networkMessageHandler.GotSignUpResponse -= OnSignUp;
 
             _completionSource.SetResult();
         }

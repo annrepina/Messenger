@@ -36,17 +36,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Windows\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
     <Resource Include="Windows\chat.png" />
-    <Resource Include="Windows\hero-img_copy.jpg" />
     <Resource Include="Windows\Images\5f50cf3d4869a94052c1cf18bcab280e.jpg" />
     <Resource Include="Windows\Images\6254-r15.jpg" />
     <Resource Include="Windows\Images\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
     <Resource Include="Windows\Images\storm %282%29.png" />
-    <Resource Include="Windows\loupe.png" />
     <Resource Include="Windows\magnifier.png" />
-    <Resource Include="Windows\magnifying-glass.png" />
-    <Resource Include="Windows\storm (2).png" />
   </ItemGroup>
 
 </Project>

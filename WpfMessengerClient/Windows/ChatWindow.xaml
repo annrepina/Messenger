@@ -105,7 +105,7 @@
                 <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" >
                     <TabItem.Header>
                         <StackPanel>
-                            <Image Source="/Windows/chat.png" Height="35" Width="30"  />
+                            <Image Height="35" Width="30" Source="/Windows/chat.png" />
                             <TextBlock Text="Чаты"/>
                         </StackPanel>
                     </TabItem.Header>
@@ -147,7 +147,7 @@
                 <TabItem FontFamily="Tahoma" FontSize="15" Background="{x:Null}">
                     <TabItem.Header>
                         <StackPanel Orientation="Vertical">
-                            <Image Source="/Windows/magnifier.png" Height="35" Width="30" Panel.ZIndex="10" />
+                            <Image Height="35" Width="30" Panel.ZIndex="10" Source="/Windows/magnifier.png" />
                             <!--<Image Name="magnifierImg" Height="40" Width="35" Source="/Windows/search.png" Visibility="Visible"/>
                             <Image Name="magnifierImg" Height="40" Width="35" Source="/Windows/search.png" Visibility="Visible"/>-->
                             <TextBlock Text="Поиск"/>
