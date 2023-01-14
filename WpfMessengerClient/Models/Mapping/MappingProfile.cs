@@ -28,8 +28,9 @@ namespace WpfMessengerClient.Models.Mapping
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
-            CreateMap<SendMessageRequest, SendMessageRequestDto>().ReverseMap();
+            CreateMap<MessageRequest, MessageRequestDto>().ReverseMap();
             CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();   
+            CreateMap<DeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
 
             CreateMap<ClientNetworkProvider, NetworkProviderDto>().ReverseMap();
 

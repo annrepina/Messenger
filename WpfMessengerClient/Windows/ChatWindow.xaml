@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfMessengerClient" xmlns:system="clr-namespace:System;assembly=netstandard" xmlns:viewmodels="clr-namespace:WpfMessengerClient.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ChatWindowViewModel}"
+        xmlns:local="clr-namespace:WpfMessengerClient" xmlns:system="clr-namespace:System;assembly=netstandard" xmlns:viewmodels="clr-namespace:WpfMessengerClient.ViewModels" xmlns:local1="clr-namespace:WpfMessengerClient.Converters" d:DataContext="{d:DesignInstance Type=viewmodels:ChatWindowViewModel}"
         mc:Ignorable="d"
         Height="{Binding Source={x:Static SystemParameters.FullPrimaryScreenHeight}}" 
         Width="{Binding Source={x:Static SystemParameters.FullPrimaryScreenWidth}}"
@@ -21,7 +21,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -31,20 +31,36 @@
 
         <!--#region Labels-->
         <Border Grid.Row="0" Grid.Column="0"  BorderBrush="#FF355D9A" Background="#FF021F38">
-            <TextBlock Name="UserName" Text="{Binding CurrentUser.Name}" FontSize="{Binding CurrentUserNameFontSize}" FontFamily="Tahoma" HorizontalAlignment="Left"
+            <TextBlock Name="UserName" Text="{Binding CurrentUser.Name}" FontSize="{Binding CurrentUser.Name, Converter={local1:FontSizeForNameConverter}}" FontFamily="Tahoma" HorizontalAlignment="Left"
                    Padding="15" TextAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
         </Border>
 
         <Border Grid.Row="0" Grid.Column="1" BorderThickness="0.5,0,0,0" BorderBrush="#FF355D9A" Background="#FF021F38">
-            <TextBlock Name="DialogName" Text="{Binding ActiveDialog.Title}" FontSize="{Binding CurrentUserNameFontSize}" FontFamily="Tahoma" HorizontalAlignment="Left"
-               Padding="15" TextAlignment="Center" VerticalAlignment="Center" Foreground="White">
-            </TextBlock>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Name="DialogName" Text="{Binding ActiveDialog.Title}" FontSize="{Binding CurrentUser.Name, Converter={local1:FontSizeForNameConverter}}" FontFamily="Tahoma" HorizontalAlignment="Left"
+                   Padding="15" TextAlignment="Center" VerticalAlignment="Center" Foreground="White">
+                </TextBlock>
+                <Button Grid.Column="1" FontSize="18" Style="{StaticResource RoundedButton}" Name="DeleteButton" Content="Удалить"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                        Margin="10, 10, 10, 10"
+                        Visibility="{Binding WasMessageSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                        Command="{Binding DeleteMessageCommand}">
+                </Button>
+            </Grid>
         </Border>
+
+        
 
 
 
 
         <!--#endregion Labels-->
+        
+        <!--#region Dockpanel--> 
 
         <DockPanel Background="#FF001323" Grid.Row="1" Grid.Column="0" Margin="0" >
 
@@ -186,14 +202,15 @@
                             </Grid.RowDefinitions>
 
                             <TextBox Grid.Row="0" Style="{StaticResource InputGreetingMessageTextBox}"
-                                             Visibility="{Binding IsGreetingMessageTextBoxVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Visibility="{Binding IsGreetingMessageTextBoxVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             <!--<TextBox Grid.Row="0" Text="{Binding GreetingMessage.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                      IsEnabled="{Binding IsGreetingMessageTextBoxAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                      Visibility="{Binding IsGreetingMessageTextBoxAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
 
                             <Button Grid.Row="1" Name="OpenDialogButton" Content="{Binding OpenDialogButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                     IsEnabled="{Binding IsOpenDialogButtonAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                    Visibility="{Binding WasUserSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="50" VerticalAlignment="Bottom"
+                                    Visibility="{Binding WasUserSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    Height="50" VerticalAlignment="Bottom"
                                     Command="{Binding OpenDialogCommand}"/>
 
                             <!--<TextBlock Grid.Row="1" Text="По Вашему запросу никто не найден" 
@@ -209,6 +226,8 @@
             </TabControl>
         </DockPanel>
 
+        <!--#endregion Dockpanel-->
+
         <Grid Background="#FF355D9A" Grid.Column="1" Grid.Row="1" >
 
             <Grid.ColumnDefinitions>
@@ -221,6 +240,11 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Text="Выберите с кем хотите начать общение"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontFamily="Tahoma" FontSize="26" Foreground="White"
+                       Visibility="{Binding IsActiveDialogNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"></TextBlock>
+
             <ListView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     Background="Transparent"
@@ -228,7 +252,8 @@
                     ItemsSource="{Binding ActiveDialog.Messages}" 
                     Margin="0,5,5,10" BorderBrush="{x:Null}" 
                     Foreground="#FFDCD7D7" FontFamily="Tahoma"
-                    HorizontalContentAlignment="Stretch">
+                    HorizontalContentAlignment="Stretch"
+                    IsEnabled="{Binding WasDeleteButtonClicked, Converter={local1:InverseBooleanConverter}}">
 
                 <ListView.InputBindings>
                     <KeyBinding Key="Delete" Command="{Binding DeleteMessageCommand}"/>
@@ -262,10 +287,11 @@
 
             <TextBox Grid.Row="1" Grid.Column="0" Margin="20,0,20,20" VerticalAlignment="Bottom"
                      Text="{Binding Message.Text}" IsEnabled="{Binding IsMainMessageBoxAvailable}"
+                     Visibility="{Binding IsActiveDialogNull, Converter={local1:InverseBooleanConverterForVisibility}}"
                      Height="AUTO" MinHeight="50"/>
 
             <Button Style="{StaticResource RoundedButton}" FontSize="12" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center"
-
+                    Visibility="{Binding IsActiveDialogNull, Converter={local1:InverseBooleanConverterForVisibility}}"
                     Content="Отправить" Command="{Binding SendMessageCommand}" 
                     IsEnabled="{Binding IsSendButtonAvailable}"
                     Height="50" Width="74" Margin="0,55,0,0"/>

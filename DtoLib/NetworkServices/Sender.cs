@@ -30,9 +30,31 @@ namespace DtoLib.NetworkServices
         /// <param name="message">Сетевое сообщение</param>
         public async Task SendNetworkMessageAsync(NetworkMessage message)
         {
-            byte[] data = Serializer<NetworkMessage>.Serialize(message);
+            try
+            {
+                byte[] data = SerializationHelper.Serialize(message);
 
-            await NetworkProvider.NetworkStream.WriteAsync(data, 0, data.Length);
+                Int32 bytesNumber = data.Length;
+                //Int32 bytesNumber = 2147483647;
+
+                //byte[] length = BitConverter.GetBytes(bytesNumber);
+
+                byte[] length = SerializationHelper.Serialize((Int32)bytesNumber);
+
+
+
+                byte[] messageWithLength = new byte[data.Length + length.Length];
+
+                length.CopyTo(messageWithLength, 0);
+                data.CopyTo(messageWithLength, length.Length);
+
+                await NetworkProvider.NetworkStream.WriteAsync(messageWithLength, 0, messageWithLength.Length);
+            }
+            catch (Exception ex )
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

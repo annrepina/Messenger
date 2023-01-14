@@ -31,22 +31,13 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private readonly NetworkMessageHandler _networkMessageHandler;
 
-        private const double MinFontSizeForUserName = 13;
-        private const double MidFontSizeForUserName = 18;
-        private const double MaxFontSizeForUserName = 26;
-        private const int SecondTerminalNameLength = 20;
-        private const int FirstTerminalNameLength = 15;
-
         /// <inheritdoc cref="ActiveDialog"/>
         private Dialog? _activeDialog;
 
         /// <inheritdoc cref="SelectedUser"/>
         private User? _selectedUser;
 
-        /// <summary>
-        /// Данные о поисковом запросе
         /// <inheritdoc cref="SearchingRequest"/>
-        /// </summary>
         private UserSearchRequest _searchingRequest;
 
         /// <summary>
@@ -101,6 +92,13 @@ namespace WpfMessengerClient.ViewModels
         /// <inheritdoc cref="IsSendButtonAvailable"/>
         private bool _isSendButtonAvailable;
 
+        /// <inheritdoc cref="IsActiveDialogNull"/>
+        private bool _isActiveDialogNull;
+
+        /// <inheritdoc cref="WasMessageSelected"/>
+        private bool _wasMessageSelected;
+        private bool _wasDeleteButtonClicked;
+
         #endregion Приватные поля
 
         #region Свойства
@@ -125,29 +123,29 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        public double CurrentUserNameFontSize
-        {
-            get
-            {
-                if (CurrentUser.Name.Length >= SecondTerminalNameLength)
-                {
-                    return MinFontSizeForUserName;
-                }
+        //public double CurrentUserNameFontSize
+        //{
+        //    get
+        //    {
+        //        if (CurrentUser.Name.Length >= SecondTerminalNameLength)
+        //        {
+        //            return MinFontSizeForUserName;
+        //        }
 
-                else if (CurrentUser.Name.Length < SecondTerminalNameLength && CurrentUser.Name.Length > FirstTerminalNameLength)
-                    return MidFontSizeForUserName;
+        //        else if (CurrentUser.Name.Length < SecondTerminalNameLength && CurrentUser.Name.Length > FirstTerminalNameLength)
+        //            return MidFontSizeForUserName;
 
-                else
-                    return MaxFontSizeForUserName;
+        //        else
+        //            return MaxFontSizeForUserName;
 
-                //CurrentUser.Name.Length > TerminalNameLength ? MinFontSizeForUserName : MaxFontSizeForUserName;
-
-  
-            }
+        //        //CurrentUser.Name.Length > TerminalNameLength ? MinFontSizeForUserName : MaxFontSizeForUserName;
 
 
-        }
- 
+        //    }
+
+
+        //}
+
 
         /// <summary>
         /// Свойство - активный диалог
@@ -159,6 +157,12 @@ namespace WpfMessengerClient.ViewModels
             set
             {
                 _activeDialog = value;
+
+                if (_activeDialog != null)
+                    IsActiveDialogNull = false;
+
+                else
+                    IsActiveDialogNull = true;
 
                 OnPropertyChanged(nameof(ActiveDialog));
             }
@@ -197,9 +201,30 @@ namespace WpfMessengerClient.ViewModels
             {
                 _selectedMessage = value;
 
+                if (_selectedMessage != null)
+                    WasMessageSelected = true;
+
+                else
+                    WasMessageSelected = false;
+
                 OnPropertyChanged(nameof(SelectedMessage));
             }
 
+        }
+
+        /// <summary>
+        /// Было выбрано сообщение
+        /// </summary>
+        public bool WasMessageSelected
+        {
+            get => _wasMessageSelected;
+
+            set
+            {
+                _wasMessageSelected = value;
+
+                OnPropertyChanged(nameof(WasMessageSelected));
+            }
         }
 
         /// <summary>
@@ -396,15 +421,45 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Кнопка отправки сообщения доступна?
         /// </summary>
-        public bool IsSendButtonAvailable 
-        { 
-            get => _isSendButtonAvailable; 
+        public bool IsSendButtonAvailable
+        {
+            get => _isSendButtonAvailable;
 
             set
             {
                 _isSendButtonAvailable = value;
 
                 OnPropertyChanged(nameof(IsSendButtonAvailable));
+            }
+        }
+
+        /// <summary>
+        /// Активный диалог равен?
+        /// </summary>
+        public bool IsActiveDialogNull
+        {
+            get => _isActiveDialogNull;
+
+            set
+            {
+                _isActiveDialogNull = value;
+
+                OnPropertyChanged(nameof(IsActiveDialogNull));
+            }
+        }
+
+        /// <summary>
+        /// Была ли нажата кнопка удаления?
+        /// </summary>
+        public bool WasDeleteButtonClicked 
+        { 
+            get => _wasDeleteButtonClicked; 
+            
+            set
+            {
+                _wasDeleteButtonClicked = value;
+
+                OnPropertyChanged(nameof(WasDeleteButtonClicked));
             }
         }
 
@@ -422,6 +477,7 @@ namespace WpfMessengerClient.ViewModels
             _networkMessageHandler = networkProviderUserDataMediator;
             _networkMessageHandler.GotCreateDialogRequest += OnGotCreateDialogRequest;
             _networkMessageHandler.DialogReceivedNewMessage += OnDialogReceivedNewMessage;
+            _networkMessageHandler.GotDeleteMessageRequest += OnGotDeleteMessageRequest;
 
             MessengerWindowsManager = messengerWindowsManager;
             CurrentUser = user;
@@ -454,7 +510,12 @@ namespace WpfMessengerClient.ViewModels
 
             IsMainMessageBoxAvailable = true;
             IsSendButtonAvailable = true;
+
+            WasDeleteButtonClicked = false;
+            WasMessageSelected = false;
         }
+
+
 
 
 
@@ -537,7 +598,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="dialog">Диалог</param>
         private void OnGotCreateDialogRequest(Dialog dialog)
         {
-            if(dialog.Messages.First().UserSender.Id == CurrentUser.Id)
+            if (dialog.Messages.First().UserSender.Id == CurrentUser.Id)
                 dialog.Messages.First().IsCurrentUserMessage = true;
 
             else
@@ -553,11 +614,11 @@ namespace WpfMessengerClient.ViewModels
         /// Обрабатывает событие обработчика сетевых сообщений - диалог получил новое сообщение
         /// </summary>
         /// <param name="sendMessageRequest">Запрос на отправку сообещения</param>
-        private void OnDialogReceivedNewMessage(SendMessageRequest sendMessageRequest)
+        private void OnDialogReceivedNewMessage(MessageRequest sendMessageRequest)
         {
             Message message = sendMessageRequest.Message;
 
-            if(message.UserSender.Id != CurrentUser.Id)
+            if (message.UserSender.Id != CurrentUser.Id)
                 message.IsCurrentUserMessage = false;
 
             else
@@ -571,7 +632,7 @@ namespace WpfMessengerClient.ViewModels
 
                 dialog.Messages.Add(message);
 
-                if (ActiveDialog.Id == dialog.Id)
+                if(ActiveDialog != null && ActiveDialog.Id == dialog.Id)
                 {
                     Dialogs.Move(dialogIndex, 0);
                     ActiveDialog = dialog;
@@ -579,7 +640,6 @@ namespace WpfMessengerClient.ViewModels
 
                 else
                     Dialogs.Move(dialogIndex, 0);
-
             });
         }
 
@@ -652,16 +712,9 @@ namespace WpfMessengerClient.ViewModels
             }
             else
             {
-                //
+                ActiveDialog = Dialogs.First(dial => dial.Users.Contains(_selectedUser));
             }
         }
-
-        private async Task OnDeleteMessageCommand()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion Обработчики событий
 
         /// <summary>
         /// Обработать нажатие кнопки отправки сообщения
@@ -680,12 +733,12 @@ namespace WpfMessengerClient.ViewModels
                 Message newMessage = Message;
                 Message = new Message("", CurrentUser, true);
 
-                SendMessageRequest sendMessageRequest = new SendMessageRequest(newMessage, ActiveDialog.Id);
+                MessageRequest sendMessageRequest = new MessageRequest(newMessage, ActiveDialog.Id);
 
                 TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
                 var observer = new MessageDeliveredObserver(_networkMessageHandler, taskCompletionSource);
 
-                await _networkMessageHandler.SendRequestAsync<SendMessageRequest, SendMessageRequestDto>(sendMessageRequest, NetworkMessageCode.SendMessageRequestCode);
+                await _networkMessageHandler.SendRequestAsync<MessageRequest, MessageRequestDto>(sendMessageRequest, NetworkMessageCode.SendMessageRequestCode);
                 await taskCompletionSource.Task;
 
                 ProcessMessageDeliveredResponse(observer.SendMessageResponse, newMessage);
@@ -694,6 +747,48 @@ namespace WpfMessengerClient.ViewModels
                 IsSendButtonAvailable = true;
             }
         }
+
+        /// <summary>
+        /// Обработать команду удаления сообщения
+        /// </summary>
+        /// <returns></returns>
+        private async Task OnDeleteMessageCommand()
+        {
+            WasDeleteButtonClicked = true;
+
+            DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest(SelectedMessage, ActiveDialog.Id, CurrentUser.Id);
+
+            TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
+            var observer = new MessageDeletedObserver(_networkMessageHandler, taskCompletionSource);
+
+            await _networkMessageHandler.SendRequestAsync<DeleteMessageRequest, DeleteMessageRequestDto>(deleteMessageRequest, NetworkMessageCode.DeleteMessageRequestCode);
+            await taskCompletionSource.Task;
+
+            ProcessMessageDeletedResponse();
+
+            WasDeleteButtonClicked = false;
+        }
+
+        /// <summary>
+        /// Обрабатывает событие получение запроса на удаление сообщения
+        /// </summary>
+        /// <param name="deleteMessageRequest">Запрос на удаление сообщения</param>
+        private void OnGotDeleteMessageRequest(DeleteMessageRequest deleteMessageRequest)
+        {
+            Dialog dialog = Dialogs.First(dial => dial.Id == deleteMessageRequest.DialogId);
+
+            Message message = dialog.Messages.First(mes => mes.Id == deleteMessageRequest.Message.Id);
+
+            Application.Current.Dispatcher.Invoke(() => 
+            { 
+                bool res = dialog.Messages.Remove(message);
+
+                if (res == false)
+                    MessageBox.Show("Не удалось удалить сообщение");
+            });
+        }
+
+        #endregion Обработчики событий
 
         /// <summary>
         /// Добавляет список найденных пользователей в список результатов поиска пользователя
@@ -722,6 +817,17 @@ namespace WpfMessengerClient.ViewModels
                 throw;
             }
 
+        }
+
+        /// <summary>
+        /// Обработать ответ на запрос об удалении сообщения
+        /// </summary>
+        private void ProcessMessageDeletedResponse()
+        {
+            bool res = ActiveDialog.Messages.Remove(SelectedMessage);
+
+            if (res == false)
+                MessageBox.Show("Не удалось удалить сообщение");
         }
 
         /// <summary>

@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace ConsoleMessengerServer.Requests
 {
     /// <summary>
-    /// Запрос на отправку сообщения
+    /// Запрос на отправку сообщениясодержащий в себе сообщение
     /// </summary>
-    public class SendMessageRequest
+    public class MessageRequest
     {
         /// <summary>
         /// Сообщение
@@ -25,7 +25,7 @@ namespace ConsoleMessengerServer.Requests
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public SendMessageRequest()
+        public MessageRequest()
         {
             Message = new Message();
             DialogId = 0;
@@ -36,7 +36,7 @@ namespace ConsoleMessengerServer.Requests
         /// </summary>
         /// <param name="message">Сообщение</param>
         /// <param name="dialogId">Идентификатор диалога</param>
-        public SendMessageRequest(Message message, int dialogId)
+        public MessageRequest(Message message, int dialogId)
         {
             Message = message;
             DialogId = dialogId;

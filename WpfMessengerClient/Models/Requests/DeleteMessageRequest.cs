@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Запрос на отправку сообщения
+    /// Данные, представляющие запрос на удаление сообщения
     /// </summary>
-    public class SendMessageRequest 
+    public class DeleteMessageRequest
     {
         /// <summary>
         /// Сообщение
@@ -23,12 +22,18 @@ namespace WpfMessengerClient.Models.Requests
         public int DialogId { get; set; }
 
         /// <summary>
+        /// Пользователь, удаливший сообщение
+        /// </summary>
+        public int UserId { get; set; }
+
+        /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public SendMessageRequest()
+        public DeleteMessageRequest()
         {
             Message = new Message();
             DialogId = 0;
+            UserId = 0;
         }
 
         /// <summary>
@@ -36,10 +41,11 @@ namespace WpfMessengerClient.Models.Requests
         /// </summary>
         /// <param name="message">Сообщение</param>
         /// <param name="dialogId">Идентификатор диалога</param>
-        public SendMessageRequest(Message message, int dialogId)
+        public DeleteMessageRequest(Message message, int dialogId, int userId)
         {
             Message = message;
             DialogId = dialogId;
+            UserId = userId;
         }
     }
 }

@@ -127,16 +127,14 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="sendMessageRequestDto">Dto для запроса на отправку сообщения</param>
         /// <returns></returns>
-        public Message AddMessage(SendMessageRequestDto sendMessageRequestDto)
+        public Message AddMessage(MessageRequest request)
         {
             Message message;
 
             try
             {
-                using(var dbContext = new MessengerDbContext())
+                using (var dbContext = new MessengerDbContext())
                 {
-                    SendMessageRequest request = _mapper.Map<SendMessageRequest>(sendMessageRequestDto);
-
                     message = request.Message;
 
                     var user = dbContext.Users.Include(user => user.Dialogs).First(user => user.Id == message.UserSender.Id);
@@ -145,7 +143,7 @@ namespace ConsoleMessengerServer.DataBase
                     message.UserSender = user;
                     message.Dialog = dialog;
 
-                    dbContext.Messages.Add(message);    
+                    dbContext.Messages.Add(message);
                     dbContext.SaveChanges();
 
                     return message;
@@ -169,17 +167,63 @@ namespace ConsoleMessengerServer.DataBase
             {
                 int userId;
 
-                using(var dbContext = new MessengerDbContext())
+                using (var dbContext = new MessengerDbContext())
                 {
-                    //Message mes = dbContext.Messages.Include(m => m.Dialog).First(mes => mes.Id == message.Id);
-
-                    //Dialog dial = mes.Dialog;
-
-                    //User us = dial.Users.First();
-
                     userId = dbContext.Messages.Include(m => m.Dialog).ThenInclude(d => d.Users).First(mes => mes.Id == message.Id).Dialog.Users.First(user => user.Id != message.UserSenderId).Id;
 
                     return userId;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Удаляет сообщение из базы данных
+        /// </summary>
+        /// <param name="messageRequest">Запрос, содержащий в себе сообщение</param>
+        public void DeleteMessage(Message message)
+        {
+            //Message message;
+
+            try
+            {
+                using (var dbContext = new MessengerDbContext())
+                {
+                    //message = messageRequest.Message;
+
+                    var a = dbContext.Messages.Remove(message);
+
+                    dbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Возвращает Id пользователя, который является собеседником определенного пользователя в определенном диалоге
+        /// </summary>
+        /// <param name="dialogId">Id диалога</param>
+        /// <param name="userId">Id пользователя</param>
+        /// <returns></returns>
+        public int GetInterlocutorId(int dialogId, int userId)
+        {
+            int interlocutorId;
+
+            try
+            {
+                using(var dbContext = new MessengerDbContext())
+                {
+                    interlocutorId = dbContext.Dialogs.Include(d => d.Users).First(d => d.Id == dialogId).Users.First(user => user.Id != userId).Id;
+
+                    return interlocutorId;
                 }
             }
             catch (Exception ex)

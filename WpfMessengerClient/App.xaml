@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WpfChatClient">
     <Application.Resources>
+        
+        
         <ResourceDictionary>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="./Styles/RoundedButton.xaml"/>
                 <ResourceDictionary Source="./Styles/InputNameTextBox.xaml"/>
@@ -17,6 +20,7 @@
                 <!--<ResourceDictionary Source="./Styles/ErrorStyle.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

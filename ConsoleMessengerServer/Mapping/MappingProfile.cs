@@ -31,7 +31,7 @@ namespace ConsoleMessengerServer.Entities.Mapping
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
-            CreateMap<SendMessageRequestDto, SendMessageRequest>().ReverseMap();
+            CreateMap<MessageRequestDto, MessageRequest>().ReverseMap();
             CreateMap<SendMessageResponse, SendMessageResponseDto>().ReverseMap();
 
             CreateMap<ServerNetworkProvider, NetworkProviderDto>().ReverseMap();

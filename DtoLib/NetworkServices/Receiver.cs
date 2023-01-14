@@ -32,26 +32,60 @@ namespace DtoLib.NetworkServices
         /// <returns></returns>
         public async Task<byte[]> ReceiveBytesAsync()
         {
-            //// буфер для получаемых данных
-            byte[] data = new byte[1024];
+            byte[] lengthBuffer = new byte[4];
+            List<byte> bytesList = new List<byte>();
 
             int bytes = 0;
+
+            bytes = await NetworkProvider.NetworkStream.ReadAsync(lengthBuffer, 0, lengthBuffer.Length);
+
+            if (bytes == 0)
+                throw new Exception("Удаленный хост разорвал соединение.");
+
+            //int length = BitConverter.ToInt32(lengthBuffer, 0);
+            int length = SerializationHelper.Deserialize<int>(lengthBuffer);
+
+            byte[] data = new byte[length];
 
             do
             {
                 bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
 
-            } while (NetworkProvider.NetworkStream.DataAvailable);
+                for(int i = 0; i < bytes; ++i)
+                {
+                    bytesList.Add(data[i]);
+                }
 
-            byte[] cutData = new byte[bytes];
+            } while (bytesList.Count < length /*&& NetworkProvider.NetworkStream.DataAvailable*/);
 
-            var list = data.ToList();
+            data = bytesList.ToArray();
 
-            list.RemoveRange(bytes, 1024 - bytes);
+            return data;
 
-            list.CopyTo(cutData);
 
-            return cutData;
+
+
+
+            ////// буфер для получаемых данных
+            //byte[] data = new byte[2048];
+
+            //int bytes = 0;
+
+            //do
+            //{
+            //    bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
+
+            //} while (NetworkProvider.NetworkStream.DataAvailable);
+
+            //byte[] cutData = new byte[bytes];
+
+            //var list = data.ToList();
+
+            //list.RemoveRange(bytes, 2048 - bytes);
+
+            //list.CopyTo(cutData);
+
+            //return cutData;
         }
 
         /// <summary>
@@ -66,7 +100,7 @@ namespace DtoLib.NetworkServices
                     // буфер для получаемых данных
                     byte[] data = await ReceiveBytesAsync();
 
-                    NetworkMessage networkMessage = Deserializer.Deserialize<NetworkMessage>(data);
+                    NetworkMessage networkMessage = SerializationHelper.Deserialize<NetworkMessage>(data);
 
                     NetworkProvider.GetNetworkMessage(networkMessage);
                 }
@@ -76,7 +110,6 @@ namespace DtoLib.NetworkServices
                 var s = ex.ToString();
                 throw;
             }
-
         }
 
         /// <summary>

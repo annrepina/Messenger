@@ -65,7 +65,17 @@ namespace WpfMessengerClient
         /// Событие - в диалоге появилось новое сообщение
         /// Либо сообщение получено от собеседника, либо сообщение отправил текущий пользователь с другого устройства
         /// </summary>
-        public event Action<SendMessageRequest> DialogReceivedNewMessage;
+        public event Action<MessageRequest> DialogReceivedNewMessage;
+
+        /// <summary>
+        /// Событие удаления сообщения
+        /// </summary>
+        public event Action MessageDeletedResponse;
+
+        /// <summary>
+        /// Собфтие получения запроса на удаление сообщения
+        /// </summary>
+        public event Action<DeleteMessageRequest> GotDeleteMessageRequest;
 
         #endregion События
 
@@ -140,12 +150,20 @@ namespace WpfMessengerClient
                     break;
 
                 case NetworkMessageCode.SendMessageRequestCode:
-                    ProcessMessage<SendMessageRequestDto, SendMessageRequest>(message, DialogReceivedNewMessage);
+                    ProcessMessage<MessageRequestDto, MessageRequest>(message, DialogReceivedNewMessage);
                     break;
 
                 case NetworkMessageCode.MessageDeliveredCode:
                     ProcessMessage<SendMessageResponseDto, SendMessageResponse>(message, MessageDelivered);
                     //ProcessMessageDeliveredResponse(message);
+                    break;
+
+                case NetworkMessageCode.DeleteMessageResponseCode:
+                    MessageDeletedResponse?.Invoke();
+                    break;
+
+                case NetworkMessageCode.DeleteMessageRequestCode:
+                    ProcessMessage<DeleteMessageRequestDto, DeleteMessageRequest>(message, GotDeleteMessageRequest);
                     break;
 
                 case NetworkMessageCode.ExitCode:
@@ -163,76 +181,6 @@ namespace WpfMessengerClient
 
         #endregion Реализация INetworkMessageHandler
 
-        #region Методы обработки сетевых сообщений
-
-        ///// <summary>
-        ///// Обаработать сетевое сообщение о регистрации пользователя асинхронно
-        ///// </summary>
-        ///// <param _name="_message">Сетевое сообщение</param>
-        //public void ProcessSuccessfulRegistrationNetworkMessage(NetworkMessage message)
-        //{
-        //    try
-        //    {
-        //        RegistrationResponseDto successfulRegistrationDto = Deserializer.Deserialize<RegistrationResponseDto>(message.Data);
-
-        //        RegisterNewUser(successfulRegistrationDto);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        throw;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Обработать сетвое сообщение об успешном поиске пользователя
-        ///// </summary>
-        ///// <param name="message">Сетевое сообщение</param>
-        //private void ProcessSuccessfulSearchNetworkMessage(NetworkMessage message)
-        //{
-        //    byte[]? data = message.Data;
-
-        //    UserSearchResponseDto userSearchResultDto = Deserializer.Deserialize<UserSearchResponseDto>(data);
-
-        //    UserSearchResponse userSearchResult = _mapper.Map<UserSearchResponse>(userSearchResultDto);
-
-        //    SearchResultReceived?.Invoke(userSearchResult);
-        //}
-
-        ///// <summary>
-        ///// Обработать сетевое сообщение о неудачном поиске
-        ///// </summary>
-        //private void ProcessFailedSearchNetworkMessage()
-        //{
-        //    UserSearchResponse userSearchResult = null;
-
-        //    SearchResultReceived?.Invoke(userSearchResult);
-        //}
-
-        /// <summary>
-        /// Обрработать сетевое сообщение об успешном создании диалога
-        /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
-        private void ProcessSuccessfulCreatingDialogNetworkMessage(NetworkMessage message)
-        {
-            CreateDialogResponseDto createDialogResponseDto = Deserializer.Deserialize<CreateDialogResponseDto>(message.Data);
-            CreateDialogResponse createDialogResponse = _mapper.Map<CreateDialogResponse>(createDialogResponseDto);
-
-            DialogCreated?.Invoke(createDialogResponse);
-        }
-
-        /// <summary>
-        /// Метод, который обрабатывает запрос на создание диалога от другого пользователя
-        /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
-        private void ProcessCreateDialogRequest(NetworkMessage message)
-        {
-            DialogDto dialogDto = Deserializer.Deserialize<DialogDto>(message.Data);
-            Dialog dialog = _mapper.Map<Dialog>(dialogDto);
-
-            GotCreateDialogRequest?.Invoke(dialog);
-        }
-
         /// <summary>
         /// Обобщенный метод обработки сетевого сообщения
         /// </summary>
@@ -241,39 +189,14 @@ namespace WpfMessengerClient
         /// <param name="message">Сетевое сообщение</param>
         /// <param name="action">Событие, которое необходимо вызывать</param>
         private void ProcessMessage<Tdto, Tdest>(NetworkMessage message, Action<Tdest> action)
-            where Tdto : class
             where Tdest : class
         {
             Tdest destination;
 
-            Tdto dto = Deserializer.Deserialize<Tdto>(message.Data);
+            Tdto dto = SerializationHelper.Deserialize<Tdto>(message.Data);
             destination = _mapper.Map<Tdest>(dto);
 
             action?.Invoke(destination);
-        }
-
-        /// <summary>
-        /// Обработать ответ об успешной отпрвке сообщения
-        /// </summary>
-        private void ProcessMessageDeliveredResponse(NetworkMessage message)
-        {
-            //Send
-        }
-
-        #endregion Методы обработки сетевых сообщений
-
-        /// <summary>
-        /// Зарегистрировать нового пользователя асинхронно
-        /// </summary>
-        /// <param _name="networkProviderDto">DTO, сетевого провайдера с Id из базы данных</param>
-        /// 
-        public void RegisterNewUser(RegistrationResponseDto successfulRegistrationDto)
-        {
-            RegistrationResponse registrationResponse = _mapper.Map<RegistrationResponse>(successfulRegistrationDto);
-
-            //ClientNetworkProvider.Id = registrationResponse.NetworkProviderId;
-
-            //SignUp?.Invoke(registrationResponse.UserId);
         }
 
         #region Методы взаимодействия с сетью
@@ -287,7 +210,7 @@ namespace WpfMessengerClient
         {
             RegistrationDto registrationDto = _mapper.Map<RegistrationDto>(registrationData);
 
-            byte[] data = Serializer<RegistrationDto>.Serialize(registrationDto);
+            byte[] data = SerializationHelper.Serialize(registrationDto);
 
             NetworkMessage message = new NetworkMessage(data, NetworkMessageCode.RegistrationRequestCode);
 
@@ -309,7 +232,7 @@ namespace WpfMessengerClient
             {
                 Tdto dto = _mapper.Map<Tdto>(requestData);
 
-                byte[] data = Serializer<Tdto>.Serialize(dto);
+                byte[] data = SerializationHelper.Serialize(dto);
 
                 NetworkMessage networkMessage = new NetworkMessage(data, code);
 

@@ -18,6 +18,8 @@ namespace DtoLib.NetworkServices
         CreateDialogResponseCode,
         SendMessageRequestCode,
         MessageDeliveredCode,
+        DeleteMessageRequestCode,
+        DeleteMessageResponseCode,
         ExitCode,
     }
 }

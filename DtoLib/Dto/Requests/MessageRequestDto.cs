@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace DtoLib.Dto.Requests
 {
     /// <summary>
-    /// Data transfer object класса SendMessageRequest
+    /// Data transfer object класса MessageRequest
     /// </summary>
     [ProtoContract]
-    public class SendMessageRequestDto
+    public class MessageRequestDto
     {
         /// <summary>
         /// Сообщение

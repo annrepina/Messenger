@@ -41,8 +41,9 @@ namespace ConsoleMessengerServer.Net
             {
                 await Receiver.ReceiveNetworkMessageAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 Console.WriteLine($"Клиент Id {Id} отключился");
             }
             finally
@@ -61,7 +62,7 @@ namespace ConsoleMessengerServer.Net
         {
             if(message.Code == NetworkMessageCode.AuthorizationRequestCode || message.Code == NetworkMessageCode.RegistrationRequestCode
                 || message.Code == NetworkMessageCode.SearchUserRequestCode || message.Code == NetworkMessageCode.SendMessageRequestCode
-                || message.Code == NetworkMessageCode.CreateDialogRequestCode)
+                || message.Code == NetworkMessageCode.CreateDialogRequestCode || message.Code == NetworkMessageCode.DeleteMessageRequestCode)
                 NetworkController.ProcessNetworkMessage(message, this);
           
             else
