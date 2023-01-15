@@ -208,7 +208,7 @@ namespace WpfMessengerClient
         /// <returns></returns>
         public async Task SendRegistrationRequestAsync(RegistrationRequest registrationRequest)
         {
-            RegistrationDto registrationDto = _mapper.Map<RegistrationDto>(registrationRequest);
+            RegistrationRequestDto registrationDto = _mapper.Map<RegistrationRequestDto>(registrationRequest);
 
             byte[] data = SerializationHelper.Serialize(registrationDto);
 
@@ -216,7 +216,11 @@ namespace WpfMessengerClient
 
             byte[] messageBytes = SerializationHelper.Serialize(message);
 
-            await ClientNetworkProvider.ConnectAsync(messageBytes);
+            if(!ClientNetworkProvider.IsConnected)
+                await ClientNetworkProvider.ConnectAsync(messageBytes);
+
+            else
+                await ClientNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
         }
 
         /// <summary>

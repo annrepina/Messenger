@@ -48,6 +48,25 @@ namespace WpfMessengerClient
             CurrentApplication.MainWindow.Show();
         }
 
+        public void SwitchToSignUpSignInWindow()
+        {
+            Window windowToShow = null;
+
+            CurrentWindow.Hide();
+
+            foreach(Window window in Application.Current.Windows)
+            {
+                if(window is SignUpSignInWindow signUpSignInWindow)
+                {
+                    windowToShow = window;
+                    break;
+                }
+            }
+
+            CurrentWindow = windowToShow;
+            CurrentWindow.Show();
+        }
+
         /// <summary>
         /// Переключиться на окно регистрации
         /// </summary>

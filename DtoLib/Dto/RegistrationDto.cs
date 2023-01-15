@@ -12,7 +12,7 @@ namespace DtoLib.Dto
     /// Data transfer object который представляет информацию, необходимую для регистрации пользователя в мессенджере
     /// </summary>
     [ProtoContract]
-    public class RegistrationDto
+    public class RegistrationRequestDto
     {
         /// <summary>
         /// Свойство - объект класса, который представляет человека

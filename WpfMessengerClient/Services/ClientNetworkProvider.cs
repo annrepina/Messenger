@@ -58,6 +58,7 @@ namespace WpfMessengerClient.Services
         {
             TcpClient = new TcpClient();
             NetworkMessageHandler = networkMessageHandler;
+            IsConnected = false;
         }
 
         #endregion Конструкторы
@@ -75,6 +76,7 @@ namespace WpfMessengerClient.Services
                 {
                     TcpClient.Connect(Host, Port);
                     NetworkStream = TcpClient.GetStream();
+                    IsConnected = true;
 
                     if (messageBytes != null)
                     {
@@ -93,6 +95,7 @@ namespace WpfMessengerClient.Services
             finally
             {
                 CloseConnection();
+                IsConnected = false;
             }
         }
 

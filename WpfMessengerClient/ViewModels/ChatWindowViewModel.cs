@@ -675,8 +675,6 @@ namespace WpfMessengerClient.ViewModels
         /// <returns></returns>
         private async Task OnOpenDialogAsync()
         {
-            //var a = Dialogs.FirstOrDefault(d => d.Users.Find(user => user.Id == _selectedUser.Id) != null);
-
             // если еще не общаемся с этим пользователем
             if (Dialogs.FirstOrDefault(d => d.Users.Find(user => user.Id == _selectedUser.Id) != null) == null)
             {
@@ -711,7 +709,7 @@ namespace WpfMessengerClient.ViewModels
                     CheckSelectedUser();
 
                 }//else
-            }
+            }//if
             else
             {
                 ActiveDialog = Dialogs.First(dial => dial.Users.Find(user => user.Id == _selectedUser.Id) != null);
@@ -758,6 +756,25 @@ namespace WpfMessengerClient.ViewModels
         {
             WasDeleteButtonClicked = true;
 
+            if(ActiveDialog.Messages.Count > 1)
+            {
+                SendDeleteMessageRequestAsync();
+
+                ProcessMessageDeletedResponse();
+            }
+            else
+            {
+                SendDeleteDialogRequestAsync();
+            }
+
+            WasDeleteButtonClicked = false;
+        }
+
+        /// <summary>
+        /// Отправить запрос на удаление сообщения асинхронно
+        /// </summary>
+        public async Task SendDeleteMessageRequestAsync()
+        {
             DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest(SelectedMessage, ActiveDialog.Id, CurrentUser.Id);
 
             TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
@@ -765,10 +782,14 @@ namespace WpfMessengerClient.ViewModels
 
             await _networkMessageHandler.SendRequestAsync<DeleteMessageRequest, DeleteMessageRequestDto>(deleteMessageRequest, NetworkMessageCode.DeleteMessageRequestCode);
             await taskCompletionSource.Task;
+        }
 
-            ProcessMessageDeletedResponse();
+        /// <summary>
+        /// Отправить запрос на удаление диалога асинхронно
+        /// </summary>
+        public async Task SendDeleteDialogRequestAsync()
+        {
 
-            WasDeleteButtonClicked = false;
         }
 
         /// <summary>

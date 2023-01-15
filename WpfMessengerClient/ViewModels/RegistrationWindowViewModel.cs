@@ -55,9 +55,14 @@ namespace WpfMessengerClient.ViewModels
         public DelegateCommand OnSignUpCommand { get; init; }
 
         /// <summary>
+        /// Команда по нажатию кнопки "назад"
+        /// </summary>
+        public DelegateCommand BackCommand { get; init; }
+
+        /// <summary>
         /// Данные о регистрации нового пользователя
         /// </summary>
-        public RegistrationRequest RegistrationRequestData { get; init; }
+        public RegistrationRequest RegistrationRequest { get; init; }
 
         /// <summary>
         /// Доступны ли контролы на вьюхе
@@ -83,11 +88,12 @@ namespace WpfMessengerClient.ViewModels
         public RegistrationWindowViewModel(MessengerWindowsManager messengerWindowsManager)
         {
             _networkMessageHandler = new NetworkMessageHandler();
-            //_networkMessageHandler.GotSignUpResponse += ChangeWindowToChatWindow;
+            //_networkMessageHandler.GotSignUpResponse += SwitchToChatWindow;
 
             OnSignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
+            BackCommand = new DelegateCommand(GoBack);
             MessengerWindowsManager = messengerWindowsManager;
-            RegistrationRequestData = new RegistrationRequest(); 
+            RegistrationRequest = new RegistrationRequest(); 
 
             IsControlsFree = true;
 
@@ -95,7 +101,17 @@ namespace WpfMessengerClient.ViewModels
             _mapper = mapper.CreateIMapper();
         }
 
+
+
         #endregion Конструкторы
+
+        /// <summary>
+        /// Вернуться назад в предыдущее окно
+        /// </summary>
+        private void GoBack()
+        {
+            SwitchToSignUpSignInWindow();
+        }
 
         /// <summary>
         /// Зарегистрировать нового пользователя
@@ -107,13 +123,15 @@ namespace WpfMessengerClient.ViewModels
             //if (String.IsNullOrEmpty(RegistrationRequest.Error))
             //{
 
+            var a = RegistrationRequest;
+
             IsControlsFree = false;
 
             TaskCompletionSource completionSource = new TaskCompletionSource();
 
             var observer = new SignUpObserver(_networkMessageHandler, completionSource);
 
-            _networkMessageHandler.SendRegistrationRequestAsync(RegistrationRequestData);
+            _networkMessageHandler.SendRegistrationRequestAsync(RegistrationRequest);
 
             await completionSource.Task;
 
@@ -127,8 +145,6 @@ namespace WpfMessengerClient.ViewModels
             //{
             //    MessageBox.Show(RegistrationRequest.Error);
             //}
-
-
         }
 
         /// <summary>
@@ -138,23 +154,33 @@ namespace WpfMessengerClient.ViewModels
         {
             if(response.Status == NetworkResponseStatus.Successful)
             {
-                User user = _mapper.Map<User>(RegistrationRequestData);
+                User user = _mapper.Map<User>(RegistrationRequest);
                 user.Id = response.UserId;
 
-                ChangeWindowToChatWindow(user);
+                SwitchToChatWindow(user);
             }
             else
             {
-                //
+                RegistrationRequest.PhoneNumber = "";
+
+                MessageBox.Show("Пользователь с таким телефоном уже существует. Введите другой номер или войдите в мессенджер.");
             }
         }
 
         /// <summary>
         /// Изменить окно на окно чата
         /// </summary>
-        public void ChangeWindowToChatWindow(User user)
+        public void SwitchToChatWindow(User user)
         {
             MessengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, user);
+        }
+
+        /// <summary>
+        /// Переключиться на окно регистрации/входа
+        /// </summary>
+        private void SwitchToSignUpSignInWindow()
+        {
+            MessengerWindowsManager.SwitchToSignUpSignInWindow();
         }
     }
 }

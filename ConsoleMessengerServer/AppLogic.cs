@@ -178,7 +178,7 @@ namespace ConsoleMessengerServer
         /// <returns></returns>
         public async Task ProcessRegistrationRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
         {
-            RegistrationDto registrationDto = SerializationHelper.Deserialize<RegistrationDto>(networkMessage.Data);
+            RegistrationRequestDto registrationDto = SerializationHelper.Deserialize<RegistrationRequestDto>(networkMessage.Data);
             User? user = _dbService.AddNewUser(registrationDto);
 
             string resultOfOperation;

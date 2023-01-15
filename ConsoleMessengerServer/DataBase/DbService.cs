@@ -41,7 +41,7 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="registrationDto">DTO, который содержит данные о регистрации</param>
         /// <returns></returns>
-        public User? AddNewUser(RegistrationDto registrationDto)
+        public User? AddNewUser(RegistrationRequestDto registrationDto)
         {
             User? user = null;
 
