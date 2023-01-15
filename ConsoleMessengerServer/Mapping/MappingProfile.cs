@@ -18,9 +18,8 @@ namespace ConsoleMessengerServer.Entities.Mapping
         public MappingProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<User, RegistrationRequestDto>().ReverseMap();
+            CreateMap<User, SignUpRequestDto>().ReverseMap();
             CreateMap<UserSearchResponse, UserSearchResponseDto>().ReverseMap();
-            //CreateMap<User, int>().ConvertUsing(source => source.Id);
             CreateMap<int, User>().ForMember(dest => dest.Id, exp => exp.MapFrom(integ => integ.GetHashCode()));
 
             CreateMap<Dialog, DialogDto>().ReverseMap();
@@ -36,8 +35,8 @@ namespace ConsoleMessengerServer.Entities.Mapping
 
             CreateMap<ServerNetworkProvider, NetworkProviderDto>().ReverseMap();
 
-            CreateMap<RegistrationResponse, RegistrationResponseDto>().ReverseMap();
-
+            CreateMap<SignUpResponse, SignUpResponseDto>().ReverseMap();
+            CreateMap<SignInResponse, SignInResponseDto>().ReverseMap();
         }
     }
 }

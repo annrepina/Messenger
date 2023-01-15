@@ -1,8 +1,0 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style TargetType="TextBox" x:Key="ExperimentalStyle" 
-           BasedOn="{StaticResource InputPasswordTextBox}">
-        <Setter Property="Text" Value="{Binding RegistrationData.RepeatedPassword}"/>
-        <Setter Property="TextBlock.Text" Value="Введите пароль повторно"/>
-    </Style>
-</ResourceDictionary>

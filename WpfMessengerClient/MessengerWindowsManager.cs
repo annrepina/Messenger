@@ -72,9 +72,9 @@ namespace WpfMessengerClient
         /// </summary>
         public void SwitchToSignUpWindow()
         {
-            RegistrationWindowViewModel registrationWindowViewModel = new RegistrationWindowViewModel(this);
+            SignUpWindowViewModel registrationWindowViewModel = new SignUpWindowViewModel(this);
 
-            RegistrationWindow registrationWindow = new RegistrationWindow(registrationWindowViewModel);
+            SignUpWindow registrationWindow = new SignUpWindow(registrationWindowViewModel);
 
             CurrentWindow.Hide();
 
@@ -88,7 +88,12 @@ namespace WpfMessengerClient
         /// </summary>
         public void SwitchToSignInWindow()
         {
+            SignInWindowViewModel signInWindowViewModel = new SignInWindowViewModel(this);
+            SignInWindow signInWindow = new SignInWindow(signInWindowViewModel);
 
+            CurrentWindow.Hide();
+            CurrentWindow = signInWindow;
+            CurrentWindow.Show();
         }
 
         /// <summary>
@@ -97,6 +102,22 @@ namespace WpfMessengerClient
         public void SwitchToChatWindow(NetworkMessageHandler networkProviderUserDataMediator, User user)
         {
             ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(networkProviderUserDataMediator, this, user);
+
+            ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
+
+            CurrentWindow.Hide();
+
+            CurrentWindow = chatWindow;
+
+            CurrentWindow.Show();
+        }
+
+        /// <summary>
+        /// Переключиться на окно чата
+        /// </summary>
+        public void SwitchToChatWindow(NetworkMessageHandler networkProviderUserDataMediator, User user, List<Dialog> dialogs)
+        {
+            ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(networkProviderUserDataMediator, this, user, dialogs);
 
             ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
 

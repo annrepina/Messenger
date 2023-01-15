@@ -124,30 +124,34 @@ namespace ConsoleMessengerServer
         /// <summary>
         /// Обработать сетевое сообщение
         /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
+        /// <param name="networkMessage">Сетевое сообщение</param>
         /// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
-        public async Task ProcessNetworkMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
+        public async Task ProcessNetworkMessage(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
         {
-            switch (message.Code)
+            switch (networkMessage.Code)
             {
-                case NetworkMessageCode.RegistrationRequestCode:
-                    ProcessRegistrationRequest(message, serverNetworkProvider);
+                case NetworkMessageCode.SignUpRequestCode:
+                    ProcessSignUpRequest(networkMessage, serverNetworkProvider);
+                    break;
+
+                case NetworkMessageCode.SignInRequestCode:
+                    ProcessSignInRequestAsync(networkMessage, serverNetworkProvider);
                     break;
 
                 case NetworkMessageCode.SearchUserRequestCode:
-                    ProcessSearchUserMessage(message, serverNetworkProvider);
+                    ProcessSearchUserMessage(networkMessage, serverNetworkProvider);
                     break;
 
                 case NetworkMessageCode.CreateDialogRequestCode:
-                    ProcessCreateDialogRequest(message, serverNetworkProvider);
+                    ProcessCreateDialogRequest(networkMessage, serverNetworkProvider);
                     break;
 
                 case NetworkMessageCode.SendMessageRequestCode:
-                    ProcessSendMessageRequest(message, serverNetworkProvider);
+                    ProcessSendMessageRequest(networkMessage, serverNetworkProvider);
                     break;
 
                 case NetworkMessageCode.DeleteMessageRequestCode:
-                    ProcessDeleteMessageRequest(message, serverNetworkProvider);
+                    ProcessDeleteMessageRequest(networkMessage, serverNetworkProvider);
                     break;
 
                 default:
@@ -176,28 +180,28 @@ namespace ConsoleMessengerServer
         /// <param name="networkMessage">Сетевое сообщение</param>
         /// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
         /// <returns></returns>
-        public async Task ProcessRegistrationRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
+        public async Task ProcessSignUpRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
         {
-            RegistrationRequestDto registrationDto = SerializationHelper.Deserialize<RegistrationRequestDto>(networkMessage.Data);
+            SignUpRequestDto registrationDto = SerializationHelper.Deserialize<SignUpRequestDto>(networkMessage.Data);
             User? user = _dbService.AddNewUser(registrationDto);
 
             string resultOfOperation;
-            RegistrationResponse registrationResponse;
+            SignUpResponse signUpResponse;
 
             if (user != null)
             {
-                CreateUserProxy(user.Id, serverNetworkProvider);
+                AddUserProxy(user.Id, serverNetworkProvider);
 
-                registrationResponse = new RegistrationResponse(user.Id, serverNetworkProvider.Id, NetworkResponseStatus.Successful);
-                resultOfOperation = $"Код операции: {NetworkMessageCode.RegistrationRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. Пользователь: {user.ToString()}.";
+                signUpResponse = new SignUpResponse(user.Id, serverNetworkProvider.Id, NetworkResponseStatus.Successful);
+                resultOfOperation = $"Код операции: {NetworkMessageCode.SignUpRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. Пользователь: {user.ToString()}.";
             }
             else
             {
-                registrationResponse = new RegistrationResponse(NetworkResponseStatus.Failed);
-                resultOfOperation = $"Код операции: {NetworkMessageCode.RegistrationRequestCode}. Статус операции: {NetworkResponseStatus.Failed}. Данные о регистрации: {registrationDto.ToString()}."; ;
+                signUpResponse = new SignUpResponse(NetworkResponseStatus.Failed);
+                resultOfOperation = $"Код операции: {NetworkMessageCode.SignUpRequestCode}. Статус операции: {NetworkResponseStatus.Failed}. Данные о регистрации: {registrationDto.ToString()}."; ;
             }
 
-            NetworkMessage responseMessage = CreateResponse(registrationResponse, out RegistrationResponseDto dto, NetworkMessageCode.RegistrationResponseCode);
+            NetworkMessage responseMessage = CreateResponse(signUpResponse, out SignUpResponseDto dto, NetworkMessageCode.SignUpResponseCode);
             byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
             await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
 
@@ -205,17 +209,77 @@ namespace ConsoleMessengerServer
         }//method
 
         /// <summary>
+        /// Обработать запрос на вход в мессенджер
+        /// </summary>
+        /// <param name="networkMessage"></param>
+        /// <param name="serverNetworkProvider"></param>
+        private async Task ProcessSignInRequestAsync(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
+        {
+            SignInRequestDto signInRequestDto = SerializationHelper.Deserialize<SignInRequestDto>(networkMessage.Data);
+
+            //bool result = _dbService.TryFindUserByPhoneNumber(signInRequestDto.PhoneNumber);
+            User? user = _dbService.TryFindUserByPhoneNumber(signInRequestDto.PhoneNumber);
+
+            SignInResponse signInResponse;
+            string resultOfOperation;
+
+            // номер телефона есть
+            if(user != null)
+            {
+                if(user.Password == signInRequestDto.Password)
+                {
+                    List<Dialog> dialogs = _dbService.FindDialogsByUSer(user);
+
+                    signInResponse = new SignInResponse(user, dialogs, NetworkResponseStatus.Successful);
+                    resultOfOperation = $"Код операции: {NetworkMessageCode.SignInRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. Данные входа: Телефон - {signInRequestDto.PhoneNumber}.";
+
+                    AddUserProxy(user.Id, serverNetworkProvider);
+                }
+                else
+                {
+                    signInResponse = new SignInResponse(NetworkResponseStatus.Failed, SignInFailContext.Password);
+                    resultOfOperation = $"Код операции: {NetworkMessageCode.SignInRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. " +
+                                        $"\nКонтекст ошибки: {SignInFailContext.Password}. Данные входа: Телефон - {signInRequestDto.PhoneNumber}.";
+                }
+            }
+            else
+            {
+                signInResponse = new SignInResponse(NetworkResponseStatus.Failed, SignInFailContext.PhoneNumber);
+                resultOfOperation = $"Код операции: {NetworkMessageCode.SignInRequestCode}. Статус операции: {NetworkResponseStatus.Failed}." +
+                                    $"\nКонтекст ошибки: {SignInFailContext.PhoneNumber}. Данные входа: Телефон - {signInRequestDto.PhoneNumber}.";
+            }
+
+            NetworkMessage responseMessage = CreateResponse(signInResponse, out SignInResponseDto dto, NetworkMessageCode.SignInResponseCode);
+            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
+
+            Console.WriteLine(resultOfOperation);
+        }
+
+        /// <summary>
         /// Создать агрегатора всех подключений определенного пользователя
         /// </summary>
         /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
-        public void CreateUserProxy(int userId, ServerNetworkProvider serverNetworkProvider)
+        public void AddUserProxy(int userId, ServerNetworkProvider serverNetworkProvider)
         {
-            UserProxy userProxy = new UserProxy(userId);
-            userProxy.AddConnection(serverNetworkProvider);
+            if(_userProxyList.ContainsKey(userId))
+            {
+                _userProxyList[userId].AddConnection(serverNetworkProvider);
+            }
+            else
+            {
+                UserProxy userProxy = new UserProxy(userId);
+                userProxy.AddConnection(serverNetworkProvider);
 
-            _userProxyList.Add(userId, userProxy);
+                _userProxyList.Add(userId, userProxy);
+            }
         }
+
+        //private bool CheckUserProxyList(int userId)
+        //{
+        //    _userProxyList.ContainsKey(userId);
+        //}
 
         /// <summary>
         /// Посик пользователя в мессенджере

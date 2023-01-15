@@ -11,7 +11,7 @@ namespace WpfMessengerClient.Models.Requests
     /// <summary>
     /// Данные, необходимые при регистрации в мессенджере
     /// </summary>
-    public class RegistrationRequest : LoginRequest
+    public class SignUpRequest : SignInRequest
     {
         #region Константы
 
@@ -79,7 +79,7 @@ namespace WpfMessengerClient.Models.Requests
 
         #region Конструкторы 
 
-        public RegistrationRequest() : base()
+        public SignUpRequest() : base()
         {
             Name = "";
             //RepeatedPassword = "";

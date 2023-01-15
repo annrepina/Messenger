@@ -26,7 +26,7 @@ namespace DtoLib.NetworkServices
         //    RegistrationCode,
         //    SuccessfulRegistrationCode,
         //    RegistrationFailedCode,
-        //    AuthorizationRequestCode,
+        //    SignInRequestCode,
         //    SearchUserCode,
         //    SuccessfulSearchCode,
         //    SearchFailedCode,

@@ -26,7 +26,7 @@
                                      CaretBrush="Gray"
                                      Margin="8,0,0,0">
                                 <TextBox.Text>
-                                    <Binding Path="RegistrationRequest.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" NotifyOnValidationError="True" ValidatesOnExceptions="True">
+                                    <Binding Path="Request.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" NotifyOnValidationError="True" ValidatesOnExceptions="True">
                                         <Binding.ValidationRules>
                                             <DataErrorValidationRule />
                                         </Binding.ValidationRules>

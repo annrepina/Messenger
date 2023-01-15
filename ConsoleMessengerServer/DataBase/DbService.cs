@@ -5,7 +5,6 @@ using ConsoleMessengerServer.Net;
 using ConsoleMessengerServer.Requests;
 using ConsoleMessengerServer.Responses;
 using DtoLib;
-using DtoLib.Dto;
 using DtoLib.Dto.Requests;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -41,16 +40,18 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="registrationDto">DTO, который содержит данные о регистрации</param>
         /// <returns></returns>
-        public User? AddNewUser(RegistrationRequestDto registrationDto)
+        public User? AddNewUser(SignUpRequestDto registrationDto)
         {
             User? user = null;
 
             using (var dbContext = new MessengerDbContext())
             {
                 // ищем есть ли аккаунт с таким номером уже в бд
-                var res = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == registrationDto.PhoneNumber);
+                //var res = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == registrationDto.PhoneNumber);
 
-                // если вернули null значит аккаунта под таким номером еще нет
+                var res = TryFindUserByPhoneNumber(registrationDto.PhoneNumber, dbContext);
+
+                // если вернули false значит аккаунта под таким номером еще нет
                 if (res == null)
                 {
                     user = _mapper.Map<User>(registrationDto);
@@ -71,6 +72,66 @@ namespace ConsoleMessengerServer.DataBase
             }//using
 
             return user;
+        }
+
+        /// <summary>
+        /// ПРобует найти пользователя по номеру телефона
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns></returns>
+        public User? TryFindUserByPhoneNumber(string phoneNumber)
+        {
+            User? user = null;
+
+            using(var dbContext = new MessengerDbContext())
+            {
+                user = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == phoneNumber);
+
+                return user;
+            }
+        }
+
+        /// <summary>
+        /// ПРобует найти пользователя по номеру телефона
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns></returns>
+        public User? TryFindUserByPhoneNumber(string phoneNumber, MessengerDbContext dbContext)
+        {
+            User? user = null;
+
+            user = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == phoneNumber);
+
+            return user;
+        }
+
+        /// <summary>
+        /// Поиск пользователя в базе данных с использованием информации о запросе на вход в мессенджер
+        /// </summary>
+        /// <param name="signInRequestDto">Dto на запрос о входе в мессенджер</param>
+        /// <returns></returns>
+        public User? FindUser(SignInRequestDto signInRequestDto)
+        {
+            User? user = null;
+
+            using (var dbContext = new MessengerDbContext())
+            {
+                user = dbContext.Users.Include(us => us.Dialogs).FirstOrDefault(user => user.PhoneNumber == signInRequestDto.PhoneNumber && user.Password == signInRequestDto.Password);              
+            }
+
+            return user;
+        }
+
+        public List<Dialog> FindDialogsByUSer(User user)
+        {
+            List<Dialog> dialogs = new List<Dialog>();
+
+            using(var dbContext = new MessengerDbContext())
+            {
+                dialogs = dbContext.Dialogs.Include(d => d.Users).Include(d => d.Messages).ThenInclude(m => m.UserSender).Where(d => d.Users.Contains(user)).ToList();
+            }
+
+            return dialogs;
         }
 
         /// <summary>

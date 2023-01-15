@@ -18,16 +18,16 @@ namespace WpfMessengerClient.Windows
     /// <summary>
     /// Логика взаимодействия для AuthorizationWindow.xaml
     /// </summary>
-    public partial class RegistrationWindow : Window
+    public partial class SignUpWindow : Window
     {
-        public RegistrationWindow()
+        public SignUpWindow()
         {
             InitializeComponent();
         }
 
-        public RegistrationWindow(RegistrationWindowViewModel registrationWindowViewModel) : this()
+        public SignUpWindow(SignUpWindowViewModel signUpWindowViewModel) : this()
         {
-            DataContext = registrationWindowViewModel;
+            DataContext = signUpWindowViewModel;
         }
     }
 }

@@ -34,9 +34,12 @@ namespace WpfMessengerClient.Models.Mapping
 
             CreateMap<ClientNetworkProvider, NetworkProviderDto>().ReverseMap();
 
-            CreateMap<RegistrationRequest, RegistrationRequestDto>().ReverseMap();        
-            CreateMap<RegistrationRequest, User>().ReverseMap();
-            CreateMap<RegistrationResponse, RegistrationResponseDto>().ReverseMap();
+            CreateMap<SignUpRequest, SignUpRequestDto>().ReverseMap();        
+            CreateMap<SignUpRequest, User>().ReverseMap();
+            CreateMap<RegistrationResponse, SignUpResponseDto>().ReverseMap();
+
+            CreateMap<SignInRequest, SignInRequestDto>().ReverseMap();
+            CreateMap<SignInResponseDto, SignInResponse>().ReverseMap();
 
             CreateMap<UserSearchRequest, UserSearchRequestDto>().ReverseMap();
             CreateMap<UserSearchResponse, UserSearchResponseDto>().ReverseMap();

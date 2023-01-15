@@ -470,11 +470,11 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param _name="networkProviderUserDataMediator">Посредник между сетевым провайдером и данными пользователя</param>
+        /// <param _name="networkMessageHandler">Посредник между сетевым провайдером и данными пользователя</param>
         /// <param _name="messengerWindowsManager">Менеджер окон приложения</param>
-        public ChatWindowViewModel(NetworkMessageHandler networkProviderUserDataMediator, MessengerWindowsManager messengerWindowsManager, User user)
+        public ChatWindowViewModel(NetworkMessageHandler networkMessageHandler, MessengerWindowsManager messengerWindowsManager, User user)
         {
-            _networkMessageHandler = networkProviderUserDataMediator;
+            _networkMessageHandler = networkMessageHandler;
             _networkMessageHandler.GotCreateDialogRequest += OnGotCreateDialogRequest;
             _networkMessageHandler.DialogReceivedNewMessage += OnDialogReceivedNewMessage;
             _networkMessageHandler.GotDeleteMessageRequest += OnGotDeleteMessageRequest;
@@ -515,11 +515,28 @@ namespace WpfMessengerClient.ViewModels
             WasMessageSelected = false;
         }
 
+        public ChatWindowViewModel(NetworkMessageHandler networkMessageHandler, MessengerWindowsManager messengerWindowsManager, User user, List<Dialog> dialogs) : this(networkMessageHandler, messengerWindowsManager, user)
+        {
+            Dialogs.CollectionChanged -= OnDialogsChanged;
 
+            Dialogs = new ObservableCollection<Dialog>(dialogs);
 
+            Dialogs.CollectionChanged += OnDialogsChanged;
 
+            foreach (Dialog dialog in Dialogs)
+            {
+                dialog.CurrentUser = CurrentUser;
 
+                foreach(Message message in dialog.Messages)
+                {
+                    if (message.UserSender.Id == CurrentUser.Id)
+                        message.IsCurrentUserMessage = true;
 
+                    else
+                        message.IsCurrentUserMessage = false;
+                }
+            }
+        }
 
         #endregion Конструкторы
 

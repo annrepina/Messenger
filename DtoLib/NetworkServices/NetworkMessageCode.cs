@@ -8,10 +8,10 @@ namespace DtoLib.NetworkServices
 {
     public enum NetworkMessageCode : byte
     {
-        RegistrationRequestCode,
-        RegistrationResponseCode,
-        AuthorizationRequestCode,
-        AuthorizationResponseCode,
+        SignUpRequestCode,
+        SignUpResponseCode,
+        SignInRequestCode,
+        SignInResponseCode,
         SearchUserRequestCode,
         SearchUserResponseCode,
         CreateDialogRequestCode,

@@ -37,7 +37,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие входа пользователя
         /// </summary>
-        public event Action SignIn;
+        public event Action <SignInResponse>GotSignInResponse;
 
         public event Action SignOut;
 
@@ -122,31 +122,24 @@ namespace WpfMessengerClient
         {
             switch (message.Code)
             {
-                case NetworkMessageCode.RegistrationResponseCode:
-                    //ProcessSuccessfulRegistrationNetworkMessage(message);
-                    ProcessMessage<RegistrationResponseDto, RegistrationResponse>(message, GotSignUpResponse);
+                case NetworkMessageCode.SignUpResponseCode:
+                    ProcessMessage<SignUpResponseDto, RegistrationResponse>(message, GotSignUpResponse);
                     break;
 
-                case NetworkMessageCode.AuthorizationResponseCode:
+                case NetworkMessageCode.SignInResponseCode:
+                    ProcessMessage<SignInResponseDto, SignInResponse>(message, GotSignInResponse);
                     break;
 
                 case NetworkMessageCode.SearchUserResponseCode:
                     ProcessMessage<UserSearchResponseDto, UserSearchResponse>(message, SearchResultReceived);
-                    //ProcessSuccessfulSearchNetworkMessage(message);
                     break;
-
-                //case NetworkMessageCode.SearchFailedCode:
-                //    ProcessFailedSearchNetworkMessage();
-                //    break;
 
                 case NetworkMessageCode.CreateDialogRequestCode:
                     ProcessMessage<DialogDto, Dialog>(message, GotCreateDialogRequest);
-                    //ProcessCreateDialogRequest(message);
                     break;
 
                 case NetworkMessageCode.CreateDialogResponseCode:
                     ProcessMessage<CreateDialogResponseDto, CreateDialogResponse>(message, DialogCreated);
-                    //ProcessSuccessfulCreatingDialogNetworkMessage(message);
                     break;
 
                 case NetworkMessageCode.SendMessageRequestCode:
@@ -155,7 +148,6 @@ namespace WpfMessengerClient
 
                 case NetworkMessageCode.MessageDeliveredCode:
                     ProcessMessage<SendMessageResponseDto, SendMessageResponse>(message, MessageDelivered);
-                    //ProcessMessageDeliveredResponse(message);
                     break;
 
                 case NetworkMessageCode.DeleteMessageResponseCode:
@@ -202,28 +194,6 @@ namespace WpfMessengerClient
         #region Методы взаимодействия с сетью
 
         /// <summary>
-        /// Отправить регистрационный запрос асинхронно
-        /// </summary>
-        /// <param _name="registrationRequest">Запрос на регистрацию</param>
-        /// <returns></returns>
-        public async Task SendRegistrationRequestAsync(RegistrationRequest registrationRequest)
-        {
-            RegistrationRequestDto registrationDto = _mapper.Map<RegistrationRequestDto>(registrationRequest);
-
-            byte[] data = SerializationHelper.Serialize(registrationDto);
-
-            NetworkMessage message = new NetworkMessage(data, NetworkMessageCode.RegistrationRequestCode);
-
-            byte[] messageBytes = SerializationHelper.Serialize(message);
-
-            if(!ClientNetworkProvider.IsConnected)
-                await ClientNetworkProvider.ConnectAsync(messageBytes);
-
-            else
-                await ClientNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
-        }
-
-        /// <summary>
         /// Обобщенный метод асинхронной отправки сетевого сообщеия
         /// </summary>
         /// <typeparam name="Treq">Тип объекта, представляющего запрос на сервер</typeparam>
@@ -244,7 +214,11 @@ namespace WpfMessengerClient
 
                 byte[] messageBytes = SerializationHelper.Serialize(networkMessage);
 
-                await ClientNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
+                if (!ClientNetworkProvider.IsConnected)
+                    await ClientNetworkProvider.ConnectAsync(messageBytes);
+
+                else
+                    await ClientNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
             }
             catch (Exception ex)
             {

@@ -13,7 +13,6 @@
                 <ResourceDictionary Source="./Styles/InputPhoneNumberTextBox.xaml"/>
                 <ResourceDictionary Source="./Styles/InputPasswordTextBox.xaml"/>
                 <ResourceDictionary Source="./Styles/InputSecondPasswordTextBox.xaml"/>
-                <ResourceDictionary Source="./Styles/ExperimentalStyle.xaml"/>
                 <ResourceDictionary Source="./Styles/InputSearchingNameTextBox.xaml"/>
                 <ResourceDictionary Source="./Styles/InputSearchingPhoneNumberTextBox.xaml"/>
                 <ResourceDictionary Source="./Styles/InputGreetingMessageTextBox.xaml"/>

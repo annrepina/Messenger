@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.Dto
+namespace DtoLib.Dto.Requests
 {
     /// <summary>
     /// Data transfer object который представляет информацию, необходимую для регистрации пользователя в мессенджере
     /// </summary>
     [ProtoContract]
-    public class RegistrationRequestDto
+    public class SignUpRequestDto
     {
         /// <summary>
         /// Свойство - объект класса, который представляет человека

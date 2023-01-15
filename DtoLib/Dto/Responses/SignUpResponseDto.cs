@@ -12,7 +12,7 @@ namespace DtoLib.Dto.Responses
     /// Dto для данных представляющих ответ на успешную регистрацию пользователя в мессенджере
     /// </summary>
     [ProtoContract]
-    public class RegistrationResponseDto
+    public class SignUpResponseDto
     {
         /// <summary>
         /// Идентификатор пользователя

@@ -11,7 +11,7 @@ namespace WpfMessengerClient.Models.Requests
     /// <summary>
     /// Информация необходимая для входа в мессенджер
     /// </summary>
-    public class LoginRequest : BaseNotifyPropertyChanged, IDataErrorInfo
+    public class SignInRequest : BaseNotifyPropertyChanged, IDataErrorInfo
     {
         #region Константы
 
@@ -90,7 +90,7 @@ namespace WpfMessengerClient.Models.Requests
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public LoginRequest()
+        public SignInRequest()
         {
             Password = "";
             PhoneNumber = "";
