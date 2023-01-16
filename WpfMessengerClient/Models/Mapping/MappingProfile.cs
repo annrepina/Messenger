@@ -26,9 +26,12 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<CreateDialogResponse, CreateDialogResponseDto>().ReverseMap();
             CreateMap<Dialog, CreateDialogResponse>().ForMember(dest => dest.DialogId, exp => exp.MapFrom(dial => dial.Id))
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
+            CreateMap<DeleteDialogRequest, DeleteDialogRequestDto>().ReverseMap();
+            CreateMap<DeleteDialogRequestForClientDto, DeleteDialogRequestForClient>().ReverseMap();
+            CreateMap<DeleteDialogResponseDto, DeleteDialogResponse>().ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
-            CreateMap<SendMessageRequest, MessageRequestDto>().ReverseMap();
+            CreateMap<SendMessageRequest, SendMessageRequestDto>().ReverseMap();
             CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();   
             CreateMap<DeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
             CreateMap<DeleteMessageResponseDto, DeleteMessageResponse>().ReverseMap();

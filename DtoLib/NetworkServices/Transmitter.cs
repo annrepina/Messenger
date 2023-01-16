@@ -42,7 +42,6 @@ namespace DtoLib.NetworkServices
                 throw new Exception("Удаленный хост разорвал соединение.");
 
             int length = BitConverter.ToInt32(lengthBuffer, 0);
-            //int length = SerializationHelper.Deserialize<int>(lengthBuffer);
 
             byte[] data = new byte[length];
 
@@ -55,36 +54,11 @@ namespace DtoLib.NetworkServices
                     bytesList.Add(data[i]);
                 }
 
-            } while (bytesList.Count < length /*&& NetworkProvider.NetworkStream.DataAvailable*/);
+            } while (bytesList.Count < length);
 
             data = bytesList.ToArray();
 
             return data;
-
-
-
-
-
-            ////// буфер для получаемых данных
-            //byte[] data = new byte[2048];
-
-            //int bytes = 0;
-
-            //do
-            //{
-            //    bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
-
-            //} while (NetworkProvider.NetworkStream.DataAvailable);
-
-            //byte[] cutData = new byte[bytes];
-
-            //var list = data.ToList();
-
-            //list.RemoveRange(bytes, 2048 - bytes);
-
-            //list.CopyTo(cutData);
-
-            //return cutData;
         }
 
         /// <summary>
@@ -119,16 +93,9 @@ namespace DtoLib.NetworkServices
         {
             try
             {
-                //byte[] data = SerializationHelper.Serialize(message);
-
                 Int32 bytesNumber = networkMessage.Length;
-                //Int32 bytesNumber = 2147483647;
 
                 byte[] length = BitConverter.GetBytes(bytesNumber);
-
-                //byte[] length = SerializationHelper.Serialize((Int32)bytesNumber);
-
-
 
                 byte[] messageWithLength = new byte[networkMessage.Length + length.Length];
 
@@ -143,36 +110,5 @@ namespace DtoLib.NetworkServices
                 throw;
             }
         }
-
-        //public async Task SendNetworkMessageAsync(NetworkMessage message)
-        //{
-        //    try
-        //    {
-        //        byte[] data = SerializationHelper.Serialize(message);
-
-        //        Int32 bytesNumber = data.Length;
-        //        //Int32 bytesNumber = 2147483647;
-
-        //        //byte[] length = BitConverter.GetBytes(bytesNumber);
-
-        //        byte[] length = SerializationHelper.Serialize((Int32)bytesNumber);
-
-
-
-        //        byte[] messageWithLength = new byte[data.Length + length.Length];
-
-        //        length.CopyTo(messageWithLength, 0);
-        //        data.CopyTo(messageWithLength, length.Length);
-
-        //        await NetworkProvider.NetworkStream.WriteAsync(messageWithLength, 0, messageWithLength.Length);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        throw;
-        //    }
-        //}
-
-
     }
 }

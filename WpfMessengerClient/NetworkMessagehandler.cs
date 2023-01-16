@@ -32,34 +32,34 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие регистрации пользователя
         /// </summary>
-        public event Action<SignUpResponse> GotSignUpResponse;
+        public event Action<SignUpResponse> SignUpResponseReceived;
 
         /// <summary>
         /// Событие входа пользователя
         /// </summary>
-        public event Action <SignInResponse>GotSignInResponse;
+        public event Action <SignInResponse> SignInResponseReceived;
 
         public event Action SignOut;
 
         /// <summary>
         /// Событие получение успешного результата поиска пользователя
         /// </summary>
-        public event Action<UserSearchResponse?> SearchResultReceived;
+        public event Action<UserSearchResponse> UserSearchResponseReceived;
 
         /// <summary>
         /// Событие - диалог создан, обработчик принимает в качестве аргумента ответ на создание нового диалога
         /// </summary>
-        public event Action<CreateDialogResponse> DialogCreated;
+        public event Action<CreateDialogResponse> CreateDialogResponseReceived;
 
         /// <summary>
         /// Событие - получили запрос на создание нового диалога
         /// </summary>
-        public event Action<Dialog> GotCreateDialogRequest;
+        public event Action<Dialog> CreateDialogRequestReceived;
 
         /// <summary>
         /// Событие - получили ответ, что сообщение доставлено
         /// </summary>
-        public event Action<SendMessageResponse> MessageDelivered;
+        public event Action<SendMessageResponse> SendMessageResponseReceived;
 
         /// <summary>
         /// Событие - в диалоге появилось новое сообщение
@@ -70,12 +70,22 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие получения ответа на запрос обу удалении сообщения
         /// </summary>
-        public event Action<DeleteMessageResponse> GotDeleteMessageResponse;
+        public event Action<DeleteMessageResponse> DeleteMessageResponseReceived;
 
         /// <summary>
-        /// Собфтие получения запроса на удаление сообщения
+        /// Событие получения запроса на удаление сообщения
         /// </summary>
-        public event Action<DeleteMessageRequestForClient> GotDeleteMessageRequest;
+        public event Action<DeleteMessageRequestForClient> DeleteMessageRequestForClientReceived;
+
+        /// <summary>
+        /// Событие получения ответа на запрос об удалении диалога
+        /// </summary>
+        public event Action<DeleteDialogResponse> DeleteDialogResponseReceived;
+
+        /// <summary>
+        /// Событие получения запроса на удаление диалога
+        /// </summary>
+        public event Action<DeleteDialogRequestForClient> DeleteDialogRequestForClientReceived;
 
         #endregion События
 
@@ -123,40 +133,48 @@ namespace WpfMessengerClient
             switch (message.Code)
             {
                 case NetworkMessageCode.SignUpResponseCode:
-                    ProcessMessage<SignUpResponseDto, SignUpResponse>(message, GotSignUpResponse);
+                    ProcessMessage<SignUpResponseDto, SignUpResponse>(message, SignUpResponseReceived);
                     break;
 
                 case NetworkMessageCode.SignInResponseCode:
-                    ProcessMessage<SignInResponseDto, SignInResponse>(message, GotSignInResponse);
+                    ProcessMessage<SignInResponseDto, SignInResponse>(message, SignInResponseReceived);
                     break;
 
                 case NetworkMessageCode.SearchUserResponseCode:
-                    ProcessMessage<UserSearchResponseDto, UserSearchResponse>(message, SearchResultReceived);
+                    ProcessMessage<UserSearchResponseDto, UserSearchResponse>(message, UserSearchResponseReceived);
                     break;
 
                 case NetworkMessageCode.CreateDialogRequestCode:
-                    ProcessMessage<DialogDto, Dialog>(message, GotCreateDialogRequest);
+                    ProcessMessage<DialogDto, Dialog>(message, CreateDialogRequestReceived);
                     break;
 
                 case NetworkMessageCode.CreateDialogResponseCode:
-                    ProcessMessage<CreateDialogResponseDto, CreateDialogResponse>(message, DialogCreated);
+                    ProcessMessage<CreateDialogResponseDto, CreateDialogResponse>(message, CreateDialogResponseReceived);
                     break;
 
                 case NetworkMessageCode.SendMessageRequestCode:
-                    ProcessMessage<MessageRequestDto, SendMessageRequest>(message, DialogReceivedNewMessage);
+                    ProcessMessage<SendMessageRequestDto, SendMessageRequest>(message, DialogReceivedNewMessage);
                     break;
 
                 case NetworkMessageCode.MessageDeliveredCode:
-                    ProcessMessage<SendMessageResponseDto, SendMessageResponse>(message, MessageDelivered);
+                    ProcessMessage<SendMessageResponseDto, SendMessageResponse>(message, SendMessageResponseReceived);
                     break;
 
                 case NetworkMessageCode.DeleteMessageResponseCode:
-                    ProcessMessage<DeleteMessageResponseDto, DeleteMessageResponse>(message, GotDeleteMessageResponse);
-                    //GotDeleteMessageResponse?.Invoke();
+                    ProcessMessage<DeleteMessageResponseDto, DeleteMessageResponse>(message, DeleteMessageResponseReceived);
+                    //DeleteMessageResponseReceived?.Invoke();
                     break;
 
                 case NetworkMessageCode.DeleteMessageRequestCode:
-                    ProcessMessage<DeleteMessageRequestForClientDto, DeleteMessageRequestForClient>(message, GotDeleteMessageRequest);
+                    ProcessMessage<DeleteMessageRequestForClientDto, DeleteMessageRequestForClient>(message, DeleteMessageRequestForClientReceived);
+                    break;
+
+                case NetworkMessageCode.DeleteDialogResponseCode:
+                    ProcessMessage<DeleteDialogResponseDto, DeleteDialogResponse>(message, DeleteDialogResponseReceived);
+                    break;
+
+                case NetworkMessageCode.DeleteDialogRequestCode:
+                    ProcessMessage<DeleteDialogRequestForClientDto, DeleteDialogRequestForClient>(message, DeleteDialogRequestForClientReceived);
                     break;
 
                 case NetworkMessageCode.ExitCode:
@@ -165,11 +183,6 @@ namespace WpfMessengerClient
                     break;
             }
         }
-
-        
-
-
-
 
 
         #endregion Реализация INetworkMessageHandler

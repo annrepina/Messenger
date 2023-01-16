@@ -1,38 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WpfMessengerClient.Models.Responses;
 
 namespace WpfMessengerClient.Obsevers
 {
-    /// <summary>
-    /// Обозреватель события получения ответа на запрос об удалении сообщения у класса NetworkMessageHandler
-    /// </summary>
-    public class GotDeleteMessageResponseObserver : Observer
-    {
-        public DeleteMessageResponse Response { get; set; }
+    ///// <summary>
+    ///// Обозреватель события получения ответа на запрос об удалении сообщения у класса NetworkMessageHandler
+    ///// </summary>
+    //public class GotDeleteMessageResponseObserver : Observer<DeleteMessageResponse>
+    //{
+    //    //public DeleteMessageResponse Response { get; set; }
 
-        public GotDeleteMessageResponseObserver(NetworkMessageHandler networkMessageHandler, TaskCompletionSource completionSource) : base(networkMessageHandler, completionSource)
-        {
-            _networkMessageHandler.GotDeleteMessageResponse += OnMessageDeleted;
-        }
+    //    public GotDeleteMessageResponseObserver(NetworkMessageHandler networkMessageHandler, TaskCompletionSource completionSource, string eventName) : base(networkMessageHandler, completionSource, action)
+    //    {
+    //        var evetsInfo = networkMessageHandler.GetType().GetEvent()
 
-        private void OnMessageDeleted(DeleteMessageResponse response)
-        {
-            Response = response;
 
-            _networkMessageHandler.GotDeleteMessageResponse -= OnMessageDeleted;
+    //        //_networkMessageHandler.
 
-            _completionSource.SetResult();
-        }
 
-        //private void OnMessageDeleted()
-        //{
-        //    _networkMessageHandler.GotDeleteMessageResponse -= OnMessageDeleted;
 
-        //    _completionSource.SetResult();
-        //}
-    }
+    //        _networkMessageHandler.DeleteMessageResponseReceived += OnMessageDeleted;
+    //    }
+
+    //    protected override void OnEventOccured(DeleteMessageResponse response)
+    //    {
+            
+    //    }
+
+    //    private void OnMessageDeleted(DeleteMessageResponse response)
+    //    {
+
+    //        var events = typeof(NetworkMessageHandler).GetEvents();
+
+    //        var method = events[0].EventHandlerType.GetMethod("Invoke");
+
+    //        var param = method.GetParameters();
+
+    //        events.Any(ev => ev.MemberType())
+
+    //        Response = response;
+
+    //        _networkMessageHandler.DeleteMessageResponseReceived -= OnMessageDeleted;
+
+    //        _completionSource.SetResult();
+    //    }
+
+    //    //private void OnMessageDeleted()
+    //    //{
+    //    //    _networkMessageHandler.DeleteMessageResponseReceived -= OnMessageDeleted;
+
+    //    //    _completionSource.SetResult();
+    //    //}
+    //}
 }

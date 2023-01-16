@@ -49,8 +49,8 @@
                 <TextBlock Grid.Row="0" Text="Добро пожаловать в Zip" FontSize="30" FontFamily="Tahoma" Foreground="White" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="1" Text="Зарегестрируйтесь или войдите" FontSize="20" FontFamily="Tahoma" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Foreground="White"/>
             </Grid>
-            <Button Style="{StaticResource RoundedButton}" Grid.Row="1" Content="Зарегистрироваться" Command="{Binding OnSignUpCommand}" />
-            <Button Style="{StaticResource RoundedButton}" Grid.Row="2" Content="Войти" Command="{Binding OnSignInCommand}"/>
+            <Button Style="{StaticResource RoundedButton}" Grid.Row="1" Content="Зарегистрироваться" Command="{Binding SignUpCommand}" />
+            <Button Style="{StaticResource RoundedButton}" Grid.Row="2" Content="Войти" Command="{Binding SignInCommand}"/>
             <Border CornerRadius="18"/>
         </Grid>
         

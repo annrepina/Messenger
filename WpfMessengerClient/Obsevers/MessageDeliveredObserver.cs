@@ -7,32 +7,41 @@ using WpfMessengerClient.Models.Responses;
 
 namespace WpfMessengerClient.Obsevers
 {
-    /// <summary>
-    /// Обозреватель события MessageDelivered у NetworkMessageHandler
-    /// </summary>
-    public class MessageDeliveredObserver : Observer
-    {
-        /// <summary>
-        /// Идентификатор сообщения
-        /// </summary>
-        public SendMessageResponse SendMessageResponse;
+    ///// <summary>
+    ///// Обозреватель события SendMessageResponseReceived у NetworkMessageHandler
+    ///// </summary>
+    //public class MessageDeliveredObserver : Observer<SendMessageResponse>
+    //{
+    //    /// <summary>
+    //    /// Идентификатор сообщения
+    //    /// </summary>
+    //    public SendMessageResponse SendMessageResponse;
 
-        public MessageDeliveredObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
-        {
-            _networkMessageHandler.MessageDelivered += OnMessageDelivered;
-        }
+    //    public MessageDeliveredObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
+    //    {
+    //        _networkMessageHandler.SendMessageResponseReceived += OnEventOccured;
+    //    }
 
-        /// <summary>
-        /// Обработчик события MessageDelivered у NetworkMessageHandler
-        /// </summary>
-        /// <param name="messageId">Идентификатор сообщения</param>
-        private void OnMessageDelivered(SendMessageResponse sendMessageResponse)
-        {
-            SendMessageResponse = sendMessageResponse;
+    //    protected override void OnEventOccured(SendMessageResponse response)
+    //    {
+    //        Response = response;
 
-            _networkMessageHandler.MessageDelivered -= OnMessageDelivered;
+    //        _networkMessageHandler.SendMessageResponseReceived -= OnEventOccured;
 
-            _completionSource.SetResult();
-        }
-    }
+    //        _completionSource.SetResult();
+    //    }
+
+    //    ///// <summary>
+    //    ///// Обработчик события SendMessageResponseReceived у NetworkMessageHandler
+    //    ///// </summary>
+    //    ///// <param name="messageId">Идентификатор сообщения</param>
+    //    //private void OnMessageDelivered(SendMessageResponse sendMessageResponse)
+    //    //{
+    //    //    SendMessageResponse = sendMessageResponse;
+
+    //    //    _networkMessageHandler.SendMessageResponseReceived -= OnMessageDelivered;
+
+    //    //    _completionSource.SetResult();
+    //    //}
+    //}
 }

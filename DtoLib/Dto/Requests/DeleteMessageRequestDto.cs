@@ -13,12 +13,6 @@ namespace DtoLib.Dto.Requests
     [ProtoContract]
     public class DeleteMessageRequestDto
     {
-        ///// <summary>
-        ///// Сообщение
-        ///// </summary>
-        //[ProtoMember(1)]
-        //public MessageDto Message { get; set; }
-
         /// <summary>
         /// Сообщение
         /// </summary>

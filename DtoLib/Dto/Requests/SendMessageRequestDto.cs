@@ -11,7 +11,7 @@ namespace DtoLib.Dto.Requests
     /// Data transfer object класса MessageRequest
     /// </summary>
     [ProtoContract]
-    public class MessageRequestDto
+    public class SendMessageRequestDto
     {
         /// <summary>
         /// Сообщение

@@ -54,7 +54,6 @@ namespace DtoLib.NetworkServices
         {
             Id = ++_counter;
             Transmitter = new Transmitter(this);
-            //Sender = new Sender(this);
             NetworkStream = null;
             TcpClient = null;
         }

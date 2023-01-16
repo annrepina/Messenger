@@ -49,7 +49,7 @@ namespace ConsoleMessengerServer.DataBase
                 // ищем есть ли аккаунт с таким номером уже в бд
                 //var res = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == registrationDto.PhoneNumber);
 
-                var res = TryFindUserByPhoneNumber(registrationDto.PhoneNumber, dbContext);
+                var res = FindUserByPhoneNumber(registrationDto.PhoneNumber, dbContext);
 
                 // если вернули false значит аккаунта под таким номером еще нет
                 if (res == null)
@@ -79,7 +79,7 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="phoneNumber"></param>
         /// <returns></returns>
-        public User? TryFindUserByPhoneNumber(string phoneNumber)
+        public User? FindUserByPhoneNumber(string phoneNumber)
         {
             User? user = null;
 
@@ -96,7 +96,7 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="phoneNumber"></param>
         /// <returns></returns>
-        public User? TryFindUserByPhoneNumber(string phoneNumber, MessengerDbContext dbContext)
+        public User? FindUserByPhoneNumber(string phoneNumber, MessengerDbContext dbContext)
         {
             User? user = null;
 
@@ -122,7 +122,7 @@ namespace ConsoleMessengerServer.DataBase
             return user;
         }
 
-        public List<Dialog> FindDialogsByUSer(User user)
+        public List<Dialog> FindDialogsByUser(User user)
         {
             List<Dialog> dialogs = new List<Dialog>();
 
@@ -139,7 +139,7 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="searchRequestDto">Dto поискового запроса</param>
         /// <returns></returns>
-        public List<User> SearchUsers(UserSearchRequestDto searchRequestDto)
+        public List<User> FindListOfUsers(UserSearchRequestDto searchRequestDto)
         {
             List<User> users = new List<User>();
 
@@ -153,8 +153,6 @@ namespace ConsoleMessengerServer.DataBase
 
         public Dialog CreateDialog(CreateDialogRequestDto dto)
         {
-            //CreateDialogResponse createDialogResponse;
-
             try
             {
                 using (var dbContext = new MessengerDbContext())
@@ -183,12 +181,32 @@ namespace ConsoleMessengerServer.DataBase
             }
         }
 
+        public Dialog? FindDialog(int dialogId)
+        {
+            Dialog? dialog = null;
+
+            try
+            {
+                using (var dbContext = new MessengerDbContext())
+                {
+                    dialog = dbContext.Dialogs.FirstOrDefault(dial => dial.Id == dialogId);
+
+                    return dialog;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Создает сообщение и помещает его в базу данных
         /// </summary>
         /// <param name="sendMessageRequestDto">Dto для запроса на отправку сообщения</param>
         /// <returns></returns>
-        public Message AddMessage(MessageRequest request)
+        public Message AddMessage(SendMessageRequest request)
         {
             Message message;
 
@@ -247,7 +265,7 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="messageId">Id сообщения</param>
         /// <returns></returns>
-        public Message? TryFindMessage(int messageId)
+        public Message? FindMessage(int messageId)
         {
             Message message = null;
 
@@ -265,15 +283,29 @@ namespace ConsoleMessengerServer.DataBase
         /// <param name="messageRequest">Запрос, содержащий в себе сообщение</param>
         public void DeleteMessage(Message message)
         {
-            //Message message;
-
             try
             {
                 using (var dbContext = new MessengerDbContext())
                 {
-                    //message = messageRequest.Message;
+                    var mes = dbContext.Messages.Remove(message);
 
-                    var a = dbContext.Messages.Remove(message);
+                    dbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        public void DeleteDialog(Dialog dialog)
+        {
+            try
+            {
+                using(var dbContext = new MessengerDbContext())
+                {
+                    var dial = dbContext.Dialogs.Remove(dialog);
 
                     dbContext.SaveChanges();
                 }
@@ -310,5 +342,7 @@ namespace ConsoleMessengerServer.DataBase
                 throw;
             }
         }
+
+
     }
 }

@@ -28,9 +28,11 @@ namespace ConsoleMessengerServer.Entities.Mapping
             CreateMap<CreateDialogResponse, CreateDialogResponseDto>().ReverseMap();
             CreateMap<Dialog, CreateDialogResponse>().ForMember(dest => dest.DialogId, exp => exp.MapFrom(dial => dial.Id))
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
+            CreateMap<DeleteDialogRequestForClient, DeleteDialogRequestForClientDto>().ReverseMap();
+            CreateMap<DeleteDialogResponse, DeleteDialogResponseDto>().ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
-            CreateMap<MessageRequestDto, MessageRequest>().ReverseMap();
+            CreateMap<SendMessageRequestDto, SendMessageRequest>().ReverseMap();
             CreateMap<SendMessageResponse, SendMessageResponseDto>().ReverseMap();
 
             CreateMap<ServerNetworkProvider, NetworkProviderDto>().ReverseMap();

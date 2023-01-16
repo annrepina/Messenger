@@ -10,7 +10,7 @@ namespace ConsoleMessengerServer.Requests
     /// <summary>
     /// Запрос на отправку сообщениясодержащий в себе сообщение
     /// </summary>
-    public class MessageRequest
+    public class SendMessageRequest
     {
         /// <summary>
         /// Сообщение
@@ -25,7 +25,7 @@ namespace ConsoleMessengerServer.Requests
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public MessageRequest()
+        public SendMessageRequest()
         {
             Message = new Message();
             DialogId = 0;
@@ -36,7 +36,7 @@ namespace ConsoleMessengerServer.Requests
         /// </summary>
         /// <param name="message">Сообщение</param>
         /// <param name="dialogId">Идентификатор диалога</param>
-        public MessageRequest(Message message, int dialogId)
+        public SendMessageRequest(Message message, int dialogId)
         {
             Message = message;
             DialogId = dialogId;

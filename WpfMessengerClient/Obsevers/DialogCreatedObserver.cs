@@ -8,32 +8,32 @@ using WpfMessengerClient.Models.Responses;
 
 namespace WpfMessengerClient.Obsevers
 {
-    /// <summary>
-    /// Обозреватель события DialogCreated у NetworkMessageHandler
-    /// </summary>
-    public class DialogCreatedObserver : Observer
-    {
-        /// <summary>
-        /// Идентификатор диалога
-        /// </summary>
-        public CreateDialogResponse CreateDialogResponse { get; private set; }
+    ///// <summary>
+    ///// Обозреватель события CreateDialogResponseReceived у NetworkMessageHandler
+    ///// </summary>
+    //public class DialogCreatedObserver : Observer
+    //{
+    //    /// <summary>
+    //    /// Идентификатор диалога
+    //    /// </summary>
+    //    public CreateDialogResponse CreateDialogResponse { get; private set; }
 
-        public DialogCreatedObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
-        {
-            networkProviderUserDataMediator.DialogCreated += OnDialogCreated;
-        }
+    //    public DialogCreatedObserver(NetworkMessageHandler networkProviderUserDataMediator, TaskCompletionSource completionSource) : base(networkProviderUserDataMediator, completionSource)
+    //    {
+    //        networkProviderUserDataMediator.CreateDialogResponseReceived += OnDialogCreated;
+    //    }
 
-        /// <summary>
-        /// Обработчик события создания диалога
-        /// </summary>
-        /// <param name="createDialogResponse">Ответ на запрос о создании диалога</param>
-        private void OnDialogCreated(CreateDialogResponse createDialogResponse)
-        {
-            CreateDialogResponse = createDialogResponse;
+    //    /// <summary>
+    //    /// Обработчик события создания диалога
+    //    /// </summary>
+    //    /// <param name="createDialogResponse">Ответ на запрос о создании диалога</param>
+    //    private void OnDialogCreated(CreateDialogResponse createDialogResponse)
+    //    {
+    //        CreateDialogResponse = createDialogResponse;
 
-            _networkMessageHandler.DialogCreated -= OnDialogCreated;
+    //        _networkMessageHandler.CreateDialogResponseReceived -= OnDialogCreated;
 
-            _completionSource.SetResult();
-        }
-    }
+    //        _completionSource.SetResult();
+    //    }
+    //}
 }

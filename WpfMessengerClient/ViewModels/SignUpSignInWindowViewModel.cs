@@ -20,12 +20,12 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Команда по нажатию на кнопку регистрации
         /// </summary>
-        public DelegateCommand OnSignUpCommand { get; init; }
+        public DelegateCommand SignUpCommand { get; init; }
 
         /// <summary>
         /// Команда по нажатию на кнопку входа
         /// </summary>
-        public DelegateCommand OnSignInCommand { get; init; }
+        public DelegateCommand SignInCommand { get; init; }
 
         /// <summary>
         /// Конструктор с параметром
@@ -35,8 +35,8 @@ namespace WpfMessengerClient.ViewModels
         {
             MessengerWindowsManager = messengerWindowsManager;
 
-            OnSignUpCommand = new DelegateCommand(SwitchToSignUpWindow);
-            OnSignInCommand = new DelegateCommand(SwitchToSignInWindow);
+            SignUpCommand = new DelegateCommand(SwitchToSignUpWindow);
+            SignInCommand = new DelegateCommand(SwitchToSignInWindow);
         }
 
         /// <summary>

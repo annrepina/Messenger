@@ -21,19 +21,6 @@ namespace DtoLib.NetworkServices
         [ProtoMember(2)]
         public byte[]? Data { get; set; }
 
-        //public enum OperationCode : byte
-        //{
-        //    RegistrationCode,
-        //    SuccessfulRegistrationCode,
-        //    RegistrationFailedCode,
-        //    SignInRequestCode,
-        //    SearchUserCode,
-        //    SuccessfulSearchCode,
-        //    SearchFailedCode,
-        //    SendingMessageCode,
-        //    ExitCode,
-        //}
-
         public NetworkMessage()
         {
 

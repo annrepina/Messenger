@@ -60,13 +60,13 @@ namespace ConsoleMessengerServer.Net
         /// <returns></returns>
         public override void GetNetworkMessage(NetworkMessage message)
         {
-            if(message.Code == NetworkMessageCode.SignInRequestCode || message.Code == NetworkMessageCode.SignUpRequestCode
-                || message.Code == NetworkMessageCode.SearchUserRequestCode || message.Code == NetworkMessageCode.SendMessageRequestCode
-                || message.Code == NetworkMessageCode.CreateDialogRequestCode || message.Code == NetworkMessageCode.DeleteMessageRequestCode)
+            //if(message.Code == NetworkMessageCode.SignInRequestCode || message.Code == NetworkMessageCode.SignUpRequestCode
+            //    || message.Code == NetworkMessageCode.SearchUserRequestCode || message.Code == NetworkMessageCode.SendMessageRequestCode
+            //    || message.Code == NetworkMessageCode.CreateDialogRequestCode || message.Code == NetworkMessageCode.DeleteMessageRequestCode)
                 NetworkController.ProcessNetworkMessage(message, this);
           
-            else
-                NetworkController.ProcessNetworkMessage(message);
+            //else
+            //    NetworkController.ProcessNetworkMessage(message);
         }
     }
 }

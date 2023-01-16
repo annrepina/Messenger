@@ -33,7 +33,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Команда по нажатию кнопки регистрации
         /// </summary>
-        public DelegateCommand OnSignUpCommand { get; init; }
+        public DelegateCommand SignUpCommand { get; init; }
 
         /// <summary>
         /// Данные о регистрации нового пользователя
@@ -48,7 +48,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
         public SignUpWindowViewModel(MessengerWindowsManager messengerWindowsManager) : base(messengerWindowsManager)
         {
-            OnSignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
+            SignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             Request = new SignUpRequest(); 
         }
 
@@ -68,13 +68,14 @@ namespace WpfMessengerClient.ViewModels
 
             TaskCompletionSource completionSource = new TaskCompletionSource();
 
-            var observer = new SignUpObserver(_networkMessageHandler, completionSource);
+            //var observer = new SignUpObserver(_networkMessageHandler, completionSource);
+            var observer = new Observer<SignUpResponse>(_networkMessageHandler, completionSource, nameof(_networkMessageHandler.SignUpResponseReceived));
 
             _networkMessageHandler.SendRequestAsync<SignUpRequest, SignUpRequestDto>(Request, NetworkMessageCode.SignUpRequestCode);
 
             await completionSource.Task;
 
-            ProcessRegistrationResponse(observer.RegistrationResponse);
+            ProcessRegistrationResponse(observer.Response);
 
             IsControlsAvailable = true;
 
