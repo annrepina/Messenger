@@ -36,7 +36,7 @@ namespace WpfMessengerClient
     /// <summary>
     /// Класс, который является посредником между сетевым провайдероми и данными пользователя
     /// </summary>
-    public class NetworkMessageHandler1 : BaseNotifyPropertyChanged, INetworkMessageHandler
+    public class NetworkMessageHandler : BaseNotifyPropertyChanged, INetworkMessageHandler
     {
         #region События
 
@@ -125,7 +125,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public NetworkMessageHandler1()
+        public NetworkMessageHandler()
         {
             ClientNetworkProvider = new ClientNetworkProvider(this);
 
