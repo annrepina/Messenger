@@ -22,17 +22,30 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace WpfMessengerClient
 {
+    public class NetworkMessageHandlerEvent<TResponce>
+        where TResponce : class
+    {
+        public event Action<TResponce>? Occured;
+
+        public void Invoke(TResponce responce)
+        {
+            Occured?.Invoke(responce);
+        }
+    }
+
     /// <summary>
     /// Класс, который является посредником между сетевым провайдероми и данными пользователя
     /// </summary>
-    public class NetworkMessageHandler : BaseNotifyPropertyChanged, INetworkMessageHandler
+    public class NetworkMessageHandler1 : BaseNotifyPropertyChanged, INetworkMessageHandler
     {
         #region События
 
         /// <summary>
         /// Событие регистрации пользователя
         /// </summary>
-        public event Action<SignUpResponse> SignUpResponseReceived;
+        //public event Action<SignUpResponse> SignUpResponseReceived;
+
+        public readonly NetworkMessageHandlerEvent<SignUpResponse> SignUpResponseReceived = new ();
 
         /// <summary>
         /// Событие входа пользователя
@@ -112,7 +125,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public NetworkMessageHandler()
+        public NetworkMessageHandler1()
         {
             ClientNetworkProvider = new ClientNetworkProvider(this);
 
@@ -195,6 +208,17 @@ namespace WpfMessengerClient
         /// <param name="message">Сетевое сообщение</param>
         /// <param name="action">Событие, которое необходимо вызывать</param>
         private void ProcessMessage<Tdto, Tdest>(NetworkMessage message, Action<Tdest> action)
+            where Tdest : class
+        {
+            Tdest destination;
+
+            Tdto dto = SerializationHelper.Deserialize<Tdto>(message.Data);
+            destination = _mapper.Map<Tdest>(dto);
+
+            action?.Invoke(destination);
+        }
+
+        private void ProcessMessage<Tdto, Tdest>(NetworkMessage message, NetworkMessageHandlerEvent<Tdest> action)
             where Tdest : class
         {
             Tdest destination;
