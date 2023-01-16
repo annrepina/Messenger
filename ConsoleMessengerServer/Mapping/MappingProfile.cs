@@ -37,6 +37,9 @@ namespace ConsoleMessengerServer.Entities.Mapping
 
             CreateMap<SignUpResponse, SignUpResponseDto>().ReverseMap();
             CreateMap<SignInResponse, SignInResponseDto>().ReverseMap();
+
+            CreateMap<DeleteMessageResponse, DeleteMessageResponseDto>().ReverseMap();
+            CreateMap<DeleteMessageRequestForClient, DeleteMessageRequestForClientDto>().ReverseMap();
         }
     }
 }

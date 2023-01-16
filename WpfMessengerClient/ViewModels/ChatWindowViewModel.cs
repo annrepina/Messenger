@@ -123,30 +123,6 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        //public double CurrentUserNameFontSize
-        //{
-        //    get
-        //    {
-        //        if (CurrentUser.Name.Length >= SecondTerminalNameLength)
-        //        {
-        //            return MinFontSizeForUserName;
-        //        }
-
-        //        else if (CurrentUser.Name.Length < SecondTerminalNameLength && CurrentUser.Name.Length > FirstTerminalNameLength)
-        //            return MidFontSizeForUserName;
-
-        //        else
-        //            return MaxFontSizeForUserName;
-
-        //        //CurrentUser.Name.Length > TerminalNameLength ? MinFontSizeForUserName : MaxFontSizeForUserName;
-
-
-        //    }
-
-
-        //}
-
-
         /// <summary>
         /// Свойство - активный диалог
         /// </summary>
@@ -631,7 +607,7 @@ namespace WpfMessengerClient.ViewModels
         /// Обрабатывает событие обработчика сетевых сообщений - диалог получил новое сообщение
         /// </summary>
         /// <param name="sendMessageRequest">Запрос на отправку сообещения</param>
-        private void OnDialogReceivedNewMessage(MessageRequest sendMessageRequest)
+        private void OnDialogReceivedNewMessage(SendMessageRequest sendMessageRequest)
         {
             Message message = sendMessageRequest.Message;
 
@@ -750,12 +726,12 @@ namespace WpfMessengerClient.ViewModels
                 Message newMessage = Message;
                 Message = new Message("", CurrentUser, true);
 
-                MessageRequest sendMessageRequest = new MessageRequest(newMessage, ActiveDialog.Id);
+                SendMessageRequest sendMessageRequest = new SendMessageRequest(newMessage, ActiveDialog.Id);
 
                 TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
                 var observer = new MessageDeliveredObserver(_networkMessageHandler, taskCompletionSource);
 
-                await _networkMessageHandler.SendRequestAsync<MessageRequest, MessageRequestDto>(sendMessageRequest, NetworkMessageCode.SendMessageRequestCode);
+                await _networkMessageHandler.SendRequestAsync<SendMessageRequest, MessageRequestDto>(sendMessageRequest, NetworkMessageCode.SendMessageRequestCode);
                 await taskCompletionSource.Task;
 
                 ProcessMessageDeliveredResponse(observer.SendMessageResponse, newMessage);
@@ -775,9 +751,9 @@ namespace WpfMessengerClient.ViewModels
 
             if(ActiveDialog.Messages.Count > 1)
             {
-                SendDeleteMessageRequestAsync();
+                DeleteMessageResponse response = await SendDeleteMessageRequestAsync();
 
-                ProcessMessageDeletedResponse();
+                ProcessMessageDeletedResponse(response);
             }
             else
             {
@@ -790,15 +766,17 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Отправить запрос на удаление сообщения асинхронно
         /// </summary>
-        public async Task SendDeleteMessageRequestAsync()
+        public async Task<DeleteMessageResponse> SendDeleteMessageRequestAsync()
         {
-            DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest(SelectedMessage, ActiveDialog.Id, CurrentUser.Id);
+            DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest(SelectedMessage.Id, ActiveDialog.Id, CurrentUser.Id);
 
             TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
-            var observer = new MessageDeletedObserver(_networkMessageHandler, taskCompletionSource);
+            var observer = new GotDeleteMessageResponseObserver(_networkMessageHandler, taskCompletionSource);
 
             await _networkMessageHandler.SendRequestAsync<DeleteMessageRequest, DeleteMessageRequestDto>(deleteMessageRequest, NetworkMessageCode.DeleteMessageRequestCode);
             await taskCompletionSource.Task;
+
+            return observer.Response;
         }
 
         /// <summary>
@@ -806,18 +784,18 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public async Task SendDeleteDialogRequestAsync()
         {
-
+            //DeleteDialogRequest 
         }
 
         /// <summary>
         /// Обрабатывает событие получение запроса на удаление сообщения
         /// </summary>
         /// <param name="deleteMessageRequest">Запрос на удаление сообщения</param>
-        private void OnGotDeleteMessageRequest(DeleteMessageRequest deleteMessageRequest)
+        private void OnGotDeleteMessageRequest(DeleteMessageRequestForClient deleteMessageRequest)
         {
             Dialog dialog = Dialogs.First(dial => dial.Id == deleteMessageRequest.DialogId);
 
-            Message message = dialog.Messages.First(mes => mes.Id == deleteMessageRequest.Message.Id);
+            Message message = dialog.Messages.First(mes => mes.Id == deleteMessageRequest.MessageId);
 
             Application.Current.Dispatcher.Invoke(() => 
             { 
@@ -862,11 +840,17 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Обработать ответ на запрос об удалении сообщения
         /// </summary>
-        private void ProcessMessageDeletedResponse()
+        private void ProcessMessageDeletedResponse(DeleteMessageResponse response)
         {
-            bool res = ActiveDialog.Messages.Remove(SelectedMessage);
+            if(response.Status == NetworkResponseStatus.Successful)
+            {
+                bool res = ActiveDialog.Messages.Remove(SelectedMessage);
 
-            if (res == false)
+                if (res == false)
+                    MessageBox.Show("Не удалось удалить сообщение");
+            }
+
+            else
                 MessageBox.Show("Не удалось удалить сообщение");
         }
 

@@ -8,19 +8,13 @@ using System.Threading.Tasks;
 namespace DtoLib.Dto.Requests
 {
     /// <summary>
-    /// Data transfer object класса Dialog
+    /// Data transfer object для класса DeleteMessageRequestForClient
     /// </summary>
     [ProtoContract]
-    public class DeleteMessageRequestDto
+    public class DeleteMessageRequestForClientDto
     {
-        ///// <summary>
-        ///// Сообщение
-        ///// </summary>
-        //[ProtoMember(1)]
-        //public MessageDto Message { get; set; }
-
         /// <summary>
-        /// Сообщение
+        /// Идентификатор сообщения
         /// </summary>
         [ProtoMember(1)]
         public int MessageId { get; set; }
@@ -30,11 +24,5 @@ namespace DtoLib.Dto.Requests
         /// </summary>
         [ProtoMember(2)]
         public int DialogId { get; set; }
-
-        /// <summary>
-        /// Пользователь, удаливший сообщение
-        /// </summary>
-        [ProtoMember(3)]
-        public int UserId { get; set; }
     }
 }

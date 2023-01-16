@@ -72,11 +72,6 @@ namespace WpfMessengerClient.Models
         /// </summary>
         public string Title => Users.First(n => n.Id != _currentUser.Id).Name;
 
-        ///// <summary>
-        ///// Свойство - обозреваемая коллекция данных о пользователях, участвующих в диалоге
-        ///// </summary>
-        //public ObservableCollection<User> Users { get; set; }
-
         /// <summary>
         /// Свойство - обозреваемая коллекция данных о пользователях, участвующих в диалоге
         /// </summary>
@@ -86,11 +81,6 @@ namespace WpfMessengerClient.Models
         /// Обозреваемая коллекция сообщений в диалоге
         /// </summary>
         public ObservableCollection<Message> Messages { get; set; }
-
-        ///// <summary>
-        ///// Обозреваемая коллекция сообщений в диалоге
-        ///// </summary>
-        //public List<Message> Messages { get; set; }
 
         #endregion Свойства
 

@@ -153,7 +153,7 @@ namespace ConsoleMessengerServer.DataBase
 
         public Dialog CreateDialog(CreateDialogRequestDto dto)
         {
-            CreateDialogResponse createDialogResponse;
+            //CreateDialogResponse createDialogResponse;
 
             try
             {
@@ -240,6 +240,23 @@ namespace ConsoleMessengerServer.DataBase
                 Console.WriteLine(ex.Message);
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Попробовать найти сообщение по Id
+        /// </summary>
+        /// <param name="messageId">Id сообщения</param>
+        /// <returns></returns>
+        public Message? TryFindMessage(int messageId)
+        {
+            Message message = null;
+
+            using(var dbContext = new MessengerDbContext())
+            {
+                message = dbContext.Messages.FirstOrDefault(mes => mes.Id == messageId);
+            }
+
+            return message;
         }
 
         /// <summary>

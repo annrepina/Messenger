@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Данные, представляющие запрос на удаление сообщения
+    /// Запрос который содержит в себе сообщение и диалог, к которому оно принадлежит
     /// </summary>
-    public class DeleteMessageRequest
+    public class SendMessageRequest 
     {
-        ///// <summary>
-        ///// Сообщение
-        ///// </summary>
-        //public Message Message { get; set; }
-
         /// <summary>
-        /// Идентификатор сообщения
+        /// Сообщение
         /// </summary>
-        public int MessageId { get; set; }
+        public Message Message { get; set; }
 
         /// <summary>
         /// Идентификатор диалога, в котором существует сообщение
@@ -27,19 +23,12 @@ namespace WpfMessengerClient.Models.Requests
         public int DialogId { get; set; }
 
         /// <summary>
-        /// Идентификатор пользователя, удалившего сообщение
-        /// </summary>
-        public int UserId { get; set; }
-
-        /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public DeleteMessageRequest()
+        public SendMessageRequest()
         {
-            //Message = new Message();
-            MessageId = 0;
+            Message = new Message();
             DialogId = 0;
-            UserId = 0;
         }
 
         /// <summary>
@@ -47,12 +36,10 @@ namespace WpfMessengerClient.Models.Requests
         /// </summary>
         /// <param name="message">Сообщение</param>
         /// <param name="dialogId">Идентификатор диалога</param>
-        public DeleteMessageRequest(/*Message message*/int messageId, int dialogId, int userId)
+        public SendMessageRequest(Message message, int dialogId)
         {
-            //Message = message;
-            MessageId = messageId;
+            Message = message;
             DialogId = dialogId;
-            UserId = userId;
         }
     }
 }

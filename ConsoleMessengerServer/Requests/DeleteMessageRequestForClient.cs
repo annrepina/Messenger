@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfMessengerClient.Models.Requests
+namespace ConsoleMessengerServer.Requests
 {
     /// <summary>
-    /// Запрос который содержит в себе сообщение и диалог, к которому оно принадлежит
+    /// Запрос на удаление сообщения для клиента
     /// </summary>
-    public class MessageRequest 
+    public class DeleteMessageRequestForClient
     {
         /// <summary>
-        /// Сообщение
+        /// Идентификатор сообщения
         /// </summary>
-        public Message Message { get; set; }
+        public int MessageId { get; set; }
 
         /// <summary>
         /// Идентификатор диалога, в котором существует сообщение
@@ -25,20 +24,20 @@ namespace WpfMessengerClient.Models.Requests
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public MessageRequest()
+        public DeleteMessageRequestForClient()
         {
-            Message = new Message();
+            MessageId = 0;
             DialogId = 0;
         }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param name="message">Сообщение</param>
-        /// <param name="dialogId">Идентификатор диалога</param>
-        public MessageRequest(Message message, int dialogId)
+        /// <param name="messageId">Id сообщения</param>
+        /// <param name="dialogId">Id диалога</param>
+        public DeleteMessageRequestForClient(int messageId, int dialogId)
         {
-            Message = message;
+            MessageId = messageId;
             DialogId = dialogId;
         }
     }

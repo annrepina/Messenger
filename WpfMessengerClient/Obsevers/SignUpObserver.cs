@@ -15,7 +15,7 @@ namespace WpfMessengerClient.Obsevers
         /// <summary>
         /// Ответ на запрос о регистрации пользователя
         /// </summary>
-        public RegistrationResponse RegistrationResponse { get; set; }
+        public SignUpResponse RegistrationResponse { get; set; }
 
         /// <summary>
         /// Конструктор с параметрами
@@ -31,7 +31,7 @@ namespace WpfMessengerClient.Obsevers
         /// Обработчик события регистрации пользователя в мессенджере
         /// </summary>
         /// <param name="response">Ответ на запрос о регистрации пользователя</param>
-        private void OnSignUp(RegistrationResponse response)
+        private void OnSignUp(SignUpResponse response)
         {
             RegistrationResponse = response;
 

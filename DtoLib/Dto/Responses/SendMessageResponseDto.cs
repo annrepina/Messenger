@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using DtoLib.NetworkServices;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,8 @@ namespace DtoLib.Dto.Responses
         /// </summary>
         [ProtoMember(1)]
         public int MessageId { get; set; }
+
+        //[ProtoMember(2)]
+        //public NetworkResponseStatus Status { get; init; }
     }
 }

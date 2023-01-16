@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DtoLib.NetworkServices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,13 @@ namespace WpfMessengerClient.Models.Responses
         /// <summary>
         /// Идентификатор отправленного сообщения
         /// </summary>
-        public int MessageId { get; set; }
+        public int MessageId { get; init; }
+
+        //public NetworkResponseStatus Status { get; init; }
+
+        public SendMessageResponse(int messageId)
+        {
+            MessageId = messageId;
+        }
     }
 }

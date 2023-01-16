@@ -7,15 +7,10 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Данные, представляющие запрос на удаление сообщения
+    /// Запррос на удаление сообщения для клиента
     /// </summary>
-    public class DeleteMessageRequest
+    public class DeleteMessageRequestForClient
     {
-        ///// <summary>
-        ///// Сообщение
-        ///// </summary>
-        //public Message Message { get; set; }
-
         /// <summary>
         /// Идентификатор сообщения
         /// </summary>
@@ -27,32 +22,23 @@ namespace WpfMessengerClient.Models.Requests
         public int DialogId { get; set; }
 
         /// <summary>
-        /// Идентификатор пользователя, удалившего сообщение
-        /// </summary>
-        public int UserId { get; set; }
-
-        /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public DeleteMessageRequest()
+        public DeleteMessageRequestForClient()
         {
-            //Message = new Message();
             MessageId = 0;
             DialogId = 0;
-            UserId = 0;
         }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param name="message">Сообщение</param>
-        /// <param name="dialogId">Идентификатор диалога</param>
-        public DeleteMessageRequest(/*Message message*/int messageId, int dialogId, int userId)
+        /// <param name="messageId">Id сообщения</param>
+        /// <param name="dialogId">Id диалога</param>
+        public DeleteMessageRequestForClient(int messageId, int dialogId)
         {
-            //Message = message;
             MessageId = messageId;
             DialogId = dialogId;
-            UserId = userId;
         }
     }
 }

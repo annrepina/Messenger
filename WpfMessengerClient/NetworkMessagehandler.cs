@@ -32,7 +32,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие регистрации пользователя
         /// </summary>
-        public event Action<RegistrationResponse> GotSignUpResponse;
+        public event Action<SignUpResponse> GotSignUpResponse;
 
         /// <summary>
         /// Событие входа пользователя
@@ -65,17 +65,17 @@ namespace WpfMessengerClient
         /// Событие - в диалоге появилось новое сообщение
         /// Либо сообщение получено от собеседника, либо сообщение отправил текущий пользователь с другого устройства
         /// </summary>
-        public event Action<MessageRequest> DialogReceivedNewMessage;
+        public event Action<SendMessageRequest> DialogReceivedNewMessage;
 
         /// <summary>
-        /// Событие удаления сообщения
+        /// Событие получения ответа на запрос обу удалении сообщения
         /// </summary>
-        public event Action MessageDeletedResponse;
+        public event Action<DeleteMessageResponse> GotDeleteMessageResponse;
 
         /// <summary>
         /// Собфтие получения запроса на удаление сообщения
         /// </summary>
-        public event Action<DeleteMessageRequest> GotDeleteMessageRequest;
+        public event Action<DeleteMessageRequestForClient> GotDeleteMessageRequest;
 
         #endregion События
 
@@ -123,7 +123,7 @@ namespace WpfMessengerClient
             switch (message.Code)
             {
                 case NetworkMessageCode.SignUpResponseCode:
-                    ProcessMessage<SignUpResponseDto, RegistrationResponse>(message, GotSignUpResponse);
+                    ProcessMessage<SignUpResponseDto, SignUpResponse>(message, GotSignUpResponse);
                     break;
 
                 case NetworkMessageCode.SignInResponseCode:
@@ -143,7 +143,7 @@ namespace WpfMessengerClient
                     break;
 
                 case NetworkMessageCode.SendMessageRequestCode:
-                    ProcessMessage<MessageRequestDto, MessageRequest>(message, DialogReceivedNewMessage);
+                    ProcessMessage<MessageRequestDto, SendMessageRequest>(message, DialogReceivedNewMessage);
                     break;
 
                 case NetworkMessageCode.MessageDeliveredCode:
@@ -151,11 +151,12 @@ namespace WpfMessengerClient
                     break;
 
                 case NetworkMessageCode.DeleteMessageResponseCode:
-                    MessageDeletedResponse?.Invoke();
+                    ProcessMessage<DeleteMessageResponseDto, DeleteMessageResponse>(message, GotDeleteMessageResponse);
+                    //GotDeleteMessageResponse?.Invoke();
                     break;
 
                 case NetworkMessageCode.DeleteMessageRequestCode:
-                    ProcessMessage<DeleteMessageRequestDto, DeleteMessageRequest>(message, GotDeleteMessageRequest);
+                    ProcessMessage<DeleteMessageRequestForClientDto, DeleteMessageRequestForClient>(message, GotDeleteMessageRequest);
                     break;
 
                 case NetworkMessageCode.ExitCode:

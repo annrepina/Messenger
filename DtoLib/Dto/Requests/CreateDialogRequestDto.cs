@@ -22,12 +22,6 @@ namespace DtoLib.Dto.Requests
         [ProtoMember(1)]
         public int Id { get; set; }
 
-        ///// <summary>
-        ///// Свойство - массив данных пользователей, участвующих в диалоге
-        ///// </summary>
-        //[ProtoMember(2)]
-        //public List<UserDto> Users { get; set; }
-
         /// <summary>
         /// Свойство - массив данных пользователей, участвующих в диалоге
         /// </summary>

@@ -160,8 +160,6 @@ namespace ConsoleMessengerServer
             }
         }
 
-
-
         public void ProcessNetworkMessage(NetworkMessage message)
         {
             //switch (networkMessage.Code)
@@ -169,7 +167,6 @@ namespace ConsoleMessengerServer
 
             //}
         }
-
 
 
         #endregion INetworkHandler Implementation
@@ -351,7 +348,7 @@ namespace ConsoleMessengerServer
         private async Task ProcessSendMessageRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
         {
             MessageRequestDto sendMessageRequestDto = SerializationHelper.Deserialize<MessageRequestDto>(networkMessage.Data);
-            MessageRequest messageRequest = _mapper.Map< MessageRequest >(sendMessageRequestDto);
+            MessageRequest messageRequest = _mapper.Map<MessageRequest>(sendMessageRequestDto);
 
             Message message = _dbService.AddMessage(messageRequest);
             int recipietUserId = _dbService.GetRecipientUserId(message);
@@ -382,27 +379,45 @@ namespace ConsoleMessengerServer
         private async Task ProcessDeleteMessageRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
         {
             DeleteMessageRequestDto deleteMessageRequestDto = SerializationHelper.Deserialize<DeleteMessageRequestDto>(networkMessage.Data);
-            Message message = _mapper.Map<Message>(deleteMessageRequestDto.Message);
 
-            int interlocutorId = _dbService.GetInterlocutorId(deleteMessageRequestDto.DialogId, deleteMessageRequestDto.UserId);
+            Console.WriteLine($"Запрос - Код операции: {networkMessage.Code}. Пользователь - Id: {deleteMessageRequestDto.UserId} отправил запрос на удаление сообщения - Id: {deleteMessageRequestDto.MessageId},\nв диалоге - Id {deleteMessageRequestDto.DialogId}");
 
-            ////MessageRequestDto messageRequestDto = SerializationHelper.Deserialize<MessageRequestDto>(networkMessage.Data);
-            ////MessageRequest messageRequest = _mapper.Map<MessageRequest>(messageRequestDto);
+            //Message message = _mapper.Map<Message>(deleteMessageRequestDto.Message);
+            Message? message = _dbService.TryFindMessage(deleteMessageRequestDto.MessageId);
 
-            _dbService.DeleteMessage(message);
+            NetworkMessage responseDeleteMessage;
+            DeleteMessageResponse deleteMessageResponse;
+            string resultOfOperation = "";
 
-            byte[] requestDeleteMessageBytes = SerializationHelper.Serialize(networkMessage);
-            await _userProxyList[deleteMessageRequestDto.UserId].BroadcastNetworkMessageAsync(requestDeleteMessageBytes, serverNetworkProvider);
+            if (message != null)
+            {
+                int interlocutorId = _dbService.GetInterlocutorId(deleteMessageRequestDto.DialogId, deleteMessageRequestDto.UserId);
+                _dbService.DeleteMessage(message);
 
-            if (_userProxyList.ContainsKey(interlocutorId))
-                await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(requestDeleteMessageBytes);
+                DeleteMessageRequestForClient deleteMessageRequestForClient = new DeleteMessageRequestForClient(message.Id, deleteMessageRequestDto.DialogId);
+                NetworkMessage deleteMessageRequest = CreateResponse(deleteMessageRequestForClient, out DeleteMessageRequestForClientDto dto, NetworkMessageCode.DeleteMessageRequestCode);
 
-            NetworkMessage responseDeleteMessage = new NetworkMessage(null, NetworkMessageCode.DeleteMessageResponseCode);
+                byte[] requestDeleteMessageBytes = SerializationHelper.Serialize(deleteMessageRequest);
+                await _userProxyList[deleteMessageRequestDto.UserId].BroadcastNetworkMessageAsync(requestDeleteMessageBytes, serverNetworkProvider);
+
+                if (_userProxyList.ContainsKey(interlocutorId))
+                    await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(requestDeleteMessageBytes);
+
+                deleteMessageResponse = new DeleteMessageResponse(NetworkResponseStatus.Successful);
+                resultOfOperation = $"Ответ - Код операции: {NetworkMessageCode.DeleteMessageResponseCode}. Статус ответа: {NetworkResponseStatus.Successful}. Сообщение - Id: {message.Id} успешно удалено.\n"
+                            + $"Текст сообщения: {message.Text}";
+            }
+            else
+            {
+                deleteMessageResponse = new DeleteMessageResponse(NetworkResponseStatus.Failed);
+                resultOfOperation = $"Ответ - Код операции: {NetworkMessageCode.DeleteMessageResponseCode}. Статус ответа: {NetworkResponseStatus.Failed}. Сообщение - Id: {message.Id} не существует в базе данных.";
+            }
+
+            responseDeleteMessage = CreateResponse(deleteMessageResponse, out DeleteMessageResponse responseDto, NetworkMessageCode.DeleteMessageResponseCode);
             byte[] responseDeleteMessageBytes = SerializationHelper.Serialize(responseDeleteMessage);    
             await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseDeleteMessageBytes);
 
-            Console.WriteLine($"Код операции {NetworkMessageCode.DeleteMessageRequestCode}. Пользователь с Id: {deleteMessageRequestDto.UserId} удалил сообщение с Id:{message.Id}.\n"
-                            + $"Текст сообщения: {message.Text}");
+            Console.WriteLine(resultOfOperation);
         }
 
         #region Методы создания ответов на запросы

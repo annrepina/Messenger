@@ -89,7 +89,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Обработать ответ на запрос о регистрации
         /// </summary>
-        private void ProcessRegistrationResponse(RegistrationResponse response)
+        private void ProcessRegistrationResponse(SignUpResponse response)
         {
             if(response.Status == NetworkResponseStatus.Successful)
             {

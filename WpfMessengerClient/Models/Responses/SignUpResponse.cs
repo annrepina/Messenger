@@ -10,7 +10,7 @@ namespace WpfMessengerClient.Models.Responses
     /// <summary>
     /// Класс, который представляет данные представляющихе ответ на успешную регистрацию пользователя в мессенджере
     /// </summary>
-    public class RegistrationResponse
+    public class SignUpResponse
     {
         /// <summary>
         /// Идентификатор пользователя
@@ -30,7 +30,7 @@ namespace WpfMessengerClient.Models.Responses
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public RegistrationResponse(int userId, int networkProviderId, NetworkResponseStatus status)
+        public SignUpResponse(int userId, int networkProviderId, NetworkResponseStatus status)
         {
             UserId = userId;
             NetworkProviderId = networkProviderId;
