@@ -10,46 +10,45 @@ namespace WpfMessengerClient.Obsevers
     /// <summary>
     /// Базовый класс 
     /// </summary>
-    public class Observer<T>
+    public class Observer<TResponse>
+        where TResponse : class
     {
-        public T Response { get; protected set; }
+        public TResponse Response { get; protected set; }
 
-        /// <summary>
-        /// Посредник между пользователем и сетью
-        /// </summary>
-        protected readonly NetworkMessageHandler _networkMessageHandler;
+        ///// <summary>
+        ///// Посредник между пользователем и сетью
+        ///// </summary>
+        //protected readonly NetworkMessageHandler _networkMessageHandler;
 
         /// <summary>
         /// 
         /// </summary>
-        protected readonly TaskCompletionSource _completionSource;
+        private readonly TaskCompletionSource _completionSource;
 
         /// <summary>
         /// Событие у _networkMessageHandler, на которое нужно подписаться
         /// </summary>
-        protected EventInfo _event;
+        private NetworkMessageHandlerEvent<TResponse> _event;
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param name="networkMessageHandler"></param>
         /// <param name="completionSource"></param>
         /// <param name="eventName"></param>
-        public Observer(NetworkMessageHandler networkMessageHandler, TaskCompletionSource completionSource, string eventName)
+        public Observer(TaskCompletionSource completionSource, NetworkMessageHandlerEvent<TResponse> eventWrapper)
         {
-            _networkMessageHandler = networkMessageHandler;
             _completionSource = completionSource;
 
-            _event = _networkMessageHandler.GetType().GetEvent(eventName);
+            _event = eventWrapper;
 
-            _event.AddEventHandler(_networkMessageHandler, OnEventOccured);
+            _event.ResponseReceived += OnEventOccured;
         }
 
-        protected void OnEventOccured(T response)
+        protected void OnEventOccured(TResponse response)
         {
             Response = response;
 
-            _event.RemoveEventHandler(_networkMessageHandler, OnEventOccured);
+            _event.ResponseReceived -= OnEventOccured;
 
             _completionSource.SetResult();
         }

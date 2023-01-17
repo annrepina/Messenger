@@ -22,6 +22,9 @@ using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
 using Microsoft.Data.SqlClient.DataClassification;
 using ConsoleMessengerServer.Requests;
+using System.Data.Entity.Core;
+using Azure;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace ConsoleMessengerServer
 {
@@ -163,8 +166,6 @@ namespace ConsoleMessengerServer
             }
         }
 
-
-
         public void ProcessNetworkMessage(NetworkMessage message)
         {
             //switch (networkMessage.Code)
@@ -184,30 +185,18 @@ namespace ConsoleMessengerServer
         /// <returns></returns>
         public async Task ProcessSignUpRequest(NetworkMessage networkMessage, ServerNetworkProvider serverNetworkProvider)
         {
-            SignUpRequestDto registrationDto = SerializationHelper.Deserialize<SignUpRequestDto>(networkMessage.Data);
-            User? user = _dbService.AddNewUser(registrationDto);
+            SignUpRequestDto signUpRequestDto = SerializationHelper.Deserialize<SignUpRequestDto>(networkMessage.Data);
 
-            string resultOfOperation;
-            SignUpResponse signUpResponse;
+            string request = $"Запрос: код операции: {networkMessage.Code}. Номер телефона: {signUpRequestDto.PhoneNumber}";
+            Console.WriteLine(request);
 
-            if (user != null)
-            {
-                AddUserProxy(user.Id, serverNetworkProvider);
+            User? user = _dbService.AddNewUser(signUpRequestDto);
 
-                signUpResponse = new SignUpResponse(user.Id, serverNetworkProvider.Id, NetworkResponseStatus.Successful);
-                resultOfOperation = $"Код операции: {NetworkMessageCode.SignUpRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. Пользователь: {user.ToString()}.";
-            }
-            else
-            {
-                signUpResponse = new SignUpResponse(NetworkResponseStatus.Failed);
-                resultOfOperation = $"Код операции: {NetworkMessageCode.SignUpRequestCode}. Статус операции: {NetworkResponseStatus.Failed}. Данные о регистрации: {registrationDto.ToString()}."; ;
-            }
+            var responseTuple = CreateSignUpResponses(user, serverNetworkProvider, signUpRequestDto);
 
-            NetworkMessage responseMessage = CreateResponse(signUpResponse, out SignUpResponseDto dto, NetworkMessageCode.SignUpResponseCode);
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
-            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
+            await SendResponseToNetworkProvider<SignUpResponse, SignUpResponseDto>(responseTuple.Item2, NetworkMessageCode.SignUpResponseCode, serverNetworkProvider);
 
-            Console.WriteLine(resultOfOperation);
+            Console.WriteLine(responseTuple.Item1);
         }//method
 
         /// <summary>
@@ -219,7 +208,6 @@ namespace ConsoleMessengerServer
         {
             SignInRequestDto signInRequestDto = SerializationHelper.Deserialize<SignInRequestDto>(networkMessage.Data);
 
-            //bool result = _dbService.FindUserByPhoneNumber(signInRequestDto.PhoneNumber);
             User? user = _dbService.FindUserByPhoneNumber(signInRequestDto.PhoneNumber);
 
             SignInResponse signInResponse;
@@ -240,7 +228,7 @@ namespace ConsoleMessengerServer
                 else
                 {
                     signInResponse = new SignInResponse(NetworkResponseStatus.Failed, SignInFailContext.Password);
-                    resultOfOperation = $"Код операции: {NetworkMessageCode.SignInRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. " +
+                    resultOfOperation = $"Код операции: {NetworkMessageCode.SignInRequestCode}. Статус операции: {NetworkResponseStatus.Failed}. " +
                                         $"\nКонтекст ошибки: {SignInFailContext.Password}. Данные входа: Телефон - {signInRequestDto.PhoneNumber}.";
                 }
             }
@@ -251,9 +239,7 @@ namespace ConsoleMessengerServer
                                     $"\nКонтекст ошибки: {SignInFailContext.PhoneNumber}. Данные входа: Телефон - {signInRequestDto.PhoneNumber}.";
             }
 
-            NetworkMessage responseMessage = CreateResponse(signInResponse, out SignInResponseDto dto, NetworkMessageCode.SignInResponseCode);
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
-            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
+            await SendResponseToNetworkProvider<SignInResponse, SignInResponseDto>(signInResponse, NetworkMessageCode.SignInResponseCode, serverNetworkProvider);
 
             Console.WriteLine(resultOfOperation);
         }
@@ -288,25 +274,23 @@ namespace ConsoleMessengerServer
         {
             UserSearchRequestDto searchRequestDto = SerializationHelper.Deserialize<UserSearchRequestDto>(message.Data);
 
-            List<User> usersList = _dbService.FindListOfUsers(searchRequestDto);
+            List<User>? usersList = _dbService.FindListOfUsers(searchRequestDto);
 
-            UserSearchResponse userSearchResult;
+            UserSearchResponse userSearchResponse;
             string resultOfOperation = "";
 
-            if (usersList?.Count > 0)
+            if (usersList != null)
             {
-                userSearchResult = new UserSearchResponse(usersList, NetworkResponseStatus.Successful);
+                userSearchResponse = new UserSearchResponse(usersList, NetworkResponseStatus.Successful);
                 resultOfOperation = $"Код операции: {NetworkMessageCode.SearchUserRequestCode}. Статус ответа: {NetworkResponseStatus.Successful}. Список составлен на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber}";
             }
             else
             {
-                userSearchResult = new UserSearchResponse(usersList, NetworkResponseStatus.Failed);
+                userSearchResponse = new UserSearchResponse(usersList, NetworkResponseStatus.Failed);
                 resultOfOperation = $"Код операции: {NetworkMessageCode.SearchUserRequestCode}. Статус ответа: {NetworkResponseStatus.Failed}. Поиск на основе запросов - Имя: {searchRequestDto.Name}. Телефон: {searchRequestDto.PhoneNumber} не дал результатов";
             }
 
-            NetworkMessage responseMessage = CreateResponse(userSearchResult, out UserSearchResponseDto dto, NetworkMessageCode.SearchUserResponseCode);
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
-            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
+            await SendResponseToNetworkProvider<UserSearchResponse, UserSearchResponseDto>(userSearchResponse, NetworkMessageCode.SearchUserResponseCode, serverNetworkProvider);
 
             Console.WriteLine(resultOfOperation);
         }
@@ -320,24 +304,35 @@ namespace ConsoleMessengerServer
         {
             CreateDialogRequestDto createDialogRequestDto = SerializationHelper.Deserialize<CreateDialogRequestDto>(message.Data);
 
-            Dialog dialog = _dbService.CreateDialog(createDialogRequestDto);
-            int senderId = dialog.Messages.First().UserSenderId;
-            int recipientId = dialog.Users.First(user => user.Id != senderId).Id;
+            Dialog? dialog = _dbService.CreateDialog(createDialogRequestDto);
 
-            CreateDialogResponse createDialogResponse = _mapper.Map<CreateDialogResponse>(dialog);
+            CreateDialogResponse createDialogResponse;
 
-            NetworkMessage responseMessageForSenderServer = CreateResponse(createDialogResponse, out CreateDialogResponseDto dto, NetworkMessageCode.CreateDialogResponseCode);
-            byte[] responseMessageForSenderServerBytes = SerializationHelper.Serialize(responseMessageForSenderServer);
-            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseMessageForSenderServerBytes);
+            if (dialog != null)
+            {
+                int senderId = dialog.Messages.First().UserSenderId;
+                int recipientId = dialog.Users.First(user => user.Id != senderId).Id;
 
-            NetworkMessage responseWithFullDialog = CreateResponse(dialog, out DialogDto dialogDto, NetworkMessageCode.CreateDialogRequestCode);
-            byte[] responseWithFullDialogBytes = SerializationHelper.Serialize(responseWithFullDialog);
-            await _userProxyList[senderId].BroadcastNetworkMessageAsync(responseWithFullDialogBytes, serverNetworkProvider);
+                createDialogResponse = _mapper.Map<CreateDialogResponse>(dialog);
 
-            if (_userProxyList.ContainsKey(recipientId))
-                await _userProxyList[recipientId].BroadcastNetworkMessageAsync(responseWithFullDialogBytes);
+                await BroadcastRequest<Dialog, DialogDto>(dialog, NetworkMessageCode.CreateDialogRequestCode, senderId, recipientId, serverNetworkProvider);
 
-            Console.WriteLine($"Код операции: {NetworkMessageCode.CreateDialogResponseCode}. Диалог с Id {createDialogResponse.DialogId} создан."); 
+                await SendResponseToNetworkProvider<CreateDialogResponse, CreateDialogResponseDto>(createDialogResponse, NetworkMessageCode.CreateDialogResponseCode, serverNetworkProvider);
+
+                Console.WriteLine($"Код операции: {NetworkMessageCode.CreateDialogResponseCode}. Диалог с Id {createDialogResponse.DialogId} создан.");
+            }
+
+            else
+            {
+                createDialogResponse = new CreateDialogResponse(NetworkResponseStatus.Failed);
+
+                await SendResponseToNetworkProvider<CreateDialogResponse, CreateDialogResponseDto>(createDialogResponse, NetworkMessageCode.CreateDialogResponseCode, serverNetworkProvider);
+
+                Console.WriteLine($"Код операции: {NetworkMessageCode.CreateDialogResponseCode}. Статус ответа: {NetworkResponseStatus.Failed}. Диалог не может быть создан.");
+
+                // !!! поставить обработчик выше
+                throw new EntityException("Error occurred due to adding dialog to database.");
+            }
         }
 
         /// <summary>
@@ -354,17 +349,12 @@ namespace ConsoleMessengerServer
             int recipietUserId = _dbService.GetRecipientUserId(message);
 
             SendMessageRequest sendMessageRequest = new SendMessageRequest(message, message.DialogId);
-            NetworkMessage newMessage = CreateResponse(sendMessageRequest, out SendMessageRequestDto dto, NetworkMessageCode.SendMessageRequestCode);
-            byte[] newMessageBytes = SerializationHelper.Serialize(newMessage);
-            await _userProxyList[message.UserSenderId].BroadcastNetworkMessageAsync(newMessageBytes, serverNetworkProvider);
 
-            if(_userProxyList.ContainsKey(recipietUserId))
-                await _userProxyList[recipietUserId].BroadcastNetworkMessageAsync(newMessageBytes);
+            await BroadcastRequest<SendMessageRequest, SendMessageRequestDto>(sendMessageRequest, NetworkMessageCode.SendMessageRequestCode, message.UserSenderId, recipietUserId, serverNetworkProvider);
 
-            SendMessageResponse response = new SendMessageResponse(message.Id);
-            NetworkMessage responseMessage = CreateResponse(response, out SendMessageResponseDto responseDto, NetworkMessageCode.MessageDeliveredCode);
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
-            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseBytes);
+            SendMessageResponse responseForSender = new SendMessageResponse(message.Id);
+
+            await SendResponseToNetworkProvider<SendMessageResponse, SendMessageResponseDto>(responseForSender, NetworkMessageCode.MessageDeliveredCode, serverNetworkProvider);
 
             Console.WriteLine($"Код операции {NetworkMessageCode.SendMessageRequestCode}. Сообщение от пользователя с Id: {message.UserSenderId} доставлено пользователю с Id: {recipietUserId}.\n"
                 + $"Текст сообщения: {message.Text}");
@@ -394,13 +384,8 @@ namespace ConsoleMessengerServer
                 _dbService.DeleteMessage(message);
 
                 DeleteMessageRequestForClient deleteMessageRequestForClient = new DeleteMessageRequestForClient(message.Id, deleteMessageRequestDto.DialogId);
-                NetworkMessage deleteMessageRequest = CreateResponse(deleteMessageRequestForClient, out DeleteMessageRequestForClientDto dto, NetworkMessageCode.DeleteMessageRequestCode);
 
-                byte[] requestDeleteMessageBytes = SerializationHelper.Serialize(deleteMessageRequest);
-                await _userProxyList[deleteMessageRequestDto.UserId].BroadcastNetworkMessageAsync(requestDeleteMessageBytes, serverNetworkProvider);
-
-                if (_userProxyList.ContainsKey(interlocutorId))
-                    await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(requestDeleteMessageBytes);
+                await BroadcastRequest<DeleteMessageRequestForClient, DeleteMessageRequestForClientDto>(deleteMessageRequestForClient, NetworkMessageCode.DeleteMessageRequestCode, deleteMessageRequestDto.UserId, interlocutorId, serverNetworkProvider);
 
                 deleteMessageResponse = new DeleteMessageResponse(NetworkResponseStatus.Successful);
                 resultOfOperation = $"Ответ - Код операции: {NetworkMessageCode.DeleteMessageResponseCode}. Статус ответа: {NetworkResponseStatus.Successful}. Сообщение - Id: {message.Id} успешно удалено.\n"
@@ -412,9 +397,7 @@ namespace ConsoleMessengerServer
                 resultOfOperation = $"Ответ - Код операции: {NetworkMessageCode.DeleteMessageResponseCode}. Статус ответа: {NetworkResponseStatus.Failed}. Сообщение - Id: {message.Id} не существует в базе данных.";
             }
 
-            responseDeleteMessage = CreateResponse(deleteMessageResponse, out DeleteMessageResponse responseDto, NetworkMessageCode.DeleteMessageResponseCode);
-            byte[] responseDeleteMessageBytes = SerializationHelper.Serialize(responseDeleteMessage);    
-            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseDeleteMessageBytes);
+            await SendResponseToNetworkProvider<DeleteMessageResponse, DeleteMessageResponseDto>(deleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode, serverNetworkProvider);
 
             Console.WriteLine(resultOfOperation);
         }
@@ -442,13 +425,8 @@ namespace ConsoleMessengerServer
                 _dbService.DeleteDialog(dialog);
 
                 DeleteDialogRequestForClient deleteDialogRequestForClient = new DeleteDialogRequestForClient(deleteDialogRequestDto.DialogId);
-                NetworkMessage deleteDialogRequest = CreateResponse(deleteDialogRequestForClient, out DeleteDialogRequestForClientDto dto, NetworkMessageCode.DeleteDialogRequestCode);
 
-                byte[] requestDeleteDialogBytes = SerializationHelper.Serialize(deleteDialogRequest);
-                await _userProxyList[deleteDialogRequestDto.UserId].BroadcastNetworkMessageAsync(requestDeleteDialogBytes, serverNetworkProvider);
-
-                if (_userProxyList.ContainsKey(interlocutorId))
-                    await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(requestDeleteDialogBytes);
+                await BroadcastRequest<DeleteDialogRequestForClient, DeleteDialogRequestForClientDto>(deleteDialogRequestForClient, NetworkMessageCode.DeleteDialogRequestCode, deleteDialogRequestDto.UserId, interlocutorId, serverNetworkProvider);
 
                 deleteDialogResponse = new DeleteDialogResponse(NetworkResponseStatus.Successful);
                 resultOfOperation = $"Ответ - Код операции: {NetworkMessageCode.DeleteDialogResponseCode}. Статус ответа: {NetworkResponseStatus.Successful}. Диалог - Id: {dialog.Id} успешно удален.\n";
@@ -459,14 +437,10 @@ namespace ConsoleMessengerServer
                 resultOfOperation = $"Ответ - Код операции: {NetworkMessageCode.DeleteDialogResponseCode}. Статус ответа: {NetworkResponseStatus.Failed}. Диалог - Id: {dialog.Id} не существует в базе данных.\n";
             }
 
-            responseNetworkMessage = CreateResponse(deleteDialogResponse, out DeleteDialogResponse responseDto, NetworkMessageCode.DeleteDialogResponseCode);
-            byte[] responseDeleteDialogBytes = SerializationHelper.Serialize(responseNetworkMessage);
-            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseDeleteDialogBytes);
+            await SendResponseToNetworkProvider<DeleteDialogResponse, DeleteDialogResponseDto>(deleteDialogResponse, NetworkMessageCode.DeleteDialogResponseCode, serverNetworkProvider);
 
             Console.WriteLine(resultOfOperation);
         }
-
-        #region Методы создания ответов на запросы
 
         /// <summary>
         /// Обобщенный метод создания ответного сетевого сообщения
@@ -477,7 +451,7 @@ namespace ConsoleMessengerServer
         /// <param name="dto">Объект, представляющий dto</param>
         /// <param name="code">Код операции</param>
         /// <returns></returns>
-        public NetworkMessage CreateResponse<Tsource, Tdto>(Tsource tsource, out Tdto dto, NetworkMessageCode code)
+        public NetworkMessage CreateNetworkMessage<Tsource, Tdto>(Tsource tsource, out Tdto dto, NetworkMessageCode code)
             where Tdto : class
         {
             try
@@ -497,7 +471,112 @@ namespace ConsoleMessengerServer
             return message;
         }
 
-        #endregion Методы создания ответов на запросы
+        /// <summary>
+        /// Отправить ответ на запрос сетевому провайдеру
+        /// </summary>
+        /// <typeparam name="TResponse">Тип класса ответа</typeparam>
+        /// <typeparam name="TResponseDto">Тип dto класса ответа</typeparam>
+        /// <param name="response">Ответ</param>
+        /// <param name="code">Код операции</param>
+        /// <param name="serverNetworkProvider">Сетевой провайдер</param>
+        /// <returns></returns>
+        private async Task SendResponseToNetworkProvider<TResponse, TResponseDto>(TResponse response, NetworkMessageCode code, ServerNetworkProvider serverNetworkProvider)
+            where TResponseDto : class
+        {
+            NetworkMessage responseMessage = CreateNetworkMessage(response, out TResponseDto responseDto, code);
+
+            byte[] responseDeleteDialogBytes = SerializationHelper.Serialize(responseMessage);
+
+            await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(responseDeleteDialogBytes);
+        }
+
+        /// <summary>
+        /// Транслировать сообщение-уведомление об изменениях отправителю запроса и его собеседнику
+        /// </summary>
+        /// <param name="networkMessage">Сетевое сообщение</param>
+        /// <param name="userSenderId">Id ползователя-отправителя запроса</param>
+        /// <param name="interlocutorId">Id собеседника того пользователя, который отправил запрос</param>
+        /// <param name="serverNetworkProvider">Сетевой провайдер</param>
+        /// <returns></returns>
+        private async Task BroadcastRequest<TRequest, TRequestDto>(TRequest request, NetworkMessageCode code, int userSenderId, int interlocutorId, ServerNetworkProvider serverNetworkProvider)
+            where TRequestDto : class
+        {
+            NetworkMessage networkMessage = CreateNetworkMessage(request, out TRequestDto dto, code);
+
+            byte[] requestDeleteDialogBytes = SerializationHelper.Serialize(networkMessage);
+            await _userProxyList[userSenderId].BroadcastNetworkMessageAsync(requestDeleteDialogBytes, serverNetworkProvider);
+
+            if (_userProxyList.ContainsKey(interlocutorId))
+                await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(requestDeleteDialogBytes);
+        }
+
+        #region Методы, создающие ответы на запросы
+
+        /// <summary>
+        /// Создать ответы на запрос о регистрации
+        /// Ответ для консоли типа String и ответ для клиента типа SignUpResponse
+        /// </summary>
+        /// <param name="user">Пользователь</param>
+        /// <param name="serverNetworkProvider">Сетевой провайдер</param>
+        /// <param name="signUpRequestDto">Dto для запроса на регистрацию</param>
+        /// <returns></returns>
+        private (string, SignUpResponse) CreateSignUpResponses(User? user, ServerNetworkProvider serverNetworkProvider, SignUpRequestDto signUpRequestDto)
+        {
+            string responseForConsole;
+            SignUpResponse signUpResponse;
+
+            if (user != null)
+            {
+                AddUserProxy(user.Id, serverNetworkProvider);
+
+                signUpResponse = new SignUpResponse(user.Id, serverNetworkProvider.Id, NetworkResponseStatus.Successful);
+                responseForConsole = $"Код операции: {NetworkMessageCode.SignUpRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. Пользователь: {user.ToString()}.";
+            }
+            else
+            {
+                signUpResponse = new SignUpResponse(NetworkResponseStatus.Failed);
+                responseForConsole = $"Код операции: {NetworkMessageCode.SignUpRequestCode}. Статус операции: {NetworkResponseStatus.Failed}. Данные о регистрации: {signUpRequestDto.ToString()}."; ;
+            }
+
+            return (responseForConsole, signUpResponse);
+        }
+
+        private (string, SignInResponse) CreateSignInResponses(User? user, SignInRequestDto signInRequestDto, ServerNetworkProvider serverNetworkProvider)
+        {
+            SignInResponse signInResponse;
+            string resultOfOperation;
+
+            // номер телефона есть
+            if (user != null)
+            {
+                if (user.Password == signInRequestDto.Password)
+                {
+                    List<Dialog> dialogs = _dbService.FindDialogsByUser(user);
+
+                    signInResponse = new SignInResponse(user, dialogs, NetworkResponseStatus.Successful);
+                    resultOfOperation = $"Код операции: {NetworkMessageCode.SignInRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. Данные входа: Телефон - {signInRequestDto.PhoneNumber}.";
+
+                    AddUserProxy(user.Id, serverNetworkProvider);
+                }
+                else
+                {
+                    signInResponse = new SignInResponse(NetworkResponseStatus.Failed, SignInFailContext.Password);
+                    resultOfOperation = $"Код операции: {NetworkMessageCode.SignInRequestCode}. Статус операции: {NetworkResponseStatus.Failed}. " +
+                                        $"\nКонтекст ошибки: {SignInFailContext.Password}. Данные входа: Телефон - {signInRequestDto.PhoneNumber}.";
+                }
+            }
+            else
+            {
+                signInResponse = new SignInResponse(NetworkResponseStatus.Failed, SignInFailContext.PhoneNumber);
+                resultOfOperation = $"Код операции: {NetworkMessageCode.SignInRequestCode}. Статус операции: {NetworkResponseStatus.Failed}." +
+                                    $"\nКонтекст ошибки: {SignInFailContext.PhoneNumber}. Данные входа: Телефон - {signInRequestDto.PhoneNumber}.";
+            }
+
+            return (resultOfOperation, signInResponse);
+        }
+
+
+        #endregion Методы, создающие ответы на запросы
 
         public void Dispose()
         {

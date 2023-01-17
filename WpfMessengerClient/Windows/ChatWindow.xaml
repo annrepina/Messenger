@@ -30,10 +30,46 @@
         <!--#region Listviews-->
 
         <!--#region Labels-->
-        <Border Grid.Row="0" Grid.Column="0"  BorderBrush="#FF355D9A" Background="#FF021F38">
-            <TextBlock Name="UserName" Text="{Binding CurrentUser.Name}" FontSize="{Binding CurrentUser.Name, Converter={local1:FontSizeForNameConverter}}" FontFamily="Tahoma" HorizontalAlignment="Left"
-                   Padding="15" TextAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
-        </Border>
+
+        <Grid Grid.Row="0" Grid.Column="0" Background="#FF021F38">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="6*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Margin="2, 0, 5, 0">
+                <Border.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="White"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="LightSkyBlue"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Resources>
+                <Button Margin="0,5,0,5" Style="{StaticResource RoundedButton}"
+                             IsEnabled="{Binding IsExitButtonAvailable}" Command="{Binding ExitCommand}">
+                    <Button.Background>
+                        <ImageBrush Stretch="Uniform" ImageSource="/Windows/logout (1).png">
+                            <ImageBrush.RelativeTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                    <SkewTransform CenterX="0.5" CenterY="0.5"/>
+                                    <RotateTransform Angle="180" CenterX="0.5" CenterY="0.5"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </ImageBrush.RelativeTransform>
+                        </ImageBrush>
+                    </Button.Background>
+                </Button>
+            </Border>
+
+            <Border Grid.Column="1" BorderBrush="#FF355D9A" Background="#FF021F38">
+                <TextBlock Name="UserName" Text="{Binding CurrentUser.Name}" FontSize="{Binding CurrentUser.Name, Converter={local1:FontSizeForNameConverter}}" FontFamily="Tahoma" HorizontalAlignment="Left"
+                       Padding="15" TextAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+            </Border>
+        </Grid>
 
         <Border Grid.Row="0" Grid.Column="1" BorderThickness="0.5,0,0,0" BorderBrush="#FF355D9A" Background="#FF021F38">
             <Grid>
@@ -53,14 +89,9 @@
             </Grid>
         </Border>
 
-        
-
-
-
-
         <!--#endregion Labels-->
-        
-        <!--#region Dockpanel--> 
+
+        <!--#region Dockpanel-->
 
         <DockPanel Background="#FF001323" Grid.Row="1" Grid.Column="0" Margin="0" >
 
@@ -72,10 +103,9 @@
                                 <ControlTemplate TargetType="TabItem">
                                     <Border
                                     Name="Border"
-                                    Margin="2,0"
+                                    Margin="0,0"
 
-                                    BorderThickness="0,0,0,0"
-                                    CornerRadius="4,4,4,4">
+                                    BorderThickness="0,0,0,0">
                                         <ContentPresenter
                                         x:Name="ContentSite"
                                         Margin="10,2"
@@ -94,11 +124,6 @@
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
-                        <!--<Setter Property="Width" Value="{Binding    
-                     Path=ActualWidth,    
-                     RelativeSource={RelativeSource    
-                     Mode=FindAncestor,    
-                     AncestorType={x:Type TabControl}}}"/>-->
                     </Style>
                 </TabControl.Resources>
 
@@ -148,12 +173,9 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Vertical">
                             <Image Height="35" Width="30" Panel.ZIndex="10" Source="/Windows/magnifier.png" />
-                            <!--<Image Name="magnifierImg" Height="40" Width="35" Source="/Windows/search.png" Visibility="Visible"/>
-                            <Image Name="magnifierImg" Height="40" Width="35" Source="/Windows/search.png" Visibility="Visible"/>-->
                             <TextBlock Text="Поиск"/>
                         </StackPanel>
                     </TabItem.Header>
-
 
                     <Grid Background="#FF021F38">
                         <Grid.RowDefinitions>
@@ -174,7 +196,7 @@
                                    HorizontalAlignment="Left" VerticalAlignment="Center" Padding="15" Foreground="White" Grid.ColumnSpan="2" />
                         <TextBox Grid.Row="3" Style="{StaticResource InputSearchingPhoneNumberTextBox}" Grid.ColumnSpan="2" Margin="5,5,5,5" />
 
-                        <Button Grid.Row="4" Background="#FF355D9A" Content="Найти" Command="{Binding SearchCommand}" IsEnabled="{Binding IsSearchingButtonFree}" Style="{StaticResource RoundedButton}" Grid.ColumnSpan="2" Margin="5,5,5,5"/>
+                        <Button Grid.Row="4" Background="#FF355D9A" Content="Найти" Command="{Binding SearchCommand}" IsEnabled="{Binding IsSearchingButtonAvailable}" Style="{StaticResource RoundedButton}" Grid.ColumnSpan="2" Margin="5,5,5,5"/>
 
                         <ListView Grid.Row="5" Margin="0,10,0,0" Padding="15" FontFamily="Tahoma" FontSize="18"  
                                     BorderBrush="{x:Null}" Foreground="White"
@@ -193,7 +215,6 @@
                                        FontFamily="Tahoma" FontSize="16" Foreground="#FFDCD7D7"
                                        HorizontalAlignment="Center" VerticalAlignment="Top" Padding="20"/>
 
-                        <!--<TextBox Grid.Row="6"></TextBox>-->
                         <Grid Grid.Row="6" Height="100">
 
                             <Grid.RowDefinitions>
@@ -203,9 +224,6 @@
 
                             <TextBox Grid.Row="0" Style="{StaticResource InputGreetingMessageTextBox}"
                                      Visibility="{Binding IsGreetingMessageTextBoxVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <!--<TextBox Grid.Row="0" Text="{Binding GreetingMessage.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                     IsEnabled="{Binding IsGreetingMessageTextBoxAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                     Visibility="{Binding IsGreetingMessageTextBoxAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
 
                             <Button Grid.Row="1" Name="OpenDialogButton" Content="{Binding OpenDialogButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                     IsEnabled="{Binding IsOpenDialogButtonAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -213,10 +231,6 @@
                                     Height="50" VerticalAlignment="Bottom"
                                     Command="{Binding OpenDialogCommand}"/>
 
-                            <!--<TextBlock Grid.Row="1" Text="По Вашему запросу никто не найден" 
-                                       Visibility="{Binding HasNotSearchResult, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                       FontFamily="Tahoma" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
-                            <!--<Grid Grid.Row="0" Grid.RowSpan="2" Background="#FF021F38" Panel.ZIndex="2"></Grid>-->
                         </Grid>
 
                     </Grid>

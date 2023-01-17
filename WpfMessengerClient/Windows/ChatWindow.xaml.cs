@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,11 @@ namespace WpfMessengerClient.Windows
         {
             DataContext = chatWindowViewModel;
             Closing += chatWindowViewModel.OnWindowClosing;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            
         }
     }
 }

@@ -13,6 +13,8 @@
     <None Remove="Windows\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
     <None Remove="Windows\chat.png" />
     <None Remove="Windows\hero-img_copy.jpg" />
+    <None Remove="Windows\logout %281%29.png" />
+    <None Remove="Windows\logout.png" />
     <None Remove="Windows\loupe.png" />
     <None Remove="Windows\magnifier.png" />
     <None Remove="Windows\magnifying-glass.png" />
@@ -41,6 +43,8 @@
     <Resource Include="Windows\Images\6254-r15.jpg" />
     <Resource Include="Windows\Images\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
     <Resource Include="Windows\Images\storm %282%29.png" />
+    <Resource Include="Windows\logout (1).png" />
+    <Resource Include="Windows\logout.png" />
     <Resource Include="Windows\magnifier.png" />
   </ItemGroup>
 

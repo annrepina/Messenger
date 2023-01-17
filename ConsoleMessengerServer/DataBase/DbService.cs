@@ -6,9 +6,11 @@ using ConsoleMessengerServer.Requests;
 using ConsoleMessengerServer.Responses;
 using DtoLib;
 using DtoLib.Dto.Requests;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -139,20 +141,25 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="searchRequestDto">Dto поискового запроса</param>
         /// <returns></returns>
-        public List<User> FindListOfUsers(UserSearchRequestDto searchRequestDto)
+        public List<User>? FindListOfUsers(UserSearchRequestDto searchRequestDto)
         {
-            List<User> users = new List<User>();
+            List<User>? res = null;
 
             using (var dbContext = new MessengerDbContext())
             {
+                List<User> users = new List<User>(); 
+
                 users = dbContext.Users.Where(u => u.PhoneNumber == searchRequestDto.PhoneNumber || (searchRequestDto.Name != "" && u.Name.ToLower().Contains(searchRequestDto.Name.ToLower()))).ToList();
+
+                if(users.Count > 0)
+                    res = users;
             }
 
-            return users;
+            return res;
         }
 
-        public Dialog CreateDialog(CreateDialogRequestDto dto)
-        {
+        public Dialog? CreateDialog(CreateDialogRequestDto dto)
+        {   
             try
             {
                 using (var dbContext = new MessengerDbContext())
@@ -177,8 +184,11 @@ namespace ConsoleMessengerServer.DataBase
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw;
+                //throw;
+                //return null;
             }
+
+            return null;
         }
 
         public Dialog? FindDialog(int dialogId)
@@ -204,7 +214,7 @@ namespace ConsoleMessengerServer.DataBase
         /// <summary>
         /// Создает сообщение и помещает его в базу данных
         /// </summary>
-        /// <param name="sendMessageRequestDto">Dto для запроса на отправку сообщения</param>
+        /// <param name="request">запрос на отправку сообщения</param>
         /// <returns></returns>
         public Message AddMessage(SendMessageRequest request)
         {
@@ -222,6 +232,9 @@ namespace ConsoleMessengerServer.DataBase
                     message.UserSender = user;
                     message.Dialog = dialog;
 
+                    //
+                    message = new Message() { Text = "dfsfdsf" };
+
                     dbContext.Messages.Add(message);
                     dbContext.SaveChanges();
 
@@ -230,7 +243,7 @@ namespace ConsoleMessengerServer.DataBase
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Исключение: " + ex.Message);
                 throw;
             }
         }
@@ -283,6 +296,8 @@ namespace ConsoleMessengerServer.DataBase
         /// <param name="messageRequest">Запрос, содержащий в себе сообщение</param>
         public void DeleteMessage(Message message)
         {
+            //Message message1 = new Message() { Id = 5 };
+
             try
             {
                 using (var dbContext = new MessengerDbContext())

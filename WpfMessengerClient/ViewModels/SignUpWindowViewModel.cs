@@ -69,13 +69,13 @@ namespace WpfMessengerClient.ViewModels
             TaskCompletionSource completionSource = new TaskCompletionSource();
 
             //var observer = new SignUpObserver(_networkMessageHandler, completionSource);
-            var observer = new Observer<SignUpResponse>(_networkMessageHandler, completionSource, nameof(_networkMessageHandler.SignUpResponseReceived));
+            var observer = new Observer<SignUpResponse>(completionSource, _networkMessageHandler.SignUpResponseReceived);
 
             _networkMessageHandler.SendRequestAsync<SignUpRequest, SignUpRequestDto>(Request, NetworkMessageCode.SignUpRequestCode);
 
             await completionSource.Task;
 
-            ProcessRegistrationResponse(observer.Response);
+            ProcessSignUpResponse(observer.Response);
 
             IsControlsAvailable = true;
 
@@ -90,7 +90,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Обработать ответ на запрос о регистрации
         /// </summary>
-        private void ProcessRegistrationResponse(SignUpResponse response)
+        private void ProcessSignUpResponse(SignUpResponse response)
         {
             if(response.Status == NetworkResponseStatus.Successful)
             {

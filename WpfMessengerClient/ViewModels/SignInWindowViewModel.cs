@@ -68,7 +68,8 @@ namespace WpfMessengerClient.ViewModels
             TaskCompletionSource completionSource = new TaskCompletionSource();
 
             //var observer = new SignInObserver(_networkMessageHandler, completionSource);
-            var observer = new Observer<SignInResponse>(_networkMessageHandler, completionSource, nameof(_networkMessageHandler.SignInResponseReceived));
+            //var observer = new Observer<SignInResponse>(_networkMessageHandler, completionSource, nameof(_networkMessageHandler.SignInResponseReceived));
+            var observer = new Observer<SignInResponse>(completionSource, _networkMessageHandler.SignInResponseReceived);
 
             _networkMessageHandler.SendRequestAsync<SignInRequest, SignInRequestDto>(Request, NetworkMessageCode.SignInRequestCode);
 

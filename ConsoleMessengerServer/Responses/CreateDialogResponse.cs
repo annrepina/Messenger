@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DtoLib.NetworkServices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,9 +22,16 @@ namespace ConsoleMessengerServer.Responses
         /// </summary>
         public int MessageId { get; init; }
 
+        public NetworkResponseStatus Status { get; init; }
+
         public CreateDialogResponse()
         {
 
+        }
+
+        public CreateDialogResponse(NetworkResponseStatus status)
+        {
+            Status = status;
         }
 
         /// <summary>
@@ -31,10 +39,11 @@ namespace ConsoleMessengerServer.Responses
         /// </summary>
         /// <param name="dialogId">Идентификатор созданного диалога</param>
         /// <param name="messageId">Идентификатор первого сообщения</param>
-        public CreateDialogResponse(int dialogId, int messageId)
+        public CreateDialogResponse(int dialogId, int messageId, NetworkResponseStatus status)
         {
             DialogId = dialogId;
             MessageId = messageId;
+            Status = status;
         }
     }
 }
