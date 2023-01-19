@@ -1,30 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConsoleMessengerServer.Net;
-using DtoLib.Serialization;
-using DtoLib.Dto;
+﻿using AutoMapper;
 using ConsoleMessengerServer.DataBase;
 using ConsoleMessengerServer.Entities;
-using AutoMapper;
 using ConsoleMessengerServer.Entities.Mapping;
-using DtoLib.NetworkInterfaces;
-using System.Net.Sockets;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.SqlClient;
+using ConsoleMessengerServer.Net;
 using ConsoleMessengerServer.Net.Interfaces;
-using DtoLib.NetworkServices;
+using ConsoleMessengerServer.Requests;
 using ConsoleMessengerServer.Responses;
-using System.Formats.Asn1;
+using DtoLib.Dto;
 using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
-using Microsoft.Data.SqlClient.DataClassification;
-using ConsoleMessengerServer.Requests;
+using DtoLib.NetworkServices;
+using DtoLib.Serialization;
 using System.Data.Entity.Core;
-using Azure;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Net.Sockets;
 
 namespace ConsoleMessengerServer
 {
@@ -187,17 +175,15 @@ namespace ConsoleMessengerServer
         {
             SignUpRequestDto signUpRequestDto = SerializationHelper.Deserialize<SignUpRequestDto>(networkMessage.Data);
 
-            string request = $"Запрос: код операции: {networkMessage.Code}. Номер телефона: {signUpRequestDto.PhoneNumber}";
-            Console.WriteLine(request);
-
             User? user = _dbService.AddNewUser(signUpRequestDto);
 
-            var responseTuple = CreateSignUpResponses(user, serverNetworkProvider, signUpRequestDto);
+            SignUpResponse response = CreateSignUpResponse(user, serverNetworkProvider);
 
-            await SendResponseToNetworkProvider<SignUpResponse, SignUpResponseDto>(responseTuple.Item2, NetworkMessageCode.SignUpResponseCode, serverNetworkProvider);
+            await SendResponseToNetworkProvider<SignUpResponse, SignUpResponseDto>(response, NetworkMessageCode.SignUpResponseCode, serverNetworkProvider);
 
-            Console.WriteLine(responseTuple.Item1);
-        }//method
+            ReportPrinter.PrintRequestReport(networkMessage.Code, signUpRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(NetworkMessageCode.SignUpResponseCode, response.Status, signUpRequestDto.ToString());
+        }
 
         /// <summary>
         /// Обработать запрос на вход в мессенджер
@@ -214,9 +200,9 @@ namespace ConsoleMessengerServer
             string resultOfOperation;
 
             // номер телефона есть
-            if(user != null)
+            if (user != null)
             {
-                if(user.Password == signInRequestDto.Password)
+                if (user.Password == signInRequestDto.Password)
                 {
                     List<Dialog> dialogs = _dbService.FindDialogsByUser(user);
 
@@ -251,7 +237,7 @@ namespace ConsoleMessengerServer
         /// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
         public void AddUserProxy(int userId, ServerNetworkProvider serverNetworkProvider)
         {
-            if(_userProxyList.ContainsKey(userId))
+            if (_userProxyList.ContainsKey(userId))
             {
                 _userProxyList[userId].AddConnection(serverNetworkProvider);
             }
@@ -418,7 +404,7 @@ namespace ConsoleMessengerServer
             DeleteDialogResponse deleteDialogResponse;
             string resultOfOperation = "";
 
-            if(dialog != null)
+            if (dialog != null)
             {
                 int interlocutorId = _dbService.GetInterlocutorId(deleteDialogRequestDto.DialogId, deleteDialogRequestDto.UserId);
 
@@ -518,27 +504,17 @@ namespace ConsoleMessengerServer
         /// </summary>
         /// <param name="user">Пользователь</param>
         /// <param name="serverNetworkProvider">Сетевой провайдер</param>
-        /// <param name="signUpRequestDto">Dto для запроса на регистрацию</param>
         /// <returns></returns>
-        private (string, SignUpResponse) CreateSignUpResponses(User? user, ServerNetworkProvider serverNetworkProvider, SignUpRequestDto signUpRequestDto)
+        private SignUpResponse CreateSignUpResponse(User? user, ServerNetworkProvider serverNetworkProvider)
         {
-            string responseForConsole;
-            SignUpResponse signUpResponse;
-
             if (user != null)
             {
                 AddUserProxy(user.Id, serverNetworkProvider);
 
-                signUpResponse = new SignUpResponse(user.Id, serverNetworkProvider.Id, NetworkResponseStatus.Successful);
-                responseForConsole = $"Код операции: {NetworkMessageCode.SignUpRequestCode}. Статус операции: {NetworkResponseStatus.Successful}. Пользователь: {user.ToString()}.";
-            }
-            else
-            {
-                signUpResponse = new SignUpResponse(NetworkResponseStatus.Failed);
-                responseForConsole = $"Код операции: {NetworkMessageCode.SignUpRequestCode}. Статус операции: {NetworkResponseStatus.Failed}. Данные о регистрации: {signUpRequestDto.ToString()}."; ;
+                return new SignUpResponse(user.Id, serverNetworkProvider.Id, NetworkResponseStatus.Successful);
             }
 
-            return (responseForConsole, signUpResponse);
+            return new SignUpResponse(NetworkResponseStatus.Failed);
         }
 
         private (string, SignInResponse) CreateSignInResponses(User? user, SignInRequestDto signInRequestDto, ServerNetworkProvider serverNetworkProvider)

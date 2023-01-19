@@ -38,7 +38,6 @@ namespace WpfMessengerClient
         /// Событие входа пользователя
         /// </summary>
         public readonly NetworkMessageHandlerEvent<SignInResponse> SignInResponseReceived;
-        //public event Action <SignInResponse> SignInResponseReceived;
 
         /// <summary>
         /// Событие выхода пользователя из мессенджера
@@ -49,56 +48,47 @@ namespace WpfMessengerClient
         /// Событие получение успешного результата поиска пользователя
         /// </summary>
         public readonly NetworkMessageHandlerEvent<UserSearchResponse> UserSearchResponseReceived;
-        //public event Action<UserSearchResponse> UserSearchResponseReceived;
 
         /// <summary>
         /// Событие - диалог создан, обработчик принимает в качестве аргумента ответ на создание нового диалога
         /// </summary>
         public readonly NetworkMessageHandlerEvent<CreateDialogResponse> CreateDialogResponseReceived;
-        //public event Action<CreateDialogResponse> CreateDialogResponseReceived;
 
         /// <summary>
         /// Событие - получили запрос на создание нового диалога
         /// </summary>
         public readonly NetworkMessageHandlerEvent<Dialog> CreateDialogRequestReceived;
-        //public event Action<Dialog> CreateDialogRequestReceived;
 
         /// <summary>
         /// Событие - получили ответ, что сообщение доставлено
         /// </summary>
         public readonly NetworkMessageHandlerEvent<SendMessageResponse> SendMessageResponseReceived;
-        //public event Action<SendMessageResponse> SendMessageResponseReceived;
 
         /// <summary>
         /// Событие - в диалоге появилось новое сообщение
         /// Либо сообщение получено от собеседника, либо сообщение отправил текущий пользователь с другого устройства
         /// </summary>
         public readonly NetworkMessageHandlerEvent<SendMessageRequest> DialogReceivedNewMessage;
-        //public event Action<SendMessageRequest> DialogReceivedNewMessage;
 
         /// <summary>
         /// Событие получения ответа на запрос обу удалении сообщения
         /// </summary>
         public readonly NetworkMessageHandlerEvent<DeleteMessageResponse> DeleteMessageResponseReceived;
-        //public event Action<DeleteMessageResponse> DeleteMessageResponseReceived;
 
         /// <summary>
         /// Событие получения запроса на удаление сообщения
         /// </summary>
         public readonly NetworkMessageHandlerEvent<DeleteMessageRequestForClient> DeleteMessageRequestForClientReceived;
-        //public event Action<DeleteMessageRequestForClient> DeleteMessageRequestForClientReceived;
 
         /// <summary>
         /// Событие получения ответа на запрос об удалении диалога
         /// </summary>
         public readonly NetworkMessageHandlerEvent<DeleteDialogResponse> DeleteDialogResponseReceived;
-        //public event Action<DeleteDialogResponse> DeleteDialogResponseReceived;
 
         /// <summary>
         /// Событие получения запроса на удаление диалога
         /// </summary>
         public readonly NetworkMessageHandlerEvent<DeleteDialogRequestForClient> DeleteDialogRequestForClientReceived;
-        //public event Action<DeleteDialogRequestForClient> DeleteDialogRequestForClientReceived;
 
         #endregion События
 

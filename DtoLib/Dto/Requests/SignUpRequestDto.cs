@@ -35,6 +35,10 @@ namespace DtoLib.Dto.Requests
         [ProtoMember(3)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Переопределение метода ToString
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"Телефон: {PhoneNumber}. Имя: {Name}";
