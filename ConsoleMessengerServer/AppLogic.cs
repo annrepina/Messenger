@@ -154,15 +154,6 @@ namespace ConsoleMessengerServer
             }
         }
 
-        public void ProcessNetworkMessage(NetworkMessage message)
-        {
-            //switch (networkMessage.Code)
-            //{
-
-            //}
-        }
-
-
         #endregion INetworkHandler Implementation
 
         /// <summary>

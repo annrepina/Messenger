@@ -11,7 +11,7 @@ namespace ConsoleMessengerServer.Net.Interfaces
     /// <summary>
     /// Интерфейс, который обрабатывает сетевые сообщения на стороне клиента
     /// </summary>
-    public interface IServerNetworkMessageHandler : INetworkMessageHandler
+    public interface IServerNetworkMessageHandler /*: INetworkMessageHandler*/
     {
         /// <summary>
         /// Обработать сетевое сообщение
