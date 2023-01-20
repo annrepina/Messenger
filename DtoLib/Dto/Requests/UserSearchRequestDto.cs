@@ -26,5 +26,16 @@ namespace DtoLib.Dto.Requests
         /// </summary>
         [ProtoMember(2)]
         public string PhoneNumber { get; set; }
+
+        public override string ToString()
+        {
+            if (String.IsNullOrEmpty(Name))
+                return $"Телефон: {PhoneNumber}.";
+
+            else if (String.IsNullOrEmpty(PhoneNumber))
+                return $"Имя: {Name}.";
+
+            return $"Имя: {Name}. Телефон: {PhoneNumber}.";
+        }
     }
 }

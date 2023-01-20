@@ -10,7 +10,7 @@ namespace DtoLib.NetworkServices
     /// <summary>
     /// Класс, который отвечает за пересылку байтов между клиентом и сервером.
     /// </summary>
-    public class Transmitter
+    public class Transmitter : ITransmitterAsync
     {
         /// <summary>
         /// Сетевой провайдер, который подключается к серверу
@@ -64,7 +64,7 @@ namespace DtoLib.NetworkServices
         /// <summary>
         /// Получить сетевое сообщение асинхронно
         /// </summary>
-        public async Task ReceiveNetworkMessageAsync()
+        public async Task RunReceivingBytesInLoop()
         {
             try
             {
@@ -73,9 +73,9 @@ namespace DtoLib.NetworkServices
                     // буфер для получаемых данных
                     byte[] data = await ReceiveBytesAsync();
 
-                    NetworkMessage networkMessage = SerializationHelper.Deserialize<NetworkMessage>(data);
-
-                    NetworkProvider.GetNetworkMessage(networkMessage);
+                    //NetworkMessage networkMessage = SerializationHelper.Deserialize<NetworkMessage>(data);
+                    //NetworkProvider.GetNetworkMessage(networkMessage);
+                    NetworkProvider.NotifyBytesReceived(data);
                 }
             }
             catch (Exception ex)

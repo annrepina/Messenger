@@ -11,7 +11,7 @@ namespace DtoLib.NetworkServices
     /// <summary>
     /// Сетевой провайдер, который подключается к серверу
     /// </summary>
-    public abstract class NetworkProvider
+    public abstract class NetworkProvider : INetworkProvider
     {
         /// <summary>
         /// Счетчик, на основе которого, объекту присваивается id
@@ -38,12 +38,7 @@ namespace DtoLib.NetworkServices
         /// <summary>
         /// Отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>
-        public Transmitter Transmitter { get; private set; }
-
-        ///// <summary>
-        ///// Отправитель сообщений на сервер
-        ///// </summary>
-        //public Sender Sender { get; private set; }
+        public ITransmitterAsync Transmitter { get; set; }
 
         #endregion Свойства 
 
@@ -75,6 +70,19 @@ namespace DtoLib.NetworkServices
         /// </summary>
         /// <param name="message">Сетевое сообщение</param>
         /// <returns></returns>
-        public abstract void GetNetworkMessage(NetworkMessage message);
+        public virtual void GetNetworkMessage(NetworkMessage message)
+        {
+
+        }
+
+        /// <summary>
+        /// Метод получения сетевого сообщения
+        /// </summary>
+        /// <param name="data">Массив получаемых байтов</param>
+        /// <returns></returns>
+        public virtual void NotifyBytesReceived(byte[] data)
+        {
+
+        }
     }
 }

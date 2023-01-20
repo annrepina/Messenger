@@ -20,11 +20,11 @@ namespace DtoLib.Dto.Responses
         [ProtoMember(1)]
         public int UserId { get; init; }
 
-        /// <summary>
-        /// Идентификатор сетевого провайдера, на котором была произведена регистрация
-        /// </summary>
-        [ProtoMember(2)]
-        public int NetworkProviderId { get; init; }
+        ///// <summary>
+        ///// Идентификатор сетевого провайдера, на котором была произведена регистрация
+        ///// </summary>
+        //[ProtoMember(2)]
+        //public int NetworkProviderId { get; init; }
 
         /// <summary>
         /// Статус ответа

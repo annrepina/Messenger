@@ -12,23 +12,34 @@ namespace ConsoleMessengerServer
     /// </summary>
     public class App : IDisposable
     {
-        private AppLogic _appLogic;
+        private NetworkMessageHandler _networkMessageHandler;
+
+        /// <summary>
+        /// Объект, управляющий работой со связью по сети
+        /// </summary>
+        private ConnectionController _connectionController;
 
         public App()
         {
-            _appLogic = new AppLogic();
+            _networkMessageHandler = new NetworkMessageHandler();
+            _connectionController = new ConnectionController();
+            _connectionController.ServerNetworkMessageHandler = _networkMessageHandler;
+            _networkMessageHandler.ConnectionController = _connectionController;
         }
 
         public void Dispose()
         {
-            _appLogic.Dispose();
+            //_networkMessageHandler.Dispose();
         }
+
+
 
         public async Task LaunchAsync()
         {
-            //_appLogic.DeleteNetworkProvidersFromDb();
+            //_networkMessageHandler.DeleteNetworkProvidersFromDb();
 
-            await _appLogic.StartListeningConnectionsAsync();
+            //await _networkMessageHandler.StartListeningConnectionsAsync();
+            await _connectionController.RunAsync();
         }
 
         /// <summary>
@@ -45,4 +56,3 @@ namespace ConsoleMessengerServer
         }
     }
 }
-

@@ -18,18 +18,18 @@ namespace ConsoleMessengerServer.Net
         /// <summary>
         /// Отвечает за работу с сетью
         /// </summary>
-        public INetworkController NetworkController { get; set; }
+        public IConnectionController ConnectionController { get; set; }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="tcpClient">TCP клиент</param>
-        /// <param name="networkController">Отвечает за работу с сетью</param>
-        public ServerNetworkProvider(TcpClient tcpClient, INetworkController networkController)
+        /// <param name="connectionController">Отвечает за работу с сетью</param>
+        public ServerNetworkProvider(TcpClient tcpClient, IConnectionController connectionController)
         {
             TcpClient = tcpClient;
             NetworkStream = TcpClient.GetStream();
-            NetworkController = networkController;
+            ConnectionController = connectionController;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ConsoleMessengerServer.Net
         {
             try
             {
-                await Transmitter.ReceiveNetworkMessageAsync();
+                await Transmitter.RunReceivingBytesInLoop();
             }
             catch (Exception ex)
             {
@@ -48,7 +48,7 @@ namespace ConsoleMessengerServer.Net
             }
             finally
             {
-                NetworkController.DisconnectClient(Id);
+                ConnectionController.DisconnectClient(Id);
                 CloseConnection();
             }
         }
@@ -63,10 +63,21 @@ namespace ConsoleMessengerServer.Net
             //if(message.Code == NetworkMessageCode.SignInRequestCode || message.Code == NetworkMessageCode.SignUpRequestCode
             //    || message.Code == NetworkMessageCode.SearchUserRequestCode || message.Code == NetworkMessageCode.SendMessageRequestCode
             //    || message.Code == NetworkMessageCode.CreateDialogRequestCode || message.Code == NetworkMessageCode.DeleteMessageRequestCode)
-                NetworkController.ProcessNetworkMessage(message, this);
+                //ConnectionController.ProcessNetworkMessage(message, this);
+
+            //ConnectionController.NotifyBytesReceived(Id);
           
             //else
-            //    NetworkController.ProcessNetworkMessage(message);
+            //    ConnectionController.ProcessNetworkMessage(message);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        public override void NotifyBytesReceived(byte[] data)
+        {
+            ConnectionController.NotifyBytesReceived(data, Id);
         }
     }
 }

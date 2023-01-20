@@ -88,6 +88,17 @@ namespace ConsoleMessengerServer
         }
 
         /// <summary>
+        /// Отправить ответ на сетевой провайдер, от которого пришел запрос
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="netWorkProviderId"></param>
+        /// <returns></returns>
+        public async Task SendResponseAsync(byte[] response, int netWorkProviderId)
+        {
+            await _connections.First(con => con.Id == netWorkProviderId).Transmitter.SendNetworkMessageAsync(response);
+        }
+
+        /// <summary>
         /// Закрыть все соединения
         /// </summary>
         public void CloseAll()

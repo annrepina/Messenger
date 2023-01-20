@@ -9,6 +9,7 @@ namespace DtoLib.NetworkServices
     public enum NetworkResponseStatus : byte
     {
         Successful,
-        Failed
+        Failed,
+        FatalError
     }
 }

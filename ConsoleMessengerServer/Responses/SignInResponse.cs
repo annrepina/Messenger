@@ -46,5 +46,10 @@ namespace ConsoleMessengerServer.Responses
             Dialogs = dialogs;
             Status = status;
         }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }

@@ -18,10 +18,10 @@ namespace ConsoleMessengerServer.Responses
         /// </summary>
         public int UserId { get; set; }
 
-        /// <summary>
-        /// Идентификатор сетевого провайдера, на котором была произведена регистрация
-        /// </summary>
-        public int NetworkProviderId { get; set; }
+        ///// <summary>
+        ///// Идентификатор сетевого провайдера, на котором была произведена регистрация
+        ///// </summary>
+        //public int NetworkProviderId { get; set; }
 
         /// <summary>
         /// Статус ответа
@@ -31,10 +31,10 @@ namespace ConsoleMessengerServer.Responses
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public SignUpResponse(int userId, int networkProviderId, NetworkResponseStatus status) : this(status)
+        public SignUpResponse(int userId, /*int networkProviderId, */NetworkResponseStatus status) : this(status)
         {
             UserId = userId;
-            NetworkProviderId = networkProviderId;
+            //NetworkProviderId = networkProviderId;
         }
 
         public SignUpResponse(NetworkResponseStatus status)

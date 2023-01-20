@@ -19,7 +19,7 @@ namespace ConsoleMessengerServer.Net
     /// </summary>
     public class Server
     {
-        private INetworkController NetworkHandler;
+        private IConnectionController _connectionController;
 
         /// <summary>
         /// Прослушиватель TCP подключений от клиентов
@@ -34,13 +34,13 @@ namespace ConsoleMessengerServer.Net
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public Server(INetworkController iNetworkHandler)
+        public Server(IConnectionController connectionController)
         {
             _port = 8888;
 
             _tcpListener = new TcpListener(IPAddress.Any, _port);
 
-            NetworkHandler = iNetworkHandler;
+            _connectionController = connectionController;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace ConsoleMessengerServer.Net
             {
                 TcpClient tcpClient = await _tcpListener.AcceptTcpClientAsync();
 
-                NetworkHandler.InitializeNewConnection(tcpClient);
+                _connectionController.InitializeNewConnection(tcpClient);
             }
         }
 

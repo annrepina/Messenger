@@ -83,7 +83,7 @@ namespace WpfMessengerClient.Services
                         await Transmitter.SendNetworkMessageAsync(messageBytes);
                     }
 
-                    await Task.Run(() => Transmitter.ReceiveNetworkMessageAsync());
+                    await Task.Run(() => Transmitter.RunReceivingBytesInLoop());
                 }
             }
             catch (Exception ex)

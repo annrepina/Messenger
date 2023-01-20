@@ -24,5 +24,10 @@ namespace DtoLib.Dto.Requests
         /// </summary>
         [ProtoMember(2)]
         public string Password { get; set; }
+
+        public override string ToString()
+        {
+            return $"Телефон: {PhoneNumber}.";
+        }
     }
 }

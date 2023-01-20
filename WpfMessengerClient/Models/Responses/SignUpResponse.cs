@@ -17,10 +17,10 @@ namespace WpfMessengerClient.Models.Responses
         /// </summary>
         public int UserId { get; init; }
 
-        /// <summary>
-        /// Идентификатор сетевого провайдера, на котором была произведена регистрация
-        /// </summary>
-        public int NetworkProviderId { get; init; }
+        ///// <summary>
+        ///// Идентификатор сетевого провайдера, на котором была произведена регистрация
+        ///// </summary>
+        //public int NetworkProviderId { get; init; }
 
         /// <summary> 
         /// Статус ответа на сетевой запрос
@@ -30,10 +30,10 @@ namespace WpfMessengerClient.Models.Responses
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public SignUpResponse(int userId, int networkProviderId, NetworkResponseStatus status)
+        public SignUpResponse(int userId, /*int networkProviderId, */NetworkResponseStatus status)
         {
             UserId = userId;
-            NetworkProviderId = networkProviderId;
+            //NetworkProviderId = networkProviderId;
             Status = status;
         }
     }
