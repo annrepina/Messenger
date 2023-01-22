@@ -1,12 +1,11 @@
-﻿using ConsoleMessengerServer.Net;
-using DtoLib.NetworkServices;
+﻿using DtoLib.NetworkServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleMessengerServer
+namespace ConsoleMessengerServer.Net
 {
     /// <summary>
     /// Класс - аггрегатор всех соединений одного пользователя
@@ -17,7 +16,7 @@ namespace ConsoleMessengerServer
         /// Список сетевых провайдеров, которые подключены к серверу 
         /// и в которых выполнен вход в учетную запись пользователя
         /// </summary>
-        private List<ServerNetworkProvider> _connections;
+        private List<INetworkProvider> _connections;
 
         /// <summary>
         /// Свойство - идентификатор
@@ -31,14 +30,14 @@ namespace ConsoleMessengerServer
         public UserProxy(int id)
         {
             Id = id;
-            _connections = new List<ServerNetworkProvider>();
+            _connections = new List<INetworkProvider>();
         }
 
         /// <summary>
         /// Добавить соединение
         /// </summary>
         /// <param name="serverNetworkProvider">Сетевой провайдер, на котором произошло подключение</param>
-        public void AddConnection(ServerNetworkProvider serverNetworkProvider)
+        public void AddConnection(INetworkProvider serverNetworkProvider)
         {
             _connections.Add(serverNetworkProvider);
         }
@@ -47,7 +46,7 @@ namespace ConsoleMessengerServer
         /// Транслировать асинхронно сетевое сообщение всем сетевым провайдерам на которых подключен пользователь
         /// </summary>
         /// <param name="networkMessage">Сетевое сообщение</param>
-        public async Task BroadcastNetworkMessageAsync(/*NetworkMessage networkMessage*/byte[] messageBytes) 
+        public async Task BroadcastNetworkMessageAsync(/*NetworkMessage networkMessage*/byte[] messageBytes)
         {
             try
             {
@@ -64,19 +63,19 @@ namespace ConsoleMessengerServer
         }
 
         /// <summary>
-        /// Перегрузка метода BroadcastNetworkMessageAsync
+        /// Перегрузка метода BroadcastNetworkMessageToInterLocutorAsync
         /// Транслировать асинхронно сетевое сообщение всем сетевым провайдерам на которых подключен пользователь, кроме того, который передан в метод
         /// </summary>
         /// <param name="networkMessage">Сетевое сообщение</param>
         /// <param name="networkProvider">Сетевой провайдер на стороне сервера</param>
         /// <returns></returns>
-        public async Task BroadcastNetworkMessageAsync(/*NetworkMessage networkMessage*/byte[] messageBytes, ServerNetworkProvider networkProvider)
+        public async Task BroadcastNetworkMessageAsync(byte[] messageBytes, int networkProviderId)
         {
             try
             {
                 foreach (ServerNetworkProvider serverNetworkProvider in _connections)
                 {
-                    if(serverNetworkProvider != networkProvider)
+                    if (serverNetworkProvider.Id != networkProviderId)
                         await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
                 }
             }
@@ -101,12 +100,12 @@ namespace ConsoleMessengerServer
         /// <summary>
         /// Закрыть все соединения
         /// </summary>
-        public void CloseAll()
-        {
-            foreach (var provider in _connections)
-            {
-                provider.CloseConnection();
-            }
-        }
+        //public void CloseAll()
+        //{
+        //    foreach (var provider in _connections)
+        //    {
+        //        provider.CloseConnection();
+        //    }
+        //}
     }
 }

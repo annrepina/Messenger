@@ -19,7 +19,12 @@ namespace ConsoleMessengerServer
 
         public static void PrintResponseReport(NetworkMessageCode code, NetworkResponseStatus status, string info)
         {
-            Console.WriteLine($"Код операции: {code}. Статус операции: {status}. " + info);
+            Console.WriteLine($"Ответ: код операции: {code}. Статус ответа: {status}. " + info);
+        }
+
+        public static void PrintResponseReport(NetworkMessageCode code, NetworkResponseStatus status)
+        {
+            Console.WriteLine($"Ответ: код операции: {code}. Статус ответа: {status}.");
         }
     }
 }

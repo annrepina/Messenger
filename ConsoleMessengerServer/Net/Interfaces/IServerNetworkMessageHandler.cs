@@ -11,19 +11,12 @@ namespace ConsoleMessengerServer.Net.Interfaces
     /// <summary>
     /// Интерфейс, который обрабатывает сетевые сообщения на стороне клиента
     /// </summary>
-    public interface IServerNetworkMessageHandler /*: INetworkMessageHandler*/
+    public interface IServerNetworkMessageHandler
     {
         /// <summary>
         /// Объект, управляющий связью по сети
         /// </summary>
         public IConnectionController ConnectionController { set; }
-
-        ///// <summary>
-        ///// Обработать сетевое сообщение
-        ///// </summary>
-        ///// <param name="message">Сетевое сообщение</param>
-        ///// <param name="serverNetworkProvider">Сетевой провайдер на стороне сервера</param>
-        //public Task ProcessNetworkMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider);
 
         /// <summary>
         /// Обрабатывает массив байтов переданных по сети
@@ -31,6 +24,6 @@ namespace ConsoleMessengerServer.Net.Interfaces
         /// <param name="data">Полученный массив байтов</param>
         /// <param name="senderId">Идентификатор отправителя</param>
         /// <returns></returns>
-        public Task ProcessDataAsync(byte[] data, int senderId);
+        public byte[] ProcessData(byte[] data, int senderId);
     }
 }

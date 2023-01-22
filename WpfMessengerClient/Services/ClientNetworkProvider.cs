@@ -13,6 +13,7 @@ using DtoLib.NetworkServices;
 using WpfMessengerClient.ViewModels;
 using WpfMessengerClient.Models;
 using DtoLib.NetworkInterfaces;
+using DtoLib.Serialization;
 
 namespace WpfMessengerClient.Services
 {
@@ -99,14 +100,19 @@ namespace WpfMessengerClient.Services
             }
         }
 
-        /// <summary>
-        /// Асинхронный метод получения сетевого сообщения
-        /// </summary>
-        /// <param _name="_message">Сетевое сообщение</param>
-        /// <returns></returns>
-        public override void GetNetworkMessage(NetworkMessage message)
+
+        //public override void GetNetworkMessage(NetworkMessage message)
+        //{
+        //    NetworkMessageHandler.ProcessNetworkMessage(message);
+        //}
+
+        public override void NotifyBytesReceived(byte[] data)
         {
+            NetworkMessage message = SerializationHelper.Deserialize<NetworkMessage>(data);
+
             NetworkMessageHandler.ProcessNetworkMessage(message);
+
+            //throw new NotImplementedException();
         }
 
         #endregion Методы связанные с сетью

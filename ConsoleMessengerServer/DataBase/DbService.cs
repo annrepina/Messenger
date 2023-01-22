@@ -158,7 +158,7 @@ namespace ConsoleMessengerServer.DataBase
             return res;
         }
 
-        public Dialog? CreateDialog(CreateDialogRequestDto dto)
+        public Dialog CreateDialog(CreateDialogRequestDto dto)
         {   
             try
             {
@@ -184,24 +184,17 @@ namespace ConsoleMessengerServer.DataBase
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //throw;
-                //return null;
+                throw;
             }
-
-            return null;
         }
 
-        public Dialog? FindDialog(int dialogId)
+        public Dialog? FindDialog(DeleteDialogRequestDto deleteDialogRequestDto)
         {
-            Dialog? dialog = null;
-
             try
             {
                 using (var dbContext = new MessengerDbContext())
                 {
-                    dialog = dbContext.Dialogs.FirstOrDefault(dial => dial.Id == dialogId);
-
-                    return dialog;
+                    return dbContext.Dialogs.Include(d => d.Users).FirstOrDefault(dial => dial.Id == deleteDialogRequestDto.DialogId);
                 }
             }
             catch (Exception ex)
@@ -216,24 +209,22 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="request">запрос на отправку сообщения</param>
         /// <returns></returns>
-        public Message AddMessage(SendMessageRequest request)
+        public Message AddMessage(/*SendMessageRequest request*/SendMessageRequestDto sendMessageRequestDto)
         {
-            Message message;
-
             try
             {
                 using (var dbContext = new MessengerDbContext())
                 {
-                    message = request.Message;
+                    Message message = _mapper.Map<Message>(sendMessageRequestDto.Message);
 
                     var user = dbContext.Users.Include(user => user.Dialogs).First(user => user.Id == message.UserSender.Id);
-                    var dialog = dbContext.Dialogs.Include(dial => dial.Users).First(dialog => dialog.Id == request.DialogId);
+                    var dialog = dbContext.Dialogs.Include(dial => dial.Users).First(dialog => dialog.Id == sendMessageRequestDto.DialogId);
 
                     message.UserSender = user;
                     message.Dialog = dialog;
 
                     //
-                    message = new Message() { Text = "dfsfdsf" };
+                    //message = new Message() { Text = "dfsfdsf" };
 
                     dbContext.Messages.Add(message);
                     dbContext.SaveChanges();
@@ -278,16 +269,20 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="messageId">Id сообщения</param>
         /// <returns></returns>
-        public Message? FindMessage(int messageId)
+        public Message? FindMessage(DeleteMessageRequestDto deleteMessageRequestDto)
         {
-            Message message = null;
-
-            using(var dbContext = new MessengerDbContext())
+            try
             {
-                message = dbContext.Messages.FirstOrDefault(mes => mes.Id == messageId);
+                using(var dbContext = new MessengerDbContext())
+                {
+                    return dbContext.Messages.Include(mes => mes.Dialog).Include(mes => mes.UserSender).FirstOrDefault(mes => mes.Id == deleteMessageRequestDto.MessageId);
+                }
             }
-
-            return message;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }          
         }
 
         /// <summary>

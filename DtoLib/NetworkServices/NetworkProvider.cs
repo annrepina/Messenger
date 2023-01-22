@@ -65,24 +65,18 @@ namespace DtoLib.NetworkServices
                 TcpClient.Close();
         }
 
-        /// <summary>
-        /// Метод получения сетевого сообщения
-        /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
-        /// <returns></returns>
-        public virtual void GetNetworkMessage(NetworkMessage message)
-        {
-
-        }
+        ///// <summary>
+        ///// Метод получения сетевого сообщения
+        ///// </summary>
+        ///// <param name="message">Сетевое сообщение</param>
+        ///// <returns></returns>
+        //public abstract void GetNetworkMessage(NetworkMessage message);
 
         /// <summary>
         /// Метод получения сетевого сообщения
         /// </summary>
         /// <param name="data">Массив получаемых байтов</param>
         /// <returns></returns>
-        public virtual void NotifyBytesReceived(byte[] data)
-        {
-
-        }
+        public abstract void NotifyBytesReceived(byte[] data);
     }
 }

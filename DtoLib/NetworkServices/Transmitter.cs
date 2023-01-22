@@ -15,13 +15,14 @@ namespace DtoLib.NetworkServices
         /// <summary>
         /// Сетевой провайдер, который подключается к серверу
         /// </summary>
-        public NetworkProvider NetworkProvider { get; private set; }
+        public INetworkProvider NetworkProvider { get; private set; }
+
 
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
         /// <param name="networkProvider">Сетевой провайдер</param>
-        public Transmitter(NetworkProvider networkProvider)
+        public Transmitter(INetworkProvider networkProvider)
         {
             NetworkProvider = networkProvider;
         }

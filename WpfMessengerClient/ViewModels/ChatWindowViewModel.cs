@@ -624,8 +624,6 @@ namespace WpfMessengerClient.ViewModels
 
             dialog.CurrentUser = CurrentUser;
             Application.Current.Dispatcher.Invoke(() => Dialogs.Insert(0, dialog));
-
-            //Dialogs.Insert(0, dialog);
         }
 
         /// <summary>
@@ -926,7 +924,6 @@ namespace WpfMessengerClient.ViewModels
             {
                 if (SelectedUser.Id == ActiveDialog.Users.First(user => user.Id != ActiveDialog.CurrentUser.Id).Id)
                 {
-                    //CheckSelectedUser();
                     IsGreetingMessageTextBoxAvailable = true;
                     IsGreetingMessageTextBoxVisible = true;
                     OpenDialogButtonText = "Поприветствовать";

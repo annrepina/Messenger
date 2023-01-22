@@ -1,5 +1,4 @@
-﻿using ConsoleMessengerServer.Net;
-using ConsoleMessengerServer.Net.Interfaces;
+﻿using ConsoleMessengerServer.Net.Interfaces;
 using DtoLib.NetworkServices;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleMessengerServer
+namespace ConsoleMessengerServer.Net
 {
     /// <summary>
     /// Класс, который отвечает за соединение
@@ -26,7 +25,7 @@ namespace ConsoleMessengerServer
         /// Key: Id сетевого провайдера.
         /// Value - объект сетевого провайдера
         /// </summary>
-        private Dictionary<int, ServerNetworkProvider> _networkProvidersBuffer;
+        private Dictionary<int, INetworkProvider> _networkProvidersBuffer;
 
         /// <inheritdoc cref="ServerNetworkMessageHandler"/>
         private IServerNetworkMessageHandler _serverNetworkMessageHandler;
@@ -35,24 +34,17 @@ namespace ConsoleMessengerServer
         /// Сервер, который прослушивает входящие подключения
         /// </summary>
         public Server Server { get; set; }
-        
+
         /// <summary>
         /// Обработчик сетевого сообщения
         /// </summary>
-        public IServerNetworkMessageHandler ServerNetworkMessageHandler 
-        { 
-            set
-            {
-                _serverNetworkMessageHandler = value;
-            }
-        }
+        public IServerNetworkMessageHandler ServerNetworkMessageHandler { set => _serverNetworkMessageHandler = value; }
 
         public ConnectionController()
         {
             Server = new Server(this);
             _userProxyList = new Dictionary<int, UserProxy>();
-            _networkProvidersBuffer = new Dictionary<int, ServerNetworkProvider>();
-            //ServerNetworkMessageHandler = serverNetworkMessageHandler;
+            _networkProvidersBuffer = new Dictionary<int, INetworkProvider>();
         }
 
         /// <summary>
@@ -90,7 +82,7 @@ namespace ConsoleMessengerServer
         {
             foreach (var client in _userProxyList.Values)
             {
-                client.CloseAll();
+                //client.CloseAll();
             }
         }
 
@@ -107,18 +99,24 @@ namespace ConsoleMessengerServer
             Console.WriteLine($"Клиент {networkProvider.Id} подключился ");
 
             Task.Run(() => networkProvider.ProcessNetworkMessagesAsync());
-        }        
-
-        public Task ProcessNetworkMessage(NetworkMessage message, ServerNetworkProvider serverNetworkProvider)
-        {
-            throw new NotImplementedException();
         }
 
-        public void NotifyBytesReceived(byte[] bytes, int networkProviderId)
+        public void NotifyBytesReceived(byte[] bytes, INetworkProvider NetworkProvider)
         {
-            _serverNetworkMessageHandler.ProcessDataAsync(bytes, networkProviderId);
+            byte[] response = _serverNetworkMessageHandler.ProcessData(bytes, NetworkProvider.Id);
 
-            
+            NetworkProvider.Transmitter.SendNetworkMessageAsync(response);
+        }
+
+        public async Task BroadcastNetworkMessageToSenderAsync(byte[] messageBytes, int userId, int networkMessageId)
+        {
+            await _userProxyList[userId].BroadcastNetworkMessageAsync(messageBytes, networkMessageId);
+        }
+
+        public async Task BroadcastNetworkMessageToInterlocutorAsync(byte[] messageBytes, int interlocutorId)
+        {
+            if (_userProxyList.ContainsKey(interlocutorId))
+                await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(messageBytes);
         }
 
         //todo Реализовать вызов метода
@@ -128,26 +126,6 @@ namespace ConsoleMessengerServer
 
             Server.Stop();
         }
-
-        ///// <summary>
-        ///// Создать агрегатора всех подключений определенного пользователя
-        ///// </summary>
-        ///// <param name="userId">Идентификатор пользователя</param>
-        ///// <param name="serverNetworkProvider">Серверный сетевой провайдер</param>
-        //public void AddUserProxy(int userId, ServerNetworkProvider serverNetworkProvider)
-        //{
-        //    if (_userProxyList.ContainsKey(userId))
-        //    {
-        //        _userProxyList[userId].AddConnection(serverNetworkProvider);
-        //    }
-        //    else
-        //    {
-        //        UserProxy userProxy = new UserProxy(userId);
-        //        userProxy.AddConnection(serverNetworkProvider);
-
-        //        _userProxyList.Add(userId, userProxy);
-        //    }
-        //}
 
         public void AddNewSession(int userId, int networkProviderId)
         {
@@ -164,16 +142,6 @@ namespace ConsoleMessengerServer
             }
 
             _networkProvidersBuffer.Remove(networkProviderId);
-        }
-
-        public void SendResponseToVerifiedUser(byte[] response, int userId, int networkProviderId)
-        {
-            _userProxyList[userId].SendResponseAsync(response, networkProviderId);
-        }
-
-        public void SendResponseToNetworkProvider(byte[] response, int networkProviderId)
-        {
-            _networkProvidersBuffer[networkProviderId].Transmitter.SendNetworkMessageAsync(response);
         }
     }
 }

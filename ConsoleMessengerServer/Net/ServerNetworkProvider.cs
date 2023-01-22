@@ -54,30 +54,12 @@ namespace ConsoleMessengerServer.Net
         }
 
         /// <summary>
-        /// Метод получения сетевого сообщения
-        /// </summary>
-        /// <param name="message">Сетевое сообщение</param>
-        /// <returns></returns>
-        public override void GetNetworkMessage(NetworkMessage message)
-        {
-            //if(message.Code == NetworkMessageCode.SignInRequestCode || message.Code == NetworkMessageCode.SignUpRequestCode
-            //    || message.Code == NetworkMessageCode.SearchUserRequestCode || message.Code == NetworkMessageCode.SendMessageRequestCode
-            //    || message.Code == NetworkMessageCode.CreateDialogRequestCode || message.Code == NetworkMessageCode.DeleteMessageRequestCode)
-                //ConnectionController.ProcessNetworkMessage(message, this);
-
-            //ConnectionController.NotifyBytesReceived(Id);
-          
-            //else
-            //    ConnectionController.ProcessNetworkMessage(message);
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="data"></param>
         public override void NotifyBytesReceived(byte[] data)
         {
-            ConnectionController.NotifyBytesReceived(data, Id);
+            ConnectionController.NotifyBytesReceived(data, this);
         }
     }
 }

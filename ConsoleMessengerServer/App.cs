@@ -36,9 +36,6 @@ namespace ConsoleMessengerServer
 
         public async Task LaunchAsync()
         {
-            //_networkMessageHandler.DeleteNetworkProvidersFromDb();
-
-            //await _networkMessageHandler.StartListeningConnectionsAsync();
             await _connectionController.RunAsync();
         }
 

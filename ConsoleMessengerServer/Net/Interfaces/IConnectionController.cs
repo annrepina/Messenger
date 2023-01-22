@@ -1,4 +1,5 @@
 ﻿using DtoLib.NetworkInterfaces;
+using DtoLib.NetworkServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ConsoleMessengerServer.Net.Interfaces
     /// <summary>
     /// Интерфейс, который управляет работой с сетью
     /// </summary>
-    public interface IConnectionController /*: IServerNetworkMessageHandler*/
+    public interface IConnectionController
     {
         /// <summary>
         /// Обработчик получения сетевых сообщений
@@ -40,24 +41,12 @@ namespace ConsoleMessengerServer.Net.Interfaces
         /// </summary>
         /// <param name="bytes">Массив полученных байтов</param>
         /// <param name="networkProviderId">Id сетевого провайдера</param>
-        public void NotifyBytesReceived(byte[] bytes, int networkProviderId);
+        public void NotifyBytesReceived(byte[] bytes, INetworkProvider NetworkProvider);
 
         public void AddNewSession(int userId, int networkProviderId);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="userId"></param>
-        /// <param name="networkProviderId"></param>
-        /// <returns></returns>
-        public void SendResponseToVerifiedUser(byte[] response, int userId, int networkProviderId);
+        public Task BroadcastNetworkMessageToSenderAsync(byte[] messageBytes, int userId, int networkProviderId);
 
-        /// <summary>
-        /// Отправить ответ сетевому провайдеру за которым не числятся пользователи
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="networkProviderId"></param>
-        public void SendResponseToNetworkProvider(byte[] response, int networkProviderId);  
+        public Task BroadcastNetworkMessageToInterlocutorAsync(byte[] messageBytes, int userId);
     }
 }

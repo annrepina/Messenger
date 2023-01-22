@@ -26,7 +26,7 @@ namespace DtoLib.Dto.Responses
         [ProtoMember(2)]
         public int MessageId { get; set; }
 
-        [ProtoMember(3)]
-        public NetworkResponseStatus Status { get; init; }
+        //[ProtoMember(3)]
+        //public NetworkResponseStatus Status { get; init; }
     }
 }

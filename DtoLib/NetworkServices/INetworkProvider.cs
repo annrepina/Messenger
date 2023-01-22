@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,9 +13,19 @@ namespace DtoLib.NetworkServices
     public interface INetworkProvider
     {
         /// <summary>
+        /// Идентификатор
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
         /// Отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>
         public ITransmitterAsync Transmitter { get; set; }
+
+        /// <summary>
+        /// Сетевой поток, по которому будет осуществляться передача данных
+        /// </summary>
+        public NetworkStream NetworkStream { get; set; }
 
         /// <summary>
         /// Уведомить о получении массива байтов

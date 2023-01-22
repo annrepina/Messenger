@@ -21,5 +21,10 @@ namespace DtoLib.Dto.Requests
         /// </summary>
         [ProtoMember(2)]
         public int UserId { get; init; }
+
+        public override string ToString()
+        {
+            return $"Пользователь - Id: {UserId} отправил запрос на удаление диалога - Id: {DialogId}.";
+        }
     }
 }

@@ -22,7 +22,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0">
+        <!--<Grid Grid.Row="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="2*"/>
@@ -31,11 +31,11 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="3*"/>
-            </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Content="Назад" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Style="{StaticResource RoundedButton}"
-                    Margin="40, 20, 40, 20" 
+            </Grid.RowDefinitions>-->
+            <Button Grid.Row="0" Grid.Column="0" Content="Назад" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" Style="{StaticResource RoundedButton}"
+                    Margin="10, 10, 0, 0" Height="50" Width="120"
                     IsEnabled="{Binding IsControlsAvailable}" Command="{Binding BackCommand}"/>
-        </Grid>
+        <!--</Grid>-->
 
         <Grid Grid.Column="1" Grid.Row="1" Background="AliceBlue">
             <Grid.RowDefinitions>

@@ -26,5 +26,10 @@ namespace DtoLib.Dto.Requests
         /// </summary>
         [ProtoMember(2)]
         public int DialogId { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id диалога: {DialogId}. Id отправителя: {Message.UserSender.Id}. Текст сообщения: {Message.Text}";
+        }
     }
 }

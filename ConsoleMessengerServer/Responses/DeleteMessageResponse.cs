@@ -10,9 +10,9 @@ namespace ConsoleMessengerServer.Responses
     /// <summary>
     /// Ответ на запрос на удаление сообщения
     /// </summary>
-    public class DeleteMessageResponse
+    public class DeleteMessageResponse : IResponse
     {
-        public NetworkResponseStatus Status { get; init; }
+        public NetworkResponseStatus Status { get; set; }
 
         public DeleteMessageResponse(NetworkResponseStatus status)
         {

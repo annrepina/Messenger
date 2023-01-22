@@ -33,11 +33,11 @@
 
         <Grid Grid.Row="0" Grid.Column="0" Background="#FF021F38">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="65"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="6*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Margin="2, 0, 5, 0">
+            <Border Margin="2, 0, 3, 0">
                 <Border.Resources>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="White"/>
@@ -48,7 +48,7 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Resources>
-                <Button Margin="0,5,0,5" Style="{StaticResource RoundedButton}"
+                <Button Margin="0,5,0,5" Style="{StaticResource RoundedButton}" Width="60"
                              IsEnabled="{Binding IsExitButtonAvailable}" Command="{Binding ExitCommand}">
                     <Button.Background>
                         <ImageBrush Stretch="Uniform" ImageSource="/Windows/logout (1).png">
@@ -127,7 +127,7 @@
                     </Style>
                 </TabControl.Resources>
 
-                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" >
+                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Width="60" >
                     <TabItem.Header>
                         <StackPanel>
                             <Image Height="35" Width="30" Source="/Windows/chat.png" />
@@ -169,7 +169,7 @@
                 </TabItem>
 
 
-                <TabItem FontFamily="Tahoma" FontSize="15" Background="{x:Null}">
+                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Width="60" >
                     <TabItem.Header>
                         <StackPanel Orientation="Vertical">
                             <Image Height="35" Width="30" Panel.ZIndex="10" Source="/Windows/magnifier.png" />

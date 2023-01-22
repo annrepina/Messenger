@@ -11,7 +11,7 @@ namespace ConsoleMessengerServer.Responses
     /// <summary>
     /// Класс, который представляет данные представляющихе ответ на успешную регистрацию пользователя в мессенджере
     /// </summary>
-    public class SignUpResponse
+    public class SignUpResponse : IResponse
     {
         /// <summary>
         /// Идентификатор пользователя
@@ -26,7 +26,7 @@ namespace ConsoleMessengerServer.Responses
         /// <summary>
         /// Статус ответа
         /// </summary>
-        public NetworkResponseStatus Status { get; init; }
+        public NetworkResponseStatus Status { get; set; }
 
         /// <summary>
         /// Конструктор по умолчанию

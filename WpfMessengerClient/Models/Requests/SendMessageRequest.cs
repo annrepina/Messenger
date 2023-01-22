@@ -23,15 +23,6 @@ namespace WpfMessengerClient.Models.Requests
         public int DialogId { get; set; }
 
         /// <summary>
-        /// Конструктор по умолчанию
-        /// </summary>
-        public SendMessageRequest()
-        {
-            Message = new Message();
-            DialogId = 0;
-        }
-
-        /// <summary>
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="message">Сообщение</param>
