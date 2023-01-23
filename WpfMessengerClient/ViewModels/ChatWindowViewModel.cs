@@ -491,13 +491,13 @@ namespace WpfMessengerClient.ViewModels
             OpenDialogButtonText = "Поприветствовать";
             IsOpenDialogButtonAvailable = false;
 
-            Message = new Message("", CurrentUser, true);
+            Message = new Message("", CurrentUser, true, true);
             DeleteMessageCommand = new DelegateCommand(async () => await OnDeleteMessageCommand());
             SendMessageCommand = new DelegateCommand(async () => await OnSendMessageCommand());
 
             ExitCommand = new DelegateCommand(async () => await OnExitCommand());
 
-            GreetingMessage = new Message("", CurrentUser, true);
+            GreetingMessage = new Message("", CurrentUser, true, true);
             IsGreetingMessageTextBoxAvailable = false;
             IsGreetingMessageTextBoxVisible = false;
 
@@ -614,7 +614,10 @@ namespace WpfMessengerClient.ViewModels
                 dialog.Messages.First().IsCurrentUserMessage = true;
 
             else
+            {
                 dialog.Messages.First().IsCurrentUserMessage = false;
+                dialog.Messages.First().IsRead = false;
+            }
 
             dialog.CurrentUser = CurrentUser;
 
@@ -638,6 +641,14 @@ namespace WpfMessengerClient.ViewModels
 
             else
                 message.IsCurrentUserMessage = true;
+
+            if( ActiveDialog != null )
+            {
+                if (sendMessageRequest.DialogId != ActiveDialog.Id)
+                    message.IsRead = false;
+                else
+                    message.IsRead = true;
+            }
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -736,7 +747,7 @@ namespace WpfMessengerClient.ViewModels
                 IsSendButtonAvailable = false;
 
                 Message newMessage = Message;
-                Message = new Message("", CurrentUser, true);
+                Message = new Message("", CurrentUser, true, true);
 
                 SendMessageRequest sendMessageRequest = new SendMessageRequest(newMessage, ActiveDialog.Id);
 

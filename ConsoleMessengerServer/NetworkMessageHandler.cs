@@ -12,7 +12,7 @@ using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
-using System.Data.Entity.Core;
+//using System.Data.Entity.Core;
 using System.Net.Sockets;
 
 namespace ConsoleMessengerServer

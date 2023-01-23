@@ -185,12 +185,12 @@ namespace WpfMessengerClient.Models
         /// <param _name="text">Текст сообщения</param>
         /// <param _name="senderUserAccount">Данные о пользователе - отправителе сообщения</param>
         /// <param _name="dialog">Диалог, в котором существует сообщение</param>
-        public Message(string text, User senderUserAccount, bool isCurrentUserMessage)
+        public Message(string text, User senderUserAccount, bool isCurrentUserMessage, bool isRead = false)
         {
             Id = 0;
             _text = text;
             _userSender = senderUserAccount;
-            _isRead = false;
+            _isRead = isRead;
             _dateTime = DateTime.Now;
             IsCurrentUserMessage = isCurrentUserMessage;
         }
