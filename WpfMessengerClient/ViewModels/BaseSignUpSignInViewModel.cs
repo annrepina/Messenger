@@ -56,9 +56,9 @@ namespace WpfMessengerClient.ViewModels
         /// Конструктор с параметром
         /// </summary>
         /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
-        public BaseSignUpSignInViewModel(MessengerWindowsManager messengerWindowsManager)
+        public BaseSignUpSignInViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler)
         {
-            _networkMessageHandler = new NetworkMessageHandler();
+            _networkMessageHandler = networkMessageHandler;
 
             BackCommand = new DelegateCommand(GoBack);
             _messengerWindowsManager = messengerWindowsManager;

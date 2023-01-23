@@ -97,6 +97,9 @@ namespace ConsoleMessengerServer
                 case NetworkMessageCode.DeleteDialogRequestCode:
                     return ProcessDeleteDialogRequest(networkMessage, networkProviderId);
 
+                case NetworkMessageCode.SignOutRequestCode:
+                    return ProcessSignOutRequest(networkMessage, networkProviderId);
+
                 default:
                     return new byte[] {};
             }
@@ -192,7 +195,7 @@ namespace ConsoleMessengerServer
         /// Обработать запрос на отправку сообщения
         /// </summary>
         /// <param name="networkMessage">Сетевое сообщение</param>
-        /// <param name="serverNetworkProvider">Сетевой провайдер на стороне сервера</param>
+        /// <param name="networkProviderId">Сетевой провайдер на стороне сервера</param>
         private byte[] ProcessSendMessageRequest(NetworkMessage networkMessage, int networkProviderId)
         {
             SendMessageRequestDto sendMessageRequestDto = SerializationHelper.Deserialize<SendMessageRequestDto>(networkMessage.Data);
@@ -227,6 +230,26 @@ namespace ConsoleMessengerServer
 
             ReportPrinter.PrintRequestReport(networkMessage.Code, deleteDialogRequestDto.ToString());
             ReportPrinter.PrintResponseReport(NetworkMessageCode.DeleteDialogResponseCode, deleteDialogResponse.Status);
+
+            return responseBytes;
+        }
+
+        private byte[] ProcessSignOutRequest(NetworkMessage networkMessage, int networkProviderId)
+        {
+            SignOutRequestDto signOutRequestDto = SerializationHelper.Deserialize<SignOutRequestDto>(networkMessage.Data);
+
+            SignOutResponse signOutResponse;
+
+            if (_conectionController.TryDisconnectUser(signOutRequestDto.UserId, networkProviderId) == true)
+                signOutResponse = new SignOutResponse(NetworkResponseStatus.Successful);
+            
+            else
+                signOutResponse = new SignOutResponse(NetworkResponseStatus.Failed);
+
+            byte[] responseBytes = CreateNetworkMessageBytes<SignOutResponse, SignOutResponseDto>(signOutResponse, NetworkMessageCode.SignOutResponseCode);
+
+            ReportPrinter.PrintRequestReport(networkMessage.Code, signOutRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(NetworkMessageCode.SignOutResponseCode, signOutResponse.Status);
 
             return responseBytes;
         }

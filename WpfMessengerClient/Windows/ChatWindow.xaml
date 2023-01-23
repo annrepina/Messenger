@@ -95,7 +95,7 @@
 
         <DockPanel Background="#FF001323" Grid.Row="1" Grid.Column="0" Margin="0" >
 
-            <TabControl TabStripPlacement="Left"  Margin="0,5,5,0" Background="Transparent" BorderThickness="0">
+            <TabControl TabStripPlacement="Left" Margin="0,5,5,0" Background="Transparent" BorderThickness="0">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -127,7 +127,7 @@
                     </Style>
                 </TabControl.Resources>
 
-                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Width="60" >
+                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" >
                     <TabItem.Header>
                         <StackPanel>
                             <Image Height="35" Width="30" Source="/Windows/chat.png" />
@@ -159,8 +159,7 @@
                                  
                                 Text="{Binding Title}" 
                                 MaxWidth="{Binding RelativeSource=
-                                {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}" 
-                                />
+                                {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"/>
                                 </StackPanel>
 
                             </DataTemplate>
@@ -169,7 +168,7 @@
                 </TabItem>
 
 
-                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Width="60" >
+                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" >
                     <TabItem.Header>
                         <StackPanel Orientation="Vertical">
                             <Image Height="35" Width="30" Panel.ZIndex="10" Source="/Windows/magnifier.png" />
@@ -177,7 +176,7 @@
                         </StackPanel>
                     </TabItem.Header>
 
-                    <Grid Background="#FF021F38">
+                    <Grid Background="#FF021F38" HorizontalAlignment="Stretch">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="40"/>
                             <RowDefinition Height="50"/>
@@ -199,6 +198,7 @@
                         <Button Grid.Row="4" Background="#FF355D9A" Content="Найти" Command="{Binding SearchCommand}" IsEnabled="{Binding IsSearchingButtonAvailable}" Style="{StaticResource RoundedButton}" Grid.ColumnSpan="2" Margin="5,5,5,5"/>
 
                         <ListView Grid.Row="5" Margin="0,10,0,0" Padding="15" FontFamily="Tahoma" FontSize="18"  
+                                    
                                     BorderBrush="{x:Null}" Foreground="White"
                                     SelectedItem="{Binding SelectedUser}" 
                                     Background="Transparent" ItemsSource="{Binding SearchUserResults}" Grid.ColumnSpan="2">

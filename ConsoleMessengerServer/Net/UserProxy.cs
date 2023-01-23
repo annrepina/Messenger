@@ -13,6 +13,11 @@ namespace ConsoleMessengerServer.Net
     public class UserProxy
     {
         /// <summary>
+        /// Событие - удалено последнее соединение
+        /// </summary>
+        public event Action<int> LastConnectionRemoved;
+
+        /// <summary>
         /// Список сетевых провайдеров, которые подключены к серверу 
         /// и в которых выполнен вход в учетную запись пользователя
         /// </summary>
@@ -43,16 +48,30 @@ namespace ConsoleMessengerServer.Net
         }
 
         /// <summary>
+        /// Удалить соединение с сетевым провайдером
+        /// </summary>
+        /// <param name="networkProviderId"></param>
+        public bool TryRemoveConnection(int networkProviderId)
+        {
+            var provider = _connections.Find(pr => pr.Id == networkProviderId);
+            
+            if(provider != null)
+                return _connections.Remove(provider);
+
+            return false;
+        }
+
+        /// <summary>
         /// Транслировать асинхронно сетевое сообщение всем сетевым провайдерам на которых подключен пользователь
         /// </summary>
         /// <param name="networkMessage">Сетевое сообщение</param>
-        public async Task BroadcastNetworkMessageAsync(/*NetworkMessage networkMessage*/byte[] messageBytes)
+        public async Task BroadcastNetworkMessageAsync(byte[] messageBytes)
         {
             try
             {
                 foreach (ServerNetworkProvider serverNetworkProvider in _connections)
                 {
-                    await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
+                    await serverNetworkProvider.SendBytesAsync(messageBytes);
                 }
             }
             catch (Exception ex)
@@ -76,7 +95,7 @@ namespace ConsoleMessengerServer.Net
                 foreach (ServerNetworkProvider serverNetworkProvider in _connections)
                 {
                     if (serverNetworkProvider.Id != networkProviderId)
-                        await serverNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
+                        await serverNetworkProvider.SendBytesAsync(messageBytes);
                 }
             }
             catch (Exception ex)
@@ -94,7 +113,7 @@ namespace ConsoleMessengerServer.Net
         /// <returns></returns>
         public async Task SendResponseAsync(byte[] response, int netWorkProviderId)
         {
-            await _connections.First(con => con.Id == netWorkProviderId).Transmitter.SendNetworkMessageAsync(response);
+            await _connections.First(con => con.Id == netWorkProviderId).SendBytesAsync(response);
         }
 
         /// <summary>

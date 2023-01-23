@@ -105,7 +105,7 @@ namespace ConsoleMessengerServer.Net
         {
             byte[] response = _serverNetworkMessageHandler.ProcessData(bytes, NetworkProvider.Id);
 
-            NetworkProvider.Transmitter.SendNetworkMessageAsync(response);
+            NetworkProvider.SendBytesAsync(response);
         }
 
         public async Task BroadcastNetworkMessageToSenderAsync(byte[] messageBytes, int userId, int networkMessageId)
@@ -136,12 +136,24 @@ namespace ConsoleMessengerServer.Net
             else
             {
                 UserProxy userProxy = new UserProxy(userId);
+                userProxy.LastConnectionRemoved += OnUserProxyLastConnectioRemoved;
                 userProxy.AddConnection(_networkProvidersBuffer[networkProviderId]);
 
                 _userProxyList.Add(userId, userProxy);
             }
 
             _networkProvidersBuffer.Remove(networkProviderId);
+        }
+
+        private void OnUserProxyLastConnectioRemoved(int userProxyId)
+        {
+            _userProxyList[userProxyId].LastConnectionRemoved -= OnUserProxyLastConnectioRemoved;
+            _userProxyList.Remove(userProxyId);
+        }
+
+        public bool TryDisconnectUser(int userId, int networkProviderId)
+        {
+            return _userProxyList[userId].TryRemoveConnection(networkProviderId);
         }
     }
 }

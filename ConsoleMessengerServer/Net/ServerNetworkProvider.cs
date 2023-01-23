@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using DtoLib.NetworkServices;
-using DtoLib.NetworkInterfaces;
 using ConsoleMessengerServer.Net.Interfaces;
 
 namespace ConsoleMessengerServer.Net
@@ -39,7 +38,7 @@ namespace ConsoleMessengerServer.Net
         {
             try
             {
-                await Transmitter.RunReceivingBytesInLoop();
+                await _transmitter.RunReceivingBytesInLoop();
             }
             catch (Exception ex)
             {
@@ -60,6 +59,11 @@ namespace ConsoleMessengerServer.Net
         public override void NotifyBytesReceived(byte[] data)
         {
             ConnectionController.NotifyBytesReceived(data, this);
+        }
+
+        public override async Task SendBytesAsync(byte[] data)
+        {
+            await _transmitter.SendNetworkMessageAsync(data);
         }
     }
 }

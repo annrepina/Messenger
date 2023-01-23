@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +10,18 @@ namespace DtoLib.Dto.Requests
     /// <summary>
     /// Data transfer object для класса ExitRequest
     /// </summary>
-    public class ExitRequestDto
+    [ProtoContract]
+    public class SignOutRequestDto
     {
         /// <summary>
         /// Id пользователя
         /// </summary>
+        [ProtoMember(1)]
         public int UserId { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id пользователя: {UserId}";
+        }
     }
 }

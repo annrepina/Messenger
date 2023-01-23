@@ -72,14 +72,14 @@ namespace WpfMessengerClient
         /// </summary>
         public void SwitchToSignUpWindow()
         {
-            SignUpWindowViewModel registrationWindowViewModel = new SignUpWindowViewModel(this);
+            var builder = new NetworkMessageHandlerBuilder();
+            builder.Build();
 
+            SignUpWindowViewModel registrationWindowViewModel = new SignUpWindowViewModel(this, builder.GetResult());
             SignUpWindow registrationWindow = new SignUpWindow(registrationWindowViewModel);
 
             CurrentWindow.Hide();
-
             CurrentWindow = registrationWindow;
-
             CurrentWindow.Show();
         }
 
@@ -88,7 +88,10 @@ namespace WpfMessengerClient
         /// </summary>
         public void SwitchToSignInWindow()
         {
-            SignInWindowViewModel signInWindowViewModel = new SignInWindowViewModel(this);
+            var builder = new NetworkMessageHandlerBuilder();
+            builder.Build();
+
+            SignInWindowViewModel signInWindowViewModel = new SignInWindowViewModel(this, builder.GetResult());
             SignInWindow signInWindow = new SignInWindow(signInWindowViewModel);
 
             CurrentWindow.Hide();

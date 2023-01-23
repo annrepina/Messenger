@@ -28,4 +28,6 @@
     </None>
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties databaseconnectionsettings_1json__JsonSchema="https://appsemble.app/api.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

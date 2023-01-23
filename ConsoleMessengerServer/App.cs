@@ -32,8 +32,6 @@ namespace ConsoleMessengerServer
             //_networkMessageHandler.Dispose();
         }
 
-
-
         public async Task LaunchAsync()
         {
             await _connectionController.RunAsync();

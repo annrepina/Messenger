@@ -2,7 +2,6 @@
 using DtoLib.Dto;
 using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
-using DtoLib.NetworkInterfaces;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
 using System;
@@ -103,10 +102,7 @@ namespace WpfMessengerClient
 
         #region  Свойства
 
-        /// <summary>
-        /// Сетевой провайдер на стороне клиента
-        /// </summary>
-        public ClientNetworkProvider ClientNetworkProvider { get; set; }
+        public IConnectionController ConnectionController { get; set; }
 
         #endregion Свойства
 
@@ -130,7 +126,7 @@ namespace WpfMessengerClient
             DeleteDialogResponseReceived = new NetworkMessageHandlerEvent<DeleteDialogResponse> ();
             DeleteDialogRequestForClientReceived = new NetworkMessageHandlerEvent<DeleteDialogRequestForClient>();
 
-            ClientNetworkProvider = new ClientNetworkProvider(this);
+            ConnectionController = null;
 
             MessengerMapper mapper = MessengerMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
@@ -144,7 +140,7 @@ namespace WpfMessengerClient
         /// Обработать сетевое сообщение
         /// </summary>
         /// <param _name="_message">Сетевое сообщение</param>
-        public void ProcessNetworkMessage(NetworkMessage message)
+        private void ProcessNetworkMessage(NetworkMessage message)
         {
             switch (message.Code)
             {
@@ -192,41 +188,22 @@ namespace WpfMessengerClient
                     ProcessMessage<DeleteDialogRequestForClientDto, DeleteDialogRequestForClient>(message, DeleteDialogRequestForClientReceived);
                     break;
 
-                case NetworkMessageCode.ExitCode:
+                case NetworkMessageCode.SignOutResponseCode:
+                    ProcessMessage<SignOutResponseDto, SignOutResponse>(message, SignOutResponseReceived);
                     break;
+
                 default:
                     break;
             }
         }
 
-
         #endregion Реализация INetworkMessageHandler
-
-        ///// <summary>
-        ///// Обобщенный метод обработки сетевого сообщения
-        ///// </summary>
-        ///// <typeparam name="Tdto">Тип представляющий dto ожидаемого объекта в сетевом сообщении</typeparam>
-        ///// <typeparam name="Tdest">Тип представляющий ожидаемый объект  в сетевом сообщении</typeparam>
-        ///// <param name="message">Сетевое сообщение</param>
-        ///// <param name="action">Событие, которое необходимо вызывать</param>
-        //private void ProcessMessage<Tdto, Tdest>(NetworkMessage message, Action<Tdest> action)
-        //    where Tdest : class
-        //{
-        //    Tdest destination;
-
-        //    Tdto dto = SerializationHelper.Deserialize<Tdto>(message.Data);
-        //    destination = _mapper.Map<Tdest>(dto);
-
-        //    action?.Invoke(destination);
-        //}
 
         private void ProcessMessage<Tdto, Tdest>(NetworkMessage message, NetworkMessageHandlerEvent<Tdest> action)
             where Tdest : class
         {
-            Tdest destination;
-
             Tdto dto = SerializationHelper.Deserialize<Tdto>(message.Data);
-            destination = _mapper.Map<Tdest>(dto);
+            Tdest destination = _mapper.Map<Tdest>(dto);
 
             action?.Invoke(destination);
         }
@@ -254,17 +231,20 @@ namespace WpfMessengerClient
 
                 byte[] messageBytes = SerializationHelper.Serialize(networkMessage);
 
-                if (!ClientNetworkProvider.IsConnected)
-                    await ClientNetworkProvider.ConnectAsync(messageBytes);
-
-                else
-                    await ClientNetworkProvider.Transmitter.SendNetworkMessageAsync(messageBytes);
+                ConnectionController?.SendRequest(messageBytes);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 throw;
             }
+        }
+
+        public void ProcessData(byte[] data)
+        {
+            NetworkMessage networkMessage = SerializationHelper.Deserialize<NetworkMessage>(data);
+
+            ProcessNetworkMessage(networkMessage);
         }
 
         #endregion Методы взаимодействия с сетью

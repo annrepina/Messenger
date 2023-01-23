@@ -1,5 +1,4 @@
-﻿using DtoLib.NetworkInterfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -17,6 +16,8 @@ namespace DtoLib.NetworkServices
         /// Счетчик, на основе которого, объекту присваивается id
         /// </summary>
         private static int _counter = 0;
+
+        protected ITransmitterAsync _transmitter;
 
         #region Свойства
 
@@ -38,7 +39,13 @@ namespace DtoLib.NetworkServices
         /// <summary>
         /// Отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>
-        public ITransmitterAsync Transmitter { get; set; }
+        public ITransmitterAsync Transmitter 
+        { 
+            set
+            {
+                _transmitter = value;
+            }
+        }
 
         #endregion Свойства 
 
@@ -65,18 +72,13 @@ namespace DtoLib.NetworkServices
                 TcpClient.Close();
         }
 
-        ///// <summary>
-        ///// Метод получения сетевого сообщения
-        ///// </summary>
-        ///// <param name="message">Сетевое сообщение</param>
-        ///// <returns></returns>
-        //public abstract void GetNetworkMessage(NetworkMessage message);
-
         /// <summary>
         /// Метод получения сетевого сообщения
         /// </summary>
         /// <param name="data">Массив получаемых байтов</param>
         /// <returns></returns>
         public abstract void NotifyBytesReceived(byte[] data);
+
+        public abstract Task SendBytesAsync(byte[] data);
     }
 }

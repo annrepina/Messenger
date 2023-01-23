@@ -12,7 +12,6 @@ using System.Windows;
 using DtoLib.NetworkServices;
 using WpfMessengerClient.ViewModels;
 using WpfMessengerClient.Models;
-using DtoLib.NetworkInterfaces;
 using DtoLib.Serialization;
 
 namespace WpfMessengerClient.Services
@@ -43,10 +42,7 @@ namespace WpfMessengerClient.Services
         /// </summary>
         public bool IsConnected { get; set; }
 
-        /// <summary>
-        /// Свойство - обработчик сетевых сообщений
-        /// </summary>
-        public INetworkMessageHandler NetworkMessageHandler { get; set; }
+        public IConnectionController ConnectionController { get; set; }
 
         #endregion Свойства 
 
@@ -55,11 +51,11 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
-        public ClientNetworkProvider(INetworkMessageHandler networkMessageHandler) : base()
+        public ClientNetworkProvider(IConnectionController connectionController) : base()
         {
             TcpClient = new TcpClient();
-            NetworkMessageHandler = networkMessageHandler;
             IsConnected = false;
+            ConnectionController = connectionController;
         }
 
         #endregion Конструкторы
@@ -69,7 +65,7 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Подключиться к серверу асинхронно 
         /// </summary>
-        public async Task ConnectAsync(/*NetworkMessage message*/byte[] messageBytes)
+        public async Task ConnectAsync(byte[] messageBytes)
         {
             try
             {
@@ -81,10 +77,10 @@ namespace WpfMessengerClient.Services
 
                     if (messageBytes != null)
                     {
-                        await Transmitter.SendNetworkMessageAsync(messageBytes);
+                        await _transmitter.SendNetworkMessageAsync(messageBytes);
                     }
 
-                    await Task.Run(() => Transmitter.RunReceivingBytesInLoop());
+                    await Task.Run(() => _transmitter.RunReceivingBytesInLoop());
                 }
             }
             catch (Exception ex)
@@ -100,19 +96,18 @@ namespace WpfMessengerClient.Services
             }
         }
 
-
-        //public override void GetNetworkMessage(NetworkMessage message)
-        //{
-        //    NetworkMessageHandler.ProcessNetworkMessage(message);
-        //}
-
         public override void NotifyBytesReceived(byte[] data)
         {
-            NetworkMessage message = SerializationHelper.Deserialize<NetworkMessage>(data);
+            ConnectionController.NotifyBytesReceived(data);
+        }
 
-            NetworkMessageHandler.ProcessNetworkMessage(message);
+        public override async Task SendBytesAsync(byte[] data)
+        {
+            if (!IsConnected)
+                await ConnectAsync(data);
 
-            //throw new NotImplementedException();
+            else
+                await _transmitter.SendNetworkMessageAsync(data);
         }
 
         #endregion Методы связанные с сетью

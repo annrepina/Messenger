@@ -74,8 +74,6 @@ namespace DtoLib.NetworkServices
                     // буфер для получаемых данных
                     byte[] data = await ReceiveBytesAsync();
 
-                    //NetworkMessage networkMessage = SerializationHelper.Deserialize<NetworkMessage>(data);
-                    //NetworkProvider.GetNetworkMessage(networkMessage);
                     NetworkProvider.NotifyBytesReceived(data);
                 }
             }

@@ -1,14 +1,17 @@
 ﻿using DtoLib.NetworkServices;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfMessengerClient.Models.Responses
+namespace DtoLib.Dto.Responses
 {
-    public class SignOutResponse
+    [ProtoContract]
+    public class SignOutResponseDto
     {
+        [ProtoMember(1)]
         public NetworkResponseStatus Status { get; set; }
     }
 }

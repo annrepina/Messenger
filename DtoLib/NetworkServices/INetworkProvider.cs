@@ -20,7 +20,7 @@ namespace DtoLib.NetworkServices
         /// <summary>
         /// Отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>
-        public ITransmitterAsync Transmitter { get; set; }
+        public ITransmitterAsync Transmitter { set; }
 
         /// <summary>
         /// Сетевой поток, по которому будет осуществляться передача данных
@@ -32,5 +32,11 @@ namespace DtoLib.NetworkServices
         /// </summary>
         /// <param name="data">Массив байтов</param>
         public void NotifyBytesReceived(byte[] data);
+
+        /// <summary>
+        /// Отправить массив байтов
+        /// </summary>
+        /// <param name="data"></param>
+        public Task SendBytesAsync(byte[] data);
     }
 }

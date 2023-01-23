@@ -1,5 +1,4 @@
-﻿using DtoLib.NetworkInterfaces;
-using DtoLib.NetworkServices;
+﻿using DtoLib.NetworkServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,13 +39,15 @@ namespace ConsoleMessengerServer.Net.Interfaces
         /// Оповестить о получении массива байтов 
         /// </summary>
         /// <param name="bytes">Массив полученных байтов</param>
-        /// <param name="networkProviderId">Id сетевого провайдера</param>
-        public void NotifyBytesReceived(byte[] bytes, INetworkProvider NetworkProvider);
+        /// <param name="networkProvider">Id сетевого провайдера</param>
+        public void NotifyBytesReceived(byte[] bytes, INetworkProvider networkProvider);
 
         public void AddNewSession(int userId, int networkProviderId);
 
         public Task BroadcastNetworkMessageToSenderAsync(byte[] messageBytes, int userId, int networkProviderId);
 
         public Task BroadcastNetworkMessageToInterlocutorAsync(byte[] messageBytes, int userId);
+
+        public bool TryDisconnectUser(int userId, int networkPrividerId);
     }
 }

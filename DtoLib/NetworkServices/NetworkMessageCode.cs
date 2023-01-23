@@ -22,6 +22,7 @@ namespace DtoLib.NetworkServices
         DeleteMessageResponseCode,
         DeleteDialogRequestCode,
         DeleteDialogResponseCode,
-        ExitCode,
+        SignOutRequestCode,
+        SignOutResponseCode
     }
 }

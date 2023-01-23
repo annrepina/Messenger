@@ -9,14 +9,14 @@ namespace WpfMessengerClient.Models.Requests
     /// <summary>
     /// Запрос на выход из мессенджера
     /// </summary>
-    public class ExitRequest
+    public class SignOutRequest
     {
         /// <summary>
         /// Id пользователя
         /// </summary>
         public int UserId { get; init; }
 
-        public ExitRequest(int userId)
+        public SignOutRequest(int userId)
         {
             UserId = userId;
         }

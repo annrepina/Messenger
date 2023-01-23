@@ -33,7 +33,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Данные о пользователе - отправителе сообщения
         /// </summary>
-        private User _userSender;
+        private User? _userSender;
 
         /// <summary>
         /// Идентификатор сообщения
@@ -80,7 +80,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Свойство - данные о пользователе - отправителе сообщения
         /// </summary>
-        public User UserSender
+        public User? UserSender
         {
             get => _userSender;
 
@@ -166,18 +166,18 @@ namespace WpfMessengerClient.Models
 
         #region Конструкторы
 
-        ///// <summary>
-        ///// Конструктор по умолчанию
-        ///// </summary>
-        //public Message()
-        //{
-        //    Id = 0;
-        //    _text = "";
-        //    _userSender = null;
-        //    _isRead = false;
-        //    _dateTime = DateTime.Now;
-        //    IsCurrentUserMessage = false;
-        //}
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
+        public Message()
+        {
+            Id = 0;
+            _text = "";
+            _userSender = null;
+            _isRead = false;
+            _dateTime = DateTime.Now;
+            IsCurrentUserMessage = false;
+        }
 
         /// <summary>
         /// Конструктор с параметрами

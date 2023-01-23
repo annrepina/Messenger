@@ -46,7 +46,7 @@ namespace WpfMessengerClient.ViewModels
         /// Конструктор с параметром
         /// </summary>
         /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
-        public SignUpWindowViewModel(MessengerWindowsManager messengerWindowsManager) : base(messengerWindowsManager)
+        public SignUpWindowViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler) : base(messengerWindowsManager, networkMessageHandler)
         {
             SignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             Request = new SignUpRequest(); 

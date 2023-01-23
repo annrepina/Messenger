@@ -32,10 +32,5 @@ namespace WpfMessengerClient.Windows
             DataContext = chatWindowViewModel;
             Closing += chatWindowViewModel.OnWindowClosing;
         }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            
-        }
     }
 }
