@@ -104,7 +104,6 @@
                                     <Border
                                     Name="Border"
                                     Margin="0,0"
-
                                     BorderThickness="0,0,0,0">
                                         <ContentPresenter
                                         x:Name="ContentSite"
@@ -140,7 +139,10 @@
                     Margin="0,10,0,10" FontFamily="Tahoma"
                   SelectedItem="{Binding ActiveDialog}" Grid.Column="0"
                  Background="Transparent" ItemsSource="{Binding Dialogs}"
-                Width="285" HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5">
+                Width="285" 
+                        HorizontalAlignment="Left" HorizontalContentAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        RenderTransformOrigin="0.5,0.5">
                         <ListView.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform/>
@@ -152,16 +154,18 @@
 
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Margin="2">
-                                    <TextBlock 
-                                TextWrapping="Wrap" Padding="2"
-                                Foreground="#FFDCD7D7"
-                                 
-                                Text="{Binding Title}" 
-                                MaxWidth="{Binding RelativeSource=
-                                {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"/>
-                                </StackPanel>
-
+                                <Border Background="{Binding IsLastMessageRead, Converter={local1:BooleanConverterForBackground}}">
+                                    <StackPanel Orientation="Horizontal" Margin="2" HorizontalAlignment="Stretch">
+                                        <TextBlock 
+                                                TextWrapping="Wrap" Padding="2"
+                                                Foreground="#FFDCD7D7"
+                                                Text="{Binding Title}" 
+                                                MaxWidth="{Binding RelativeSource=
+                                                {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"
+                                                HorizontalAlignment="Stretch"
+                                                />
+                                    </StackPanel>
+                                </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>

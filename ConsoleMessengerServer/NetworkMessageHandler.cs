@@ -92,7 +92,7 @@ namespace ConsoleMessengerServer
                     return ProcessSendMessageRequest(networkMessage, networkProviderId);
 
                 case NetworkMessageCode.DeleteMessageRequestCode:
-                    return ProcessRequest<DeleteMessageRequestDto, Message, DeleteMessageResponse, DeleteMessageResponseDto>(networkMessage, networkProviderId, _dbService.FindMessage, CreateDeleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode);
+                    return ProcessDeleteMessageRequest(networkMessage, networkProviderId);
 
                 case NetworkMessageCode.DeleteDialogRequestCode:
                     return ProcessDeleteDialogRequest(networkMessage, networkProviderId);
@@ -112,7 +112,7 @@ namespace ConsoleMessengerServer
         /// </summary>
         /// <param name="networkMessage"></param>
         /// <param name="networkProviderId"></param>
-        private byte[] ProcessSignInRequest(NetworkMessage networkMessage, /*ServerNetworkProvider serverNetworkProvider*/int networkProviderId)
+        private byte[] ProcessSignInRequest(NetworkMessage networkMessage, int networkProviderId)
         {
             SignInRequestDto signInRequestDto = SerializationHelper.Deserialize<SignInRequestDto>(networkMessage.Data);
 
@@ -122,8 +122,8 @@ namespace ConsoleMessengerServer
 
             byte[] byteResponse = CreateNetworkMessageBytes<SignInResponse, SignInResponseDto>(response, NetworkMessageCode.SignInResponseCode);
             
-            ReportPrinter.PrintRequestReport(networkMessage.Code, signInRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(NetworkMessageCode.SignInResponseCode, response.Status);
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signInRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignInResponseCode, response.Status);
 
             return byteResponse;
         }
@@ -143,8 +143,8 @@ namespace ConsoleMessengerServer
 
             byte[] byteResponse = CreateNetworkMessageBytes<UserSearchResponse, UserSearchResponseDto>(response, NetworkMessageCode.SearchUserResponseCode);
 
-            ReportPrinter.PrintRequestReport(networkMessage.Code, searchRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(NetworkMessageCode.SearchUserResponseCode, response.Status);
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, searchRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SearchUserResponseCode, response.Status);
 
             return byteResponse;
         }
@@ -166,8 +166,8 @@ namespace ConsoleMessengerServer
 
             BroadcastCreateDialogRequests(dialog, networkProviderId);
 
-            ReportPrinter.PrintRequestReport(networkMessage.Code, createDialogRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(NetworkMessageCode.CreateDialogResponseCode, NetworkResponseStatus.Successful);
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, createDialogRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.CreateDialogResponseCode, NetworkResponseStatus.Successful);
 
             return byteResponse;
         }
@@ -185,8 +185,8 @@ namespace ConsoleMessengerServer
 
             byte[] byteResponse = CreateNetworkMessageBytes<TResponse, TResponseDto>(response, code);
 
-            ReportPrinter.PrintRequestReport(networkMessage.Code, reqDto.ToString());
-            ReportPrinter.PrintResponseReport(code, response.Status);
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, reqDto.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, code, response.Status);
 
             return byteResponse;
         }
@@ -207,10 +207,26 @@ namespace ConsoleMessengerServer
 
             byte[] byteResponse = CreateNetworkMessageBytes<SendMessageResponse, SendMessageResponseDto>(responseForSender, NetworkMessageCode.MessageDeliveredCode);
 
-            ReportPrinter.PrintRequestReport(networkMessage.Code, sendMessageRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(NetworkMessageCode.MessageDeliveredCode, NetworkResponseStatus.Successful);
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, sendMessageRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.MessageDeliveredCode, NetworkResponseStatus.Successful);
 
             return byteResponse;
+        }
+
+        private byte[] ProcessDeleteMessageRequest(NetworkMessage networkMessage, int networkProviderId)
+        {
+            DeleteMessageRequestDto deleteMessageRequestDto = SerializationHelper.Deserialize<DeleteMessageRequestDto>(networkMessage.Data);
+
+            Message? message = _dbService.FindMessage(deleteMessageRequestDto);
+
+            DeleteMessageResponse deleteMessageResponse = CreateDeleteMessageResponse(message, deleteMessageRequestDto.UserId, networkProviderId);
+
+            byte[] responseBytes = CreateNetworkMessageBytes<DeleteMessageResponse, DeleteMessageResponseDto>(deleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode);
+
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, deleteMessageRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.DeleteDialogResponseCode, deleteMessageResponse.Status);
+
+            return responseBytes;
         }
 
         /// <summary>
@@ -228,8 +244,8 @@ namespace ConsoleMessengerServer
 
             byte[] responseBytes = CreateNetworkMessageBytes<DeleteDialogResponse, DeleteDialogResponseDto>(deleteDialogResponse, NetworkMessageCode.DeleteDialogResponseCode);
 
-            ReportPrinter.PrintRequestReport(networkMessage.Code, deleteDialogRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(NetworkMessageCode.DeleteDialogResponseCode, deleteDialogResponse.Status);
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, deleteDialogRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.DeleteDialogResponseCode, deleteDialogResponse.Status);
 
             return responseBytes;
         }
@@ -248,8 +264,8 @@ namespace ConsoleMessengerServer
 
             byte[] responseBytes = CreateNetworkMessageBytes<SignOutResponse, SignOutResponseDto>(signOutResponse, NetworkMessageCode.SignOutResponseCode);
 
-            ReportPrinter.PrintRequestReport(networkMessage.Code, signOutRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(NetworkMessageCode.SignOutResponseCode, signOutResponse.Status);
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signOutRequestDto.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignOutResponseCode, signOutResponse.Status);
 
             return responseBytes;
         }
@@ -347,18 +363,18 @@ namespace ConsoleMessengerServer
             return new UserSearchResponse(usersList, NetworkResponseStatus.Failed);
         }
 
-        private DeleteMessageResponse CreateDeleteMessageResponse(Message? message, int networkProviderId)
+        private DeleteMessageResponse CreateDeleteMessageResponse(Message? message, int userId, int networkProviderId)
         {
             if (message != null)
             {
-                int interlocutorId = _dbService.GetInterlocutorId(message.DialogId, message.UserSenderId);
+                int interlocutorId = _dbService.GetInterlocutorId(message.DialogId, userId);
                 _dbService.DeleteMessage(message);
 
                 DeleteMessageRequestForClient deleteMessageRequestForClient = new DeleteMessageRequestForClient(message.Id, message.DialogId);
 
                 byte[] requestBytes = CreateNetworkMessageBytes<DeleteMessageRequestForClient, DeleteMessageRequestForClientDto>(deleteMessageRequestForClient, NetworkMessageCode.DeleteMessageRequestCode);
 
-                _conectionController.BroadcastNetworkMessageToSenderAsync(requestBytes, message.UserSenderId, networkProviderId);
+                _conectionController.BroadcastNetworkMessageToSenderAsync(requestBytes, userId, networkProviderId);
                 _conectionController.BroadcastNetworkMessageToInterlocutorAsync(requestBytes, interlocutorId);
 
                 return new DeleteMessageResponse(NetworkResponseStatus.Successful);

@@ -895,7 +895,8 @@ namespace WpfMessengerClient.ViewModels
         {
             if (response.Status == NetworkResponseStatus.Successful)
             {
-                if (SelectedUser.Id == ActiveDialog.Users.First(user => user.Id != ActiveDialog.CurrentUser.Id).Id)
+                if (SelectedUser != null &&
+                    SelectedUser.Id == ActiveDialog.Users.First(user => user.Id != ActiveDialog.CurrentUser.Id).Id)
                 {
                     IsGreetingMessageTextBoxAvailable = true;
                     IsGreetingMessageTextBoxVisible = true;

@@ -12,19 +12,19 @@ namespace ConsoleMessengerServer
     /// </summary>
     public static class ReportPrinter
     {
-        public static void PrintRequestReport(NetworkMessageCode code, string info)
+        public static void PrintRequestReport(int networkProviderId, NetworkMessageCode code, string info)
         {
-            Console.WriteLine($"Запрос: код операции: {code}. " + info);
+            Console.WriteLine($"Id клиента: {networkProviderId}. Запрос: код операции: {code}. " + info);
         }
 
-        public static void PrintResponseReport(NetworkMessageCode code, NetworkResponseStatus status, string info)
+        public static void PrintResponseReport(int networkProviderId, NetworkMessageCode code, NetworkResponseStatus status, string info)
         {
-            Console.WriteLine($"Ответ: код операции: {code}. Статус ответа: {status}. " + info);
+            Console.WriteLine($"Id клиента: {networkProviderId}. Ответ: код операции: {code}. Статус ответа: {status}. " + info);
         }
 
-        public static void PrintResponseReport(NetworkMessageCode code, NetworkResponseStatus status)
+        public static void PrintResponseReport(int networkProviderId, NetworkMessageCode code, NetworkResponseStatus status)
         {
-            Console.WriteLine($"Ответ: код операции: {code}. Статус ответа: {status}.");
+            Console.WriteLine($"Id клиента: {networkProviderId}. Ответ: код операции: {code}. Статус ответа: {status}.");
         }
     }
 }

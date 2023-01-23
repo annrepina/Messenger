@@ -72,6 +72,17 @@ namespace WpfMessengerClient.Models
         /// </summary>
         public string Title => Users.First(n => n.Id != _currentUser.Id).Name;
 
+        public bool IsLastMessageRead
+        {
+            get
+            {
+                if (Messages.Count > 0 && Messages.Last().IsRead == false)
+                    return false;
+
+                return true;
+            }
+        }
+
         /// <summary>
         /// Свойство - обозреваемая коллекция данных о пользователях, участвующих в диалоге
         /// </summary>
