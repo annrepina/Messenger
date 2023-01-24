@@ -41,10 +41,10 @@ namespace ConsoleMessengerServer.Entities
         /// </summary>
         public int DialogId { get; set; }
 
-        ///// <summary>
-        ///// Свойство - прочитано сообщение?
-        ///// </summary>
-        //public bool IsRead { get; set; }
+        /// <summary>
+        /// Свойство - прочитано сообщение?
+        /// </summary>
+        public bool IsRead { get; set; }
 
         /// <summary>
         /// Свойство - дата и время отправки сообщения

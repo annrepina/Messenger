@@ -1,20 +1,17 @@
 ﻿using DtoLib.NetworkServices;
-using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.Dto.Responses
+namespace WpfMessengerClient.Models.Responses
 {
     /// <summary>
-    /// Data transfer object для класса DeleteMessageResponse
+    /// Базовый класс ответа на запрос
     /// </summary>
-    [ProtoContract]
-    public class DeleteMessageResponseDto
+    public class Response : IResponse
     {
-        [ProtoMember(1)]
         public NetworkResponseStatus Status { get; set; }
     }
 }

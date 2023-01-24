@@ -154,9 +154,9 @@
 
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="{Binding IsLastMessageRead, Converter={local1:BooleanConverterForBackground}}">
+                                <Border Background="{Binding HasUnreadMessages, Converter={local1:BooleanConverterForBackground}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                     <StackPanel Orientation="Horizontal" Margin="2" HorizontalAlignment="Stretch">
-                                        <TextBlock 
+                                        <TextBlock Background="Transparent"
                                                 TextWrapping="Wrap" Padding="2"
                                                 Foreground="#FFDCD7D7"
                                                 Text="{Binding Title}" 

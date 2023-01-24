@@ -25,15 +25,14 @@ namespace WpfMessengerClient.Models
 
         #region Приватные поля
 
-        /// <summary>
-        /// Поле - идентификатор диалога
-        /// </summary>
+        /// <inheritdoc cref="Id"/>
         private int _id;
 
-        /// <summary>
-        /// Текущий пользователь
-        /// </summary>
+        /// <inheritdoc cref=" CurrentUser"/>
         private User _currentUser;
+
+        /// <inheritdoc cref="HasUnreadMessages"/>
+        private bool _hasUnreadMessages;
 
         #endregion Приватные поля
 
@@ -72,14 +71,18 @@ namespace WpfMessengerClient.Models
         /// </summary>
         public string Title => Users.First(n => n.Id != _currentUser.Id).Name;
 
-        public bool IsLastMessageRead
+        public bool HasUnreadMessages
         {
             get
             {
-                if (Messages.Count > 0 && Messages.Last().IsRead == false)
-                    return false;
+                return _hasUnreadMessages;
+            }
 
-                return true;
+            set
+            {
+                _hasUnreadMessages = value;
+
+                OnPropertyChanged(nameof(HasUnreadMessages));
             }
         }
 
@@ -111,19 +114,10 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        public Dialog(User user1, User user2)
+        public Dialog(User user1, User user2) : this()
         {
-            Id = 0;
-
-            //Users = new ObservableCollection<User>();
-            //Users.CollectionChanged += OnUserDataCollectionChanged;
-            Users = new List<User>();
             Users.Add(user1);
             Users.Add(user2);
-
-            Messages = new ObservableCollection<Message>();
-            Messages.CollectionChanged += OnMessagesChanged;
-            //Messages = new List<Message>();
         }
 
         #endregion Конструкторы
@@ -188,6 +182,8 @@ namespace WpfMessengerClient.Models
                     item.PropertyChanged += OnMessageChanged;
                 }
             }
+
+            //CheckLastMessagesToUser();
         }
 
         /// <summary>
@@ -195,12 +191,21 @@ namespace WpfMessengerClient.Models
         /// </summary>
         /// <param _name="sender">Объект, который вызвал событие</param>
         /// <param _name="e">Содержит информацию о событии</param>
-        /// <exception cref="NotImplementedException"></exception>
         private void OnMessageChanged(object? sender, PropertyChangedEventArgs e)
         {
-            //throw new NotImplementedException();
+            //if(e.PropertyName == nameof(Message.IsRead))
+            //    CheckLastMessagesToUser();                
         }
 
         #endregion Обработчики событий
+
+        /// <summary>
+        /// Проверить прочитаны ли последние сообщения от собеседника
+        /// </summary>
+        /// <param name="userId">Текущий пользователь, которому присылают сообщения</param>
+        public void CheckLastMessagesToUser(int userId)
+        {
+            HasUnreadMessages = Messages.Count > 0 && Messages.Last().IsCurrentUserMessage == false && Messages.Last().IsRead == false;
+        }
     }
 }

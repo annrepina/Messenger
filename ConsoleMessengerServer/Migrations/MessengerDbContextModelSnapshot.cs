@@ -17,7 +17,7 @@ namespace ConsoleMessengerServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.2")
+                .HasAnnotation("ProductVersion", "7.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -32,7 +32,7 @@ namespace ConsoleMessengerServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Dialogs");
+                    b.ToTable("Dialogs", (string)null);
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Message", b =>
@@ -49,6 +49,11 @@ namespace ConsoleMessengerServer.Migrations
                     b.Property<int>("DialogId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -62,7 +67,7 @@ namespace ConsoleMessengerServer.Migrations
 
                     b.HasIndex("UserSenderId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.User", b =>
@@ -97,7 +102,7 @@ namespace ConsoleMessengerServer.Migrations
 
                     b.HasAlternateKey("PhoneNumber");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("DialogUser", b =>
@@ -112,7 +117,7 @@ namespace ConsoleMessengerServer.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("DialogUser");
+                    b.ToTable("DialogUser", (string)null);
                 });
 
             modelBuilder.Entity("ConsoleMessengerServer.Entities.Message", b =>

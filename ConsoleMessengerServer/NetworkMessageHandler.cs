@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure;
 using ConsoleMessengerServer.DataBase;
 using ConsoleMessengerServer.Entities;
 using ConsoleMessengerServer.Entities.Mapping;
@@ -219,9 +218,11 @@ namespace ConsoleMessengerServer
 
             Message? message = _dbService.FindMessage(deleteMessageRequestDto);
 
-            DeleteMessageResponse deleteMessageResponse = CreateDeleteMessageResponse(message, deleteMessageRequestDto.UserId, networkProviderId);
+            //DeleteMessageResponse deleteMessageResponse = CreateDeleteMessageResponse(message, deleteMessageRequestDto.UserId, networkProviderId);
+            Response deleteMessageResponse = CreateDeleteMessageResponse(message, deleteMessageRequestDto.UserId, networkProviderId);
 
-            byte[] responseBytes = CreateNetworkMessageBytes<DeleteMessageResponse, DeleteMessageResponseDto>(deleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode);
+            //byte[] responseBytes = CreateNetworkMessageBytes<DeleteMessageResponse, DeleteMessageResponseDto>(deleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode);
+            byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(deleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode);
 
             ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, deleteMessageRequestDto.ToString());
             ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.DeleteDialogResponseCode, deleteMessageResponse.Status);
@@ -240,9 +241,11 @@ namespace ConsoleMessengerServer
 
             Dialog? dialog = _dbService.FindDialog(deleteDialogRequestDto);
 
-            DeleteDialogResponse deleteDialogResponse = CreateDeleteDialogResponse(dialog, networkProviderId, deleteDialogRequestDto.UserId);
+            //DeleteDialogResponse deleteDialogResponse = CreateDeleteDialogResponse(dialog, networkProviderId, deleteDialogRequestDto.UserId);
+            Response deleteDialogResponse = CreateDeleteDialogResponse(dialog, networkProviderId, deleteDialogRequestDto.UserId);
 
-            byte[] responseBytes = CreateNetworkMessageBytes<DeleteDialogResponse, DeleteDialogResponseDto>(deleteDialogResponse, NetworkMessageCode.DeleteDialogResponseCode);
+            //byte[] responseBytes = CreateNetworkMessageBytes<DeleteDialogResponse, DeleteDialogResponseDto>(deleteDialogResponse, NetworkMessageCode.DeleteDialogResponseCode);
+            byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(deleteDialogResponse, NetworkMessageCode.DeleteDialogResponseCode);
 
             ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, deleteDialogRequestDto.ToString());
             ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.DeleteDialogResponseCode, deleteDialogResponse.Status);
@@ -254,15 +257,15 @@ namespace ConsoleMessengerServer
         {
             SignOutRequestDto signOutRequestDto = SerializationHelper.Deserialize<SignOutRequestDto>(networkMessage.Data);
 
-            SignOutResponse signOutResponse;
+            Response signOutResponse;
 
             if (_conectionController.TryDisconnectUser(signOutRequestDto.UserId, networkProviderId) == true)
-                signOutResponse = new SignOutResponse(NetworkResponseStatus.Successful);
+                signOutResponse = new Response(NetworkResponseStatus.Successful);
             
             else
-                signOutResponse = new SignOutResponse(NetworkResponseStatus.Failed);
+                signOutResponse = new Response(NetworkResponseStatus.Failed);
 
-            byte[] responseBytes = CreateNetworkMessageBytes<SignOutResponse, SignOutResponseDto>(signOutResponse, NetworkMessageCode.SignOutResponseCode);
+            byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(signOutResponse, NetworkMessageCode.SignOutResponseCode);
 
             ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signOutRequestDto.ToString());
             ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignOutResponseCode, signOutResponse.Status);
@@ -363,7 +366,7 @@ namespace ConsoleMessengerServer
             return new UserSearchResponse(usersList, NetworkResponseStatus.Failed);
         }
 
-        private DeleteMessageResponse CreateDeleteMessageResponse(Message? message, int userId, int networkProviderId)
+        private Response CreateDeleteMessageResponse(Message? message, int userId, int networkProviderId)
         {
             if (message != null)
             {
@@ -377,13 +380,13 @@ namespace ConsoleMessengerServer
                 _conectionController.BroadcastNetworkMessageToSenderAsync(requestBytes, userId, networkProviderId);
                 _conectionController.BroadcastNetworkMessageToInterlocutorAsync(requestBytes, interlocutorId);
 
-                return new DeleteMessageResponse(NetworkResponseStatus.Successful);
+                return new Response(NetworkResponseStatus.Successful);
             }
 
-            return new DeleteMessageResponse(NetworkResponseStatus.Failed);
+            return new Response(NetworkResponseStatus.Failed);
         }
 
-        private DeleteDialogResponse CreateDeleteDialogResponse(Dialog? dialog, int networkProviderId, int userId)
+        private /*DeleteDialog*/Response CreateDeleteDialogResponse(Dialog? dialog, int networkProviderId, int userId)
         {
             if (dialog != null)
             {
@@ -398,10 +401,10 @@ namespace ConsoleMessengerServer
                 _conectionController.BroadcastNetworkMessageToSenderAsync(requestBytes, userId, networkProviderId);
                 _conectionController.BroadcastNetworkMessageToInterlocutorAsync(requestBytes, interlocutorId);
 
-                return new DeleteDialogResponse(NetworkResponseStatus.Successful);
+                return new /*DeleteDialog*/Response(NetworkResponseStatus.Successful);
             }
 
-            return new DeleteDialogResponse(NetworkResponseStatus.Failed);
+            return new /*DeleteDialog*/Response(NetworkResponseStatus.Failed);
         }
 
         /// <summary>

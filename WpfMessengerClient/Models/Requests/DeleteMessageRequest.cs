@@ -11,11 +11,6 @@ namespace WpfMessengerClient.Models.Requests
     /// </summary>
     public class DeleteMessageRequest
     {
-        ///// <summary>
-        ///// Сообщение
-        ///// </summary>
-        //public Message Message { get; set; }
-
         /// <summary>
         /// Идентификатор сообщения
         /// </summary>
@@ -36,7 +31,6 @@ namespace WpfMessengerClient.Models.Requests
         /// </summary>
         public DeleteMessageRequest()
         {
-            //Message = new Message();
             MessageId = 0;
             DialogId = 0;
             UserId = 0;
@@ -45,11 +39,11 @@ namespace WpfMessengerClient.Models.Requests
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param name="message">Сообщение</param>
+        /// <param name="messageId">Идентификатор диалога</param>
         /// <param name="dialogId">Идентификатор диалога</param>
-        public DeleteMessageRequest(/*Message message*/int messageId, int dialogId, int userId)
+        /// <param name="userId">Идентификатор диалога</param>
+        public DeleteMessageRequest(int messageId, int dialogId, int userId)
         {
-            //Message = message;
             MessageId = messageId;
             DialogId = dialogId;
             UserId = userId;

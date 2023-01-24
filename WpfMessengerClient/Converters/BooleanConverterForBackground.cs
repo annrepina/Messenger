@@ -22,10 +22,10 @@ namespace WpfMessengerClient.Converters
 
             else if (value is bool val)
             {
-                if (val == false)
+                if (val == true)
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9c4856"));
 
-                return new SolidColorBrush(Colors.GhostWhite);
+                return new SolidColorBrush(Colors.Transparent);
             }
 
             else

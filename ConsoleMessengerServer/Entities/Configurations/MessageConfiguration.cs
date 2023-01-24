@@ -20,7 +20,7 @@ namespace ConsoleMessengerServer.Entities.Configurations
 
             builder.HasOne(m => m.Dialog).WithMany(d => d.Messages).HasForeignKey(m => m.DialogId).IsRequired();
 
-            //builder.Property(m => m.IsRead).IsRequired().HasDefaultValue(false);
+            builder.Property(m => m.IsRead).IsRequired().HasDefaultValue(false);
 
             builder.Property(m => m.DateTime).IsRequired();
         }

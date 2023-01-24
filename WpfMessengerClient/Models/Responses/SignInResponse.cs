@@ -12,7 +12,6 @@ namespace WpfMessengerClient.Models.Responses
     /// </summary>
     public class SignInResponse
     {
-
         /// <summary>
         /// Пользователь
         /// </summary>

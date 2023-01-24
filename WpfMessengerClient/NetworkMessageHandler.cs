@@ -41,7 +41,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие выхода пользователя из мессенджера
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<SignOutResponse> SignOutResponseReceived;
+        public readonly NetworkMessageHandlerEvent<Response> SignOutResponseReceived;
 
         /// <summary>
         /// Событие получение успешного результата поиска пользователя
@@ -72,7 +72,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие получения ответа на запрос обу удалении сообщения
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<DeleteMessageResponse> DeleteMessageResponseReceived;
+        public readonly NetworkMessageHandlerEvent<Response> DeleteMessageResponseReceived;
 
         /// <summary>
         /// Событие получения запроса на удаление сообщения
@@ -82,12 +82,17 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие получения ответа на запрос об удалении диалога
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<DeleteDialogResponse> DeleteDialogResponseReceived;
+        public readonly NetworkMessageHandlerEvent<Response> DeleteDialogResponseReceived;
 
         /// <summary>
         /// Событие получения запроса на удаление диалога
         /// </summary>
         public readonly NetworkMessageHandlerEvent<DeleteDialogRequestForClient> DeleteDialogRequestForClientReceived;
+
+        /// <summary>
+        /// Событие получения ответа на запрос о прочтении сообщения
+        /// </summary>
+        public readonly NetworkMessageHandlerEvent<Response> MessageIsReadResponseReceived;
 
         #endregion События
 
@@ -115,16 +120,17 @@ namespace WpfMessengerClient
         {
             SignUpResponseReceived = new NetworkMessageHandlerEvent<SignUpResponse> ();
             SignInResponseReceived = new NetworkMessageHandlerEvent<SignInResponse> ();
-            SignOutResponseReceived = new NetworkMessageHandlerEvent<SignOutResponse> ();
+            SignOutResponseReceived = new NetworkMessageHandlerEvent<Response> ();
             UserSearchResponseReceived = new NetworkMessageHandlerEvent<UserSearchResponse> ();
             CreateDialogResponseReceived = new NetworkMessageHandlerEvent<CreateDialogResponse> ();
             CreateDialogRequestReceived = new NetworkMessageHandlerEvent<Dialog>();
             SendMessageResponseReceived = new NetworkMessageHandlerEvent<SendMessageResponse> ();
             DialogReceivedNewMessage = new NetworkMessageHandlerEvent<SendMessageRequest> ();
-            DeleteMessageResponseReceived = new NetworkMessageHandlerEvent<DeleteMessageResponse> ();
+            DeleteMessageResponseReceived = new NetworkMessageHandlerEvent<Response> ();
             DeleteMessageRequestForClientReceived = new NetworkMessageHandlerEvent<DeleteMessageRequestForClient> ();
-            DeleteDialogResponseReceived = new NetworkMessageHandlerEvent<DeleteDialogResponse> ();
+            DeleteDialogResponseReceived = new NetworkMessageHandlerEvent<Response> ();
             DeleteDialogRequestForClientReceived = new NetworkMessageHandlerEvent<DeleteDialogRequestForClient>();
+            MessageIsReadResponseReceived = new NetworkMessageHandlerEvent<Response>();
 
             ConnectionController = null;
 
@@ -173,7 +179,7 @@ namespace WpfMessengerClient
                     break;
 
                 case NetworkMessageCode.DeleteMessageResponseCode:
-                    ProcessMessage<DeleteMessageResponseDto, DeleteMessageResponse>(message, DeleteMessageResponseReceived);
+                    ProcessMessage<ResponseDto, Response>(message, DeleteMessageResponseReceived);
                     break;
 
                 case NetworkMessageCode.DeleteMessageRequestCode:
@@ -181,7 +187,7 @@ namespace WpfMessengerClient
                     break;
 
                 case NetworkMessageCode.DeleteDialogResponseCode:
-                    ProcessMessage<DeleteDialogResponseDto, DeleteDialogResponse>(message, DeleteDialogResponseReceived);
+                    ProcessMessage<ResponseDto, Response>(message, DeleteDialogResponseReceived);
                     break;
 
                 case NetworkMessageCode.DeleteDialogRequestCode:
@@ -189,7 +195,7 @@ namespace WpfMessengerClient
                     break;
 
                 case NetworkMessageCode.SignOutResponseCode:
-                    ProcessMessage<SignOutResponseDto, SignOutResponse>(message, SignOutResponseReceived);
+                    ProcessMessage<ResponseDto, Response>(message, SignOutResponseReceived);
                     break;
 
                 default:

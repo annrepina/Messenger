@@ -7,14 +7,11 @@ using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.Responses
 {
-    /// <summary>
-    /// Ответ на запрос о выходе из программы 
-    /// </summary>
-    public class SignOutResponse : IResponse
+    public class Response : IResponse
     {
         public NetworkResponseStatus Status { get; set; }
 
-        public SignOutResponse(NetworkResponseStatus status)
+        public Response(NetworkResponseStatus status)
         {
             Status = status;
         }

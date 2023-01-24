@@ -11,7 +11,7 @@ namespace WpfMessengerClient.Models
     /// <summary>
     /// Сообщения отправляемые пользователями
     /// </summary>
-    public class Message : BaseNotifyPropertyChanged, ICloneable
+    public class Message : BaseNotifyPropertyChanged
     {
         #region Приватные поля
 
@@ -172,10 +172,10 @@ namespace WpfMessengerClient.Models
         public Message()
         {
             Id = 0;
-            _text = "";
-            _userSender = null;
-            _isRead = false;
-            _dateTime = DateTime.Now;
+            Text = "";
+            UserSender = null;
+            IsRead = false;
+            DateTime = DateTime.Now;
             IsCurrentUserMessage = false;
         }
 
@@ -188,21 +188,11 @@ namespace WpfMessengerClient.Models
         public Message(string text, User senderUserAccount, bool isCurrentUserMessage, bool isRead = false)
         {
             Id = 0;
-            _text = text;
-            _userSender = senderUserAccount;
-            _isRead = isRead;
-            _dateTime = DateTime.Now;
+            Text = text;
+            UserSender = senderUserAccount;
+            IsRead = isRead;
+            DateTime = DateTime.Now;
             IsCurrentUserMessage = isCurrentUserMessage;
-        }
-
-        public object Clone()
-        {
-            Message message = new Message(_text, _userSender, _isCurrentUserMessage);
-            message.Id = Id;
-            message.IsRead = IsRead;
-            message.DateTime = DateTime.Now;
-
-            return message;
         }
 
         #endregion Конструкторы
