@@ -15,12 +15,12 @@ namespace WpfMessengerClient.Models.Responses
         /// <summary>
         /// Пользователь
         /// </summary>
-        public User User { get; set; }
+        public User? User { get; set; }
 
         /// <summary>
         /// Список диалогов пользователя
         /// </summary>
-        public List<Dialog> Dialogs { get; set; }
+        public List<Dialog>? Dialogs { get; set; }
 
         /// <summary>
         /// Статус ответа
@@ -33,7 +33,7 @@ namespace WpfMessengerClient.Models.Responses
         public SignInFailContext Context { get; init; }
 
 
-        public SignInResponse(User user, List<Dialog> dialogs, NetworkResponseStatus status, SignInFailContext context)
+        public SignInResponse(User? user, List<Dialog>? dialogs, NetworkResponseStatus status, SignInFailContext context)
         {
             User = user;
             Dialogs = dialogs;

@@ -33,33 +33,35 @@ namespace ConsoleMessengerServer.DataBase
         /// <returns></returns>
         public User? AddNewUser(SignUpRequestDto registrationDto)
         {
-            User? user = null;
+            //User? user = null;
 
             using (var dbContext = new MessengerDbContext())
             {
-                var res = FindUserByPhoneNumber(registrationDto.PhoneNumber, dbContext);
+                //var res = FindUserByPhoneNumber(registrationDto.PhoneNumber, dbContext);
+                User? user = FindUserByPhoneNumber(registrationDto.PhoneNumber, dbContext);
 
-                // если вернули false значит аккаунта под таким номером еще нет
-                if (res == null)
+                if (user == null)
                 {
                     user = _mapper.Map<User>(registrationDto);
                     dbContext.Users.Add(user);
 
-                    try
-                    {
-                        dbContext.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        throw;
-                    }
+                    dbContext.SaveChanges();
+
+                    //try
+                    //{
+                    //    dbContext.SaveChanges();
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    Console.WriteLine(ex.Message);
+                    //    throw;
+                    //}
 
                 }//if                    
 
-            }//using
+                return user;
 
-            return user;
+            }//using
         }
 
         public void ReadMessages(MessagesAreReadRequestDto messagesAreReadRequest)
@@ -97,13 +99,13 @@ namespace ConsoleMessengerServer.DataBase
         /// <returns></returns>
         public User? FindUserByPhoneNumber(string phoneNumber)
         {
-            User? user = null;
+            //User? user = null;
 
             using (var dbContext = new MessengerDbContext())
             {
-                user = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == phoneNumber);
+                return dbContext.Users.FirstOrDefault(user => user.PhoneNumber == phoneNumber);
 
-                return user;
+                //return user;
             }
         }
 
@@ -114,11 +116,11 @@ namespace ConsoleMessengerServer.DataBase
         /// <returns></returns>
         public User? FindUserByPhoneNumber(string phoneNumber, MessengerDbContext dbContext)
         {
-            User? user = null;
+            //User? user = null;
 
-            user = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == phoneNumber);
+            return dbContext.Users.FirstOrDefault(user => user.PhoneNumber == phoneNumber);
 
-            return user;
+            //return user;
         }
 
         /// <summary>

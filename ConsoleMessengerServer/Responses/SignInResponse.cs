@@ -11,45 +11,46 @@ namespace ConsoleMessengerServer.Responses
     /// <summary>
     /// Ответ на запрос о входе в мессенджер
     /// </summary>
-    public class SignInResponse
+    public class SignInResponse : Response
     {
         /// <summary>
         /// Пользователь
         /// </summary>
-        public User User { get; set; }
+        public User? User { get; set; }
 
         /// <summary>
         /// Список диалогов пользователя
         /// </summary>
-        public List<Dialog> Dialogs { get; set; }
+        public List<Dialog>? Dialogs { get; set; }
 
-        /// <summary>
-        /// Статус ответа
-        /// </summary>
-        public NetworkResponseStatus Status { get; init; }
+        ///// <summary>
+        ///// Статус ответа
+        ///// </summary>
+        //public NetworkResponseStatus Status { get; init; }
 
         /// <summary>
         /// Контекст ошибки, если статус ответа неудачный
         /// </summary>
         public SignInFailContext Context { get; init; }
 
-        public SignInResponse(NetworkResponseStatus status, SignInFailContext сontext)
+        public SignInResponse(NetworkResponseStatus status) : base(status)
         {
-            Status = status;
+            User = null;
+            Dialogs = null;
+        }
+
+        public SignInResponse(NetworkResponseStatus status, SignInFailContext сontext) : base(status)
+        {
+            //Status = status;
             Context = сontext;
             Dialogs = new List<Dialog>();
         }
 
-        public SignInResponse(User user, List<Dialog> dialogs, NetworkResponseStatus status)
+        public SignInResponse(User user, List<Dialog> dialogs, NetworkResponseStatus status) : base(status)
         {
             User = user;
             Dialogs = dialogs;
-            Status = status;
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
+            //Status = status;
         }
     }
 }

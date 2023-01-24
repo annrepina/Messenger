@@ -76,7 +76,8 @@ namespace ConsoleMessengerServer
             switch (networkMessage.Code)
             {
                 case NetworkMessageCode.SignUpRequestCode:
-                    return ProcessRequest<SignUpRequestDto, User, SignUpResponse, SignUpResponseDto>(networkMessage, networkProviderId, _dbService.AddNewUser, CreateSignUpResponse, NetworkMessageCode.SignUpResponseCode);
+                    return ProcessSignUpRequest(networkMessage, networkProviderId);
+                    //return ProcessRequest<SignUpRequestDto, User, SignUpResponse, SignUpResponseDto>(networkMessage, networkProviderId, _dbService.AddNewUser, CreateSignUpResponse, NetworkMessageCode.SignUpResponseCode);
 
                 case NetworkMessageCode.SignInRequestCode:
                     return ProcessSignInRequest(networkMessage, networkProviderId);
@@ -109,6 +110,99 @@ namespace ConsoleMessengerServer
 
         #endregion INetworkHandler Implementation
 
+        private byte[] ProcessSignUpRequest(NetworkMessage networkMessage, int networkProviderId)
+        {
+            try
+            {
+                SignUpRequestDto signUpRequestDto = SerializationHelper.Deserialize<SignUpRequestDto>(networkMessage.Data);
+
+                User? user = _dbService.AddNewUser(signUpRequestDto);
+
+                SignUpResponse signUpResponse = CreateSignUpResponse(user, networkProviderId);
+
+                byte[] responseBytes = CreateNetworkMessageBytes<SignUpResponse, SignUpResponseDto>(signUpResponse, NetworkMessageCode.SignUpResponseCode);
+
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signUpRequestDto.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignUpResponseCode, signUpResponse.Status);
+
+                return responseBytes;
+            }
+            catch (Exception)
+            {
+                SignUpResponse signUpResponse = new SignUpResponse(NetworkResponseStatus.FatalError);
+                ProcessError<SignUpResponse, SignUpResponseDto>(networkProviderId, signUpResponse, NetworkMessageCode.SignUpResponseCode);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Обработать запрос на вход в мессенджер
+        /// </summary>
+        /// <param name="networkMessage"></param>
+        /// <param name="networkProviderId"></param>
+        private byte[] ProcessSignInRequest(NetworkMessage networkMessage, int networkProviderId)
+        {
+            try
+            {
+                SignInRequestDto signInRequestDto = SerializationHelper.Deserialize<SignInRequestDto>(networkMessage.Data);
+
+                User? user = _dbService.FindUserByPhoneNumber(signInRequestDto.PhoneNumber);
+
+                SignInResponse response = CreateSignInResponse(user, signInRequestDto, networkProviderId);
+
+                byte[] byteResponse = CreateNetworkMessageBytes<SignInResponse, SignInResponseDto>(response, NetworkMessageCode.SignInResponseCode);
+
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signInRequestDto.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignInResponseCode, response.Status);
+
+                return byteResponse;
+            }
+            catch (Exception)
+            {
+                SignInResponse signInResponse = new SignInResponse(NetworkResponseStatus.FatalError);
+                ProcessError<SignInResponse, SignInResponseDto>(networkProviderId, signInResponse, NetworkMessageCode.SignUpResponseCode);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Посик пользователя в мессенджере
+        /// </summary>
+        /// <param name="networkMessage">Сообщение</param>
+        /// <returns></returns>
+        private byte[] ProcessSearchUserRequest(NetworkMessage networkMessage, int networkProviderId)
+        {
+            try
+            {
+                UserSearchRequestDto searchRequestDto = SerializationHelper.Deserialize<UserSearchRequestDto>(networkMessage.Data);
+
+                List<User>? usersList = _dbService.FindListOfUsers(searchRequestDto);
+
+                UserSearchResponse response = CreateUserSearchResponse(usersList);
+
+                byte[] byteResponse = CreateNetworkMessageBytes<UserSearchResponse, UserSearchResponseDto>(response, NetworkMessageCode.SearchUserResponseCode);
+
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, searchRequestDto.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SearchUserResponseCode, response.Status);
+
+                return byteResponse;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+        private void ProcessError<TResponse, TResponseDto>(int networkProviderId, TResponse response, NetworkMessageCode code)
+            where TResponseDto : class
+        {
+            byte[] responseBytes = CreateNetworkMessageBytes<TResponse, TResponseDto>(response, code);
+            _conectionController.BroadcastErrorToSenderAsync(responseBytes, networkProviderId);
+        }
+
         private byte[] ProcessMessagesAreReadRequest(NetworkMessage networkMessage, int networkProviderId)
         {
             MessagesAreReadRequestDto messagesAreReadRequest = SerializationHelper.Deserialize<MessagesAreReadRequestDto>(networkMessage.Data);
@@ -125,47 +219,9 @@ namespace ConsoleMessengerServer
             return byteResponse;
         }
 
-        /// <summary>
-        /// Обработать запрос на вход в мессенджер
-        /// </summary>
-        /// <param name="networkMessage"></param>
-        /// <param name="networkProviderId"></param>
-        private byte[] ProcessSignInRequest(NetworkMessage networkMessage, int networkProviderId)
-        {
-            SignInRequestDto signInRequestDto = SerializationHelper.Deserialize<SignInRequestDto>(networkMessage.Data);
 
-            User? user = _dbService.FindUserByPhoneNumber(signInRequestDto.PhoneNumber);
 
-            SignInResponse response = CreateSignInResponse(user, signInRequestDto, networkProviderId);
 
-            byte[] byteResponse = CreateNetworkMessageBytes<SignInResponse, SignInResponseDto>(response, NetworkMessageCode.SignInResponseCode);
-            
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signInRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignInResponseCode, response.Status);
-
-            return byteResponse;
-        }
-
-        /// <summary>
-        /// Посик пользователя в мессенджере
-        /// </summary>
-        /// <param name="networkMessage">Сообщение</param>
-        /// <returns></returns>
-        private byte[] ProcessSearchUserRequest(NetworkMessage networkMessage, /*ServerNetworkProvider serverNetworkProvider*/int networkProviderId)
-        {
-            UserSearchRequestDto searchRequestDto = SerializationHelper.Deserialize<UserSearchRequestDto>(networkMessage.Data);
-
-            List<User>? usersList = _dbService.FindListOfUsers(searchRequestDto);
-
-            UserSearchResponse response = CreateUserSearchResponse(usersList);
-
-            byte[] byteResponse = CreateNetworkMessageBytes<UserSearchResponse, UserSearchResponseDto>(response, NetworkMessageCode.SearchUserResponseCode);
-
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, searchRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SearchUserResponseCode, response.Status);
-
-            return byteResponse;
-        }
 
         /// <summary>
         /// Обработать запрос на создание нового диалога
@@ -190,24 +246,26 @@ namespace ConsoleMessengerServer
             return byteResponse;
         }
 
-        private byte[] ProcessRequest<TReqDto, TReqResult, TResponse, TResponseDto>(NetworkMessage networkMessage, int networkProviderId, Func<TReqDto, TReqResult?> processInDb, Func<TReqResult?, int, TResponse> createResponse, NetworkMessageCode code)
-            where TReqResult : class
-            where TResponseDto : class
-            where TResponse : IResponse
-        {
-            TReqDto reqDto = SerializationHelper.Deserialize<TReqDto>(networkMessage.Data);
 
-            TReqResult? res = processInDb(reqDto);
 
-            TResponse response = createResponse(res, networkProviderId);
+        //private byte[] ProcessRequest<TReqDto, TReqResult, TResponse, TResponseDto>(NetworkMessage networkMessage, int networkProviderId, Func<TReqDto, TReqResult?> processInDb, Func<TReqResult?, int, TResponse> createResponse, NetworkMessageCode code)
+        //    where TReqResult : class
+        //    where TResponseDto : class
+        //    where TResponse : IResponse
+        //{
+        //    TReqDto reqDto = SerializationHelper.Deserialize<TReqDto>(networkMessage.Data);
 
-            byte[] byteResponse = CreateNetworkMessageBytes<TResponse, TResponseDto>(response, code);
+        //    TReqResult? res = processInDb(reqDto);
 
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, reqDto.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, code, response.Status);
+        //    TResponse response = createResponse(res, networkProviderId);
 
-            return byteResponse;
-        }
+        //    byte[] byteResponse = CreateNetworkMessageBytes<TResponse, TResponseDto>(response, code);
+
+        //    ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, reqDto.ToString());
+        //    ReportPrinter.PrintResponseReport(networkProviderId, code, response.Status);
+
+        //    return byteResponse;
+        //}
 
         /// <summary>
         /// Обработать запрос на отправку сообщения
@@ -347,11 +405,11 @@ namespace ConsoleMessengerServer
         /// <param name="user">Пользователь</param>
         /// <param name="serverNetworkProvider">Сетевой провайдер</param>
         /// <returns></returns>
-        private SignUpResponse CreateSignUpResponse(User? user, int senderId)
+        private SignUpResponse CreateSignUpResponse(User? user, int networkProviderId)
         {
             if (user != null)
             {
-                _conectionController.AddNewSession(user.Id, senderId);
+                _conectionController.AddNewSession(user.Id, networkProviderId);
 
                 return new SignUpResponse(user.Id, NetworkResponseStatus.Successful);
             }

@@ -18,13 +18,13 @@ namespace DtoLib.Dto.Responses
         /// Пользователь
         /// </summary>
         [ProtoMember(1)]
-        public UserDto User { get; set; }
+        public UserDto? User { get; set; }
 
         /// <summary>
         /// Список диалогов пользователя
         /// </summary>
         [ProtoMember(2)]
-        public List<DialogDto> Dialogs { get; set; }
+        public List<DialogDto>? Dialogs { get; set; }
 
         /// <summary>
         /// Статус ответа

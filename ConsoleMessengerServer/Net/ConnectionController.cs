@@ -155,5 +155,10 @@ namespace ConsoleMessengerServer.Net
         {
             return _userProxyList[userId].TryRemoveConnection(networkProviderId);
         }
+
+        public async Task BroadcastErrorToSenderAsync(byte[] messageBytes, int networkProviderId)
+        {
+            await _networkProvidersBuffer[networkProviderId].SendBytesAsync(messageBytes);
+        }
     }
 }

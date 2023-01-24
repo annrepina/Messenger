@@ -11,7 +11,7 @@ namespace ConsoleMessengerServer.Responses
     /// <summary>
     /// Класс, который представляет данные представляющихе ответ на успешную регистрацию пользователя в мессенджере
     /// </summary>
-    public class SignUpResponse : IResponse
+    public class SignUpResponse : Response
     {
         /// <summary>
         /// Идентификатор пользователя
@@ -19,27 +19,20 @@ namespace ConsoleMessengerServer.Responses
         public int UserId { get; set; }
 
         ///// <summary>
-        ///// Идентификатор сетевого провайдера, на котором была произведена регистрация
+        ///// Статус ответа
         ///// </summary>
-        //public int NetworkProviderId { get; set; }
-
-        /// <summary>
-        /// Статус ответа
-        /// </summary>
-        public NetworkResponseStatus Status { get; set; }
+        //public NetworkResponseStatus Status { get; set; }
 
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public SignUpResponse(int userId, /*int networkProviderId, */NetworkResponseStatus status) : this(status)
+        public SignUpResponse(int userId, NetworkResponseStatus status) : base(status)
         {
             UserId = userId;
-            //NetworkProviderId = networkProviderId;
         }
 
-        public SignUpResponse(NetworkResponseStatus status)
+        public SignUpResponse(NetworkResponseStatus status) : base(status)
         {
-            Status = status;
         }
     }
 }

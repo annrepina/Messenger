@@ -48,6 +48,8 @@ namespace ConsoleMessengerServer.Net.Interfaces
 
         public Task BroadcastNetworkMessageToInterlocutorAsync(byte[] messageBytes, int userId);
 
+        public Task BroadcastErrorToSenderAsync(byte[] messageBytes, int networkProviderId);
+
         public bool TryDisconnectUser(int userId, int networkPrividerId);
     }
 }
