@@ -1,19 +1,8 @@
 ﻿using AutoMapper;
 using ConsoleMessengerServer.Entities;
 using ConsoleMessengerServer.Entities.Mapping;
-using ConsoleMessengerServer.Net;
-using ConsoleMessengerServer.Requests;
-using ConsoleMessengerServer.Responses;
-using DtoLib;
 using DtoLib.Dto.Requests;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.DataBase
 {
@@ -23,7 +12,7 @@ namespace ConsoleMessengerServer.DataBase
     public class DbService
     {
         /// <summary>
-        /// Маппер для мапинга ентити на DTO и обратно
+        /// Маппер для мапинга Entity на DTO и обратно
         /// </summary>
         private readonly IMapper _mapper;
 
@@ -38,7 +27,7 @@ namespace ConsoleMessengerServer.DataBase
 
         /// <summary>
         /// Добавить нового пользователя в базу данных, 
-        /// вернуть пользователя, при успешном добавлении, ноль - при неудаче
+        /// вернуть пользователя, при успешном добавлении, null - при неудаче
         /// </summary>
         /// <param name="registrationDto">DTO, который содержит данные о регистрации</param>
         /// <returns></returns>
@@ -48,9 +37,6 @@ namespace ConsoleMessengerServer.DataBase
 
             using (var dbContext = new MessengerDbContext())
             {
-                // ищем есть ли аккаунт с таким номером уже в бд
-                //var res = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == registrationDto.PhoneNumber);
-
                 var res = FindUserByPhoneNumber(registrationDto.PhoneNumber, dbContext);
 
                 // если вернули false значит аккаунта под таким номером еще нет
@@ -76,6 +62,34 @@ namespace ConsoleMessengerServer.DataBase
             return user;
         }
 
+        public void ReadMessages(MessagesAreReadRequestDto messagesAreReadRequest)
+        {
+
+            try
+            {
+                using (var dbContext = new MessengerDbContext())
+                {
+                    var messagesAreReadId = messagesAreReadRequest.MessagesId;
+
+                    List<Message> messagesList = dbContext.Dialogs.Include(d => d.Messages).First(d => d.Id == messagesAreReadRequest.DialogId).Messages.ToList();
+
+                    foreach (int id in messagesAreReadId)
+                    {
+                        messagesList.First(mes => mes.Id == id).IsRead = true;
+                    }
+
+                    var mes = dbContext.Dialogs.Include(d => d.Messages).First(d => d.Id == messagesAreReadRequest.DialogId).Messages.ToList();
+
+                    dbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
+
         /// <summary>
         /// ПРобует найти пользователя по номеру телефона
         /// </summary>
@@ -85,7 +99,7 @@ namespace ConsoleMessengerServer.DataBase
         {
             User? user = null;
 
-            using(var dbContext = new MessengerDbContext())
+            using (var dbContext = new MessengerDbContext())
             {
                 user = dbContext.Users.FirstOrDefault(user => user.PhoneNumber == phoneNumber);
 
@@ -118,7 +132,7 @@ namespace ConsoleMessengerServer.DataBase
 
             using (var dbContext = new MessengerDbContext())
             {
-                user = dbContext.Users.Include(us => us.Dialogs).FirstOrDefault(user => user.PhoneNumber == signInRequestDto.PhoneNumber && user.Password == signInRequestDto.Password);              
+                user = dbContext.Users.Include(us => us.Dialogs).FirstOrDefault(user => user.PhoneNumber == signInRequestDto.PhoneNumber && user.Password == signInRequestDto.Password);
             }
 
             return user;
@@ -128,7 +142,7 @@ namespace ConsoleMessengerServer.DataBase
         {
             List<Dialog> dialogs = new List<Dialog>();
 
-            using(var dbContext = new MessengerDbContext())
+            using (var dbContext = new MessengerDbContext())
             {
                 dialogs = dbContext.Dialogs.Include(d => d.Users).Include(d => d.Messages).ThenInclude(m => m.UserSender).Where(d => d.Users.Contains(user)).ToList();
             }
@@ -147,11 +161,11 @@ namespace ConsoleMessengerServer.DataBase
 
             using (var dbContext = new MessengerDbContext())
             {
-                List<User> users = new List<User>(); 
+                List<User> users = new List<User>();
 
                 users = dbContext.Users.Where(u => u.PhoneNumber == searchRequestDto.PhoneNumber || (searchRequestDto.Name != "" && u.Name.ToLower().Contains(searchRequestDto.Name.ToLower()))).ToList();
 
-                if(users.Count > 0)
+                if (users.Count > 0)
                     res = users;
             }
 
@@ -159,7 +173,7 @@ namespace ConsoleMessengerServer.DataBase
         }
 
         public Dialog CreateDialog(CreateDialogRequestDto dto)
-        {   
+        {
             try
             {
                 using (var dbContext = new MessengerDbContext())
@@ -273,7 +287,7 @@ namespace ConsoleMessengerServer.DataBase
         {
             try
             {
-                using(var dbContext = new MessengerDbContext())
+                using (var dbContext = new MessengerDbContext())
                 {
                     return dbContext.Messages.Include(mes => mes.Dialog).Include(mes => mes.UserSender).FirstOrDefault(mes => mes.Id == deleteMessageRequestDto.MessageId);
                 }
@@ -282,7 +296,7 @@ namespace ConsoleMessengerServer.DataBase
             {
                 Console.WriteLine(ex.Message);
                 throw;
-            }          
+            }
         }
 
         /// <summary>
@@ -313,7 +327,7 @@ namespace ConsoleMessengerServer.DataBase
         {
             try
             {
-                using(var dbContext = new MessengerDbContext())
+                using (var dbContext = new MessengerDbContext())
                 {
                     var dial = dbContext.Dialogs.Remove(dialog);
 
@@ -339,7 +353,7 @@ namespace ConsoleMessengerServer.DataBase
 
             try
             {
-                using(var dbContext = new MessengerDbContext())
+                using (var dbContext = new MessengerDbContext())
                 {
                     interlocutorId = dbContext.Dialogs.Include(d => d.Users).First(d => d.Id == dialogId).Users.First(user => user.Id != userId).Id;
 

@@ -11,12 +11,20 @@ namespace WpfMessengerClient.Models.Requests
     /// </summary>
     public class MessagesAreReadRequest
     {
-        //public int MessageId { get; set; }
         public List<int> MessagesId { get; set; }
 
-        public MessagesAreReadRequest(List<int> messagesId)
+        /// <summary>
+        /// Id пользователя прочитавшего сообщения
+        /// </summary>
+        public int UserId { get; set; }
+
+        public int DialogId { get; set; }
+
+        public MessagesAreReadRequest(List<int> messagesId, int userId, int dialogId)
         {
             MessagesId = messagesId;
+            UserId = userId;
+            DialogId = dialogId;
         }
     }
 }

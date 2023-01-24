@@ -99,12 +99,31 @@ namespace ConsoleMessengerServer
                 case NetworkMessageCode.SignOutRequestCode:
                     return ProcessSignOutRequest(networkMessage, networkProviderId);
 
+                case NetworkMessageCode.MessagesAreReadRequestCode:
+                    return ProcessMessagesAreReadRequest(networkMessage, networkProviderId);
+
                 default:
                     return new byte[] {};
             }
         }
 
         #endregion INetworkHandler Implementation
+
+        private byte[] ProcessMessagesAreReadRequest(NetworkMessage networkMessage, int networkProviderId)
+        {
+            MessagesAreReadRequestDto messagesAreReadRequest = SerializationHelper.Deserialize<MessagesAreReadRequestDto>(networkMessage.Data);
+
+            _dbService.ReadMessages(messagesAreReadRequest);
+
+            Response response = CreateMessagesAreReadRersponse(messagesAreReadRequest, networkProviderId);
+
+            byte[] byteResponse = CreateNetworkMessageBytes<Response, ResponseDto>(response, NetworkMessageCode.MessagesAreReadResponseCode);
+
+            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, messagesAreReadRequest.ToString());
+            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.MessagesAreReadResponseCode, response.Status);
+
+            return byteResponse;
+        }
 
         /// <summary>
         /// Обработать запрос на вход в мессенджер
@@ -386,7 +405,7 @@ namespace ConsoleMessengerServer
             return new Response(NetworkResponseStatus.Failed);
         }
 
-        private /*DeleteDialog*/Response CreateDeleteDialogResponse(Dialog? dialog, int networkProviderId, int userId)
+        private Response CreateDeleteDialogResponse(Dialog? dialog, int networkProviderId, int userId)
         {
             if (dialog != null)
             {
@@ -401,10 +420,22 @@ namespace ConsoleMessengerServer
                 _conectionController.BroadcastNetworkMessageToSenderAsync(requestBytes, userId, networkProviderId);
                 _conectionController.BroadcastNetworkMessageToInterlocutorAsync(requestBytes, interlocutorId);
 
-                return new /*DeleteDialog*/Response(NetworkResponseStatus.Successful);
+                return new Response(NetworkResponseStatus.Successful);
             }
 
-            return new /*DeleteDialog*/Response(NetworkResponseStatus.Failed);
+            return new Response(NetworkResponseStatus.Failed);
+        }
+
+        private Response CreateMessagesAreReadRersponse(MessagesAreReadRequestDto readRequest, int networkProviderId)
+        {
+            Response response = new Response(NetworkResponseStatus.Successful);
+
+            MessagesAreReadRequestForClient messagesAreReadRequest = new MessagesAreReadRequestForClient(readRequest.MessagesId, readRequest.DialogId);
+            byte[] requestBytes = CreateNetworkMessageBytes<MessagesAreReadRequestForClient, MessagesAreReadRequestForClientDto>(messagesAreReadRequest, NetworkMessageCode.MessagesAreReadRequestCode);
+
+            _conectionController.BroadcastNetworkMessageToSenderAsync(requestBytes, readRequest.UserId, networkProviderId);
+
+            return response;
         }
 
         /// <summary>

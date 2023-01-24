@@ -35,6 +35,7 @@ namespace ConsoleMessengerServer.Entities.Mapping
             CreateMap<Message, MessageDto>().ReverseMap();
             CreateMap<SendMessageRequestDto, SendMessageRequest>().ReverseMap();
             CreateMap<SendMessageResponse, SendMessageResponseDto>().ReverseMap();
+            CreateMap<MessagesAreReadRequestForClient, MessagesAreReadRequestForClientDto>().ReverseMap();
 
             CreateMap<ServerNetworkProvider, NetworkProviderDto>().ReverseMap();
 

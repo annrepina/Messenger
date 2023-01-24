@@ -37,6 +37,8 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<DeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
             //CreateMap<DeleteMessageResponseDto, DeleteMessageResponse>().ReverseMap();
             CreateMap<DeleteMessageRequestForClientDto, DeleteMessageRequestForClient>().ReverseMap();
+            CreateMap<MessagesAreReadRequest, MessagesAreReadRequestDto>().ReverseMap();
+            CreateMap<MessagesAreReadRequestForClientDto, MessagesAreReadRequestForClient>().ReverseMap();
 
             CreateMap<ClientNetworkProvider, NetworkProviderDto>().ReverseMap();
 

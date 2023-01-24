@@ -5,19 +5,12 @@ using DtoLib.Dto.Responses;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
-using WpfMessengerClient.Services;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WpfMessengerClient
 {
@@ -94,6 +87,11 @@ namespace WpfMessengerClient
         /// </summary>
         public readonly NetworkMessageHandlerEvent<Response> MessageIsReadResponseReceived;
 
+        /// <summary>
+        /// Событие получение запроса на прочтение сообщения текущим пользователем с другого клиента
+        /// </summary>
+        public readonly NetworkMessageHandlerEvent<MessagesAreReadRequestForClient> MessagesAreReadRequestForClientReceived;
+
         #endregion События
 
         #region Приватные поля
@@ -118,19 +116,20 @@ namespace WpfMessengerClient
         /// </summary>
         public NetworkMessageHandler()
         {
-            SignUpResponseReceived = new NetworkMessageHandlerEvent<SignUpResponse> ();
-            SignInResponseReceived = new NetworkMessageHandlerEvent<SignInResponse> ();
-            SignOutResponseReceived = new NetworkMessageHandlerEvent<Response> ();
-            UserSearchResponseReceived = new NetworkMessageHandlerEvent<UserSearchResponse> ();
-            CreateDialogResponseReceived = new NetworkMessageHandlerEvent<CreateDialogResponse> ();
+            SignUpResponseReceived = new NetworkMessageHandlerEvent<SignUpResponse>();
+            SignInResponseReceived = new NetworkMessageHandlerEvent<SignInResponse>();
+            SignOutResponseReceived = new NetworkMessageHandlerEvent<Response>();
+            UserSearchResponseReceived = new NetworkMessageHandlerEvent<UserSearchResponse>();
+            CreateDialogResponseReceived = new NetworkMessageHandlerEvent<CreateDialogResponse>();
             CreateDialogRequestReceived = new NetworkMessageHandlerEvent<Dialog>();
-            SendMessageResponseReceived = new NetworkMessageHandlerEvent<SendMessageResponse> ();
-            DialogReceivedNewMessage = new NetworkMessageHandlerEvent<SendMessageRequest> ();
-            DeleteMessageResponseReceived = new NetworkMessageHandlerEvent<Response> ();
-            DeleteMessageRequestForClientReceived = new NetworkMessageHandlerEvent<DeleteMessageRequestForClient> ();
-            DeleteDialogResponseReceived = new NetworkMessageHandlerEvent<Response> ();
+            SendMessageResponseReceived = new NetworkMessageHandlerEvent<SendMessageResponse>();
+            DialogReceivedNewMessage = new NetworkMessageHandlerEvent<SendMessageRequest>();
+            DeleteMessageResponseReceived = new NetworkMessageHandlerEvent<Response>();
+            DeleteMessageRequestForClientReceived = new NetworkMessageHandlerEvent<DeleteMessageRequestForClient>();
+            DeleteDialogResponseReceived = new NetworkMessageHandlerEvent<Response>();
             DeleteDialogRequestForClientReceived = new NetworkMessageHandlerEvent<DeleteDialogRequestForClient>();
             MessageIsReadResponseReceived = new NetworkMessageHandlerEvent<Response>();
+            MessagesAreReadRequestForClientReceived = new NetworkMessageHandlerEvent<MessagesAreReadRequestForClient>();
 
             ConnectionController = null;
 
@@ -184,6 +183,14 @@ namespace WpfMessengerClient
 
                 case NetworkMessageCode.DeleteMessageRequestCode:
                     ProcessMessage<DeleteMessageRequestForClientDto, DeleteMessageRequestForClient>(message, DeleteMessageRequestForClientReceived);
+                    break;
+
+                case NetworkMessageCode.MessagesAreReadRequestCode:
+                    ProcessMessage<MessagesAreReadRequestForClientDto, MessagesAreReadRequestForClient>(message, MessagesAreReadRequestForClientReceived);
+                    break;
+
+                case NetworkMessageCode.MessagesAreReadResponseCode:
+                    ProcessMessage<ResponseDto, Response>(message, MessageIsReadResponseReceived);
                     break;
 
                 case NetworkMessageCode.DeleteDialogResponseCode:

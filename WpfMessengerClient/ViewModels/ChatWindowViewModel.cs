@@ -126,12 +126,14 @@ namespace WpfMessengerClient.ViewModels
                 _activeDialog = value;
 
                 if (_activeDialog != null)
+                {
                     IsActiveDialogNull = false;
+
+                    ReadMessages(ActiveDialog);
+                }
 
                 else
                     IsActiveDialogNull = true;
-
-
 
                 OnPropertyChanged(nameof(ActiveDialog));
             }
@@ -467,6 +469,7 @@ namespace WpfMessengerClient.ViewModels
             _networkMessageHandler.DialogReceivedNewMessage.ResponseReceived += OnDialogReceivedNewMessage;
             _networkMessageHandler.DeleteMessageRequestForClientReceived.ResponseReceived += OnDeleteMessageRequestForClientReceived;
             _networkMessageHandler.DeleteDialogRequestForClientReceived.ResponseReceived += OnDeleteDialogRequestForClientReceived;
+            _networkMessageHandler.MessagesAreReadRequestForClientReceived.ResponseReceived += OnMessagesAreReadRequestForClientReceived;
 
             MessengerWindowsManager = messengerWindowsManager;
             CurrentUser = user;
@@ -507,6 +510,8 @@ namespace WpfMessengerClient.ViewModels
 
             IsExitButtonAvailable = true;
         }
+
+
 
         public ChatWindowViewModel(NetworkMessageHandler networkMessageHandler, MessengerWindowsManager messengerWindowsManager, User user, List<Dialog> dialogs) : this(networkMessageHandler, messengerWindowsManager, user)
         {
@@ -613,6 +618,15 @@ namespace WpfMessengerClient.ViewModels
         //    throw new NotImplementedException();
         //}
 
+        private void OnMessagesAreReadRequestForClientReceived(MessagesAreReadRequestForClient messagesAreReadRequestForClient)
+        {
+            var dialog = Dialogs.First(d => d.Id == messagesAreReadRequestForClient.DialogId);
+
+            ReadMessages(messagesAreReadRequestForClient.MessagesId, dialog);
+
+            dialog.CheckLastMessagesToUser(CurrentUser.Id);
+        }
+
         /// <summary>
         /// Обрабатывает событие обработчика сетевых сообщений - получен запрос на создание нового диалога
         /// </summary>
@@ -681,11 +695,11 @@ namespace WpfMessengerClient.ViewModels
 
         private async Task SendMessagesAreReadRequest(List<int> messagesId, Dialog dialog)
         {
-            MessagesAreReadRequest messageIsReadRequest = new MessagesAreReadRequest(messagesId);
+            MessagesAreReadRequest messageIsReadRequest = new MessagesAreReadRequest(messagesId, CurrentUser.Id, dialog.Id);
 
-            var response = await SendRequestAsync<MessagesAreReadRequest, MessageIsReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.MessageIsReadResponseReceived, NetworkMessageCode.MessageIsReadRequestCode);
+            var response = await SendRequestAsync<MessagesAreReadRequest, MessagesAreReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.MessageIsReadResponseReceived, NetworkMessageCode.MessagesAreReadRequestCode);
 
-            ProcessMessageIsReadResponse(response, messagesId, dialog);
+            ProcessMessagesAreReadResponse(response, messagesId, dialog);
         }
 
         /// <summary>
@@ -721,25 +735,23 @@ namespace WpfMessengerClient.ViewModels
             {
                 ActiveDialog = Dialogs.First(dial => dial.Users.Find(user => user.Id == _selectedUser.Id) != null);
 
-                var messagesIsNotRead = ActiveDialog.Messages.Where(mes => mes.IsRead == false).ToList();
-
-                foreach (var message in messagesIsNotRead)
-                {
-                    message.IsRead = true;
-                }
+                await ReadMessages(ActiveDialog);
             }
         }
 
-        private void ReadMessages(Dialog dialog)
+        private async Task ReadMessages(Dialog dialog)
         {
-            var messagesIsNotReadId = dialog.Messages.Where(mes => mes.IsRead == false).Select(mes => mes.Id).ToList();
+            var unreadMessagesId = ActiveDialog.Messages.Reverse().TakeWhile(mes => mes.IsCurrentUserMessage == false && mes.IsRead == false).Select(mes => mes.Id).ToList();
 
-            //SendMessagesAreReadRequest(messagesIsNotReadId, )
+            if(unreadMessagesId.Count > 0)
+                await SendMessagesAreReadRequest(unreadMessagesId, dialog);
+        }
 
-            foreach (var message in messagesIsNotRead)
+        private void ReadMessages(List<int> messagesId, Dialog dialog)
+        {
+            foreach (int id in messagesId)
             {
-                //SendMessagesAreReadRequest()
-                message.IsRead = true;
+                dialog.Messages.First(mes => mes.Id == id).IsRead = true;
             }
         }
 
@@ -926,17 +938,14 @@ namespace WpfMessengerClient.ViewModels
         /// Обработать ответ на запрос о прочтении сообщения
         /// </summary>
         /// <param name="response"></param>
-        private void ProcessMessageIsReadResponse(Response response, List<int> messagesId, Dialog dialog)
+        private void ProcessMessagesAreReadResponse(Response response, List<int> messagesId, Dialog dialog)
         {
             if(response.Status == NetworkResponseStatus.Successful)
             {
-                foreach (int messageId in messagesId)
-                {
-                    dialog.Messages.First(mes => mes.Id == messageId).IsRead = true;
-                }
-
+                ReadMessages(messagesId, dialog);
                 dialog.CheckLastMessagesToUser(CurrentUser.Id);
             }
+
             else
             {
                 //
