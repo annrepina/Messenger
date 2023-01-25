@@ -1,4 +1,5 @@
-﻿using ConsoleMessengerServer.Net;
+﻿//#define DEBUG
+using ConsoleMessengerServer.Net;
 
 namespace ConsoleMessengerServer
 {

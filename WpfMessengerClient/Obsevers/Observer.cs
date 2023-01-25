@@ -15,11 +15,6 @@ namespace WpfMessengerClient.Obsevers
     {
         public TResponse Response { get; protected set; }
 
-        ///// <summary>
-        ///// Посредник между пользователем и сетью
-        ///// </summary>
-        //protected readonly NetworkMessageHandler _networkMessageHandler;
-
         /// <summary>
         /// 
         /// </summary>

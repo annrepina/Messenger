@@ -1,4 +1,5 @@
 ﻿using DtoLib.NetworkServices;
+using DtoLib.NetworkServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,11 @@ namespace ConsoleMessengerServer.Responses
         public Response(NetworkResponseStatus status)
         {
             Status = status;
+        }
+
+        public Response()
+        {
+            //Status = NetworkResponseStatus.Successful;
         }
     }
 }

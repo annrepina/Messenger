@@ -11,6 +11,7 @@ using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
+using WpfMessengerClient.NetworkServices;
 
 namespace WpfMessengerClient
 {

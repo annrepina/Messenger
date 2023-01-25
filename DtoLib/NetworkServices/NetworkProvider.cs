@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DtoLib.NetworkServices.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -18,6 +19,8 @@ namespace DtoLib.NetworkServices
         private static int _counter = 0;
 
         protected ITransmitterAsync _transmitter;
+
+        //public event Action<int> Disconnected;
 
         #region Свойства
 
@@ -60,6 +63,8 @@ namespace DtoLib.NetworkServices
             TcpClient = null;
         }
 
+        public event Action<int> Disconnected;
+
         /// <summary>
         /// Закрыть подлючения
         /// </summary>
@@ -80,5 +85,36 @@ namespace DtoLib.NetworkServices
         public abstract void NotifyBytesReceived(byte[] data);
 
         public abstract Task SendBytesAsync(byte[] data);
+
+        public virtual void Disconnect()
+        {
+            Disconnected.Invoke(Id);
+            //CloseConnection();
+        }
+
+        /// <summary>
+        /// Получить сетевое сообщение асинхронно
+        /// </summary>
+        public async Task ReadBytes()
+        {
+            try
+            {
+                while (true)
+                {
+                    // буфер для получаемых данных
+                    byte[] data = await _transmitter.ReceiveBytesAsync();
+
+                    NotifyBytesReceived(data);
+                }
+            }
+            catch (IOException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -23,19 +23,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!--<Grid Grid.Row="0" Grid.Column="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="2*"/>
-            </Grid.RowDefinitions>-->
-            <Button Grid.Row="0" Grid.Column="0" Content="Назад" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Style="{StaticResource RoundedButton}"
-                    Margin="10, 0, 0, 0" Height="50" Width="120"
-                    IsEnabled="{Binding IsControlsAvailable}" Command="{Binding BackCommand}"/>
+        <Button Grid.Row="0" Grid.Column="0" Content="Назад" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Style="{StaticResource RoundedButton}"
+                Margin="10, 0, 0, 0" Height="50" Width="120"
+                IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding BackCommand}"/>
         <!--</Grid>-->
 
         <Grid Grid.Column="1" Grid.Row="1" Background="AliceBlue">
@@ -55,12 +45,12 @@
                 <TextBlock Grid.Row="0" Text="Регистрация" FontSize="32" FontFamily="Tahoma" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="1" Text="Ваш номер телефона будет использоваться &#x0a;для входа в аккаунт" FontSize="16" FontFamily="Tahoma" HorizontalAlignment="Center" TextAlignment="Center" Foreground="#6f7378"/>
             </Grid>
-            <TextBox Grid.Row="1" IsEnabled="{Binding IsControlsAvailable}" Style="{StaticResource InputPhoneNumberTextBox}" Height="90" Margin="5,0,5,5" VerticalAlignment="Bottom"/>
-            <TextBox Grid.Row="2" IsEnabled="{Binding IsControlsAvailable}" Style="{StaticResource InputNameTextBox}" />
-            <TextBox Grid.Row="3" IsEnabled="{Binding IsControlsAvailable}" Style="{StaticResource InputPasswordTextBox}"/>
+            <TextBox Grid.Row="1" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPhoneNumberTextBox}" Height="90" Margin="5,0,5,5" VerticalAlignment="Bottom"/>
+            <TextBox Grid.Row="2" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputNameTextBox}" />
+            <TextBox Grid.Row="3" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPasswordTextBox}"/>
             <!--<TextBox Grid.Row="4" Style="{StaticResource InputSecondPasswordTextBox}" />-->
 
-            <Button Grid.Row="5" Style="{StaticResource RoundedButton}" IsEnabled="{Binding IsControlsAvailable}" Content="Зарегистрироваться" Command="{Binding SignUpCommand}"/>
+            <Button Grid.Row="5" Style="{StaticResource RoundedButton}" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Content="Зарегистрироваться" Command="{Binding SignUpCommand}"/>
             <Border CornerRadius="18"/>
         </Grid>   
     </Grid>

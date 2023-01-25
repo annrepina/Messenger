@@ -1,5 +1,5 @@
 ﻿using ConsoleMessengerServer.Net.Interfaces;
-using DtoLib.NetworkServices;
+using DtoLib.NetworkServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,28 +64,6 @@ namespace ConsoleMessengerServer.Net
             }
         }
 
-        //todo: Возможно убрать эту реализацию вообще
-        /// <summary>
-        /// Отключить конкретного клиента
-        /// </summary>
-        /// <param name="clientId">Идентификатор клиента</param>
-        public void DisconnectClient(int clientId)
-        {
-            if (_userProxyList != null && _userProxyList.Count > 0)
-            {
-                _userProxyList.Remove(clientId);
-            }
-        }
-
-        //todo Возможно убрать этот метод вообще
-        public void DisconnectClients()
-        {
-            foreach (var client in _userProxyList.Values)
-            {
-                //client.CloseAll();
-            }
-        }
-
         /// <summary>
         /// Инициализировать новое подключение
         /// </summary>
@@ -122,8 +100,6 @@ namespace ConsoleMessengerServer.Net
         //todo Реализовать вызов метода
         public void Dispose()
         {
-            //DisconnectClients();
-
             Server.Stop();
         }
 
@@ -151,9 +127,9 @@ namespace ConsoleMessengerServer.Net
             _userProxyList.Remove(userProxyId);
         }
 
-        public bool TryDisconnectUser(int userId, int networkProviderId)
+        public void DisconnectUser(int userId, int networkProviderId)
         {
-            return _userProxyList[userId].TryRemoveConnection(networkProviderId);
+            _userProxyList[userId].RemoveConnection(networkProviderId);
         }
 
         public async Task BroadcastErrorToSenderAsync(byte[] messageBytes, int networkProviderId)

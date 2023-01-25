@@ -10,7 +10,7 @@ namespace ConsoleMessengerServer.Responses
     /// <summary>
     /// Класс, который представляет ответ на запрос о создании нового диалога
     /// </summary>
-    public class CreateDialogResponse 
+    public class CreateDialogResponse : Response
     {
         /// <summary>
         /// Идентификатор созданного диалога
@@ -22,36 +22,23 @@ namespace ConsoleMessengerServer.Responses
         /// </summary>
         public int MessageId { get; init; }
 
-        //public NetworkResponseStatus Status { get; set; }
-
-        public CreateDialogResponse()
+        public CreateDialogResponse() : base()
         {
-
         }
 
-        //public CreateDialogResponse(NetworkResponseStatus status)
-        //{
-        //    Status = status;
-        //}
+        public CreateDialogResponse(NetworkResponseStatus status) : base(status)
+        {
+        }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="dialogId">Идентификатор созданного диалога</param>
         /// <param name="messageId">Идентификатор первого сообщения</param>
-        public CreateDialogResponse(int dialogId, int messageId/*, NetworkResponseStatus status*/)
+        public CreateDialogResponse(int dialogId, int messageId, NetworkResponseStatus status) : base(status)
         {
             DialogId = dialogId;
             MessageId = messageId;
-            //Status = status;
         }
-
-        //public override string ToString()
-        //{
-        //    if (Status == NetworkResponseStatus.Successful)
-        //        return $"Диалог с Id {DialogId} успешно создан";
-
-        //    return "Диалог не удалось создать";
-        //}
     }
 }

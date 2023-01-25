@@ -18,11 +18,6 @@ namespace ConsoleMessengerServer.Responses
         /// </summary>
         public int UserId { get; set; }
 
-        ///// <summary>
-        ///// Статус ответа
-        ///// </summary>
-        //public NetworkResponseStatus Status { get; set; }
-
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>

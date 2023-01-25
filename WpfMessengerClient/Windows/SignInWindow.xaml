@@ -22,19 +22,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!--<Grid Grid.Row="0" Grid.Column="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="3*"/>
-            </Grid.RowDefinitions>-->
-            <Button Grid.Row="0" Grid.Column="0" Content="Назад" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" Style="{StaticResource RoundedButton}"
-                    Margin="10, 10, 0, 0" Height="50" Width="120"
-                    IsEnabled="{Binding IsControlsAvailable}" Command="{Binding BackCommand}"/>
+        <Button Grid.Row="0" Grid.Column="0" Content="Назад" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" Style="{StaticResource RoundedButton}"
+                Margin="10, 10, 0, 0" Height="50" Width="120"
+                IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding BackCommand}"/>
         <!--</Grid>-->
 
         <Grid Grid.Column="1" Grid.Row="1" Background="AliceBlue">
@@ -52,10 +42,10 @@
                 <TextBlock Grid.Row="0" Text="Вход" FontSize="32" FontFamily="Tahoma" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
                 <TextBlock Grid.Row="1" Text="Введите номер телефона и пароль" FontSize="16" FontFamily="Tahoma" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Foreground="#6f7378"/>
             </Grid>
-            <TextBox Grid.Row="1" IsEnabled="{Binding IsControlsAvailable}" Style="{StaticResource InputPhoneNumberTextBox}" Height="90" Margin="5,0,5,5" VerticalAlignment="Bottom"/>
-            <TextBox Grid.Row="2" IsEnabled="{Binding IsControlsAvailable}" Style="{StaticResource InputPasswordTextBox}"/>
+            <TextBox Grid.Row="1" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPhoneNumberTextBox}" Height="90" Margin="5,0,5,5" VerticalAlignment="Bottom"/>
+            <TextBox Grid.Row="2" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPasswordTextBox}"/>
 
-            <Button Grid.Row="3" Style="{StaticResource RoundedButton}" IsEnabled="{Binding IsControlsAvailable}" Content="Войти" Command="{Binding SignInCommand}"/>
+            <Button Grid.Row="3" Style="{StaticResource RoundedButton}" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Content="Войти" Command="{Binding SignInCommand}"/>
             <!--<Border CornerRadius="18"/>-->
         </Grid>
     </Grid>

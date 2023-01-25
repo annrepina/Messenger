@@ -10,7 +10,7 @@ namespace WpfMessengerClient.Models.Responses
     /// <summary>
     /// Класс, который представляет ответ на запрос поиска пользователя с удачным результатом 
     /// </summary>
-    public class UserSearchResponse
+    public class UserSearchResponse : Response
     {
         /// <summary>
         /// Пользователи удовлетворяющие поиску
@@ -18,17 +18,11 @@ namespace WpfMessengerClient.Models.Responses
         public List<User> RelevantUsers { get; init; }
 
         /// <summary>
-        /// Статус ответа на сетевой запрос
-        /// </summary>
-        public NetworkResponseStatus Status { get; init; }
-
-        /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        public UserSearchResponse(List<User> relevantUsers, NetworkResponseStatus status)
+        public UserSearchResponse(List<User> relevantUsers, NetworkResponseStatus status) : base(status)
         {
             RelevantUsers = relevantUsers;
-            Status = status;
         }
     }
 }

@@ -15,13 +15,6 @@ namespace DtoLib.Dto.Requests
     [ProtoContract]
     public class CreateDialogRequestDto
     {
-        ///// <summary>
-        ///// Свойство - id
-        ///// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        ///// </summary>
-        //[ProtoMember(1)]
-        //public int Id { get; set; }
-
         /// <summary>
         /// Свойство - массив данных пользователей, участвующих в диалоге
         /// </summary>

@@ -28,19 +28,15 @@ namespace WpfMessengerClient.Models.Mapping
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
             CreateMap<DeleteDialogRequest, DeleteDialogRequestDto>().ReverseMap();
             CreateMap<DeleteDialogRequestForClientDto, DeleteDialogRequestForClient>().ReverseMap();
-            //CreateMap<DeleteDialogResponseDto, DeleteDialogResponse>().ReverseMap();
             CreateMap<ResponseDto, Response>().ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
             CreateMap<SendMessageRequest, SendMessageRequestDto>().ReverseMap();
             CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();   
             CreateMap<DeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
-            //CreateMap<DeleteMessageResponseDto, DeleteMessageResponse>().ReverseMap();
             CreateMap<DeleteMessageRequestForClientDto, DeleteMessageRequestForClient>().ReverseMap();
             CreateMap<MessagesAreReadRequest, MessagesAreReadRequestDto>().ReverseMap();
             CreateMap<MessagesAreReadRequestForClientDto, MessagesAreReadRequestForClient>().ReverseMap();
-
-            CreateMap<ClientNetworkProvider, NetworkProviderDto>().ReverseMap();
 
             CreateMap<SignUpRequest, SignUpRequestDto>().ReverseMap();        
             CreateMap<SignUpRequest, User>().ReverseMap();
@@ -53,7 +49,6 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<UserSearchResponse, UserSearchResponseDto>().ReverseMap();
 
             CreateMap<SignOutRequest, SignOutRequestDto>().ReverseMap(); 
-            //CreateMap<SignOutResponseDto, SignOutResponse>().ReverseMap();
         }
     }
 }

@@ -38,16 +38,21 @@ namespace ConsoleMessengerServer.Net
         {
             try
             {
-                await _transmitter.RunReceivingBytesInLoop();
+                await ReadBytes();
+            }
+            catch (IOException)
+            {
+                var dateTime = DateTime.Now;
+
+                Console.WriteLine($"[{dateTime.ToString("dd.MM.yyyy HH:mm:ss")}] Клиент Id:{Id} отключился.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Клиент Id {Id} отключился");
+                Console.WriteLine(ex.InnerException?.Message);
             }
             finally
             {
-                ConnectionController.DisconnectClient(Id);
                 CloseConnection();
             }
         }

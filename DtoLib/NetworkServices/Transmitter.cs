@@ -1,4 +1,5 @@
-﻿using DtoLib.Serialization;
+﻿using DtoLib.NetworkServices.Interfaces;
+using DtoLib.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,33 +34,45 @@ namespace DtoLib.NetworkServices
         /// <returns></returns>
         public async Task<byte[]> ReceiveBytesAsync()
         {
-            byte[] lengthBuffer = new byte[4];
-            List<byte> bytesList = new List<byte>();
-            int bytes = 0;
-
-            bytes = await NetworkProvider.NetworkStream.ReadAsync(lengthBuffer, 0, lengthBuffer.Length);
-
-            if (bytes == 0)
-                throw new Exception("Удаленный хост разорвал соединение.");
-
-            int length = BitConverter.ToInt32(lengthBuffer, 0);
-
-            byte[] data = new byte[length];
-
-            do
+            try
             {
-                bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
+                byte[] lengthBuffer = new byte[4];
+                List<byte> bytesList = new List<byte>();
+                int bytes = 0;
 
-                for(int i = 0; i < bytes; ++i)
+                bytes = await NetworkProvider.NetworkStream.ReadAsync(lengthBuffer, 0, lengthBuffer.Length);
+
+                if (bytes == 0)
+                    throw new IOException();           
+
+                int length = BitConverter.ToInt32(lengthBuffer, 0);
+
+                byte[] data = new byte[length];
+
+                do
                 {
-                    bytesList.Add(data[i]);
-                }
+                    bytes = await NetworkProvider.NetworkStream.ReadAsync(data, 0, data.Length);
 
-            } while (bytesList.Count < length);
+                    for(int i = 0; i < bytes; ++i)
+                    {
+                        bytesList.Add(data[i]);
+                    }
 
-            data = bytesList.ToArray();
+                } while (bytesList.Count < length);
 
-            return data;
+                data = bytesList.ToArray();
+
+                return data;
+            }
+            catch(IOException)
+            {
+                NetworkProvider.Disconnect();
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -77,9 +90,12 @@ namespace DtoLib.NetworkServices
                     NetworkProvider.NotifyBytesReceived(data);
                 }
             }
-            catch (Exception ex)
+            catch (IOException)
             {
-                var s = ex.ToString();
+                throw;
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }

@@ -5,13 +5,18 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.NetworkServices
+namespace DtoLib.NetworkServices.Interfaces
 {
     /// <summary>
     /// Интерфейс, который представляет собой сетевого провайдера
     /// </summary>
     public interface INetworkProvider
     {
+        /// <summary>
+        /// Событие отключения
+        /// </summary>
+        public event Action<int> Disconnected;
+
         /// <summary>
         /// Идентификатор
         /// </summary>
@@ -38,5 +43,9 @@ namespace DtoLib.NetworkServices
         /// </summary>
         /// <param name="data"></param>
         public Task SendBytesAsync(byte[] data);
+
+        public Task ReadBytes();
+
+        public void Disconnect();
     }
 }

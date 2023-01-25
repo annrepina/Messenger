@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient
 {
     /// <summary>
-    /// Класс, который является оберткой над событием в классе NetworkMessageHandler
+    /// Класс, который является оберткой над событием в классе _networkMessageHandler
     /// </summary>
     public class NetworkMessageHandlerEvent<TResponse>
         where TResponse : class

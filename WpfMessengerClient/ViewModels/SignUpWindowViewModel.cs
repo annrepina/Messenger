@@ -1,27 +1,14 @@
-﻿using Prism.Commands;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using AutoMapper;
+using DtoLib.Dto.Requests;
+using DtoLib.NetworkServices;
+using Prism.Commands;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Windows.Media.Animation;
+using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
-using AutoMapper;
-using DtoLib.Dto;
-using WpfMessengerClient.Services;
-using DtoLib;
-using DtoLib.Serialization;
-using WpfMessengerClient.Obsevers;
-using System.Windows;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
-using DtoLib.NetworkServices;
-using DtoLib.Dto.Requests;
+using WpfMessengerClient.Obsevers;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -30,6 +17,11 @@ namespace WpfMessengerClient.ViewModels
     /// </summary>
     public class SignUpWindowViewModel : BaseSignUpSignInViewModel
     {
+        /// <summary>
+        /// Маппер для мапинга моделей на DTO и обратно
+        /// </summary>
+        protected readonly IMapper _mapper;
+
         /// <summary>
         /// Команда по нажатию кнопки регистрации
         /// </summary>
@@ -49,7 +41,10 @@ namespace WpfMessengerClient.ViewModels
         public SignUpWindowViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler) : base(messengerWindowsManager, networkMessageHandler)
         {
             SignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
-            Request = new SignUpRequest(); 
+            Request = new SignUpRequest();
+
+            MessengerMapper mapper = MessengerMapper.GetInstance();
+            _mapper = mapper.CreateIMapper();
         }
 
         #endregion Конструкторы
@@ -64,11 +59,10 @@ namespace WpfMessengerClient.ViewModels
             //if (String.IsNullOrEmpty(SignUpRequest.Error))
             //{
 
-            IsControlsAvailable = false;
+            AreControlsAvailable = false;
 
             TaskCompletionSource completionSource = new TaskCompletionSource();
 
-            //var observer = new SignUpObserver(_networkMessageHandler, completionSource);
             var observer = new Observer<SignUpResponse>(completionSource, _networkMessageHandler.SignUpResponseReceived);
 
             _networkMessageHandler.SendRequestAsync<SignUpRequest, SignUpRequestDto>(Request, NetworkMessageCode.SignUpRequestCode);
@@ -77,7 +71,7 @@ namespace WpfMessengerClient.ViewModels
 
             ProcessSignUpResponse(observer.Response);
 
-            IsControlsAvailable = true;
+            AreControlsAvailable = true;
 
             //}
 
@@ -92,27 +86,24 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private void ProcessSignUpResponse(SignUpResponse response)
         {
-            if(response.Status == NetworkResponseStatus.Successful)
+            if (response.Status == NetworkResponseStatus.Successful)
             {
                 User user = _mapper.Map<User>(Request);
                 user.Id = response.UserId;
 
-                SwitchToChatWindow(user);
+                _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, user);
             }
-            else
+            else if (response.Status == NetworkResponseStatus.Failed)
             {
                 Request.PhoneNumber = "";
 
                 MessageBox.Show("Пользователь с таким телефоном уже существует. Введите другой номер или войдите в мессенджер.");
             }
-        }
-
-        /// <summary>
-        /// Изменить окно на окно чата
-        /// </summary>
-        private void SwitchToChatWindow(User user)
-        {
-            _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, user);
+            else
+            {
+                MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
+                _messengerWindowsManager.CloseCurrentWindow();
+            }
         }
     }
 }

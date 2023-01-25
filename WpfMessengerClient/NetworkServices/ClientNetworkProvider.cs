@@ -13,6 +13,7 @@ using DtoLib.NetworkServices;
 using WpfMessengerClient.ViewModels;
 using WpfMessengerClient.Models;
 using DtoLib.Serialization;
+using WpfMessengerClient.NetworkServices;
 
 namespace WpfMessengerClient.Services
 {
@@ -80,7 +81,8 @@ namespace WpfMessengerClient.Services
                         await _transmitter.SendNetworkMessageAsync(messageBytes);
                     }
 
-                    await Task.Run(() => _transmitter.RunReceivingBytesInLoop());
+                    //await Task.Run(() => _transmitter.RunReceivingBytesInLoop());
+                    await Task.Run(() => ReadBytes());
                 }
             }
             catch (Exception ex)
@@ -108,6 +110,11 @@ namespace WpfMessengerClient.Services
 
             else
                 await _transmitter.SendNetworkMessageAsync(data);
+        }
+
+        public override void Disconnect()
+        {
+            CloseConnection();
         }
 
         #endregion Методы связанные с сетью

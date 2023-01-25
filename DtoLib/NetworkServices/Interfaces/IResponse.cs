@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.NetworkServices
+namespace DtoLib.NetworkServices.Interfaces
 {
     public interface IResponse
     {

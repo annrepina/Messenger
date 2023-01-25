@@ -11,7 +11,7 @@ namespace ConsoleMessengerServer.Responses
     /// <summary>
     /// Результат поиска пользователей в мессенджере
     /// </summary>
-    public class UserSearchResponse
+    public class UserSearchResponse : Response
     {
         /// <summary>
         /// Пользователи удовлетворяющие поиску
@@ -19,14 +19,9 @@ namespace ConsoleMessengerServer.Responses
         public List<User> RelevantUsers { get; set; }
 
         /// <summary>
-        /// Статус ответа на сетевой запрос
-        /// </summary>
-        public NetworkResponseStatus Status { get; init; }
-
-        /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public UserSearchResponse()
+        public UserSearchResponse(NetworkResponseStatus status) : base(status)
         {
             RelevantUsers = new List<User>();
         }
@@ -34,10 +29,9 @@ namespace ConsoleMessengerServer.Responses
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public UserSearchResponse(List<User> relevantUsers, NetworkResponseStatus status)
+        public UserSearchResponse(List<User> relevantUsers, NetworkResponseStatus status) : base(status)
         {
             RelevantUsers = relevantUsers;
-            Status = status;
         }
     }
 }

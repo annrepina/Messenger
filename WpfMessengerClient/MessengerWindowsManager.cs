@@ -130,5 +130,12 @@ namespace WpfMessengerClient
 
             CurrentWindow.Show();
         }
+
+        public void CloseCurrentWindow()
+        {
+            CurrentWindow.Close();
+
+            CurrentApplication.Shutdown();
+        }
     }
 }

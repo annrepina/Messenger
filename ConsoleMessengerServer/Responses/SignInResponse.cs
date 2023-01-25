@@ -23,11 +23,6 @@ namespace ConsoleMessengerServer.Responses
         /// </summary>
         public List<Dialog>? Dialogs { get; set; }
 
-        ///// <summary>
-        ///// Статус ответа
-        ///// </summary>
-        //public NetworkResponseStatus Status { get; init; }
-
         /// <summary>
         /// Контекст ошибки, если статус ответа неудачный
         /// </summary>
@@ -41,7 +36,6 @@ namespace ConsoleMessengerServer.Responses
 
         public SignInResponse(NetworkResponseStatus status, SignInFailContext сontext) : base(status)
         {
-            //Status = status;
             Context = сontext;
             Dialogs = new List<Dialog>();
         }
@@ -50,7 +44,6 @@ namespace ConsoleMessengerServer.Responses
         {
             User = user;
             Dialogs = dialogs;
-            //Status = status;
         }
     }
 }

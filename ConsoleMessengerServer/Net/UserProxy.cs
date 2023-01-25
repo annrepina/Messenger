@@ -1,4 +1,4 @@
-﻿using DtoLib.NetworkServices;
+﻿using DtoLib.NetworkServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,20 +45,18 @@ namespace ConsoleMessengerServer.Net
         public void AddConnection(INetworkProvider serverNetworkProvider)
         {
             _connections.Add(serverNetworkProvider);
+            serverNetworkProvider.Disconnected += RemoveConnection;
         }
 
         /// <summary>
         /// Удалить соединение с сетевым провайдером
         /// </summary>
         /// <param name="networkProviderId"></param>
-        public bool TryRemoveConnection(int networkProviderId)
+        public void RemoveConnection(int networkProviderId)
         {
-            var provider = _connections.Find(pr => pr.Id == networkProviderId);
+            var provider = _connections.First(pr => pr.Id == networkProviderId);
             
-            if(provider != null)
-                return _connections.Remove(provider);
-
-            return false;
+            _connections.Remove(provider);
         }
 
         /// <summary>

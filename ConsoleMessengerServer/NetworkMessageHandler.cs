@@ -11,8 +11,6 @@ using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
-//using System.Data.Entity.Core;
-using System.Net.Sockets;
 
 namespace ConsoleMessengerServer
 {
@@ -21,12 +19,6 @@ namespace ConsoleMessengerServer
     /// </summary>
     public class NetworkMessageHandler : IServerNetworkMessageHandler
     {
-        /// <summary>
-        /// Словарь, который содержит пары: ключ - id агрегатора соединений пользователя 
-        /// и значение - самого агрегатора
-        /// </summary>
-        private Dictionary<int, UserProxy> _userProxyList;
-
         /// <inheritdoc cref="ConnectionController"/>
         private IConnectionController _conectionController;
 
@@ -47,8 +39,6 @@ namespace ConsoleMessengerServer
         /// </summary>
         public NetworkMessageHandler()
         {
-            _userProxyList = new Dictionary<int, UserProxy>();
-
             DataBaseMapper mapper = DataBaseMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
 
@@ -77,7 +67,6 @@ namespace ConsoleMessengerServer
             {
                 case NetworkMessageCode.SignUpRequestCode:
                     return ProcessSignUpRequest(networkMessage, networkProviderId);
-                    //return ProcessRequest<SignUpRequestDto, User, SignUpResponse, SignUpResponseDto>(networkMessage, networkProviderId, _dbService.AddNewUser, CreateSignUpResponse, NetworkMessageCode.SignUpResponseCode);
 
                 case NetworkMessageCode.SignInRequestCode:
                     return ProcessSignInRequest(networkMessage, networkProviderId);
@@ -104,7 +93,7 @@ namespace ConsoleMessengerServer
                     return ProcessMessagesAreReadRequest(networkMessage, networkProviderId);
 
                 default:
-                    return new byte[] {};
+                    return new byte[] { };
             }
         }
 
@@ -124,13 +113,13 @@ namespace ConsoleMessengerServer
 
                 ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signUpRequestDto.ToString());
                 ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignUpResponseCode, signUpResponse.Status);
-
+                
                 return responseBytes;
             }
             catch (Exception)
             {
-                SignUpResponse signUpResponse = new SignUpResponse(NetworkResponseStatus.FatalError);
-                ProcessError<SignUpResponse, SignUpResponseDto>(networkProviderId, signUpResponse, NetworkMessageCode.SignUpResponseCode);
+                SignUpResponse errorResponse = new SignUpResponse(NetworkResponseStatus.FatalError);
+                SendError<SignUpResponse, SignUpResponseDto>(networkProviderId, errorResponse, NetworkMessageCode.SignUpResponseCode);
                 throw;
             }
         }
@@ -160,7 +149,7 @@ namespace ConsoleMessengerServer
             catch (Exception)
             {
                 SignInResponse signInResponse = new SignInResponse(NetworkResponseStatus.FatalError);
-                ProcessError<SignInResponse, SignInResponseDto>(networkProviderId, signInResponse, NetworkMessageCode.SignUpResponseCode);
+                SendError<SignInResponse, SignInResponseDto>(networkProviderId, signInResponse, NetworkMessageCode.SignUpResponseCode);
                 throw;
             }
         }
@@ -176,7 +165,7 @@ namespace ConsoleMessengerServer
             {
                 UserSearchRequestDto searchRequestDto = SerializationHelper.Deserialize<UserSearchRequestDto>(networkMessage.Data);
 
-                List<User>? usersList = _dbService.FindListOfUsers(searchRequestDto);
+                List<User> usersList = _dbService.FindListOfUsers(searchRequestDto);
 
                 UserSearchResponse response = CreateUserSearchResponse(usersList);
 
@@ -189,83 +178,43 @@ namespace ConsoleMessengerServer
             }
             catch (Exception)
             {
-
+                UserSearchResponse response = new UserSearchResponse(NetworkResponseStatus.FatalError);
+                SendError<UserSearchResponse, UserSearchResponseDto>(networkProviderId, response, NetworkMessageCode.SearchUserResponseCode);
                 throw;
             }
-
-
         }
-
-        private void ProcessError<TResponse, TResponseDto>(int networkProviderId, TResponse response, NetworkMessageCode code)
-            where TResponseDto : class
-        {
-            byte[] responseBytes = CreateNetworkMessageBytes<TResponse, TResponseDto>(response, code);
-            _conectionController.BroadcastErrorToSenderAsync(responseBytes, networkProviderId);
-        }
-
-        private byte[] ProcessMessagesAreReadRequest(NetworkMessage networkMessage, int networkProviderId)
-        {
-            MessagesAreReadRequestDto messagesAreReadRequest = SerializationHelper.Deserialize<MessagesAreReadRequestDto>(networkMessage.Data);
-
-            _dbService.ReadMessages(messagesAreReadRequest);
-
-            Response response = CreateMessagesAreReadRersponse(messagesAreReadRequest, networkProviderId);
-
-            byte[] byteResponse = CreateNetworkMessageBytes<Response, ResponseDto>(response, NetworkMessageCode.MessagesAreReadResponseCode);
-
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, messagesAreReadRequest.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.MessagesAreReadResponseCode, response.Status);
-
-            return byteResponse;
-        }
-
-
-
-
 
         /// <summary>
         /// Обработать запрос на создание нового диалога
         /// </summary>
         /// <param name="networkMessage">Сетевое сообщение</param>
-        /// <param name="serverNetworkProvider">Сетевой провайдер на стороне сервера</param>
+        /// <param name="networkProviderId">Сетевой провайдер на стороне сервера</param>
         private byte[] ProcessCreateDialogRequest(NetworkMessage networkMessage, int networkProviderId)
         {
-            CreateDialogRequestDto createDialogRequestDto = SerializationHelper.Deserialize<CreateDialogRequestDto>(networkMessage.Data);
+            try
+            {
+                CreateDialogRequestDto createDialogRequestDto = SerializationHelper.Deserialize<CreateDialogRequestDto>(networkMessage.Data);
 
-            Dialog dialog = _dbService.CreateDialog(createDialogRequestDto);
+                Dialog dialog = _dbService.CreateDialog(createDialogRequestDto);
 
-            CreateDialogResponse response = _mapper.Map<CreateDialogResponse>(dialog);
+                CreateDialogResponse response = _mapper.Map<CreateDialogResponse>(dialog);
 
-            byte[] byteResponse = CreateNetworkMessageBytes<CreateDialogResponse, CreateDialogResponseDto>(response, NetworkMessageCode.CreateDialogResponseCode);
+                byte[] byteResponse = CreateNetworkMessageBytes<CreateDialogResponse, CreateDialogResponseDto>(response, NetworkMessageCode.CreateDialogResponseCode);
 
-            BroadcastCreateDialogRequests(dialog, networkProviderId);
+                BroadcastCreateDialogRequests(dialog, networkProviderId);
 
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, createDialogRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.CreateDialogResponseCode, NetworkResponseStatus.Successful);
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, createDialogRequestDto.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.CreateDialogResponseCode, NetworkResponseStatus.Successful);
 
-            return byteResponse;
+                return byteResponse;
+            }
+            catch (Exception)
+            {
+                CreateDialogResponse createDialogResponse = new CreateDialogResponse(NetworkResponseStatus.FatalError);
+                SendError<CreateDialogResponse, CreateDialogResponseDto>(networkProviderId, createDialogResponse, NetworkMessageCode.CreateDialogResponseCode);
+                throw;
+            }
         }
-
-
-
-        //private byte[] ProcessRequest<TReqDto, TReqResult, TResponse, TResponseDto>(NetworkMessage networkMessage, int networkProviderId, Func<TReqDto, TReqResult?> processInDb, Func<TReqResult?, int, TResponse> createResponse, NetworkMessageCode code)
-        //    where TReqResult : class
-        //    where TResponseDto : class
-        //    where TResponse : IResponse
-        //{
-        //    TReqDto reqDto = SerializationHelper.Deserialize<TReqDto>(networkMessage.Data);
-
-        //    TReqResult? res = processInDb(reqDto);
-
-        //    TResponse response = createResponse(res, networkProviderId);
-
-        //    byte[] byteResponse = CreateNetworkMessageBytes<TResponse, TResponseDto>(response, code);
-
-        //    ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, reqDto.ToString());
-        //    ReportPrinter.PrintResponseReport(networkProviderId, code, response.Status);
-
-        //    return byteResponse;
-        //}
 
         /// <summary>
         /// Обработать запрос на отправку сообщения
@@ -274,37 +223,53 @@ namespace ConsoleMessengerServer
         /// <param name="networkProviderId">Сетевой провайдер на стороне сервера</param>
         private byte[] ProcessSendMessageRequest(NetworkMessage networkMessage, int networkProviderId)
         {
-            SendMessageRequestDto sendMessageRequestDto = SerializationHelper.Deserialize<SendMessageRequestDto>(networkMessage.Data);
+            try
+            {
+                SendMessageRequestDto sendMessageRequestDto = SerializationHelper.Deserialize<SendMessageRequestDto>(networkMessage.Data);
 
-            Message message = _dbService.AddMessage(sendMessageRequestDto);
-            SendMessageResponse responseForSender = new SendMessageResponse(message.Id);
+                Message message = _dbService.AddMessage(sendMessageRequestDto);
+                SendMessageResponse responseForSender = new SendMessageResponse(message.Id, NetworkResponseStatus.Successful);
 
-            BroadcastSendMessageRequest(message, networkProviderId);
+                BroadcastSendMessageRequest(message, networkProviderId);
 
-            byte[] byteResponse = CreateNetworkMessageBytes<SendMessageResponse, SendMessageResponseDto>(responseForSender, NetworkMessageCode.MessageDeliveredCode);
+                byte[] byteResponse = CreateNetworkMessageBytes<SendMessageResponse, SendMessageResponseDto>(responseForSender, NetworkMessageCode.MessageDeliveredCode);
 
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, sendMessageRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.MessageDeliveredCode, NetworkResponseStatus.Successful);
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, sendMessageRequestDto.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.MessageDeliveredCode, NetworkResponseStatus.Successful);
 
-            return byteResponse;
+                return byteResponse;
+            }
+            catch (Exception)
+            {
+                SendMessageResponse sendMessageResponse = new SendMessageResponse(NetworkResponseStatus.FatalError);
+                SendError<SendMessageResponse, SendMessageResponseDto>(networkProviderId, sendMessageResponse, NetworkMessageCode.MessageDeliveredCode);
+                throw;
+            }
         }
 
         private byte[] ProcessDeleteMessageRequest(NetworkMessage networkMessage, int networkProviderId)
         {
-            DeleteMessageRequestDto deleteMessageRequestDto = SerializationHelper.Deserialize<DeleteMessageRequestDto>(networkMessage.Data);
+            try
+            {
+                DeleteMessageRequestDto deleteMessageRequestDto = SerializationHelper.Deserialize<DeleteMessageRequestDto>(networkMessage.Data);
 
-            Message? message = _dbService.FindMessage(deleteMessageRequestDto);
+                Message? message = _dbService.FindMessage(deleteMessageRequestDto);
 
-            //DeleteMessageResponse deleteMessageResponse = CreateDeleteMessageResponse(message, deleteMessageRequestDto.UserId, networkProviderId);
-            Response deleteMessageResponse = CreateDeleteMessageResponse(message, deleteMessageRequestDto.UserId, networkProviderId);
+                Response deleteMessageResponse = CreateDeleteMessageResponse(message, deleteMessageRequestDto.UserId, networkProviderId);
 
-            //byte[] responseBytes = CreateNetworkMessageBytes<DeleteMessageResponse, DeleteMessageResponseDto>(deleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode);
-            byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(deleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode);
+                byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(deleteMessageResponse, NetworkMessageCode.DeleteMessageResponseCode);
 
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, deleteMessageRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.DeleteDialogResponseCode, deleteMessageResponse.Status);
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, deleteMessageRequestDto.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.DeleteDialogResponseCode, deleteMessageResponse.Status);
 
-            return responseBytes;
+                return responseBytes;
+            }
+            catch (Exception)
+            {
+                Response response = new Response(NetworkResponseStatus.FatalError);
+                SendError<Response, ResponseDto>(networkProviderId, response, NetworkMessageCode.DeleteMessageResponseCode);
+                throw;
+            }
         }
 
         /// <summary>
@@ -314,40 +279,84 @@ namespace ConsoleMessengerServer
         /// <param name="serverNetworkProvider"></param>
         private byte[] ProcessDeleteDialogRequest(NetworkMessage networkMessage, int networkProviderId)
         {
-            DeleteDialogRequestDto deleteDialogRequestDto = SerializationHelper.Deserialize<DeleteDialogRequestDto>(networkMessage.Data);
+            try
+            {
+                DeleteDialogRequestDto deleteDialogRequestDto = SerializationHelper.Deserialize<DeleteDialogRequestDto>(networkMessage.Data);
 
-            Dialog? dialog = _dbService.FindDialog(deleteDialogRequestDto);
+                Dialog? dialog = _dbService.FindDialog(deleteDialogRequestDto);
 
-            //DeleteDialogResponse deleteDialogResponse = CreateDeleteDialogResponse(dialog, networkProviderId, deleteDialogRequestDto.UserId);
-            Response deleteDialogResponse = CreateDeleteDialogResponse(dialog, networkProviderId, deleteDialogRequestDto.UserId);
+                Response deleteDialogResponse = CreateDeleteDialogResponse(dialog, networkProviderId, deleteDialogRequestDto.UserId);
 
-            //byte[] responseBytes = CreateNetworkMessageBytes<DeleteDialogResponse, DeleteDialogResponseDto>(deleteDialogResponse, NetworkMessageCode.DeleteDialogResponseCode);
-            byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(deleteDialogResponse, NetworkMessageCode.DeleteDialogResponseCode);
+                byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(deleteDialogResponse, NetworkMessageCode.DeleteDialogResponseCode);
 
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, deleteDialogRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.DeleteDialogResponseCode, deleteDialogResponse.Status);
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, deleteDialogRequestDto.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.DeleteDialogResponseCode, deleteDialogResponse.Status);
 
-            return responseBytes;
+                return responseBytes;
+            }
+            catch (Exception)
+            {
+                Response errorResponse = new Response(NetworkResponseStatus.FatalError);
+                SendError<Response, ResponseDto>(networkProviderId, errorResponse, NetworkMessageCode.DeleteDialogResponseCode);
+                throw;
+            }
         }
 
         private byte[] ProcessSignOutRequest(NetworkMessage networkMessage, int networkProviderId)
         {
-            SignOutRequestDto signOutRequestDto = SerializationHelper.Deserialize<SignOutRequestDto>(networkMessage.Data);
+            try
+            {
+                SignOutRequestDto signOutRequestDto = SerializationHelper.Deserialize<SignOutRequestDto>(networkMessage.Data);
 
-            Response signOutResponse;
+                _conectionController.DisconnectUser(signOutRequestDto.UserId, networkProviderId);
 
-            if (_conectionController.TryDisconnectUser(signOutRequestDto.UserId, networkProviderId) == true)
-                signOutResponse = new Response(NetworkResponseStatus.Successful);
-            
-            else
-                signOutResponse = new Response(NetworkResponseStatus.Failed);
+                Response signOutResponse = new Response(NetworkResponseStatus.Successful);
 
-            byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(signOutResponse, NetworkMessageCode.SignOutResponseCode);
+                byte[] responseBytes = CreateNetworkMessageBytes<Response, ResponseDto>(signOutResponse, NetworkMessageCode.SignOutResponseCode);
 
-            ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signOutRequestDto.ToString());
-            ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignOutResponseCode, signOutResponse.Status);
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, signOutRequestDto.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.SignOutResponseCode, signOutResponse.Status);
 
-            return responseBytes;
+                return responseBytes;
+            }
+            catch (Exception)
+            {
+                Response errorResponse = new Response(NetworkResponseStatus.FatalError);
+                SendError<Response, ResponseDto>(networkProviderId, errorResponse, NetworkMessageCode.SignOutResponseCode);
+                throw;
+            }
+        }
+
+        private byte[] ProcessMessagesAreReadRequest(NetworkMessage networkMessage, int networkProviderId)
+        {
+            try
+            {
+                MessagesAreReadRequestDto messagesAreReadRequest = SerializationHelper.Deserialize<MessagesAreReadRequestDto>(networkMessage.Data);
+
+                _dbService.ReadMessages(messagesAreReadRequest);
+
+                Response response = CreateMessagesAreReadRersponse(messagesAreReadRequest, networkProviderId);
+
+                byte[] byteResponse = CreateNetworkMessageBytes<Response, ResponseDto>(response, NetworkMessageCode.MessagesAreReadResponseCode);
+
+                ReportPrinter.PrintRequestReport(networkProviderId, networkMessage.Code, messagesAreReadRequest.ToString());
+                ReportPrinter.PrintResponseReport(networkProviderId, NetworkMessageCode.MessagesAreReadResponseCode, response.Status);
+
+                return byteResponse;
+            }
+            catch (Exception)
+            {
+                Response errorResponse = new Response(NetworkResponseStatus.FatalError);
+                SendError<Response, ResponseDto>(networkProviderId, errorResponse, NetworkMessageCode.MessagesAreReadResponseCode);
+                throw;
+            }
+        }
+
+        private void SendError<TResponse, TResponseDto>(int networkProviderId, TResponse response, NetworkMessageCode code)
+            where TResponseDto : class
+        {
+            byte[] responseBytes = CreateNetworkMessageBytes<TResponse, TResponseDto>(response, code);
+            _conectionController.BroadcastErrorToSenderAsync(responseBytes, networkProviderId);
         }
 
         /// <summary>
@@ -355,22 +364,14 @@ namespace ConsoleMessengerServer
         /// </summary>
         /// <typeparam name="Tsource">Тип данных источника для мапинга на dto</typeparam>
         /// <typeparam name="Tdto">Тип конкретного dto</typeparam>
-        /// <param name="tsource">Объект - сточник для мапинга на dto</param>
+        /// <param name="tsource">Объект - источник для мапинга на dto</param>
         /// <param name="dto">Объект, представляющий dto</param>
         /// <param name="code">Код операции</param>
         /// <returns></returns>
         public NetworkMessage CreateNetworkMessage<Tsource, Tdto>(Tsource tsource, out Tdto dto, NetworkMessageCode code)
             where Tdto : class
         {
-            try
-            {
-                dto = _mapper.Map<Tdto>(tsource);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
+            dto = _mapper.Map<Tdto>(tsource);
 
             byte[] data = SerializationHelper.Serialize(dto);
 
@@ -403,7 +404,7 @@ namespace ConsoleMessengerServer
         /// Ответ для консоли типа String и ответ для клиента типа SignUpResponse
         /// </summary>
         /// <param name="user">Пользователь</param>
-        /// <param name="serverNetworkProvider">Сетевой провайдер</param>
+        /// <param name="networkProviderId">Сетевой провайдер</param>
         /// <returns></returns>
         private SignUpResponse CreateSignUpResponse(User? user, int networkProviderId)
         {
@@ -435,12 +436,12 @@ namespace ConsoleMessengerServer
             return new SignInResponse(NetworkResponseStatus.Failed, SignInFailContext.PhoneNumber);
         }
 
-        private UserSearchResponse CreateUserSearchResponse(List<User>? usersList)
+        private UserSearchResponse CreateUserSearchResponse(List<User> usersList)
         {
-            if (usersList != null)
+            if (usersList.Count > 0)
                 return new UserSearchResponse(usersList, NetworkResponseStatus.Successful);
 
-            return new UserSearchResponse(usersList, NetworkResponseStatus.Failed);
+            return new UserSearchResponse(NetworkResponseStatus.Failed);
         }
 
         private Response CreateDeleteMessageResponse(Message? message, int userId, int networkProviderId)

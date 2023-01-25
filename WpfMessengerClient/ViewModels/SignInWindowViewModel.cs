@@ -63,7 +63,7 @@ namespace WpfMessengerClient.ViewModels
             //if (String.IsNullOrEmpty(SignUpRequest.Error))
             //{
 
-            IsControlsAvailable = false;
+            AreControlsAvailable = false;
 
             TaskCompletionSource completionSource = new TaskCompletionSource();
 
@@ -75,7 +75,7 @@ namespace WpfMessengerClient.ViewModels
 
             ProcessSignInResponse(observer.Response);
 
-            IsControlsAvailable = true;
+            AreControlsAvailable = true;
 
             //}
 
@@ -95,7 +95,7 @@ namespace WpfMessengerClient.ViewModels
             {
                 _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, signInResponse.User, signInResponse.Dialogs);
             }
-            else
+            else if(signInResponse.Status == NetworkResponseStatus.Failed)
             {
                 if(signInResponse.Context == SignInFailContext.PhoneNumber)
                 {
@@ -107,6 +107,11 @@ namespace WpfMessengerClient.ViewModels
                     Request.Password = "";
                     MessageBox.Show("Неверный пароль");
                 }
+            }
+            else
+            {
+                MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
+                _messengerWindowsManager.CloseCurrentWindow();
             }
         }
 

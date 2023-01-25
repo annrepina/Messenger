@@ -21,11 +21,8 @@ namespace DtoLib.Dto.Responses
         [ProtoMember(1)]
         public List<UserDto> RelevantUsers { get; init; }
 
-        /// <summary>
-        /// Статус ответа на сетевой запрос
-        /// </summary>
         [ProtoMember(2)]
-        public NetworkResponseStatus Status { get; init; }
+        public NetworkResponseStatus Status { get; set; }
 
         public UserSearchResponseDto()
         {

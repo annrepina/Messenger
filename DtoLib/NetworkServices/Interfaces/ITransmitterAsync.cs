@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.NetworkServices
+namespace DtoLib.NetworkServices.Interfaces
 {
     /// <summary>
     /// Интерфейс который отвечает за пересылку байтов по сети асинхронно
@@ -19,6 +19,6 @@ namespace DtoLib.NetworkServices
 
         public Task<byte[]> ReceiveBytesAsync();
 
-        public Task RunReceivingBytesInLoop();
+        //public Task RunReceivingBytesInLoop();
     }
 }

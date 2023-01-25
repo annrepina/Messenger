@@ -1,4 +1,4 @@
-﻿using DtoLib.NetworkServices;
+﻿using DtoLib.NetworkServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,16 +24,16 @@ namespace ConsoleMessengerServer.Net.Interfaces
         /// <param name="tcpClient">TCP клиент</param>
         public void InitializeNewConnection(TcpClient tcpClient);
 
-        /// <summary>
-        /// Отключить всех клиентов
-        /// </summary>
-        public void DisconnectClients();
+        ///// <summary>
+        ///// Отключить всех клиентов
+        ///// </summary>
+        //public void DisconnectClients();
 
-        /// <summary>
-        /// Отключить конкретного клиента
-        /// </summary>
-        /// <param name="clientId">Id клиента</param>
-        public void DisconnectClient(int clientId);
+        ///// <summary>
+        ///// Отключить конкретного клиента
+        ///// </summary>
+        ///// <param name="clientId">Id клиента</param>
+        //public void DisconnectClient(int clientId);
 
         /// <summary>
         /// Оповестить о получении массива байтов 
@@ -50,6 +50,6 @@ namespace ConsoleMessengerServer.Net.Interfaces
 
         public Task BroadcastErrorToSenderAsync(byte[] messageBytes, int networkProviderId);
 
-        public bool TryDisconnectUser(int userId, int networkPrividerId);
+        public void DisconnectUser(int userId, int networkPrividerId);
     }
 }

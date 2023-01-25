@@ -12,16 +12,14 @@ namespace WpfMessengerClient.Models.Responses
     /// Подтверждает, что сообщение отправлено.
     /// Обертка для идентификатора отправленного сообщения
     /// </summary>
-    public class SendMessageResponse
+    public class SendMessageResponse : Response
     {
         /// <summary>
         /// Идентификатор отправленного сообщения
         /// </summary>
         public int MessageId { get; init; }
 
-        //public NetworkResponseStatus Status { get; init; }
-
-        public SendMessageResponse(int messageId)
+        public SendMessageResponse(int messageId, NetworkResponseStatus status) : base(status)
         {
             MessageId = messageId;
         }

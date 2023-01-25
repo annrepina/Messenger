@@ -12,12 +12,15 @@ namespace DtoLib.Dto.Responses
     /// Data transfer object для класса представляющего ответ на запрос об отправке сообщения
     /// </summary>
     [ProtoContract]
-    public class SendMessageResponseDto
+    public class SendMessageResponseDto 
     {
         /// <summary>
         /// Идентификатор отправленного сообщения
         /// </summary>
         [ProtoMember(1)]
         public int MessageId { get; set; }
+
+        [ProtoMember(2)]
+        public NetworkResponseStatus Status { get; set; }
     }
 }

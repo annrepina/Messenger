@@ -12,10 +12,13 @@ namespace WpfMessengerClient.ViewModels
     /// </summary>
     public class SignUpSignInWindowViewModel : BaseNotifyPropertyChanged
     {
+        /// <inheritdoc cref="AreControlsAvailable"/>
+        protected bool _areControlsAvailable;
+
         /// <summary>
         /// Менеджер окон для мессенджера
         /// </summary>
-        MessengerWindowsManager MessengerWindowsManager { get; init; }
+        public MessengerWindowsManager MessengerWindowsManager { get; init; }
 
         /// <summary>
         /// Команда по нажатию на кнопку регистрации
@@ -28,6 +31,21 @@ namespace WpfMessengerClient.ViewModels
         public DelegateCommand SignInCommand { get; init; }
 
         /// <summary>
+        /// Доступны ли контролы на вьюхе
+        /// </summary>
+        public bool AreControlsAvailable
+        {
+            get => _areControlsAvailable;
+
+            set
+            {
+                _areControlsAvailable = value;
+
+                OnPropertyChanged(nameof(AreControlsAvailable));
+            }
+        }
+
+        /// <summary>
         /// Конструктор с параметром
         /// </summary>
         /// <param _name="messengerWindowsManager">Менеджер окон для приложения</param>
@@ -37,6 +55,8 @@ namespace WpfMessengerClient.ViewModels
 
             SignUpCommand = new DelegateCommand(SwitchToSignUpWindow);
             SignInCommand = new DelegateCommand(SwitchToSignInWindow);
+
+            AreControlsAvailable = true;
         }
 
         /// <summary>
@@ -44,7 +64,9 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private void SwitchToSignInWindow()
         {
+            AreControlsAvailable = false;
             MessengerWindowsManager.SwitchToSignInWindow();
+            AreControlsAvailable = true;
         }
 
         /// <summary>
@@ -52,7 +74,9 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private void SwitchToSignUpWindow()
         {
+            AreControlsAvailable = false;
             MessengerWindowsManager.SwitchToSignUpWindow();
+            AreControlsAvailable = true;
         }
     }
 }

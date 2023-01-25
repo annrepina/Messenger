@@ -10,30 +10,19 @@ namespace WpfMessengerClient.Models.Responses
     /// <summary>
     /// Класс, который представляет данные представляющихе ответ на успешную регистрацию пользователя в мессенджере
     /// </summary>
-    public class SignUpResponse
+    public class SignUpResponse : Response
     {
         /// <summary>
         /// Идентификатор пользователя
         /// </summary>
         public int UserId { get; init; }
 
-        ///// <summary>
-        ///// Идентификатор сетевого провайдера, на котором была произведена регистрация
-        ///// </summary>
-        //public int NetworkProviderId { get; init; }
-
-        /// <summary> 
-        /// Статус ответа на сетевой запрос
-        /// </summary>
-        public NetworkResponseStatus Status { get; init; }
-
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public SignUpResponse(int userId, /*int networkProviderId, */NetworkResponseStatus status)
+        public SignUpResponse(int userId, NetworkResponseStatus status) : base(status)
         {
             UserId = userId;
-            //NetworkProviderId = networkProviderId;
             Status = status;
         }
     }
