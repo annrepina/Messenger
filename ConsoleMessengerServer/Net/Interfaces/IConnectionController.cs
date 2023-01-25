@@ -40,7 +40,7 @@ namespace ConsoleMessengerServer.Net.Interfaces
         /// </summary>
         /// <param name="bytes">Массив полученных байтов</param>
         /// <param name="networkProvider">Id сетевого провайдера</param>
-        public void NotifyBytesReceived(byte[] bytes, INetworkProvider networkProvider);
+        public void NotifyBytesReceived(byte[] bytes, IServerNetworProvider networkProvider);
 
         public void AddNewSession(int userId, int networkProviderId);
 

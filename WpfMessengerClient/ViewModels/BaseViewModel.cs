@@ -1,8 +1,12 @@
-﻿using System;
+﻿using DtoLib.NetworkServices;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using WpfMessengerClient.Obsevers;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -13,6 +17,8 @@ namespace WpfMessengerClient.ViewModels
     {
         /// <inheritdoc cref="AreControlsAvailable"/>
         protected bool _areControlsAvailable;
+
+
 
         /// <summary>
         /// Посредник между сетевым провайдером и данными пользователя
@@ -47,6 +53,18 @@ namespace WpfMessengerClient.ViewModels
             _messengerWindowsManager = messengerWindowsManager;
 
             AreControlsAvailable = true;
+        }
+
+        /// <summary>
+        /// Закрывает текущее окно
+        /// </summary>
+        protected void CloseWindow()
+        {
+            MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
+
+            _networkMessageHandler.ConnectionController.CloseConnection();
+
+            _messengerWindowsManager.CloseCurrentWindow();
         }
     }
 }

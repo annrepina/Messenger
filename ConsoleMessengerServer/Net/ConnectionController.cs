@@ -25,7 +25,7 @@ namespace ConsoleMessengerServer.Net
         /// Key: Id сетевого провайдера.
         /// Value - объект сетевого провайдера
         /// </summary>
-        private Dictionary<int, INetworkProvider> _networkProvidersBuffer;
+        private Dictionary<int, IServerNetworProvider> _networkProvidersBuffer;
 
         /// <inheritdoc cref="ServerNetworkMessageHandler"/>
         private IServerNetworkMessageHandler _serverNetworkMessageHandler;
@@ -44,7 +44,7 @@ namespace ConsoleMessengerServer.Net
         {
             Server = new Server(this);
             _userProxyList = new Dictionary<int, UserProxy>();
-            _networkProvidersBuffer = new Dictionary<int, INetworkProvider>();
+            _networkProvidersBuffer = new Dictionary<int, IServerNetworProvider>();
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace ConsoleMessengerServer.Net
             Task.Run(() => networkProvider.ProcessNetworkMessagesAsync());
         }
 
-        public void NotifyBytesReceived(byte[] bytes, INetworkProvider NetworkProvider)
+        public void NotifyBytesReceived(byte[] bytes, IServerNetworProvider NetworkProvider)
         {
             byte[] response = _serverNetworkMessageHandler.ProcessData(bytes, NetworkProvider.Id);
 

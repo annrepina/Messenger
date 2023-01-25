@@ -10,23 +10,36 @@ namespace WpfMessengerClient.NetworkServices
 {
     public class ConnectionController : IConnectionController
     {
+        public event Action Disconnected;
+
         public INetworkMessageHandler NetworkMessageHandler { get; set; }
 
-        public INetworkProvider NetworkProvider { get; set; }
+        public IClientNetworkProvider NetworkProvider { get; set; }
 
         public void NotifyBytesReceived(byte[] bytes)
         {
             NetworkMessageHandler.ProcessData(bytes);
         }
 
-        public void SendRequest(byte[] bytes)
+        public async Task SendRequestAsync(byte[] bytes)
         {
-            NetworkProvider.SendBytesAsync(bytes);
+            await NetworkProvider.SendBytesAsync(bytes);
+        }
+
+        public void CloseConnection()
+        {
+            NetworkProvider.CloseConnection();
         }
 
         public ConnectionController()
         {
             NetworkProvider = new ClientNetworkProvider(this);
+            NetworkProvider.Disconnected += OnDisconnected;
+        }
+
+        public void OnDisconnected()
+        {
+            Disconnected?.Invoke();
         }
     }
 }

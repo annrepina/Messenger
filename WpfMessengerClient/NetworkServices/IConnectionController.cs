@@ -12,13 +12,19 @@ namespace WpfMessengerClient.NetworkServices
     /// </summary>
     public interface IConnectionController
     {
+        public event Action Disconnected;
+
         INetworkMessageHandler NetworkMessageHandler { get; set; }
 
-        INetworkProvider NetworkProvider { get; set; }
+        IClientNetworkProvider NetworkProvider { get; set; }
 
         public void NotifyBytesReceived(byte[] bytes);
 
-        public void SendRequest(byte[] bytes);
+        public Task SendRequestAsync(byte[] bytes);
+
+        public void CloseConnection();
+
+        public void OnDisconnected();
     }
 
 }

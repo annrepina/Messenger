@@ -2,6 +2,7 @@
 using DtoLib.Dto.Requests;
 using DtoLib.NetworkServices;
 using Prism.Commands;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using WpfMessengerClient.Models;
@@ -55,30 +56,38 @@ namespace WpfMessengerClient.ViewModels
         /// <returns></returns>
         private async Task RegisterNewUserAsync()
         {
-            //// если ошибок нет
-            //if (String.IsNullOrEmpty(SignUpRequest.Error))
-            //{
+            try
+            {
+                //// если ошибок нет
+                //if (String.IsNullOrEmpty(SignUpRequest.Error))
+                //{
 
-            AreControlsAvailable = false;
+                AreControlsAvailable = false;
 
-            TaskCompletionSource completionSource = new TaskCompletionSource();
+                TaskCompletionSource completionSource = new TaskCompletionSource();
 
-            var observer = new Observer<SignUpResponse>(completionSource, _networkMessageHandler.SignUpResponseReceived);
+                var observer = new Observer<SignUpResponse>(completionSource, _networkMessageHandler.SignUpResponseReceived);
 
-            _networkMessageHandler.SendRequestAsync<SignUpRequest, SignUpRequestDto>(Request, NetworkMessageCode.SignUpRequestCode);
+                _networkMessageHandler.SendRequestAsync<SignUpRequest, SignUpRequestDto>(Request, NetworkMessageCode.SignUpRequestCode);
 
-            await completionSource.Task;
+                await completionSource.Task;
 
-            ProcessSignUpResponse(observer.Response);
+                ProcessSignUpResponse(observer.Response);
 
-            AreControlsAvailable = true;
+                AreControlsAvailable = true;
 
-            //}
+                //}
 
-            //else
-            //{
-            //    MessageBox.Show(SignUpRequest.Error);
-            //}
+                //else
+                //{
+                //    MessageBox.Show(SignUpRequest.Error);
+                //}
+            }
+            catch (Exception)
+            {
+                CloseWindow();
+                throw;
+            }
         }
 
         /// <summary>

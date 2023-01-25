@@ -102,11 +102,20 @@ namespace WpfMessengerClient
         /// </summary>
         private readonly IMapper _mapper;
 
+
+        private IConnectionController _connectionController;
+
         #endregion Приватные поля
 
         #region  Свойства
 
-        public IConnectionController ConnectionController { get; set; }
+        public IConnectionController ConnectionController 
+        { 
+            set
+            {
+                _connectionController = value;
+            }
+        }
 
         #endregion Свойства
 
@@ -235,8 +244,8 @@ namespace WpfMessengerClient
         public async Task SendRequestAsync<Treq, Tdto>(Treq requestData, NetworkMessageCode code)
                     where Tdto : class
         {
-            try
-            {
+            //try
+            //{
                 Tdto dto = _mapper.Map<Tdto>(requestData);
 
                 byte[] data = SerializationHelper.Serialize(dto);
@@ -245,13 +254,13 @@ namespace WpfMessengerClient
 
                 byte[] messageBytes = SerializationHelper.Serialize(networkMessage);
 
-                ConnectionController?.SendRequest(messageBytes);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                throw;
-            }
+                await _connectionController.SendRequestAsync(messageBytes);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //    throw;
+            //}
         }
 
         public void ProcessData(byte[] data)

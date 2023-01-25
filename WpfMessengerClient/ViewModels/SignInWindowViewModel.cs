@@ -59,30 +59,40 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private async Task SignInAsync()
         {
-            //// если ошибок нет
-            //if (String.IsNullOrEmpty(SignUpRequest.Error))
-            //{
+            try
+            {
+                //// если ошибок нет
+                //if (String.IsNullOrEmpty(SignUpRequest.Error))
+                //{
 
-            AreControlsAvailable = false;
+                AreControlsAvailable = false;
 
-            TaskCompletionSource completionSource = new TaskCompletionSource();
+                TaskCompletionSource completionSource = new TaskCompletionSource();
 
-            var observer = new Observer<SignInResponse>(completionSource, _networkMessageHandler.SignInResponseReceived);
+                var observer = new Observer<SignInResponse>(completionSource, _networkMessageHandler.SignInResponseReceived);
 
-            _networkMessageHandler.SendRequestAsync<SignInRequest, SignInRequestDto>(Request, NetworkMessageCode.SignInRequestCode);
+                _networkMessageHandler.SendRequestAsync<SignInRequest, SignInRequestDto>(Request, NetworkMessageCode.SignInRequestCode);
 
-            await completionSource.Task;
+                await completionSource.Task;
 
-            ProcessSignInResponse(observer.Response);
+                ProcessSignInResponse(observer.Response);
 
-            AreControlsAvailable = true;
+                AreControlsAvailable = true;
 
-            //}
+                //}
 
-            //else
-            //{
-            //    MessageBox.Show(SignUpRequest.Error);
-            //}
+                //else
+                //{
+                //    MessageBox.Show(SignUpRequest.Error);
+                //}
+            }
+            catch (Exception)
+            {
+                CloseWindow();
+                throw;
+            }
+
+
         }
 
         /// <summary>

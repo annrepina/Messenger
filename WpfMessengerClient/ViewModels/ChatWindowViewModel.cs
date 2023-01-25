@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Media;
 using System.Threading.Tasks;
@@ -24,16 +25,6 @@ namespace WpfMessengerClient.ViewModels
     {
         #region Приватные поля
 
-        ///// <summary>
-        ///// Посредник между сетевым провайдером и данными пользователя
-        ///// </summary>
-        //protected readonly NetworkMessageHandler _networkMessageHandler;
-
-        ///// <summary>
-        ///// Менеджер окон приложения
-        ///// </summary>
-        //protected readonly MessengerWindowsManager _messengerWindowsManager;
-
         /// <inheritdoc cref="ActiveDialog"/>
         private Dialog? _activeDialog;
 
@@ -42,9 +33,6 @@ namespace WpfMessengerClient.ViewModels
 
         /// <inheritdoc cref="SearchingRequest"/>
         private UserSearchRequest _searchingRequest;
-
-        ///// <inheritdoc cref="IsSearchingButtonAvailable"/>
-        //private bool _isSearchingButtonAvailable;
 
         /// <inheritdoc cref="GreetingMessage"/>
         private Message _greetingMessage;
@@ -76,26 +64,11 @@ namespace WpfMessengerClient.ViewModels
         /// <inheritdoc cref="Message"/>
         private Message _message;
 
-        ///// <inheritdoc cref="IsMainMessageBoxAvailable"/>
-        //private bool _isMainMessageBoxAvailable;
-
-        ///// <inheritdoc cref="IsSendButtonAvailable"/>
-        //private bool _isSendButtonAvailable;
-
         /// <inheritdoc cref="IsActiveDialogNull"/>
         private bool _isActiveDialogNull;
 
         /// <inheritdoc cref="WasMessageSelected"/>
         private bool _wasMessageSelected;
-
-        ///// <inheritdoc cref="WasDeleteButtonClicked"/>
-        //private bool _wasDeleteButtonClicked;
-
-        ///// <inheritdoc cref="IsExitButtonAvailable"/>
-        //private bool _isExitButtonAvailable;
-
-        ///// <inheritdoc cref="IsDialogsEnabled"/>
-        //private bool _isDialogsEnabled;
 
         #endregion Приватные поля
 
@@ -145,18 +118,6 @@ namespace WpfMessengerClient.ViewModels
         /// Обозреваемая коллекция 
         /// </summary>
         public ObservableCollection<Dialog> Dialogs { get; set; }
-
-        //public bool IsDialogsEnabled
-        //{
-        //    get => _isDialogsEnabled;
-
-        //    set
-        //    {
-        //        _isDialogsEnabled = value;
-
-        //        OnPropertyChanged(nameof(IsDialogsEnabled));
-        //    }
-        //}
 
         /// <summary>
         /// Выбранный пользователь 
@@ -255,36 +216,6 @@ namespace WpfMessengerClient.ViewModels
         /// Команда по выходу из приложения
         /// </summary>
         public DelegateCommand ExitCommand { get; init; }
-
-        ///// <summary>
-        ///// Кнопка выхода доступна?
-        ///// </summary>
-        //public bool IsExitButtonAvailable
-        //{
-        //    get => _isExitButtonAvailable;
-
-        //    set
-        //    {
-        //        _isExitButtonAvailable = value;
-
-        //        OnPropertyChanged(nameof(IsExitButtonAvailable));
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Доступна кнопка поиска?
-        ///// </summary>
-        //public bool IsSearchingButtonAvailable
-        //{
-        //    get => _isSearchingButtonAvailable;
-
-        //    set
-        //    {
-        //        _isSearchingButtonAvailable = value;
-
-        //        OnPropertyChanged(nameof(IsSearchingButtonAvailable));
-        //    }
-        //}
 
         /// <summary>
         /// Был выбран пользователь среди найденных результатов поиска?
@@ -407,36 +338,6 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        ///// <summary>
-        ///// Главный текст бокс доступен?
-        ///// </summary>
-        //public bool IsMainMessageBoxAvailable
-        //{
-        //    get => _isMainMessageBoxAvailable;
-
-        //    set
-        //    {
-        //        _isMainMessageBoxAvailable = value;
-
-        //        OnPropertyChanged(nameof(IsMainMessageBoxAvailable));
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Кнопка отправки сообщения доступна?
-        ///// </summary>
-        //public bool IsSendButtonAvailable
-        //{
-        //    get => _isSendButtonAvailable;
-
-        //    set
-        //    {
-        //        _isSendButtonAvailable = value;
-
-        //        OnPropertyChanged(nameof(IsSendButtonAvailable));
-        //    }
-        //}
-
         /// <summary>
         /// Активный диалог равен?
         /// </summary>
@@ -452,21 +353,6 @@ namespace WpfMessengerClient.ViewModels
             }
         }
 
-        ///// <summary>
-        ///// Была ли нажата кнопка удаления?
-        ///// </summary>
-        //public bool WasDeleteButtonClicked
-        //{
-        //    get => _wasDeleteButtonClicked;
-
-        //    set
-        //    {
-        //        _wasDeleteButtonClicked = value;
-
-        //        OnPropertyChanged(nameof(WasDeleteButtonClicked));
-        //    }
-        //}
-
         #endregion Свойства
 
         #region Конструкторы
@@ -478,27 +364,20 @@ namespace WpfMessengerClient.ViewModels
         /// <param _name="messengerWindowsManager">Менеджер окон приложения</param>
         public ChatWindowViewModel(NetworkMessageHandler networkMessageHandler, MessengerWindowsManager messengerWindowsManager, User user) : base(messengerWindowsManager, networkMessageHandler)
         {
-            //_networkMessageHandler = networkMessageHandler;
             _networkMessageHandler.CreateDialogRequestReceived.ResponseReceived += OnCreateDialogRequestReceived;
             _networkMessageHandler.DialogReceivedNewMessage.ResponseReceived += OnDialogReceivedNewMessage;
             _networkMessageHandler.DeleteMessageRequestForClientReceived.ResponseReceived += OnDeleteMessageRequestForClientReceived;
             _networkMessageHandler.DeleteDialogRequestForClientReceived.ResponseReceived += OnDeleteDialogRequestForClientReceived;
             _networkMessageHandler.MessagesAreReadRequestForClientReceived.ResponseReceived += OnMessagesAreReadRequestForClientReceived;
 
-            //_messengerWindowsManager = messengerWindowsManager;
             CurrentUser = user;
 
             Dialogs = new ObservableCollection<Dialog>();
-            //Dialogs.CollectionChanged += OnDialogsChanged;
             ActiveDialog = Dialogs.FirstOrDefault();
-            //IsDialogsEnabled = true;
 
             SearchUserResults = new ObservableCollection<User>();
-            //SearchUserResults.CollectionChanged += OnSearchUserResultsChanged;
-            //SearchUserResults = new List<User>();
             SelectedUser = SearchUserResults.FirstOrDefault();
             SearchCommand = new DelegateCommand(async () => await OnSearchCommandAsync());
-            //IsSearchingButtonAvailable = true;
             SearchingRequest = new UserSearchRequest();
             HasNotSearchResult = false;
             WasUserSelected = false;
@@ -517,13 +396,7 @@ namespace WpfMessengerClient.ViewModels
             IsGreetingMessageTextBoxAvailable = false;
             IsGreetingMessageTextBoxVisible = false;
 
-            //IsMainMessageBoxAvailable = true;
-            //IsSendButtonAvailable = true;
-
-            //WasDeleteButtonClicked = false;
             WasMessageSelected = false;
-
-            //IsExitButtonAvailable = true;
         }
 
         public ChatWindowViewModel(NetworkMessageHandler networkMessageHandler, MessengerWindowsManager messengerWindowsManager, User user, List<Dialog> dialogs) : this(networkMessageHandler, messengerWindowsManager, user)
@@ -542,9 +415,7 @@ namespace WpfMessengerClient.ViewModels
                 }
             }
 
-            //Dialogs.CollectionChanged -= OnDialogsChanged;
             Dialogs = new ObservableCollection<Dialog>(dialogs.OrderByDescending(d => d.Messages.Last().DateTime));
-            //Dialogs.CollectionChanged += OnDialogsChanged;
 
             foreach (var dialog in Dialogs)
             {
@@ -555,74 +426,6 @@ namespace WpfMessengerClient.ViewModels
         #endregion Конструкторы
 
         #region Обработчики событий
-
-        ///// <summary>
-        ///// Обработчик события измения обозреваемой коллекции Диалогов
-        ///// </summary>
-        ///// <param _name="sender">Объект, вызвавший событие</param>
-        ///// <param _name="e">Содержит информацию о событии</param>
-        //private void OnDialogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.OldItems != null)
-        //    {
-        //        foreach (INotifyPropertyChanged item in e.OldItems)
-        //        {
-        //            item.PropertyChanged -= OnDialogChanged;
-        //        }
-        //    }
-
-        //    if (e.NewItems != null)
-        //    {
-        //        foreach (INotifyPropertyChanged item in e.NewItems)
-        //        {
-        //            item.PropertyChanged += OnDialogChanged;
-        //        }
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Обработчик события изменения конкретного диалога
-        ///// </summary>
-        ///// <param _name="sender">Объект, вызвавший событие</param>
-        ///// <param _name="e">Содержит информацию о событии</param>
-        //private void OnDialogChanged(object? sender, PropertyChangedEventArgs e)
-        //{
-
-        //    //throw new NotImplementedException();
-        //}
-
-        ///// <summary>
-        ///// Обрабатывает события измения обозреваемой коллекции результатов поиска пользователей
-        ///// </summary>
-        ///// <param name="sender">Объект, вызвавший событие</param>
-        ///// <param name="e">Содержит информацию о событии</param>
-        //private void OnSearchUserResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.OldItems != null)
-        //    {
-        //        foreach (INotifyPropertyChanged item in e.OldItems)
-        //        {
-        //            item.PropertyChanged -= OnUserResultChanged;
-        //        }
-        //    }
-
-        //    if (e.NewItems != null)
-        //    {
-        //        foreach (INotifyPropertyChanged item in e.NewItems)
-        //        {
-        //            item.PropertyChanged += OnUserResultChanged;
-        //        }
-        //    }
-        //}
-        ///// <summary>
-        ///// Обрабатывает изменение конкретного результата поиска пользователя
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void OnUserResultChanged(object? sender, PropertyChangedEventArgs e)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         private void OnMessagesAreReadRequestForClientReceived(MessagesAreReadRequestForClient messagesAreReadRequestForClient)
         {
@@ -718,14 +521,12 @@ namespace WpfMessengerClient.ViewModels
 
             else
             {
-                //IsSearchingButtonAvailable = false;
                 AreControlsAvailable = false;
 
                 var response = await SendRequestAsync<UserSearchRequest, UserSearchRequestDto, UserSearchResponse>(SearchingRequest, _networkMessageHandler.UserSearchResponseReceived, NetworkMessageCode.SearchUserRequestCode);
 
                 ProcessSearchResponse(response);
 
-                //IsSearchingButtonAvailable = true;
                 AreControlsAvailable = true;
             }
         }
@@ -803,9 +604,7 @@ namespace WpfMessengerClient.ViewModels
 
             else
             {
-                //IsMainMessageBoxAvailable = false;
                 AreControlsAvailable = false;
-                //IsSendButtonAvailable = false;
 
                 Message newMessage = Message;
                 Message = new Message("", CurrentUser, true);
@@ -816,9 +615,7 @@ namespace WpfMessengerClient.ViewModels
 
                 ProcessMessageDeliveredResponse(response, newMessage);
 
-                //IsMainMessageBoxAvailable = true;
                 AreControlsAvailable = true;
-                //IsSendButtonAvailable = true;
             }
         }
 
@@ -828,8 +625,6 @@ namespace WpfMessengerClient.ViewModels
         /// <returns></returns>
         private async Task OnDeleteMessageCommand()
         {
-            //WasDeleteButtonClicked = true;
-            //IsDialogsEnabled = false;
             AreControlsAvailable = false;
 
             if (ActiveDialog.Messages.Count > 1)
@@ -846,22 +641,33 @@ namespace WpfMessengerClient.ViewModels
             }
 
             AreControlsAvailable = true;
-            //IsDialogsEnabled = true;
-            //WasDeleteButtonClicked = false;
         }
 
         private async Task<TResponse> SendRequestAsync<TRequest, TRequestDto, TResponse>(TRequest request, NetworkMessageHandlerEvent<TResponse> eventWrapper, NetworkMessageCode code)
             where TResponse : class
             where TRequestDto : class
         {
-            TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
+            try
+            {
+                TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
 
-            var observer = new Observer<TResponse>(taskCompletionSource, eventWrapper);
+                var observer = new Observer<TResponse>(taskCompletionSource, eventWrapper);
 
-            await _networkMessageHandler.SendRequestAsync<TRequest, TRequestDto>(request, code);
-            await taskCompletionSource.Task;
+                await _networkMessageHandler.SendRequestAsync<TRequest, TRequestDto>(request, code);
+                await taskCompletionSource.Task;
 
-            return observer.Response;
+                return observer.Response;
+            }
+            catch(IOException)
+            {
+                CloseWindow();
+                throw;
+            }
+            catch (Exception)
+            {
+                CloseWindow();
+                throw;
+            }
         }
 
         /// <summary>
@@ -1165,15 +971,5 @@ namespace WpfMessengerClient.ViewModels
         }
 
         #endregion Предикаты
-
-        /// <summary>
-        /// Закрывает текущее окно
-        /// </summary>
-        private void CloseWindow()
-        {
-            MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
-
-            _messengerWindowsManager.CloseCurrentWindow();
-        }
     }
 }

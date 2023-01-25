@@ -1,4 +1,5 @@
-﻿using DtoLib.NetworkServices.Interfaces;
+﻿using ConsoleMessengerServer.Net.Interfaces;
+using DtoLib.NetworkServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace ConsoleMessengerServer.Net
         /// Список сетевых провайдеров, которые подключены к серверу 
         /// и в которых выполнен вход в учетную запись пользователя
         /// </summary>
-        private List<INetworkProvider> _connections;
+        private List<IServerNetworProvider> _connections;
 
         /// <summary>
         /// Свойство - идентификатор
@@ -35,14 +36,14 @@ namespace ConsoleMessengerServer.Net
         public UserProxy(int id)
         {
             Id = id;
-            _connections = new List<INetworkProvider>();
+            _connections = new List<IServerNetworProvider>();
         }
 
         /// <summary>
         /// Добавить соединение
         /// </summary>
         /// <param name="serverNetworkProvider">Сетевой провайдер, на котором произошло подключение</param>
-        public void AddConnection(INetworkProvider serverNetworkProvider)
+        public void AddConnection(IServerNetworProvider serverNetworkProvider)
         {
             _connections.Add(serverNetworkProvider);
             serverNetworkProvider.Disconnected += RemoveConnection;

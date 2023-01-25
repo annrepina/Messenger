@@ -66,32 +66,6 @@ namespace DtoLib.NetworkServices
             }
             catch(IOException)
             {
-                NetworkProvider.Disconnect();
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Получить сетевое сообщение асинхронно
-        /// </summary>
-        public async Task RunReceivingBytesInLoop()
-        {
-            try
-            {
-                while (true)
-                {
-                    // буфер для получаемых данных
-                    byte[] data = await ReceiveBytesAsync();
-
-                    NetworkProvider.NotifyBytesReceived(data);
-                }
-            }
-            catch (IOException)
-            {
                 throw;
             }
             catch (Exception)
@@ -119,9 +93,13 @@ namespace DtoLib.NetworkServices
 
                 await NetworkProvider.NetworkStream.WriteAsync(messageWithLength, 0, messageWithLength.Length);
             }
-            catch (Exception ex)
+            catch(IOException)
             {
-                Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception)
+            {
+                //Console.WriteLine(ex.Message);
                 throw;
             }
         }

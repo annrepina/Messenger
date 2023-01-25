@@ -13,16 +13,6 @@ namespace DtoLib.NetworkServices.Interfaces
     public interface INetworkProvider
     {
         /// <summary>
-        /// Событие отключения
-        /// </summary>
-        public event Action<int> Disconnected;
-
-        /// <summary>
-        /// Идентификатор
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
         /// Отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>
         public ITransmitterAsync Transmitter { set; }
@@ -30,7 +20,12 @@ namespace DtoLib.NetworkServices.Interfaces
         /// <summary>
         /// Сетевой поток, по которому будет осуществляться передача данных
         /// </summary>
-        public NetworkStream NetworkStream { get; set; }
+        public NetworkStream? NetworkStream { get; set; }
+
+        /// <summary>
+        /// Обеспечивает клиентские соединения для сетевых служб tcp.
+        /// </summary>
+        public TcpClient? TcpClient { get; set; }
 
         /// <summary>
         /// Уведомить о получении массива байтов
@@ -44,8 +39,10 @@ namespace DtoLib.NetworkServices.Interfaces
         /// <param name="data"></param>
         public Task SendBytesAsync(byte[] data);
 
-        public Task ReadBytes();
+        public Task ReadBytesAsync();
 
         public void Disconnect();
+
+        public void CloseConnection();
     }
 }

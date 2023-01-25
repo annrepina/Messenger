@@ -13,7 +13,7 @@ namespace WpfMessengerClient
     /// </summary>
     public interface INetworkMessageHandler
     {
-        IConnectionController ConnectionController { get; set; }
+        IConnectionController ConnectionController { set; }
 
         /// <summary>
         /// Обработать сетевое сообщение

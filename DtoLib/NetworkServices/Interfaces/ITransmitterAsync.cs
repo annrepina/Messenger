@@ -18,7 +18,5 @@ namespace DtoLib.NetworkServices.Interfaces
         public Task SendNetworkMessageAsync(byte[] networkMessage);
 
         public Task<byte[]> ReceiveBytesAsync();
-
-        //public Task RunReceivingBytesInLoop();
     }
 }
