@@ -14,17 +14,12 @@ namespace ConsoleMessengerServer
     {
         public static void PrintRequestReport(int networkProviderId, NetworkMessageCode code, string info)
         {
-            Console.WriteLine($"Id клиента: {networkProviderId}. Запрос: код операции: {code}. " + info);
-        }
-
-        public static void PrintResponseReport(int networkProviderId, NetworkMessageCode code, NetworkResponseStatus status, string info)
-        {
-            Console.WriteLine($"Id клиента: {networkProviderId}. Ответ: код операции: {code}. Статус ответа: {status}. " + info);
+            Console.WriteLine($"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Id клиента: {networkProviderId}. Запрос: код операции: {code}. " + info);
         }
 
         public static void PrintResponseReport(int networkProviderId, NetworkMessageCode code, NetworkResponseStatus status)
         {
-            Console.WriteLine($"Id клиента: {networkProviderId}. Ответ: код операции: {code}. Статус ответа: {status}.");
+            Console.WriteLine($"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Id клиента: {networkProviderId}. Ответ: код операции: {code}. Статус ответа: {status}.");
         }
     }
 }

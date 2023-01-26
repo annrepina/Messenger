@@ -29,5 +29,10 @@ namespace ConsoleMessengerServer.Responses
         public SignUpResponse(NetworkResponseStatus status) : base(status)
         {
         }
+
+        public SignUpResponse()
+        {
+
+        }
     }
 }

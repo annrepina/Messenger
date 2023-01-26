@@ -14,26 +14,10 @@ namespace ConsoleMessengerServer.Net.Interfaces
     public interface IConnectionController
     {
         /// <summary>
-        /// Обработчик получения сетевых сообщений
-        /// </summary>
-        public IServerNetworkMessageHandler ServerNetworkMessageHandler { set; }
-
-        /// <summary>
         /// Инициализировать новое подключение
         /// </summary>
         /// <param name="tcpClient">TCP клиент</param>
         public void InitializeNewConnection(TcpClient tcpClient);
-
-        ///// <summary>
-        ///// Отключить всех клиентов
-        ///// </summary>
-        //public void DisconnectClients();
-
-        ///// <summary>
-        ///// Отключить конкретного клиента
-        ///// </summary>
-        ///// <param name="clientId">Id клиента</param>
-        //public void DisconnectClient(int clientId);
 
         /// <summary>
         /// Оповестить о получении массива байтов 
@@ -44,11 +28,11 @@ namespace ConsoleMessengerServer.Net.Interfaces
 
         public void AddNewSession(int userId, int networkProviderId);
 
-        public Task BroadcastNetworkMessageToSenderAsync(byte[] messageBytes, int userId, int networkProviderId);
+        public Task BroadcastToSenderAsync(byte[] messageBytes, int userId, int networkProviderId);
 
-        public Task BroadcastNetworkMessageToInterlocutorAsync(byte[] messageBytes, int userId);
+        public Task BroadcastToInterlocutorAsync(byte[] messageBytes, int userId);
 
-        public Task BroadcastErrorToSenderAsync(byte[] messageBytes, int networkProviderId);
+        public Task BroadcastError(byte[] messageBytes, IServerNetworProvider networkProvider);
 
         public void DisconnectUser(int userId, int networkPrividerId);
     }

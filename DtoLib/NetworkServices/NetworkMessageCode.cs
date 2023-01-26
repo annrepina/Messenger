@@ -17,7 +17,7 @@ namespace DtoLib.NetworkServices
         CreateDialogRequestCode,
         CreateDialogResponseCode,
         SendMessageRequestCode,
-        MessageDeliveredCode,
+        SendMessageResponseCode,
         DeleteMessageRequestCode,
         DeleteMessageResponseCode,
         DeleteDialogRequestCode,

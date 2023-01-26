@@ -183,7 +183,7 @@ namespace WpfMessengerClient
                     ProcessMessage<SendMessageRequestDto, SendMessageRequest>(message, DialogReceivedNewMessage);
                     break;
 
-                case NetworkMessageCode.MessageDeliveredCode:
+                case NetworkMessageCode.SendMessageResponseCode:
                     ProcessMessage<SendMessageResponseDto, SendMessageResponse>(message, SendMessageResponseReceived);
                     break;
 

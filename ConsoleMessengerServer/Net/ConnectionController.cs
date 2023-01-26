@@ -27,29 +27,25 @@ namespace ConsoleMessengerServer.Net
         /// </summary>
         private Dictionary<int, IServerNetworProvider> _networkProvidersBuffer;
 
-        /// <inheritdoc cref="ServerNetworkMessageHandler"/>
-        private IServerNetworkMessageHandler _serverNetworkMessageHandler;
+
+        private IRequestController _requestController;
 
         /// <summary>
         /// Сервер, который прослушивает входящие подключения
         /// </summary>
         public Server Server { get; set; }
 
-        /// <summary>
-        /// Обработчик сетевого сообщения
-        /// </summary>
-        public IServerNetworkMessageHandler ServerNetworkMessageHandler { set => _serverNetworkMessageHandler = value; }
-
         public ConnectionController()
         {
             Server = new Server(this);
+            _requestController = new RequestController(this);
             _userProxyList = new Dictionary<int, UserProxy>();
             _networkProvidersBuffer = new Dictionary<int, IServerNetworProvider>();
         }
 
         /// <summary>
         /// Асинхронный метод - начать работу контроллера
-        /// Бывший метод NetworkMessageHandler - StartListeningConnectionsAsync
+        /// Бывший метод RequestController - StartListeningConnectionsAsync
         /// </summary>
         /// <returns></returns>
         public async Task RunAsync()
@@ -70,7 +66,8 @@ namespace ConsoleMessengerServer.Net
         /// <param name="tcpClient">TCP клиент</param>
         public void InitializeNewConnection(TcpClient tcpClient)
         {
-            ServerNetworkProvider networkProvider = new ServerNetworkProvider(tcpClient, this);
+            ServerNetworkProvider networkProvider = new ServerNetworkProvider(tcpClient/*, this*/);
+            networkProvider.BytesReceived += ProcessRequest;
 
             _networkProvidersBuffer.Add(networkProvider.Id, networkProvider);
 
@@ -79,19 +76,26 @@ namespace ConsoleMessengerServer.Net
             Task.Run(() => networkProvider.ProcessNetworkMessagesAsync());
         }
 
+        private void ProcessRequest(byte[] data, IServerNetworProvider networkProvider)
+        {
+            byte[] response = _requestController.ProcessRequest(data, networkProvider);
+
+            networkProvider.SendBytesAsync(response);
+        }
+
         public void NotifyBytesReceived(byte[] bytes, IServerNetworProvider NetworkProvider)
         {
-            byte[] response = _serverNetworkMessageHandler.ProcessData(bytes, NetworkProvider.Id);
+            byte[] response = _requestController.ProcessRequest(bytes, NetworkProvider);
 
             NetworkProvider.SendBytesAsync(response);
         }
 
-        public async Task BroadcastNetworkMessageToSenderAsync(byte[] messageBytes, int userId, int networkMessageId)
+        public async Task BroadcastToSenderAsync(byte[] messageBytes, int userId, int networkMessageId)
         {
             await _userProxyList[userId].BroadcastNetworkMessageAsync(messageBytes, networkMessageId);
         }
 
-        public async Task BroadcastNetworkMessageToInterlocutorAsync(byte[] messageBytes, int interlocutorId)
+        public async Task BroadcastToInterlocutorAsync(byte[] messageBytes, int interlocutorId)
         {
             if (_userProxyList.ContainsKey(interlocutorId))
                 await _userProxyList[interlocutorId].BroadcastNetworkMessageAsync(messageBytes);
@@ -132,9 +136,9 @@ namespace ConsoleMessengerServer.Net
             _userProxyList[userId].RemoveConnection(networkProviderId);
         }
 
-        public async Task BroadcastErrorToSenderAsync(byte[] messageBytes, int networkProviderId)
+        public async Task BroadcastError(byte[] messageBytes, IServerNetworProvider networkProvider)
         {
-            await _networkProvidersBuffer[networkProviderId].SendBytesAsync(messageBytes);
+            await networkProvider.SendBytesAsync(messageBytes);
         }
     }
 }

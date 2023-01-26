@@ -62,7 +62,7 @@ namespace WpfMessengerClient.ViewModels
         {
             MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
 
-            _networkMessageHandler.ConnectionController.CloseConnection();
+            //_networkMessageHandler.ConnectionController.CloseConnection();
 
             _messengerWindowsManager.CloseCurrentWindow();
         }

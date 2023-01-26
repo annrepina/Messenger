@@ -18,5 +18,7 @@ namespace ConsoleMessengerServer.Net.Interfaces
         /// Событие отключения
         /// </summary>
         public event Action<int> Disconnected;
+
+        public event Action<byte[], IServerNetworProvider> BytesReceived;
     }
 }

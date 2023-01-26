@@ -10,19 +10,14 @@ namespace ConsoleMessengerServer.Net.Interfaces
     /// <summary>
     /// Интерфейс, который обрабатывает сетевые сообщения на стороне клиента
     /// </summary>
-    public interface IServerNetworkMessageHandler
+    public interface IRequestController
     {
-        /// <summary>
-        /// Объект, управляющий связью по сети
-        /// </summary>
-        public IConnectionController ConnectionController { set; }
-
         /// <summary>
         /// Обрабатывает массив байтов переданных по сети
         /// </summary>
         /// <param name="data">Полученный массив байтов</param>
-        /// <param name="senderId">Идентификатор отправителя</param>
+        /// <param name="networkProviderId">Идентификатор отправителя</param>
         /// <returns></returns>
-        public byte[] ProcessData(byte[] data, int senderId);
+        public byte[] ProcessRequest(byte[] data, IServerNetworProvider networkProviderId);
     }
 }

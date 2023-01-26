@@ -13,20 +13,19 @@ namespace ConsoleMessengerServer.Net
     /// <summary>
     /// Сетевой провайдер на стороне сервера
     /// </summary>
-    public class ServerNetworkProvider : /*NetworkProvider,*/ IServerNetworProvider
+    public class ServerNetworkProvider : IServerNetworProvider
     {
         public event Action<int> Disconnected;
+
+        public event Action<byte[], IServerNetworProvider> BytesReceived;
 
         /// <summary>
         /// Счетчик, на основе которого, объекту присваивается id
         /// </summary>
         private static int _counter = 0;
+
         private ITransmitterAsync _transmitter;
 
-        /// <summary>
-        /// Отвечает за работу с сетью
-        /// </summary>
-        public IConnectionController ConnectionController { get; set; }
         public int Id { get; set; }
         
         /// <summary>
@@ -47,14 +46,12 @@ namespace ConsoleMessengerServer.Net
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="tcpClient">TCP клиент</param>
-        /// <param name="connectionController">Отвечает за работу с сетью</param>
-        public ServerNetworkProvider(TcpClient tcpClient, IConnectionController connectionController)
+        public ServerNetworkProvider(TcpClient tcpClient)
         {
             Id = ++_counter;
             Transmitter = new Transmitter(this);
             TcpClient = tcpClient;
             NetworkStream = TcpClient.GetStream();
-            ConnectionController = connectionController;
         }
 
         /// <summary>
@@ -91,7 +88,9 @@ namespace ConsoleMessengerServer.Net
         /// <param name="data"></param>
         public void NotifyBytesReceived(byte[] data)
         {
-            ConnectionController.NotifyBytesReceived(data, this);
+            //BytesReceived?.Invoke(data, )
+
+            //ConnectionController.NotifyBytesReceived(data, this);
         }
 
         public async Task SendBytesAsync(byte[] data)
@@ -107,24 +106,13 @@ namespace ConsoleMessengerServer.Net
 
         public async Task ReadBytesAsync()
         {
-            //try
-            //{
-                while (true)
-                {
-                    // буфер для получаемых данных
-                    byte[] data = await _transmitter.ReceiveBytesAsync();
+            while (true)
+            {
+                // буфер для получаемых данных
+                byte[] data = await _transmitter.ReceiveBytesAsync();
 
-                    NotifyBytesReceived(data);
-                }
-            //}
-            //catch (IOException)
-            //{
-            //    throw;
-            //}
-            //catch (Exception)
-            //{
-            //    throw;
-            //}
+                BytesReceived?.Invoke(data, this);
+            }
         }
 
         public void CloseConnection()

@@ -12,6 +12,8 @@ namespace DtoLib.NetworkServices.Interfaces
     /// </summary>
     public interface INetworkProvider
     {
+        //public event Action<byte[], INetworkProvider> BytesReceived;
+
         /// <summary>
         /// Отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>

@@ -12,7 +12,7 @@ namespace ConsoleMessengerServer
     /// </summary>
     public class App : IDisposable
     {
-        private NetworkMessageHandler _networkMessageHandler;
+        //private RequestController _networkMessageHandler;
 
         /// <summary>
         /// Объект, управляющий работой со связью по сети
@@ -21,10 +21,10 @@ namespace ConsoleMessengerServer
 
         public App()
         {
-            _networkMessageHandler = new NetworkMessageHandler();
+            //_networkMessageHandler = new RequestController();
             _connectionController = new ConnectionController();
-            _connectionController.ServerNetworkMessageHandler = _networkMessageHandler;
-            _networkMessageHandler.ConnectionController = _connectionController;
+            //_connectionController.RequestController = _networkMessageHandler;
+            //_networkMessageHandler.ConnectionController = _connectionController;
         }
 
         public void Dispose()

@@ -19,10 +19,9 @@ namespace ConsoleMessengerServer.DataBase
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
-        public DbService()
+        public DbService(IMapper mapper)
         {
-            DataBaseMapper mapper = DataBaseMapper.GetInstance();
-            _mapper = mapper.CreateIMapper();
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -106,7 +105,6 @@ namespace ConsoleMessengerServer.DataBase
                 return dbContext.Users.Include(us => us.Dialogs).FirstOrDefault(user => user.PhoneNumber == signInRequestDto.PhoneNumber && user.Password == signInRequestDto.Password);
             }
         }
-
         public List<Dialog> FindDialogsByUser(User user)
         {
             using (var dbContext = new MessengerDbContext())
@@ -127,7 +125,6 @@ namespace ConsoleMessengerServer.DataBase
                 return dbContext.Users.Where(u => u.PhoneNumber == searchRequestDto.PhoneNumber || (searchRequestDto.Name != "" && u.Name.ToLower().Contains(searchRequestDto.Name.ToLower()))).ToList();
             }
         }
-
         public Dialog CreateDialog(CreateDialogRequestDto dto)
         {
             using (var dbContext = new MessengerDbContext())
