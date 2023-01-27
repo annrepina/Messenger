@@ -30,7 +30,7 @@ namespace WpfChatClient
 
             MessengerWindowsManager = new MessengerWindowsManager(this);
 
-            MessengerWindowsManager.OpenSignUpSignInWindow();
+            MessengerWindowsManager.OpenStartWindow();
         }
     }
 }

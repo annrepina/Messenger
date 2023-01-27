@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
 using ConsoleMessengerServer.DataBase;
-using ConsoleMessengerServer.Entities;
 using ConsoleMessengerServer.Entities.Mapping;
 using ConsoleMessengerServer.Net;
 using ConsoleMessengerServer.Net.Interfaces;
 using ConsoleMessengerServer.RequestHandlers;
-using ConsoleMessengerServer.Requests;
-using ConsoleMessengerServer.Responses;
-using DtoLib.Dto;
-using DtoLib.Dto.Requests;
-using DtoLib.Dto.Responses;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
 
@@ -63,51 +57,7 @@ namespace ConsoleMessengerServer
         /// <param name="networkProvider">Идентификатор отправителя</param>
         private byte[] ProcessRequestMessage(NetworkMessage networkMessage, IServerNetworProvider networkProvider)
         {
-            RequestHandler handler;
-
-            switch (networkMessage.Code)
-            {
-                case NetworkMessageCode.SignUpRequestCode:
-                    handler = new SignUpRequestHandler(_mapper, _conectionController);
-                    break;
-
-                case NetworkMessageCode.SignInRequestCode:
-                    handler = new SignInRequestHandler(_mapper, _conectionController);
-                    break;
-
-                case NetworkMessageCode.SearchUserRequestCode:
-                    handler = new SearchUserRequestHandler(_mapper, _conectionController);
-                    break;
-
-                case NetworkMessageCode.CreateDialogRequestCode:
-                    handler = new CreateDialogRequestHandler(_mapper, _conectionController);
-                    break;
-
-                case NetworkMessageCode.SendMessageRequestCode:
-                    handler = new SendMessageRequestHandler(_mapper, _conectionController);
-                    break;
-
-                case NetworkMessageCode.DeleteMessageRequestCode:
-                    handler = new DeleteMessageRequestHandler(_mapper, _conectionController);
-                    break;
-
-                case NetworkMessageCode.DeleteDialogRequestCode:
-                    handler = new DeleteDialogRequestHandler(_mapper, _conectionController);
-                    break;
-
-                case NetworkMessageCode.SignOutRequestCode:
-                    handler = new SignOutRequestHandler(_mapper, _conectionController);
-                    break;
-                //return ProcessSignOutRequest(networkMessage, networkProvider);
-
-                case NetworkMessageCode.MessagesAreReadRequestCode:
-                    //return ProcessMessagesAreReadRequest(networkMessage, networkProvider);
-                    handler = new ReadMessagesRequestHandler(_mapper, _conectionController);    
-                    break;
-
-                default:
-                    return new byte[] { };
-            }
+            RequestHandler handler = RequestHandlerCreator.FactoryMethod(_mapper, _conectionController, networkMessage.Code);
 
             return handler.Process(_dbService, networkMessage, networkProvider);
         }

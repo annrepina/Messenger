@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WpfMessengerClient.Models.Mapping;
+using WpfMessengerClient.NetworkServices;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -22,8 +23,9 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
-        public BaseSignUpSignInViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler) : base(messengerWindowsManager, networkMessageHandler)
+        /// <param _name="windowsManager">Менеджер окон в приложении</param>
+        public BaseSignUpSignInViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController*/IClientNetworkProvider networkProvider) 
+            : base(windowsManager, networkMessageHandler, /*connectionController*/networkProvider)
         {
             BackCommand = new DelegateCommand(GoBack);
         }
@@ -41,7 +43,7 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         private void SwitchToSignUpSignInWindow()
         {
-            _messengerWindowsManager.SwitchToSignUpSignInWindow();
+            _messengerWindowsManager.ReturnToStartWindow();
         }
     }
 }

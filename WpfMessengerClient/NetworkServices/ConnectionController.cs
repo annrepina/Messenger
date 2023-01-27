@@ -20,9 +20,10 @@ namespace WpfMessengerClient.NetworkServices
         {
             NetworkProvider = new ClientNetworkProvider(this);
             NetworkProvider.Disconnected += OnDisconnected;
+            NetworkProvider.BytesReceived += OnBytesReceived;
         }
 
-        public void NotifyBytesReceived(byte[] bytes)
+        public void OnBytesReceived(byte[] bytes)
         {
             NetworkMessageHandler.ProcessData(bytes);
         }

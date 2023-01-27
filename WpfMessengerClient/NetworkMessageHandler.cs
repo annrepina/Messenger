@@ -23,73 +23,73 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие регистрации пользователя
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<SignUpResponse> SignUpResponseReceived;
+        public readonly NetworkMessageHandlerEvent<SignUpResponse> SignUpResponseReceived = new();
 
         /// <summary>
         /// Событие входа пользователя
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<SignInResponse> SignInResponseReceived;
+        public readonly NetworkMessageHandlerEvent<SignInResponse> SignInResponseReceived = new();
 
         /// <summary>
         /// Событие выхода пользователя из мессенджера
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<Response> SignOutResponseReceived;
+        public readonly NetworkMessageHandlerEvent<Response> SignOutResponseReceived = new();
 
         /// <summary>
         /// Событие получение успешного результата поиска пользователя
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<UserSearchResponse> UserSearchResponseReceived;
+        public readonly NetworkMessageHandlerEvent<UserSearchResponse> UserSearchResponseReceived = new();
 
         /// <summary>
         /// Событие - диалог создан, обработчик принимает в качестве аргумента ответ на создание нового диалога
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<CreateDialogResponse> CreateDialogResponseReceived;
+        public readonly NetworkMessageHandlerEvent<CreateDialogResponse> CreateDialogResponseReceived = new();
 
         /// <summary>
         /// Событие - получили запрос на создание нового диалога
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<Dialog> CreateDialogRequestReceived;
+        public readonly NetworkMessageHandlerEvent<Dialog> CreateDialogRequestReceived = new();
 
         /// <summary>
         /// Событие - получили ответ, что сообщение доставлено
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<SendMessageResponse> SendMessageResponseReceived;
+        public readonly NetworkMessageHandlerEvent<SendMessageResponse> SendMessageResponseReceived = new();
 
         /// <summary>
         /// Событие - в диалоге появилось новое сообщение
         /// Либо сообщение получено от собеседника, либо сообщение отправил текущий пользователь с другого устройства
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<SendMessageRequest> DialogReceivedNewMessage;
+        public readonly NetworkMessageHandlerEvent<SendMessageRequest> DialogReceivedNewMessage = new();
 
         /// <summary>
         /// Событие получения ответа на запрос обу удалении сообщения
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<Response> DeleteMessageResponseReceived;
+        public readonly NetworkMessageHandlerEvent<Response> DeleteMessageResponseReceived = new();
 
         /// <summary>
         /// Событие получения запроса на удаление сообщения
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<DeleteMessageRequestForClient> DeleteMessageRequestForClientReceived;
+        public readonly NetworkMessageHandlerEvent<DeleteMessageRequestForClient> DeleteMessageRequestForClientReceived = new();
 
         /// <summary>
         /// Событие получения ответа на запрос об удалении диалога
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<Response> DeleteDialogResponseReceived;
+        public readonly NetworkMessageHandlerEvent<Response> DeleteDialogResponseReceived = new();
 
         /// <summary>
         /// Событие получения запроса на удаление диалога
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<DeleteDialogRequestForClient> DeleteDialogRequestForClientReceived;
+        public readonly NetworkMessageHandlerEvent<DeleteDialogRequestForClient> DeleteDialogRequestForClientReceived = new();
 
         /// <summary>
         /// Событие получения ответа на запрос о прочтении сообщения
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<Response> MessageIsReadResponseReceived;
+        public readonly NetworkMessageHandlerEvent<Response> MessageIsReadResponseReceived = new();
 
         /// <summary>
         /// Событие получение запроса на прочтение сообщения текущим пользователем с другого клиента
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<MessagesAreReadRequestForClient> MessagesAreReadRequestForClientReceived;
+        public readonly NetworkMessageHandlerEvent<MessagesAreReadRequestForClient> MessagesAreReadRequestForClientReceived = new();
 
         #endregion События
 
@@ -123,23 +123,6 @@ namespace WpfMessengerClient
         /// </summary>
         public NetworkMessageHandler()
         {
-            SignUpResponseReceived = new NetworkMessageHandlerEvent<SignUpResponse>();
-            SignInResponseReceived = new NetworkMessageHandlerEvent<SignInResponse>();
-            SignOutResponseReceived = new NetworkMessageHandlerEvent<Response>();
-            UserSearchResponseReceived = new NetworkMessageHandlerEvent<UserSearchResponse>();
-            CreateDialogResponseReceived = new NetworkMessageHandlerEvent<CreateDialogResponse>();
-            CreateDialogRequestReceived = new NetworkMessageHandlerEvent<Dialog>();
-            SendMessageResponseReceived = new NetworkMessageHandlerEvent<SendMessageResponse>();
-            DialogReceivedNewMessage = new NetworkMessageHandlerEvent<SendMessageRequest>();
-            DeleteMessageResponseReceived = new NetworkMessageHandlerEvent<Response>();
-            DeleteMessageRequestForClientReceived = new NetworkMessageHandlerEvent<DeleteMessageRequestForClient>();
-            DeleteDialogResponseReceived = new NetworkMessageHandlerEvent<Response>();
-            DeleteDialogRequestForClientReceived = new NetworkMessageHandlerEvent<DeleteDialogRequestForClient>();
-            MessageIsReadResponseReceived = new NetworkMessageHandlerEvent<Response>();
-            MessagesAreReadRequestForClientReceived = new NetworkMessageHandlerEvent<MessagesAreReadRequestForClient>();
-
-            ConnectionController = null;
-
             MessengerMapper mapper = MessengerMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
         }

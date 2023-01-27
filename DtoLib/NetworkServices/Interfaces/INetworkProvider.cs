@@ -29,11 +29,11 @@ namespace DtoLib.NetworkServices.Interfaces
         /// </summary>
         public TcpClient? TcpClient { get; set; }
 
-        /// <summary>
-        /// Уведомить о получении массива байтов
-        /// </summary>
-        /// <param name="data">Массив байтов</param>
-        public void NotifyBytesReceived(byte[] data);
+        ///// <summary>
+        ///// Уведомить о получении массива байтов
+        ///// </summary>
+        ///// <param name="data">Массив байтов</param>
+        //public void NotifyBytesReceived(byte[] data);
 
         /// <summary>
         /// Отправить массив байтов

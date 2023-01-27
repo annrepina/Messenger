@@ -18,7 +18,7 @@ namespace WpfMessengerClient.NetworkServices
 
         IClientNetworkProvider NetworkProvider { get; set; }
 
-        public void NotifyBytesReceived(byte[] bytes);
+        public void OnBytesReceived(byte[] bytes);
 
         public Task SendRequestAsync(byte[] bytes);
 

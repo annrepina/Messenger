@@ -10,6 +10,7 @@ using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
+using WpfMessengerClient.NetworkServices;
 using WpfMessengerClient.Obsevers;
 
 namespace WpfMessengerClient.ViewModels
@@ -46,8 +47,9 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param name="messengerWindowsManager">Менеджер окон в приложении</param>
-        public SignInWindowViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler) : base(messengerWindowsManager, networkMessageHandler)
+        /// <param name="windowsManager">Менеджер окон в приложении</param>
+        public SignInWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController*/IClientNetworkProvider networkProvider) 
+            : base(windowsManager, networkMessageHandler, networkProvider)
         {
             SignInCommand = new DelegateCommand(async () => await SignInAsync());
 
@@ -103,7 +105,7 @@ namespace WpfMessengerClient.ViewModels
         {
             if(signInResponse.Status == NetworkResponseStatus.Successful)
             {
-                _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, signInResponse.User, signInResponse.Dialogs);
+                _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, _networkProvider, signInResponse.User, signInResponse.Dialogs);
             }
             else if(signInResponse.Status == NetworkResponseStatus.Failed)
             {

@@ -15,6 +15,9 @@ namespace WpfMessengerClient.Services
     public class ClientNetworkProvider : /*NetworkProvider, */IClientNetworkProvider
     {
         public event Action Disconnected;
+        public event Action<byte[]> BytesReceived;
+
+        private ITransmitterAsync _transmitter;
 
         #region Константы
 
@@ -27,7 +30,6 @@ namespace WpfMessengerClient.Services
         /// Порт по которому будет осуществляться передача данных
         /// </summary>
         private const int Port = 8888;
-        private ITransmitterAsync _transmitter;
 
         #endregion Константы
 
@@ -43,13 +45,7 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>
-        public ITransmitterAsync Transmitter
-        {
-            set
-            {
-                _transmitter = value;
-            }
-        }
+        public ITransmitterAsync Transmitter { set => _transmitter = value; }
 
         public NetworkStream NetworkStream { get; set; }
         public TcpClient TcpClient { get; set; }
@@ -108,10 +104,10 @@ namespace WpfMessengerClient.Services
             }
         }
 
-        public void NotifyBytesReceived(byte[] data)
-        {
-            ConnectionController.NotifyBytesReceived(data);
-        }
+        //public void OnBytesReceived(byte[] data)
+        //{
+        //    ConnectionController.OnBytesReceived(data);
+        //}
 
         public async Task SendBytesAsync(byte[] data)
         {
@@ -137,6 +133,7 @@ namespace WpfMessengerClient.Services
         public void Disconnect()
         {
             Disconnected.Invoke();
+            //ConnectionController.NotifyDisconnect();
             CloseConnection();
         }
 
@@ -146,10 +143,10 @@ namespace WpfMessengerClient.Services
             //{
             while (true)
             {
-                // буфер для получаемых данных
                 byte[] data = await _transmitter.ReceiveBytesAsync();
 
-                NotifyBytesReceived(data);
+                BytesReceived?.Invoke(data);
+                //OnBytesReceived(data);
             }
             //}
             //catch (IOException)

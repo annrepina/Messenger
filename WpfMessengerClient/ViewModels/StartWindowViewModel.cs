@@ -10,7 +10,7 @@ namespace WpfMessengerClient.ViewModels
     /// <summary>
     /// Вьюмодель для окна регистрации/входа
     /// </summary>
-    public class SignUpSignInWindowViewModel : BaseNotifyPropertyChanged
+    public class StartWindowViewModel : BaseNotifyPropertyChanged
     {
         /// <inheritdoc cref="AreControlsAvailable"/>
         protected bool _areControlsAvailable;
@@ -49,7 +49,7 @@ namespace WpfMessengerClient.ViewModels
         /// Конструктор с параметром
         /// </summary>
         /// <param _name="messengerWindowsManager">Менеджер окон для приложения</param>
-        public SignUpSignInWindowViewModel(MessengerWindowsManager messengerWindowsManager)
+        public StartWindowViewModel(MessengerWindowsManager messengerWindowsManager)
         {
             MessengerWindowsManager = messengerWindowsManager;
 

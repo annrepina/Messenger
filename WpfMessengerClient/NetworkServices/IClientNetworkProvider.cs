@@ -10,5 +10,7 @@ namespace WpfMessengerClient.NetworkServices
     public interface IClientNetworkProvider : INetworkProvider
     {
         public event Action Disconnected;
+
+        public event Action<byte[]> BytesReceived;
     }
 }

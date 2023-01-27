@@ -82,16 +82,16 @@ namespace ConsoleMessengerServer.Net
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="data"></param>
-        public void NotifyBytesReceived(byte[] data)
-        {
-            //BytesReceived?.Invoke(data, )
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="data"></param>
+        //public void NotifyBytesReceived(byte[] data)
+        //{
+        //    //BytesReceived?.Invoke(data, )
 
-            //ConnectionController.NotifyBytesReceived(data, this);
-        }
+        //    //ConnectionController.NotifyBytesReceived(data, this);
+        //}
 
         public async Task SendBytesAsync(byte[] data)
         {

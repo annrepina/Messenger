@@ -1,4 +1,5 @@
 ﻿using DtoLib.NetworkServices;
+using DtoLib.NetworkServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfMessengerClient.NetworkServices;
 using WpfMessengerClient.Obsevers;
 
 namespace WpfMessengerClient.ViewModels
@@ -24,6 +26,9 @@ namespace WpfMessengerClient.ViewModels
         protected readonly NetworkMessageHandler _networkMessageHandler;
 
         protected readonly MessengerWindowsManager _messengerWindowsManager;
+
+        //protected readonly ConnectionController _connectionController;
+        protected IClientNetworkProvider _networkProvider;
 
         /// <summary>
         /// Доступны ли контролы на вьюхе
@@ -44,11 +49,12 @@ namespace WpfMessengerClient.ViewModels
         /// Конструктор с параметром
         /// </summary>
         /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
-        public BaseViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler)
+        public BaseViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController*/ IClientNetworkProvider networkProvider)
         {
-            _networkMessageHandler = networkMessageHandler;
-
             _messengerWindowsManager = messengerWindowsManager;
+            _networkMessageHandler = networkMessageHandler;
+            //_connectionController = connectionController;
+            _networkProvider = networkProvider;
 
             AreControlsAvailable = true;
         }

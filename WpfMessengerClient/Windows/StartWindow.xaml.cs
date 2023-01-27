@@ -16,16 +16,16 @@ using WpfMessengerClient.ViewModels;
 namespace WpfMessengerClient.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для SignUpSignInWindow.xaml
+    /// Логика взаимодействия для StartWindow.xaml
     /// </summary>
-    public partial class SignUpSignInWindow : Window
+    public partial class StartWindow : Window
     {
-        public SignUpSignInWindow()
+        public StartWindow()
         {
             InitializeComponent();
         }
 
-        public SignUpSignInWindow(SignUpSignInWindowViewModel viewModel) : this()
+        public StartWindow(StartWindowViewModel viewModel) : this()
         {
             DataContext = viewModel;
         }

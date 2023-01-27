@@ -9,6 +9,7 @@ using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
+using WpfMessengerClient.NetworkServices;
 using WpfMessengerClient.Obsevers;
 
 namespace WpfMessengerClient.ViewModels
@@ -38,8 +39,9 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
-        public SignUpWindowViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler) : base(messengerWindowsManager, networkMessageHandler)
+        /// <param _name="windowsManager">Менеджер окон в приложении</param>
+        public SignUpWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController*/IClientNetworkProvider networkProvider) 
+            : base(windowsManager, networkMessageHandler, /*connectionController*/networkProvider)
         {
             SignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
             Request = new SignUpRequest();
@@ -68,7 +70,10 @@ namespace WpfMessengerClient.ViewModels
 
                 var observer = new Observer<SignUpResponse>(completionSource, _networkMessageHandler.SignUpResponseReceived);
 
-                _networkMessageHandler.SendRequestAsync<SignUpRequest, SignUpRequestDto>(Request, NetworkMessageCode.SignUpRequestCode);
+                _networkProvider.SendBytesAsync(RequestConverter<SignUpRequest, SignUpRequestDto>.Convert(Request, _mapper, NetworkMessageCode.SignUpRequestCode));
+                //_connectionController.SendRequestAsync(RequestConverter<SignUpRequest, SignUpRequestDto>.Convert(Request, _mapper, NetworkMessageCode.SignUpRequestCode));
+
+                //_networkMessageHandler.SendRequestAsync<SignUpRequest, SignUpRequestDto>(Request, NetworkMessageCode.SignUpRequestCode);
 
                 await completionSource.Task;
 
@@ -100,7 +105,7 @@ namespace WpfMessengerClient.ViewModels
                 User user = _mapper.Map<User>(Request);
                 user.Id = response.UserId;
 
-                _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, user);
+                _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, /*_connectionController*/_networkProvider, user);
             }
             else if (response.Status == NetworkResponseStatus.Failed)
             {

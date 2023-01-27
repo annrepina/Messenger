@@ -14,6 +14,7 @@ using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
+using WpfMessengerClient.NetworkServices;
 using WpfMessengerClient.Obsevers;
 
 namespace WpfMessengerClient.ViewModels
@@ -361,8 +362,8 @@ namespace WpfMessengerClient.ViewModels
         /// Конструктор с параметрами
         /// </summary>
         /// <param _name="networkMessageHandler">Посредник между сетевым провайдером и данными пользователя</param>
-        /// <param _name="messengerWindowsManager">Менеджер окон приложения</param>
-        public ChatWindowViewModel(NetworkMessageHandler networkMessageHandler, MessengerWindowsManager messengerWindowsManager, User user) : base(messengerWindowsManager, networkMessageHandler)
+        /// <param _name="windowsManager">Менеджер окон приложения</param>
+        public ChatWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user) : base(windowsManager, networkMessageHandler, networkProvider)
         {
             _networkMessageHandler.CreateDialogRequestReceived.ResponseReceived += OnCreateDialogRequestReceived;
             _networkMessageHandler.DialogReceivedNewMessage.ResponseReceived += OnDialogReceivedNewMessage;
@@ -399,7 +400,8 @@ namespace WpfMessengerClient.ViewModels
             WasMessageSelected = false;
         }
 
-        public ChatWindowViewModel(NetworkMessageHandler networkMessageHandler, MessengerWindowsManager messengerWindowsManager, User user, List<Dialog> dialogs) : this(networkMessageHandler, messengerWindowsManager, user)
+        public ChatWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user, List<Dialog> dialogs) 
+            : this(windowsManager, networkMessageHandler, networkProvider, user)
         {
             foreach (Dialog dialog in dialogs)
             {
@@ -883,7 +885,7 @@ namespace WpfMessengerClient.ViewModels
             if (response.Status == NetworkResponseStatus.Successful)
             {
                 AreControlsAvailable = true;
-                _messengerWindowsManager.SwitchToSignUpSignInWindow();
+                _messengerWindowsManager.ReturnToStartWindow();
             }
 
             else
