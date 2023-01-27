@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using DtoLib.NetworkServices;
+using DtoLib.NetworkServices.Interfaces;
+using System;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
-using System.Security.Policy;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using DtoLib.NetworkServices;
-using WpfMessengerClient.ViewModels;
-using WpfMessengerClient.Models;
-using DtoLib.Serialization;
 using WpfMessengerClient.NetworkServices;
-using DtoLib.NetworkServices.Interfaces;
 
 namespace WpfMessengerClient.Services
 {
@@ -23,7 +14,6 @@ namespace WpfMessengerClient.Services
     /// </summary>
     public class ClientNetworkProvider : /*NetworkProvider, */IClientNetworkProvider
     {
-
         public event Action Disconnected;
 
         #region Константы
@@ -101,10 +91,11 @@ namespace WpfMessengerClient.Services
                     //    await _transmitter.SendNetworkMessageAsync(messageBytes);
                     //}
 
-                    await Task.Run(() => ReadBytesAsync());
+                    /*await */
+                    Task.Run(() => ReadBytesAsync());
                 }
             }
-            catch(IOException)
+            catch (IOException)
             {
                 Disconnect();
                 throw;
@@ -127,15 +118,11 @@ namespace WpfMessengerClient.Services
             try
             {
                 if (!IsConnected)
-                {
                     ConnectAsync();
-
-                    //await _transmitter.SendNetworkMessageAsync(data);
-                }
 
                 await _transmitter.SendNetworkMessageAsync(data);
             }
-            catch(IOException)
+            catch (IOException)
             {
                 Disconnect();
                 throw;
@@ -157,13 +144,13 @@ namespace WpfMessengerClient.Services
         {
             //try
             //{
-                while (true)
-                {
-                    // буфер для получаемых данных
-                    byte[] data = await _transmitter.ReceiveBytesAsync();
+            while (true)
+            {
+                // буфер для получаемых данных
+                byte[] data = await _transmitter.ReceiveBytesAsync();
 
-                    NotifyBytesReceived(data);
-                }
+                NotifyBytesReceived(data);
+            }
             //}
             //catch (IOException)
             //{

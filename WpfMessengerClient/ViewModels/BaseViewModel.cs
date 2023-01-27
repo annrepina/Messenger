@@ -18,8 +18,6 @@ namespace WpfMessengerClient.ViewModels
         /// <inheritdoc cref="AreControlsAvailable"/>
         protected bool _areControlsAvailable;
 
-
-
         /// <summary>
         /// Посредник между сетевым провайдером и данными пользователя
         /// </summary>

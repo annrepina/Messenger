@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using ConsoleMessengerServer.DataBase;
 using ConsoleMessengerServer.Net.Interfaces;
+using ConsoleMessengerServer.Responses;
+using DtoLib.Dto.Responses;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
 using System;
@@ -37,7 +39,11 @@ namespace ConsoleMessengerServer.RequestHandlers
             }
         }
 
-        protected abstract void OnError(NetworkMessage networkMessage, IServerNetworProvider networkProvider);
+        protected virtual void OnError(NetworkMessage networkMessage, IServerNetworProvider networkProvider)
+        {
+            Response response = new Response(NetworkResponseStatus.FatalError);
+            SendError<Response, ResponseDto>(networkProvider, response, NetworkMessageCode.DeleteMessageResponseCode);
+        }
 
         protected abstract byte[] OnProcess(DbService dbService, NetworkMessage networkMessage, IServerNetworProvider networkProvider);
 

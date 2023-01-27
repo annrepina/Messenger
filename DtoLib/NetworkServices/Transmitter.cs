@@ -34,8 +34,8 @@ namespace DtoLib.NetworkServices
         /// <returns></returns>
         public async Task<byte[]> ReceiveBytesAsync()
         {
-            try
-            {
+            //try
+            //{
                 byte[] lengthBuffer = new byte[4];
                 List<byte> bytesList = new List<byte>();
                 int bytes = 0;
@@ -63,15 +63,15 @@ namespace DtoLib.NetworkServices
                 data = bytesList.ToArray();
 
                 return data;
-            }
-            catch(IOException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            //}
+            //catch(IOException)
+            //{
+            //    throw;
+            //}
+            //catch (Exception)
+            //{
+            //    throw;
+            //}
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace DtoLib.NetworkServices
         /// <param name="networkMessage">Сетевое сообщение в виде байтов</param>
         public async Task SendNetworkMessageAsync(byte[] networkMessage)
         {
-            try
-            {
+            //try
+            //{
                 Int32 bytesNumber = networkMessage.Length;
 
                 byte[] length = BitConverter.GetBytes(bytesNumber);
@@ -92,16 +92,16 @@ namespace DtoLib.NetworkServices
                 networkMessage.CopyTo(messageWithLength, length.Length);
 
                 await NetworkProvider.NetworkStream.WriteAsync(messageWithLength, 0, messageWithLength.Length);
-            }
-            catch(IOException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //Console.WriteLine(ex.Message);
-                throw;
-            }
+            //}
+            //catch(IOException)
+            //{
+            //    throw;
+            //}
+            //catch (Exception)
+            //{
+            //    //Console.WriteLine(ex.Message);
+            //    throw;
+            //}
         }
     }
 }

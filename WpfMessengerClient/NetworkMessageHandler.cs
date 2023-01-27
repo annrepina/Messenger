@@ -4,9 +4,7 @@ using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
-using System;
 using System.Threading.Tasks;
-using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
@@ -102,15 +100,14 @@ namespace WpfMessengerClient
         /// </summary>
         private readonly IMapper _mapper;
 
-
         private IConnectionController _connectionController;
 
         #endregion Приватные поля
 
         #region  Свойства
 
-        public IConnectionController ConnectionController 
-        { 
+        public IConnectionController ConnectionController
+        {
             set
             {
                 _connectionController = value;
@@ -246,15 +243,15 @@ namespace WpfMessengerClient
         {
             //try
             //{
-                Tdto dto = _mapper.Map<Tdto>(requestData);
+            Tdto dto = _mapper.Map<Tdto>(requestData);
 
-                byte[] data = SerializationHelper.Serialize(dto);
+            byte[] data = SerializationHelper.Serialize(dto);
 
-                NetworkMessage networkMessage = new NetworkMessage(data, code);
+            NetworkMessage networkMessage = new NetworkMessage(data, code);
 
-                byte[] messageBytes = SerializationHelper.Serialize(networkMessage);
+            byte[] messageBytes = SerializationHelper.Serialize(networkMessage);
 
-                await _connectionController.SendRequestAsync(messageBytes);
+            await _connectionController.SendRequestAsync(messageBytes);
             //}
             //catch (Exception ex)
             //{

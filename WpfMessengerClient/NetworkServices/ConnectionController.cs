@@ -16,6 +16,12 @@ namespace WpfMessengerClient.NetworkServices
 
         public IClientNetworkProvider NetworkProvider { get; set; }
 
+        public ConnectionController()
+        {
+            NetworkProvider = new ClientNetworkProvider(this);
+            NetworkProvider.Disconnected += OnDisconnected;
+        }
+
         public void NotifyBytesReceived(byte[] bytes)
         {
             NetworkMessageHandler.ProcessData(bytes);
@@ -29,12 +35,6 @@ namespace WpfMessengerClient.NetworkServices
         public void CloseConnection()
         {
             NetworkProvider.CloseConnection();
-        }
-
-        public ConnectionController()
-        {
-            NetworkProvider = new ClientNetworkProvider(this);
-            NetworkProvider.Disconnected += OnDisconnected;
         }
 
         public void OnDisconnected()
