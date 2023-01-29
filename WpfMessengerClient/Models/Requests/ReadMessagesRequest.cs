@@ -6,18 +6,21 @@ using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models.Requests
 {
-    public class MessagesAreReadRequestForClient
+    /// <summary>
+    /// запрос о прочтении сообщения для клиента
+    /// </summary>
+    public class ReadMessagesRequest
     {
         public List<int> MessagesId { get; set; }
 
         public int DialogId { get; set; }
 
-        public MessagesAreReadRequestForClient()
+        public ReadMessagesRequest()
         {
             MessagesId = new List<int>();
         }
 
-        public MessagesAreReadRequestForClient(List<int> messagesId, int dialogId)
+        public ReadMessagesRequest(List<int> messagesId, int dialogId)
         {
             MessagesId = messagesId;
             DialogId = dialogId;

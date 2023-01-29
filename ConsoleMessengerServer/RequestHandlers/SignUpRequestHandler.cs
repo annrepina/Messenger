@@ -25,7 +25,7 @@ namespace ConsoleMessengerServer.RequestHandlers
         protected override void OnError(NetworkMessage networkMessage, IServerNetworProvider networkProvider)
         {
             SignUpResponse errorResponse = new SignUpResponse(NetworkResponseStatus.FatalError);
-            SendError<SignUpResponse, SignUpResponseDto>(networkProvider, errorResponse, NetworkMessageCode.SignUpResponseCode);
+            SendErrorResponse<SignUpResponse, SignUpResponseDto>(networkProvider, errorResponse, NetworkMessageCode.SignUpResponseCode);
         }
 
         protected override byte[] OnProcess(DbService dbService, NetworkMessage networkMessage, IServerNetworProvider networkProvider)
@@ -36,11 +36,12 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             SignUpResponse signUpResponse = CreateSignUpResponse(user, networkProvider.Id);
 
-            NetworkMessage responseMessage = CreateNetworkMessage(signUpResponse, out SignUpResponseDto responseDto, NetworkMessageCode.SignUpResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage(signUpResponse, out SignUpResponseDto responseDto, NetworkMessageCode.SignUpResponseCode);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter<SignUpResponse, SignUpResponseDto>.Convert(signUpResponse, NetworkMessageCode.SignUpResponseCode);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, signUpRequestDto.ToString(), signUpResponse.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.SignUpResponseCode, signUpRequestDto.ToString(), signUpResponse.Status);
 
             return responseBytes;
         }

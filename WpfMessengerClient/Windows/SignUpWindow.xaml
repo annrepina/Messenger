@@ -23,8 +23,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Grid.Row="0" Grid.Column="0" Content="Назад" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Style="{StaticResource RoundedButton}"
-                Margin="10, 0, 0, 0" Height="50" Width="120"
+        <Button Grid.Row="0" Grid.Column="0" Content="Назад" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" Style="{StaticResource RoundedButton}"
+                Margin="10, 10, 0, 0" Height="50" Width="120"
                 IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding BackCommand}"/>
         <!--</Grid>-->
 
@@ -45,9 +45,40 @@
                 <TextBlock Grid.Row="0" Text="Регистрация" FontSize="32" FontFamily="Tahoma" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="1" Text="Ваш номер телефона будет использоваться &#x0a;для входа в аккаунт" FontSize="16" FontFamily="Tahoma" HorizontalAlignment="Center" TextAlignment="Center" Foreground="#6f7378"/>
             </Grid>
-            <TextBox Grid.Row="1" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPhoneNumberTextBox}" Height="90" Margin="5,0,5,5" VerticalAlignment="Bottom"/>
-            <TextBox Grid.Row="2" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputNameTextBox}" />
-            <TextBox Grid.Row="3" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPasswordTextBox}"/>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                 <TextBox Grid.Row="0" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPhoneNumberTextBox}" VerticalAlignment="Stretch" Margin="5,0,5,5" />           
+            </Grid>
+            
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputNameTextBox}" VerticalAlignment="Stretch" Margin="5,0,5,5" />
+            </Grid>
+
+            <Grid Grid.Row="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPasswordTextBox}" VerticalAlignment="Stretch" Margin="5,0,5,5" />
+            </Grid>
+
+            <Grid Grid.Row="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputSecondPasswordTextBox}" VerticalAlignment="Stretch" Margin="5,0,5,5" />
+            </Grid>
+
+            <!--<TextBox Grid.Row="2" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputNameTextBox}" />-->
+            <!--<TextBox Grid.Row="3" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPasswordTextBox}"/>-->
             <!--<TextBox Grid.Row="4" Style="{StaticResource InputSecondPasswordTextBox}" />-->
 
             <Button Grid.Row="5" Style="{StaticResource RoundedButton}" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Content="Зарегистрироваться" Command="{Binding SignUpCommand}"/>

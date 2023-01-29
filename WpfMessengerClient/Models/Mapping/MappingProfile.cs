@@ -26,17 +26,17 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<CreateDialogResponse, CreateDialogResponseDto>().ReverseMap();
             CreateMap<Dialog, CreateDialogResponse>().ForMember(dest => dest.DialogId, exp => exp.MapFrom(dial => dial.Id))
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
-            CreateMap<DeleteDialogRequest, DeleteDialogRequestDto>().ReverseMap();
-            CreateMap<DeleteDialogRequestForClientDto, DeleteDialogRequestForClient>().ReverseMap();
+            CreateMap<ExtendedDeleteDialogRequest, DeleteDialogRequestDto>().ReverseMap();
+            CreateMap<DeleteDialogRequestForClientDto, DeleteDialogRequest>().ReverseMap();
             CreateMap<ResponseDto, Response>().ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
             CreateMap<SendMessageRequest, SendMessageRequestDto>().ReverseMap();
             CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();   
-            CreateMap<DeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
-            CreateMap<DeleteMessageRequestForClientDto, DeleteMessageRequestForClient>().ReverseMap();
-            CreateMap<MessagesAreReadRequest, MessagesAreReadRequestDto>().ReverseMap();
-            CreateMap<MessagesAreReadRequestForClientDto, MessagesAreReadRequestForClient>().ReverseMap();
+            CreateMap<ExtendedDeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
+            CreateMap<DeleteMessageRequestForClientDto, DeleteMessageRequest>().ReverseMap();
+            CreateMap<ExtendedReadMessagesRequest, MessagesAreReadRequestDto>().ReverseMap();
+            CreateMap<MessagesAreReadRequestForClientDto, ReadMessagesRequest>().ReverseMap();
 
             CreateMap<SignUpRequest, SignUpRequestDto>().ReverseMap();        
             CreateMap<SignUpRequest, User>().ReverseMap();

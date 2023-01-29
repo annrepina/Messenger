@@ -9,7 +9,7 @@ namespace WpfMessengerClient.Models.Requests
     /// <summary>
     /// Запрос на прочтение сообщения
     /// </summary>
-    public class MessagesAreReadRequest
+    public class ExtendedReadMessagesRequest
     {
         public List<int> MessagesId { get; set; }
 
@@ -20,7 +20,7 @@ namespace WpfMessengerClient.Models.Requests
 
         public int DialogId { get; set; }
 
-        public MessagesAreReadRequest(List<int> messagesId, int userId, int dialogId)
+        public ExtendedReadMessagesRequest(List<int> messagesId, int userId, int dialogId)
         {
             MessagesId = messagesId;
             UserId = userId;

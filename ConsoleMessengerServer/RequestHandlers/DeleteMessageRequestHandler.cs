@@ -25,11 +25,12 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             Response response = CreateDeleteMessageResponse(dbService, message, deleteMessageRequestDto.UserId, networkProvider.Id);
 
-            NetworkMessage responseMessage = CreateNetworkMessage<Response, ResponseDto>(response, out ResponseDto dto, NetworkMessageCode.DeleteMessageResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage<Response, ResponseDto>(response, out ResponseDto dto, NetworkMessageCode.DeleteMessageResponseCode);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter<Response, ResponseDto>.Convert(response, NetworkMessageCode.DeleteMessageResponseCode);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, deleteMessageRequestDto.ToString(), response.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.DeleteMessageResponseCode, deleteMessageRequestDto.ToString(), response.Status);
 
             return responseBytes;
         }
@@ -43,9 +44,10 @@ namespace ConsoleMessengerServer.RequestHandlers
 
                 DeleteMessageRequestForClient deleteMessageRequest = new DeleteMessageRequestForClient(message.Id, message.DialogId);
 
-                NetworkMessage requestMessage = CreateNetworkMessage<DeleteMessageRequestForClient, DeleteMessageRequestForClientDto>(deleteMessageRequest, out DeleteMessageRequestForClientDto dto, NetworkMessageCode.DeleteMessageRequestCode);
+                //NetworkMessage requestMessage = CreateNetworkMessage<DeleteMessageRequestForClient, DeleteMessageRequestForClientDto>(deleteMessageRequest, out DeleteMessageRequestForClientDto dto, NetworkMessageCode.DeleteMessageRequestCode);
 
-                byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
+                //byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
+                byte[] requestBytes = ByteArrayConverter<DeleteMessageRequestForClient, DeleteMessageRequestForClientDto>.Convert(deleteMessageRequest, NetworkMessageCode.DeleteMessageRequestCode);
 
                 _conectionController.BroadcastToSenderAsync(requestBytes, userId, networkProviderId);
                 _conectionController.BroadcastToInterlocutorAsync(requestBytes, interlocutorId);

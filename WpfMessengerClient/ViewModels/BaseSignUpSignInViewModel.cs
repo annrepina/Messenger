@@ -1,17 +1,10 @@
-﻿using AutoMapper;
-using Prism.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfMessengerClient.Models.Mapping;
+﻿using Prism.Commands;
 using WpfMessengerClient.NetworkServices;
 
 namespace WpfMessengerClient.ViewModels
 {
     /// <summary>
-    /// Базовый класс для вьюмоделей регистрации и входа
+    /// Базовый класс для ViewModel окон входа и регистрации
     /// </summary>
     public class BaseSignUpSignInViewModel : BaseViewModel
     {
@@ -20,12 +13,15 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public DelegateCommand BackCommand { get; init; }
 
+
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        /// <param _name="windowsManager">Менеджер окон в приложении</param>
-        public BaseSignUpSignInViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController*/IClientNetworkProvider networkProvider) 
-            : base(windowsManager, networkMessageHandler, /*connectionController*/networkProvider)
+        /// <param name="windowsManager">Менеджер окон</param>
+        /// <param name="networkMessageHandler">Обработчик сетевых сообщений</param>
+        /// <param name="networkProvider">Сетевой провайдер</param>
+        public BaseSignUpSignInViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
+            : base(windowsManager, networkMessageHandler, networkProvider)
         {
             BackCommand = new DelegateCommand(GoBack);
         }
@@ -34,14 +30,6 @@ namespace WpfMessengerClient.ViewModels
         /// Вернуться назад в предыдущее окно
         /// </summary>
         private void GoBack()
-        {
-            SwitchToSignUpSignInWindow();
-        }
-
-        /// <summary>
-        /// Переключиться на окно регистрации/входа
-        /// </summary>
-        private void SwitchToSignUpSignInWindow()
         {
             _messengerWindowsManager.ReturnToStartWindow();
         }

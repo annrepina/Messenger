@@ -24,7 +24,7 @@ namespace ConsoleMessengerServer.RequestHandlers
         protected override void OnError(NetworkMessage networkMessage, IServerNetworProvider networkProvider)
         {
             UserSearchResponse errorResponse = new UserSearchResponse(NetworkResponseStatus.FatalError);
-            SendError<UserSearchResponse, UserSearchResponseDto>(networkProvider, errorResponse, NetworkMessageCode.SearchUserResponseCode);
+            SendErrorResponse<UserSearchResponse, UserSearchResponseDto>(networkProvider, errorResponse, NetworkMessageCode.SearchUserResponseCode);
         }
 
         protected override byte[] OnProcess(DbService dbService, NetworkMessage networkMessage, IServerNetworProvider networkProvider)
@@ -35,11 +35,12 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             UserSearchResponse response = CreateUserSearchResponse(usersList);
 
-            NetworkMessage responseMessage = CreateNetworkMessage(response, out UserSearchResponseDto responseDto, NetworkMessageCode.SearchUserResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage(response, out UserSearchResponseDto responseDto, NetworkMessageCode.SearchUserResponseCode);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter<UserSearchResponse, UserSearchResponseDto>.Convert(response, NetworkMessageCode.SearchUserResponseCode);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, searchRequestDto.ToString(), response.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.SearchUserResponseCode, searchRequestDto.ToString(), response.Status);
 
             return responseBytes;
         }

@@ -20,32 +20,32 @@ using WpfMessengerClient.Obsevers;
 namespace WpfMessengerClient.ViewModels
 {
     /// <summary>
-    /// Вьюмодель окна чатов
+    /// ViewModel для окна чатов
     /// </summary>
     public class ChatWindowViewModel : BaseViewModel
     {
         #region Приватные поля
 
+        /// <inheritdoc cref="CurrentUser"/>
+        private User _currentUser;
+
         /// <inheritdoc cref="ActiveDialog"/>
         private Dialog? _activeDialog;
 
-        /// <inheritdoc cref="SelectedUser"/>
-        private User? _selectedUser;
+        /// <inheritdoc cref="SelectedSearchedUser"/>
+        private User? _selectedSearchedUser;
 
         /// <inheritdoc cref="SearchingRequest"/>
-        private UserSearchRequest _searchingRequest;
+        private UserSearchRequest _userSearchRequest;
 
         /// <inheritdoc cref="GreetingMessage"/>
         private Message _greetingMessage;
 
-        /// <inheritdoc cref="CurrentUser"/>
-        private User _currentUser;
-
         /// <inheritdoc cref="IsGreetingMessageTextBoxAvailable"/>
-        private bool _isGreetingMessageTextBoxAvailable;
+        private bool _isGreetTextBoxEnabled;
 
         /// <inheritdoc cref="OpenDialogButtonText"/>
-        private string _openDialogButtonText;
+        private string _greetButtonText;
 
         /// <inheritdoc cref="WasUserSelected"/>
         private bool _wasUserSelected;
@@ -54,10 +54,10 @@ namespace WpfMessengerClient.ViewModels
         private bool _hasNotSearchResult;
 
         /// <inheritdoc cref="IsGreetingMessageTextBoxVisible"/>
-        private bool _isGreetingMessageTextBoxVisible;
+        private bool _isGreetTextBoxVisible;
 
         /// <inheritdoc cref="IsOpenDialogButtonAvailable"/>
-        private bool _isOpenDialogButtonAvailable;
+        private bool _isGreetButtonEnabled;
 
         /// <inheritdoc cref="SelectedMessage"/>
         private Message _selectedMessage;
@@ -116,29 +116,29 @@ namespace WpfMessengerClient.ViewModels
         }
 
         /// <summary>
-        /// Обозреваемая коллекция 
+        /// Обозреваемая коллекция диалогов пользователя
         /// </summary>
-        public ObservableCollection<Dialog> Dialogs { get; set; }
+        public ObservableCollection<Dialog> Dialogs { get; init; }
 
         /// <summary>
-        /// Выбранный пользователь 
+        /// Выбранный пользователь среди результатов поиска
         /// </summary>
-        public User? SelectedUser
+        public User? SelectedSearchedUser
         {
-            get => _selectedUser;
+            get => _selectedSearchedUser;
 
             set
             {
-                _selectedUser = value;
+                _selectedSearchedUser = value;
 
-                CheckSelectedUser();
+                CheckSearchControls();
 
-                OnPropertyChanged(nameof(SelectedUser));
+                OnPropertyChanged(nameof(SelectedSearchedUser));
             }
         }
 
         /// <summary>
-        /// Выбранное сообщение
+        /// Выбранное сообщение в чате
         /// </summary>
         public Message SelectedMessage
         {
@@ -159,7 +159,7 @@ namespace WpfMessengerClient.ViewModels
         }
 
         /// <summary>
-        /// Было выбрано сообщение
+        /// Было выбрано сообщение в чате?
         /// </summary>
         public bool WasMessageSelected
         {
@@ -174,7 +174,7 @@ namespace WpfMessengerClient.ViewModels
         }
 
         /// <summary>
-        /// Обозреваемая коллекция пользователей, которых ищет текущий пользователь
+        /// Обозреваемая коллекция пользователей, которые являются результатом поиска пользователя
         /// </summary>
         public ObservableCollection<User> SearchUserResults { get; set; }
 
@@ -183,11 +183,11 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public UserSearchRequest SearchingRequest
         {
-            get => _searchingRequest;
+            get => _userSearchRequest;
 
             set
             {
-                _searchingRequest = value;
+                _userSearchRequest = value;
 
                 OnPropertyChanged(nameof(SearchingRequest));
             }
@@ -238,11 +238,11 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public bool IsOpenDialogButtonAvailable
         {
-            get => _isOpenDialogButtonAvailable;
+            get => _isGreetButtonEnabled;
 
             set
             {
-                _isOpenDialogButtonAvailable = value;
+                _isGreetButtonEnabled = value;
 
                 OnPropertyChanged(nameof(IsOpenDialogButtonAvailable));
             }
@@ -299,11 +299,11 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public string OpenDialogButtonText
         {
-            get => _openDialogButtonText;
+            get => _greetButtonText;
 
             set
             {
-                _openDialogButtonText = value;
+                _greetButtonText = value;
 
                 OnPropertyChanged(nameof(OpenDialogButtonText));
             }
@@ -314,11 +314,11 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public bool IsGreetingMessageTextBoxAvailable
         {
-            get => _isGreetingMessageTextBoxAvailable;
+            get => _isGreetTextBoxEnabled;
 
             set
             {
-                _isGreetingMessageTextBoxAvailable = value;
+                _isGreetTextBoxEnabled = value;
 
                 OnPropertyChanged(nameof(IsGreetingMessageTextBoxAvailable));
             }
@@ -329,11 +329,11 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         public bool IsGreetingMessageTextBoxVisible
         {
-            get => _isGreetingMessageTextBoxVisible;
+            get => _isGreetTextBoxVisible;
 
             set
             {
-                _isGreetingMessageTextBoxVisible = value;
+                _isGreetTextBoxVisible = value;
 
                 OnPropertyChanged(nameof(IsGreetingMessageTextBoxVisible));
             }
@@ -365,11 +365,11 @@ namespace WpfMessengerClient.ViewModels
         /// <param _name="windowsManager">Менеджер окон приложения</param>
         public ChatWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user) : base(windowsManager, networkMessageHandler, networkProvider)
         {
-            _networkMessageHandler.CreateDialogRequestReceived.ResponseReceived += OnCreateDialogRequestReceived;
-            _networkMessageHandler.DialogReceivedNewMessage.ResponseReceived += OnDialogReceivedNewMessage;
-            _networkMessageHandler.DeleteMessageRequestForClientReceived.ResponseReceived += OnDeleteMessageRequestForClientReceived;
-            _networkMessageHandler.DeleteDialogRequestForClientReceived.ResponseReceived += OnDeleteDialogRequestForClientReceived;
-            _networkMessageHandler.MessagesAreReadRequestForClientReceived.ResponseReceived += OnMessagesAreReadRequestForClientReceived;
+            _networkMessageHandler.CreateDialogRequestReceived.NetworkMessageReceived += OnCreateDialogRequestReceived;
+            _networkMessageHandler.DialogReceivedNewMessage.NetworkMessageReceived += OnDialogReceivedNewMessage;
+            _networkMessageHandler.DeleteMessageRequestReceived.NetworkMessageReceived += OnDeleteMessageRequestForClientReceived;
+            _networkMessageHandler.DeleteDialogRequestReceived.NetworkMessageReceived += OnDeleteDialogRequestForClientReceived;
+            _networkMessageHandler.MessagesAreReadRequestForClientReceived.NetworkMessageReceived += OnMessagesAreReadRequestForClientReceived;
 
             CurrentUser = user;
 
@@ -377,7 +377,7 @@ namespace WpfMessengerClient.ViewModels
             ActiveDialog = Dialogs.FirstOrDefault();
 
             SearchUserResults = new ObservableCollection<User>();
-            SelectedUser = SearchUserResults.FirstOrDefault();
+            SelectedSearchedUser = SearchUserResults.FirstOrDefault();
             SearchCommand = new DelegateCommand(async () => await OnSearchCommandAsync());
             SearchingRequest = new UserSearchRequest();
             HasNotSearchResult = false;
@@ -429,7 +429,7 @@ namespace WpfMessengerClient.ViewModels
 
         #region Обработчики событий
 
-        private void OnMessagesAreReadRequestForClientReceived(MessagesAreReadRequestForClient messagesAreReadRequestForClient)
+        private void OnMessagesAreReadRequestForClientReceived(ReadMessagesRequest messagesAreReadRequestForClient)
         {
             var dialog = Dialogs.First(d => d.Id == messagesAreReadRequestForClient.DialogId);
 
@@ -506,9 +506,9 @@ namespace WpfMessengerClient.ViewModels
 
         private async Task SendMessagesAreReadRequest(List<int> messagesId, Dialog dialog)
         {
-            MessagesAreReadRequest messageIsReadRequest = new MessagesAreReadRequest(messagesId, CurrentUser.Id, dialog.Id);
+            ExtendedReadMessagesRequest messageIsReadRequest = new ExtendedReadMessagesRequest(messagesId, CurrentUser.Id, dialog.Id);
 
-            var response = await SendRequestAsync<MessagesAreReadRequest, MessagesAreReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.MessageIsReadResponseReceived, NetworkMessageCode.MessagesAreReadRequestCode);
+            var response = await SendRequestAsync<ExtendedReadMessagesRequest, MessagesAreReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.ReadMessageResponseReceived, NetworkMessageCode.MessagesAreReadRequestCode);
 
             ProcessMessagesAreReadResponse(response, messagesId, dialog);
         }
@@ -544,7 +544,7 @@ namespace WpfMessengerClient.ViewModels
 
             else
             {
-                ActiveDialog = Dialogs.First(dial => dial.Users.Find(user => user.Id == _selectedUser.Id) != null);
+                ActiveDialog = Dialogs.First(dial => dial.Users.Find(user => user.Id == _selectedSearchedUser.Id) != null);
 
                 await ReadMessages(ActiveDialog);
             }
@@ -580,7 +580,7 @@ namespace WpfMessengerClient.ViewModels
             {
                 IsOpenDialogButtonAvailable = false;
 
-                Dialog dialog = new Dialog(CurrentUser, SelectedUser);
+                Dialog dialog = new Dialog(CurrentUser, SelectedSearchedUser);
                 dialog.CurrentUser = CurrentUser;
                 dialog.Messages.Add(GreetingMessage);
 
@@ -590,7 +590,7 @@ namespace WpfMessengerClient.ViewModels
 
                 ProcessCreateDialogResponse(response, dialog);
 
-                CheckSelectedUser();
+                CheckSearchControls();
                 dialog.HasUnreadMessages = false;
             }
         }
@@ -631,14 +631,14 @@ namespace WpfMessengerClient.ViewModels
 
             if (ActiveDialog.Messages.Count > 1)
             {
-                DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest(SelectedMessage.Id, ActiveDialog.Id, CurrentUser.Id);
-                var response = await SendRequestAsync<DeleteMessageRequest, DeleteMessageRequestDto, Response>(deleteMessageRequest, _networkMessageHandler.DeleteMessageResponseReceived, NetworkMessageCode.DeleteMessageRequestCode);
+                ExtendedDeleteMessageRequest deleteMessageRequest = new ExtendedDeleteMessageRequest(SelectedMessage.Id, ActiveDialog.Id, CurrentUser.Id);
+                var response = await SendRequestAsync<ExtendedDeleteMessageRequest, DeleteMessageRequestDto, Response>(deleteMessageRequest, _networkMessageHandler.DeleteMessageResponseReceived, NetworkMessageCode.DeleteMessageRequestCode);
                 ProcessMessageDeletedResponse(response);
             }
             else
             {
-                DeleteDialogRequest deleteDialogRequest = new DeleteDialogRequest(ActiveDialog.Id, CurrentUser.Id);
-                var response = await SendRequestAsync<DeleteDialogRequest, DeleteDialogRequestDto, Response>(deleteDialogRequest, _networkMessageHandler.DeleteDialogResponseReceived, NetworkMessageCode.DeleteDialogRequestCode);
+                ExtendedDeleteDialogRequest deleteDialogRequest = new ExtendedDeleteDialogRequest(ActiveDialog.Id, CurrentUser.Id);
+                var response = await SendRequestAsync<ExtendedDeleteDialogRequest, DeleteDialogRequestDto, Response>(deleteDialogRequest, _networkMessageHandler.DeleteDialogResponseReceived, NetworkMessageCode.DeleteDialogRequestCode);
                 ProcessDeleteDialogResponse(response);
             }
 
@@ -655,7 +655,8 @@ namespace WpfMessengerClient.ViewModels
 
                 var observer = new Observer<TResponse>(taskCompletionSource, eventWrapper);
 
-                await _networkMessageHandler.SendRequestAsync<TRequest, TRequestDto>(request, code);
+                await _networkProvider.SendBytesAsync(RequestConverter<TRequest, TRequestDto>.Convert(request, code));
+                //await _networkMessageHandler.SendRequestAsync<TRequest, TRequestDto>(request, code);
                 await taskCompletionSource.Task;
 
                 return observer.Response;
@@ -676,7 +677,7 @@ namespace WpfMessengerClient.ViewModels
         /// Обрабатывает событие получение запроса на удаление сообщения
         /// </summary>
         /// <param name="deleteMessageRequest">Запрос на удаление сообщения</param>
-        private void OnDeleteMessageRequestForClientReceived(DeleteMessageRequestForClient deleteMessageRequest)
+        private void OnDeleteMessageRequestForClientReceived(DeleteMessageRequest deleteMessageRequest)
         {
             int id = CurrentUser.Id;
 
@@ -699,7 +700,7 @@ namespace WpfMessengerClient.ViewModels
         /// Обрабатывает событие получения запроса на удаление диалога
         /// </summary>
         /// <param name="obj"></param>
-        private void OnDeleteDialogRequestForClientReceived(DeleteDialogRequestForClient deleteDialogRequest)
+        private void OnDeleteDialogRequestForClientReceived(DeleteDialogRequest deleteDialogRequest)
         {
             Dialog dialog = Dialogs.First(dial => dial.Id == deleteDialogRequest.DialogId);
 
@@ -907,16 +908,16 @@ namespace WpfMessengerClient.ViewModels
         }
 
         /// <summary>
-        /// Проверить выбранного пользователя
+        /// Проверить элементы управления поиском во view
         /// </summary>
-        private void CheckSelectedUser()
+        private void CheckSearchControls()
         {
-            if (_selectedUser != null)
+            if (_selectedSearchedUser != null)
             {
                 IsOpenDialogButtonAvailable = true;
                 WasUserSelected = true;
 
-                if (Dialogs.FirstOrDefault(d => d.Users.Any(user => user.Id == _selectedUser.Id)) != null)
+                if (HasChatWithSelectedUser())
                 {
                     IsGreetingMessageTextBoxVisible = false;
                     OpenDialogButtonText = "Открыть диалог";
@@ -949,7 +950,13 @@ namespace WpfMessengerClient.ViewModels
         /// <returns></returns>
         private bool HasNotChatWithSelectedUser()
         {
-            return Dialogs.FirstOrDefault(d => d.Users.Find(user => user.Id == _selectedUser.Id) != null) == null;
+            return Dialogs.FirstOrDefault(d => d.Users.Find(user => user.Id == _selectedSearchedUser.Id) != null) == null;
+                   Dialogs.FirstOrDefault(d => d.Users.Any(user => user.Id == _selectedSearchedUser.Id)) != null
+        }
+
+        private bool HasChatWithSelectedUser()
+        {
+            return Dialogs.FirstOrDefault(d => d.Users.Any(user => user.Id == _selectedSearchedUser.Id)) != null;
         }
 
         /// <summary>
@@ -969,7 +976,7 @@ namespace WpfMessengerClient.ViewModels
         /// <returns></returns>
         private bool AreSelectedUserAndActiveDialogUserEqual()
         {
-            return SelectedUser != null && SelectedUser.Id == ActiveDialog.Users.First(user => user.Id != ActiveDialog.CurrentUser.Id).Id;
+            return SelectedSearchedUser != null && SelectedSearchedUser.Id == ActiveDialog.Users.First(user => user.Id != ActiveDialog.CurrentUser.Id).Id;
         }
 
         #endregion Предикаты

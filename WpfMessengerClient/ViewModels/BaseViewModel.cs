@@ -1,37 +1,37 @@
-﻿using DtoLib.NetworkServices;
-using DtoLib.NetworkServices.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using WpfMessengerClient.NetworkServices;
-using WpfMessengerClient.Obsevers;
 
 namespace WpfMessengerClient.ViewModels
 {
     /// <summary>
-    /// Базовый класс для ViewModel
+    /// Базовый класс ViewModel
     /// </summary>
     public class BaseViewModel : BaseNotifyPropertyChanged
     {
+        #region Protected поля
+
         /// <inheritdoc cref="AreControlsAvailable"/>
         protected bool _areControlsAvailable;
 
         /// <summary>
-        /// Посредник между сетевым провайдером и данными пользователя
+        /// Обработчик сетевого сообщения
         /// </summary>
         protected readonly NetworkMessageHandler _networkMessageHandler;
 
+        /// <summary>
+        /// Менеджер окон приложения
+        /// </summary>
         protected readonly MessengerWindowsManager _messengerWindowsManager;
 
-        //protected readonly ConnectionController _connectionController;
-        protected IClientNetworkProvider _networkProvider;
+        /// <summary>
+        /// Сетевой провайдер, отвечающий за передачу данных по сети
+        /// </summary>
+        protected readonly IClientNetworkProvider _networkProvider;
+
+        #endregion Protected поля
 
         /// <summary>
-        /// Доступны ли контролы на вьюхе
+        /// Доступны ли элементы управления на View
         /// </summary>
         public bool AreControlsAvailable
         {
@@ -46,16 +46,18 @@ namespace WpfMessengerClient.ViewModels
         }
 
         /// <summary>
-        /// Конструктор с параметром
+        /// Конструктор с параметрами
         /// </summary>
-        /// <param _name="messengerWindowsManager">Менеджер окон в приложении</param>
-        public BaseViewModel(MessengerWindowsManager messengerWindowsManager, NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController*/ IClientNetworkProvider networkProvider)
+        /// <param name="windowsManager">Менеджер окон приложения</param>
+        /// <param name="networkMessageHandler">Обработчик сетевого сообщения</param>
+        /// <param name="networkProvider">Сетевой провайдер</param>
+        public BaseViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
         {
-            _messengerWindowsManager = messengerWindowsManager;
+            _messengerWindowsManager = windowsManager;
             _networkMessageHandler = networkMessageHandler;
-            //_connectionController = connectionController;
             _networkProvider = networkProvider;
-
+            _networkProvider.BytesReceived += _networkMessageHandler.ProcessNetworkMessage;
+            _networkProvider.Disconnected += CloseWindow;
             AreControlsAvailable = true;
         }
 
@@ -66,9 +68,9 @@ namespace WpfMessengerClient.ViewModels
         {
             MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
 
-            //_networkMessageHandler.ConnectionController.CloseConnection();
+            _networkProvider.CloseConnection();
 
-            _messengerWindowsManager.CloseCurrentWindow();
+            Application.Current.Dispatcher.Invoke(() => _messengerWindowsManager.CloseCurrentWindow());
         }
     }
 }

@@ -42,29 +42,30 @@ namespace ConsoleMessengerServer.RequestHandlers
         protected virtual void OnError(NetworkMessage networkMessage, IServerNetworProvider networkProvider)
         {
             Response response = new Response(NetworkResponseStatus.FatalError);
-            SendError<Response, ResponseDto>(networkProvider, response, NetworkMessageCode.DeleteMessageResponseCode);
+            SendErrorResponse<Response, ResponseDto>(networkProvider, response, NetworkMessageCode.DeleteMessageResponseCode);
         }
 
         protected abstract byte[] OnProcess(DbService dbService, NetworkMessage networkMessage, IServerNetworProvider networkProvider);
 
-        public NetworkMessage CreateNetworkMessage<Tsource, Tdto>(Tsource tsource, out Tdto dto, NetworkMessageCode code)
-            where Tdto : class
-        {
-            dto = _mapper.Map<Tdto>(tsource);
+        //public NetworkMessage CreateNetworkMessage<Tsource, Tdto>(Tsource tsource, out Tdto dto, NetworkMessageCode code)
+        //    where Tdto : class
+        //{
+        //    dto = _mapper.Map<Tdto>(tsource);
 
-            byte[] data = SerializationHelper.Serialize(dto);
+        //    byte[] data = SerializationHelper.Serialize(dto);
 
-            var message = new NetworkMessage(data, code);
+        //    var message = new NetworkMessage(data, code);
 
-            return message;
-        }
+        //    return message;
+        //}
 
-        protected void SendError<TResponse, TResponseDto>(IServerNetworProvider networkProvider, TResponse response, NetworkMessageCode code)
+        protected void SendErrorResponse<TResponse, TResponseDto>(IServerNetworProvider networkProvider, TResponse response, NetworkMessageCode code)
             where TResponseDto : class
         {
-            NetworkMessage responseMessage = CreateNetworkMessage(response, out TResponseDto responseDto, code);
+            //NetworkMessage responseMessage = CreateNetworkMessage(response, out TResponseDto responseDto, code);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter< TResponse , TResponseDto>.Convert(response, code);
 
             _conectionController.BroadcastError(responseBytes, networkProvider);
         }

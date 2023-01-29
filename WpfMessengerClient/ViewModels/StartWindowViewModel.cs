@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient.ViewModels
 {
     /// <summary>
-    /// Вьюмодель для окна регистрации/входа
+    /// ViewModel для стартового окна
     /// </summary>
     public class StartWindowViewModel : BaseNotifyPropertyChanged
     {
         /// <inheritdoc cref="AreControlsAvailable"/>
-        protected bool _areControlsAvailable;
+        private bool _areControlsAvailable;
 
         /// <summary>
         /// Менеджер окон для мессенджера
         /// </summary>
-        public MessengerWindowsManager MessengerWindowsManager { get; init; }
+        private readonly MessengerWindowsManager _messengerWindowsManager;
 
         /// <summary>
         /// Команда по нажатию на кнопку регистрации
@@ -31,7 +31,7 @@ namespace WpfMessengerClient.ViewModels
         public DelegateCommand SignInCommand { get; init; }
 
         /// <summary>
-        /// Доступны ли контролы на вьюхе
+        /// Доступны ли элементы управления на стратовом окне
         /// </summary>
         public bool AreControlsAvailable
         {
@@ -48,34 +48,21 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
-        /// <param _name="messengerWindowsManager">Менеджер окон для приложения</param>
-        public StartWindowViewModel(MessengerWindowsManager messengerWindowsManager)
+        /// <param name="windowsManager">Менеджер окон для приложения</param>
+        public StartWindowViewModel(MessengerWindowsManager windowsManager)
         {
-            MessengerWindowsManager = messengerWindowsManager;
+            _messengerWindowsManager = windowsManager;
 
-            SignUpCommand = new DelegateCommand(SwitchToSignUpWindow);
-            SignInCommand = new DelegateCommand(SwitchToSignInWindow);
+            SignUpCommand = new DelegateCommand(() => SwitchToWindow(_messengerWindowsManager.SwitchToSignUpWindow));
+            SignInCommand = new DelegateCommand(() => SwitchToWindow(_messengerWindowsManager.SwitchToSignInWindow));
 
             AreControlsAvailable = true;
         }
 
-        /// <summary>
-        /// Переключиться на окно входа пользователя
-        /// </summary>
-        private void SwitchToSignInWindow()
+        private void SwitchToWindow(Action switchAction)
         {
             AreControlsAvailable = false;
-            MessengerWindowsManager.SwitchToSignInWindow();
-            AreControlsAvailable = true;
-        }
-
-        /// <summary>
-        /// Переключиться на окно с регистрацией нового пользователя
-        /// </summary>
-        private void SwitchToSignUpWindow()
-        {
-            AreControlsAvailable = false;
-            MessengerWindowsManager.SwitchToSignUpWindow();
+            switchAction.Invoke();
             AreControlsAvailable = true;
         }
     }

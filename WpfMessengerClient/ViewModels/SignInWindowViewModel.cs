@@ -1,13 +1,13 @@
-﻿using DtoLib.Dto.Requests;
+﻿using AutoMapper;
+using DtoLib.Dto.Requests;
 using DtoLib.NetworkServices;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using WpfMessengerClient.Models;
+using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
 using WpfMessengerClient.NetworkServices;
@@ -16,13 +16,12 @@ using WpfMessengerClient.Obsevers;
 namespace WpfMessengerClient.ViewModels
 {
     /// <summary>
-    /// Вьюмодель для окна входа
+    /// ViewModel для окна входа
     /// </summary>
     public class SignInWindowViewModel : BaseSignUpSignInViewModel
     {
         /// <inheritdoc cref="Request"/>
         private SignInRequest _request;
-
 
         /// <summary>
         /// Запрос на вход в мессенджер
@@ -47,8 +46,10 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param name="windowsManager">Менеджер окон в приложении</param>
-        public SignInWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController*/IClientNetworkProvider networkProvider) 
+        /// <param name="windowsManager">Менеджер окон</param>
+        /// <param name="networkMessageHandler">Обработчик сетевого сообщения</param>
+        /// <param name="networkProvider">Сетевой провайдер</param>
+        public SignInWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
             SignInCommand = new DelegateCommand(async () => await SignInAsync());
@@ -63,38 +64,32 @@ namespace WpfMessengerClient.ViewModels
         {
             try
             {
-                //// если ошибок нет
-                //if (String.IsNullOrEmpty(SignUpRequest.Error))
-                //{
+                // если ошибок нет
+                if (Request.HasNotErrors() == true)
+                {
+                    AreControlsAvailable = false;
 
-                AreControlsAvailable = false;
+                    TaskCompletionSource completionSource = new TaskCompletionSource();
 
-                TaskCompletionSource completionSource = new TaskCompletionSource();
+                    var observer = new Observer<SignInResponse>(completionSource, _networkMessageHandler.SignInResponseReceived);
 
-                var observer = new Observer<SignInResponse>(completionSource, _networkMessageHandler.SignInResponseReceived);
+                    _networkProvider.SendBytesAsync(RequestConverter<SignInRequest, SignInRequestDto>.Convert(Request, NetworkMessageCode.SignInRequestCode));
 
-                _networkMessageHandler.SendRequestAsync<SignInRequest, SignInRequestDto>(Request, NetworkMessageCode.SignInRequestCode);
+                    await completionSource.Task;
 
-                await completionSource.Task;
+                    ProcessSignInResponse(observer.Response);
 
-                ProcessSignInResponse(observer.Response);
+                    AreControlsAvailable = true;
+                }
 
-                AreControlsAvailable = true;
-
-                //}
-
-                //else
-                //{
-                //    MessageBox.Show(SignUpRequest.Error);
-                //}
+                else
+                    MessageBox.Show(Request.GetError());
             }
             catch (Exception)
             {
                 CloseWindow();
                 throw;
             }
-
-
         }
 
         /// <summary>
@@ -103,13 +98,12 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="signInResponse">Ответ на запрос о входе</param>
         private void ProcessSignInResponse(SignInResponse signInResponse)
         {
-            if(signInResponse.Status == NetworkResponseStatus.Successful)
-            {
+            if (signInResponse.Status == NetworkResponseStatus.Successful)
                 _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, _networkProvider, signInResponse.User, signInResponse.Dialogs);
-            }
-            else if(signInResponse.Status == NetworkResponseStatus.Failed)
+
+            else if (signInResponse.Status == NetworkResponseStatus.Failed)
             {
-                if(signInResponse.Context == SignInFailContext.PhoneNumber)
+                if (signInResponse.Context == SignInFailContext.PhoneNumber)
                 {
                     Request.PhoneNumber = "";
                     MessageBox.Show("Пользователя с данным телефоном не существует.\nВведите другой номер или зарегистрируйтесь");
@@ -120,19 +114,17 @@ namespace WpfMessengerClient.ViewModels
                     MessageBox.Show("Неверный пароль");
                 }
             }
+
             else
-            {
-                MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
-                _messengerWindowsManager.CloseCurrentWindow();
-            }
+                CloseWindow();
         }
 
         /// <summary>
-        /// Изменить окно на окно чата
+        /// Переключиться на окно чатов
         /// </summary>
         public void SwitchToChatWindow(User user, List<Dialog> dialogs)
         {
-            _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, user, dialogs);
+            _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, _networkProvider, user, dialogs);
         }
     }
 }

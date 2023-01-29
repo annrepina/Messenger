@@ -1,24 +1,14 @@
-﻿using DtoLib.NetworkServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfMessengerClient.NetworkServices;
-
-namespace WpfMessengerClient
+﻿namespace WpfMessengerClient
 {
     /// <summary>
-    /// Интерфейс - обработчик сетевого сообщения
+    /// Интерфейс - обработчик сетевого сообщения, который представлен массивом байт
     /// </summary>
     public interface INetworkMessageHandler
     {
-        IConnectionController ConnectionController { set; }
-
         /// <summary>
         /// Обработать сетевое сообщение
         /// </summary>
-        /// <param name="data"></param>
-        public void ProcessData(byte[] data);
+        /// <param name="networkMessageBytes">Массив байт, представляющий сетевое сообщение</param>
+        public void ProcessNetworkMessage(byte[] networkMessageBytes);
     }
 }

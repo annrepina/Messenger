@@ -64,7 +64,7 @@ namespace DtoLib.NetworkServices
 
                 return data;
             //}
-            //catch(IOException)
+            //catch (IOException)
             //{
             //    throw;
             //}

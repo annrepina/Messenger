@@ -30,11 +30,12 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             Response response = CreateDeleteDialogResponse(dbService, dialog, networkProvider.Id, deleteDialogRequestDto.UserId);
 
-            NetworkMessage responseMessage = CreateNetworkMessage<Response, ResponseDto>(response, out ResponseDto dto, NetworkMessageCode.DeleteDialogResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage<Response, ResponseDto>(response, out ResponseDto dto, NetworkMessageCode.DeleteDialogResponseCode);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter<Response, ResponseDto>.Convert(response, NetworkMessageCode.DeleteDialogResponseCode);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, deleteDialogRequestDto.ToString(), response.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.DeleteDialogResponseCode, deleteDialogRequestDto.ToString(), response.Status);
 
             return responseBytes;
         }
@@ -49,9 +50,10 @@ namespace ConsoleMessengerServer.RequestHandlers
 
                 DeleteDialogRequestForClient deleteDialogRequest = new DeleteDialogRequestForClient(dialog.Id);
 
-                NetworkMessage requestMessage = CreateNetworkMessage<DeleteDialogRequestForClient, DeleteDialogRequestForClientDto>(deleteDialogRequest, out DeleteDialogRequestForClientDto dto, NetworkMessageCode.DeleteDialogRequestCode);
+                //NetworkMessage requestMessage = CreateNetworkMessage<DeleteDialogRequestForClient, DeleteDialogRequestForClientDto>(deleteDialogRequest, out DeleteDialogRequestForClientDto dto, NetworkMessageCode.DeleteDialogRequestCode);
 
-                byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
+                //byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
+                byte[] requestBytes = ByteArrayConverter<DeleteDialogRequestForClient, DeleteDialogRequestForClientDto>.Convert(deleteDialogRequest, NetworkMessageCode.DeleteDialogRequestCode);
 
                 _conectionController.BroadcastToSenderAsync(requestBytes, userId, networkProviderId);
                 _conectionController.BroadcastToInterlocutorAsync(requestBytes, interlocutorId);

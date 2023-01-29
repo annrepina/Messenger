@@ -21,7 +21,7 @@ namespace ConsoleMessengerServer.RequestHandlers
         protected override void OnError(NetworkMessage networkMessage, IServerNetworProvider networkProvider)
         {
             CreateDialogResponse errorResponse = new CreateDialogResponse(NetworkResponseStatus.FatalError);
-            SendError<CreateDialogResponse, CreateDialogResponseDto>(networkProvider, errorResponse, NetworkMessageCode.CreateDialogResponseCode);
+            SendErrorResponse<CreateDialogResponse, CreateDialogResponseDto>(networkProvider, errorResponse, NetworkMessageCode.CreateDialogResponseCode);
         }
 
         protected override byte[] OnProcess(DbService dbService, NetworkMessage networkMessage, IServerNetworProvider networkProvider)
@@ -32,13 +32,14 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             CreateDialogResponse response = _mapper.Map<CreateDialogResponse>(dialog);
 
-            NetworkMessage responseMessage = CreateNetworkMessage(response, out CreateDialogResponseDto responseDto, NetworkMessageCode.CreateDialogResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage(response, out CreateDialogResponseDto responseDto, NetworkMessageCode.CreateDialogResponseCode);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter<CreateDialogResponse, CreateDialogResponseDto>.Convert(response, NetworkMessageCode.CreateDialogResponseCode);
 
             BroadcastCreateDialogRequests(dialog, networkProvider.Id);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, createDialogRequestDto.ToString(), response.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.CreateDialogResponseCode, createDialogRequestDto.ToString(), response.Status);
 
             return responseBytes;
         }
@@ -54,9 +55,10 @@ namespace ConsoleMessengerServer.RequestHandlers
             int senderId = dialog.Messages.First().UserSenderId;
             int recipientId = dialog.Users.First(user => user.Id != senderId).Id;
 
-            NetworkMessage createDialogMessage = CreateNetworkMessage(dialog, out DialogDto responseDto, NetworkMessageCode.CreateDialogRequestCode);
+            //NetworkMessage createDialogMessage = CreateNetworkMessage(dialog, out DialogDto responseDto, NetworkMessageCode.CreateDialogRequestCode);
 
-            byte[] createDialogMessageBytes = SerializationHelper.Serialize(createDialogMessage);
+            //byte[] createDialogMessageBytes = SerializationHelper.Serialize(createDialogMessage);
+            byte[] createDialogMessageBytes = ByteArrayConverter<Dialog, DialogDto>.Convert(dialog, NetworkMessageCode.CreateDialogRequestCode);
 
             _conectionController.BroadcastToSenderAsync(createDialogMessageBytes, senderId, networkProviderId);
             _conectionController.BroadcastToInterlocutorAsync(createDialogMessageBytes, recipientId);

@@ -18,14 +18,14 @@ namespace WpfMessengerClient.NetworkServices
 
         public ConnectionController()
         {
-            NetworkProvider = new ClientNetworkProvider(this);
+            NetworkProvider = new ClientNetworkProvider();
             NetworkProvider.Disconnected += OnDisconnected;
             NetworkProvider.BytesReceived += OnBytesReceived;
         }
 
         public void OnBytesReceived(byte[] bytes)
         {
-            NetworkMessageHandler.ProcessData(bytes);
+            NetworkMessageHandler.ProcessNetworkMessage(bytes);
         }
 
         public async Task SendRequestAsync(byte[] bytes)

@@ -28,11 +28,12 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             Response response = new Response(NetworkResponseStatus.Successful);
 
-            NetworkMessage responseMessage = CreateNetworkMessage(response, out ResponseDto dto, NetworkMessageCode.SignOutResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage(response, out ResponseDto dto, NetworkMessageCode.SignOutResponseCode);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter<Response, ResponseDto>.Convert(response, NetworkMessageCode.SignOutResponseCode);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, signOutRequestDto.ToString(), response.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.SignOutResponseCode, signOutRequestDto.ToString(), response.Status);
 
             return responseBytes;
         }

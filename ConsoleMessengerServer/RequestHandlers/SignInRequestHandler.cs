@@ -24,7 +24,7 @@ namespace ConsoleMessengerServer.RequestHandlers
         protected override void OnError(NetworkMessage networkMessage, IServerNetworProvider networkProvider)
         {
             SignInResponse signInResponse = new SignInResponse(NetworkResponseStatus.FatalError);
-            SendError<SignInResponse, SignInResponseDto>(networkProvider, signInResponse, NetworkMessageCode.SignUpResponseCode);
+            SendErrorResponse<SignInResponse, SignInResponseDto>(networkProvider, signInResponse, NetworkMessageCode.SignUpResponseCode);
         }
 
         protected override byte[] OnProcess(DbService dbService, NetworkMessage networkMessage, IServerNetworProvider networkProvider)
@@ -35,11 +35,12 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             SignInResponse signInResponse = CreateSignInResponse(dbService, user, signInRequestDto, networkProvider.Id);
 
-            NetworkMessage responseMessage = CreateNetworkMessage(signInResponse, out SignInResponseDto responseDto, NetworkMessageCode.SignInResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage(signInResponse, out SignInResponseDto responseDto, NetworkMessageCode.SignInResponseCode);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter<SignInResponse, SignInResponseDto>.Convert(signInResponse, NetworkMessageCode.SignInResponseCode);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, signInRequestDto.ToString(), signInResponse.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.SignInResponseCode, signInRequestDto.ToString(), signInResponse.Status);
 
             return responseBytes;
         }

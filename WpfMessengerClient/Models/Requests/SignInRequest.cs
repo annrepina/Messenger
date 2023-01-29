@@ -49,6 +49,12 @@ namespace WpfMessengerClient.Models.Requests
         /// </summary>
         private string _error;
 
+        //public bool HasPhoneNumberError { get; protected set; }
+        //protected bool HasPasswordError { get; protected set; }
+
+        public string PhoneNumberError { get; protected set; }
+        public string PasswordError { get; protected set; }
+
         #endregion Приватные поля
 
         #region Свойства
@@ -95,6 +101,10 @@ namespace WpfMessengerClient.Models.Requests
             Password = "";
             PhoneNumber = "";
             Error = "";
+            //HasPhoneNumberError = true;
+            //HasPasswordError = true;
+            PhoneNumberError = "";
+            PasswordError = "";
         }
 
         #endregion Конструкторы
@@ -165,16 +175,37 @@ namespace WpfMessengerClient.Models.Requests
         {
             Regex regex = new Regex(@"^\w{6}");
 
-            Error = "";
-
             if (!regex.IsMatch(Password))
+            {
                 Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+                //HasPasswordError = true;
+                PasswordError = Error;
+            }
 
             else if (Password.Length > MaxLengthOfPassword)
+            {
                 Error = "Пароль должен содержать не больше 10ти символов";
+                //HasPasswordError = true;
+                PasswordError = Error;
+            }
 
             else if (Password.Length < MinLengthOfPassword)
+            {
                 Error = "Пароль должен содержать не меньше 6ти символов";
+                PasswordError = Error;
+            }
+
+            //else if(HasPhoneNumberError == false)
+            //{
+            //    HasPasswordError = false;
+
+            //}
+            else
+            {
+                Error = "";
+                PasswordError = "";
+                //HasPasswordError = false;
+            }
         }
 
         /// <summary>
@@ -184,15 +215,51 @@ namespace WpfMessengerClient.Models.Requests
         {
             Regex regex = new Regex(@"^\+7\d{10}");
 
-            Error = "";
+            //Error = "";
 
             if (!regex.IsMatch(PhoneNumber))
+            {
                 Error = "Телефон должен начинаться с +7 и далее состоять из 10 цифр";
+                //HasPhoneNumberError = true;
+                PhoneNumberError = Error;
+            }
 
             else if (PhoneNumber.Length != PhoneNumberLength)
-                Error = "Номер телефон должнен состоять из 12 символов всего";
+            {
+                Error = "Телефон должнен состоять из 12 символов всего";
+                //HasPhoneNumberError = true;
+                PhoneNumberError = Error;
+            }
+
+            //else if (HasPasswordError == false)
+            //{
+            //    //HasPhoneNumberError = false;
+            //    Error = "";
+            //}
+            else
+            {
+                Error = "";
+                PhoneNumberError = "";
+                //HasPhoneNumberError = false;
+            }
         }
 
         #endregion Валидация
+
+        public virtual bool HasNotErrors()
+        {
+            if (PhoneNumberError == "" && PasswordError == "")
+                return true;
+
+            return false;
+        }
+
+        public virtual string GetError()
+        {
+            if (PhoneNumberError != "")
+                return PhoneNumberError;
+
+            return PasswordError;
+        }
     }
 }

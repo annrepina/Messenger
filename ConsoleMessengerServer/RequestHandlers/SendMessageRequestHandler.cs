@@ -36,11 +36,12 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             BroadcastSendMessageRequest(dbService, message, networkProvider.Id);
 
-            NetworkMessage responseMessage = CreateNetworkMessage(response, out SendMessageResponseDto responseDto, NetworkMessageCode.SendMessageResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage(response, out SendMessageResponseDto responseDto, NetworkMessageCode.SendMessageResponseCode);
 
-            byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            //byte[] responseBytes = SerializationHelper.Serialize(responseMessage);
+            byte[] responseBytes = ByteArrayConverter<SendMessageResponse, SendMessageResponseDto>.Convert(response, NetworkMessageCode.SendMessageResponseCode);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, sendMessageRequestDto.ToString(), response.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.SendMessageResponseCode, sendMessageRequestDto.ToString(), response.Status);
 
             return responseBytes;
         }
@@ -51,9 +52,10 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             SendMessageRequest sendMessageRequest = new SendMessageRequest(message, message.DialogId);
 
-            NetworkMessage requestMessage = CreateNetworkMessage(sendMessageRequest, out SendMessageRequestDto requestDto, NetworkMessageCode.SendMessageRequestCode);
+            //NetworkMessage requestMessage = CreateNetworkMessage(sendMessageRequest, out SendMessageRequestDto requestDto, NetworkMessageCode.SendMessageRequestCode);
 
-            byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
+            //byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
+            byte[] requestBytes = ByteArrayConverter<SendMessageRequest, SendMessageRequestDto>.Convert(sendMessageRequest, NetworkMessageCode.SendMessageRequestCode);
 
             _conectionController.BroadcastToSenderAsync(requestBytes, message.UserSenderId, networkProviderId);
             _conectionController.BroadcastToInterlocutorAsync(requestBytes, recipietUserId);

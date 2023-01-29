@@ -39,6 +39,9 @@ namespace WpfMessengerClient.Models.Requests
         /// </summary>
         private string _name;
 
+        //private bool HasRepeatedPasswordError;
+        //private bool _hasNameError;
+
         #endregion Приватные поля
 
         #region Свойства
@@ -46,19 +49,17 @@ namespace WpfMessengerClient.Models.Requests
         /// <summary>
         /// Свойство - повторяйющийся пароль
         /// </summary>
-        //public string RepeatedPassword
-        //{
-        //    get => _repeatedPassword;
+        public string RepeatedPassword
+        {
+            get => _repeatedPassword;
 
-        //    set
-        //    {
-        //        _repeatedPassword = value;
+            set
+            {
+                _repeatedPassword = value;
 
-        //        ValidatePassword();
-
-        //        OnPropertyChanged(nameof(RepeatedPassword));
-        //    }
-        //}
+                OnPropertyChanged(nameof(RepeatedPassword));
+            }
+        }
 
         /// <summary>
         /// Свойство - имя
@@ -75,6 +76,9 @@ namespace WpfMessengerClient.Models.Requests
             }
         }
 
+        public string NameError { get; protected set; }
+        public string RepeatedPasswordError { get; protected set; } 
+
         #endregion Свойства 
 
         #region Конструкторы 
@@ -82,7 +86,11 @@ namespace WpfMessengerClient.Models.Requests
         public SignUpRequest() : base()
         {
             Name = "";
-            //RepeatedPassword = "";
+            RepeatedPassword = "";
+            //HasRepeatedPasswordError = true;
+            //_hasNameError = true;
+            NameError = "";
+            RepeatedPasswordError = "";
         }
 
         #endregion Конструкторы
@@ -115,7 +123,7 @@ namespace WpfMessengerClient.Models.Requests
         /// <param _name="propName">Имя свойства</param>
         protected override void ValidateAllProperties(string propName)
         {
-            base.ValidateAllProperties(propName);
+            base.ValidatePhoneNumber();
 
             switch (propName)
             {
@@ -123,9 +131,14 @@ namespace WpfMessengerClient.Models.Requests
                     ValidateName();
                     break;
 
-                //case nameof(RepeatedPassword):
-                //    ValidatePassword();
-                //    break;
+                case nameof(Password):
+                    //ValidatePassword(Password, RepeatedPassword, PasswordError);
+                    ValidatePassword();
+                    break;
+
+                case nameof(RepeatedPassword):
+                    ValidateRepeatedPassword();
+                    break;
 
                 default:
                     break;
@@ -133,26 +146,152 @@ namespace WpfMessengerClient.Models.Requests
         }
 
         /// <summary>
-        /// Проверить на корректность повторяемый пароль
+        /// Проверить на корректность пароль
         /// </summary>
+        private void ValidatePassword(string validatedPassword, string secondPassword, string paswordError)
+        {
+            Regex regex = new Regex(@"^\w{6}");
+
+            //Error = "";
+
+            if (!regex.IsMatch(validatedPassword))
+            {
+                Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+                paswordError = Error;
+            }
+
+            else if (validatedPassword.Length > MaxLengthOfPassword)
+            {
+                Error = "Пароль должен содержать не больше 10ти символов";
+                paswordError = Error;
+            }
+
+            else if (validatedPassword.Length < MinLengthOfPassword)
+            {
+                Error = "Пароль должен содержать не меньше 6ти символов";
+                paswordError = Error;
+            }
+
+            else if (secondPassword != "" && validatedPassword != secondPassword)
+            {
+                Error = "Пароли должны совпадать";
+                paswordError = Error;
+            }
+
+            else
+            {
+                Error = "";
+                paswordError = "";
+            }
+        }
+
         protected override void ValidatePassword()
         {
             Regex regex = new Regex(@"^\w{6}");
 
-            Error = "";
+            //Error = "";
 
-            if (!regex.IsMatch(Password) /*|| !regex.IsMatch(RepeatedPassword)*/)
+            if (!regex.IsMatch(Password))
+            {
                 Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+                PasswordError = Error;
+            }
 
-            else if (Password.Length > MaxLengthOfPassword /*|| RepeatedPassword.Length > MaxLengthOfPassword*/)
+            else if (Password.Length > MaxLengthOfPassword)
+            {
                 Error = "Пароль должен содержать не больше 10ти символов";
+                PasswordError = Error;
+            }
 
-            else if (Password.Length < MinLengthOfPassword /*|| RepeatedPassword.Length < MinLengthOfPassword*/)
+            else if (Password.Length < MinLengthOfPassword)
+            {
                 Error = "Пароль должен содержать не меньше 6ти символов";
+                PasswordError = Error;
+            }
 
-            //else if (Password != RepeatedPassword)
-            //    Error = "Пароли должны совпадать";
+            else if (RepeatedPassword != "" && Password != RepeatedPassword)
+            {
+                Error = "Пароли должны совпадать";
+                PasswordError = Error;
+            }
+
+            else
+            {
+                Error = "";
+                PasswordError = "";
+            }
         }
+
+        protected void ValidateRepeatedPassword()
+        {
+            Regex regex = new Regex(@"^\w{6}");
+
+            //Error = "";
+
+            if (!regex.IsMatch(RepeatedPassword))
+            {
+                Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+                RepeatedPasswordError = Error;
+            }
+
+            else if (RepeatedPassword.Length > MaxLengthOfPassword)
+            {
+                Error = "Пароль должен содержать не больше 10ти символов";
+                RepeatedPasswordError = Error;
+            }
+
+            else if (RepeatedPassword.Length < MinLengthOfPassword)
+            {
+                Error = "Пароль должен содержать не меньше 6ти символов";
+                RepeatedPasswordError = Error;
+            }
+
+            else if (Password != "" && Password != RepeatedPassword)
+            {
+                Error = "Пароли должны совпадать";
+                RepeatedPasswordError = Error;
+            }
+
+            else
+            {
+                Error = "";
+                RepeatedPasswordError = "";
+            }
+        }
+
+
+        ///// <summary>
+        ///// Проверить на корректность пароль
+        ///// </summary>
+        //protected void ValidateRepeatedPassword()
+        //{
+        //    Regex regex = new Regex(@"^\w{6}");
+
+        //    //Error = "";
+
+        //    if (!regex.IsMatch(RepeatedPassword))
+        //    {
+
+        //    }
+        //        Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
+
+        //    else if (RepeatedPassword.Length > MaxLengthOfPassword)
+        //        Error = "Пароль должен содержать не больше 10ти символов";
+
+        //    else if (RepeatedPassword.Length < MinLengthOfPassword)
+        //        Error = "Пароль должен содержать не меньше 6ти символов";
+
+        //    else if (Password != "" && RepeatedPassword != Password)
+        //        Error = "Пароли должны совпадать";
+
+        //    else if(HasPasswordError == false && _hasNameError == false && HasPhoneNumberError == false)
+        //    {
+        //        Error = "";
+        //        HasRepeatedPasswordError = false;
+        //    }
+        //    else
+        //        HasRepeatedPasswordError = false;
+        //}
 
         /// <summary>
         /// Проверить на корретность имя
@@ -161,18 +300,70 @@ namespace WpfMessengerClient.Models.Requests
         {
             Regex regex = new Regex(@"^\w+");
 
-            Error = "";
+            //Error = "";
 
-            if (!regex.IsMatch(Name))
+            if (String.IsNullOrEmpty(Name))
+            {
+                Error = "Имя должно быть не меньше 2х символов";
+                //_hasNameError = true;
+                NameError = Error;
+            }
+
+            else if (!regex.IsMatch(Name))
+            {
                 Error = "Недопустимые символы";
+                //_hasNameError = true;
+                NameError = Error;
+            }
 
             else if (Name.Length > MaxNameLength)
+            {
                 Error = "Имя не должно превышать 50ти символов";
+                //_hasNameError = true;
+                NameError = Error;
+            }
 
             else if (Name.Length < MinNameLength)
+            {
                 Error = "Имя должно быть не меньше 2х символов";
+                //_hasNameError = true;
+                NameError = Error;
+            }
+
+            //else if (HasPasswordError == false && HasRepeatedPasswordError == false && HasPhoneNumberError == false)
+            //{
+            //    Error = "";
+            //    _hasNameError = false;
+            //}
+
+            else
+            {
+                //_hasNameError = false;
+                Error = "";
+                NameError = "";
+            }
+
         }
 
         #endregion Валидация
+
+        public override bool HasNotErrors()
+        {
+            if(base.HasNotErrors() && RepeatedPasswordError == "" && NameError == "")
+                return true;
+
+            return false;
+        }
+
+        public override string GetError()
+        {
+            if (base.GetError() != "")
+                return base.GetError();
+
+            else if (RepeatedPasswordError != "")
+                return RepeatedPasswordError;
+
+            return NameError;
+        }
     }
 }

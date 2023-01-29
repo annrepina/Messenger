@@ -1,4 +1,5 @@
-﻿using DtoLib.NetworkServices;
+﻿#define DebugExceptions
+using DtoLib.NetworkServices;
 using DtoLib.NetworkServices.Interfaces;
 using System;
 using System.IO;
@@ -57,12 +58,12 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
-        public ClientNetworkProvider(IConnectionController connectionController) : base()
+        public ClientNetworkProvider(/*IConnectionController connectionController*/) : base()
         {
             Transmitter = new Transmitter(this);
             TcpClient = new TcpClient();
             IsConnected = false;
-            ConnectionController = connectionController;
+            //ConnectionController = connectionController;
         }
 
         #endregion Конструкторы
@@ -76,31 +77,34 @@ namespace WpfMessengerClient.Services
         {
             try
             {
-                if (!IsConnected)
-                {
-                    TcpClient.Connect(Host, Port);
-                    NetworkStream = TcpClient.GetStream();
-                    IsConnected = true;
 
-                    //if (messageBytes != null)
-                    //{
-                    //    await _transmitter.SendNetworkMessageAsync(messageBytes);
-                    //}
+                TcpClient.Connect(Host, Port);
+                NetworkStream = TcpClient.GetStream();
+                IsConnected = true;
 
-                    /*await */
-                    Task.Run(() => ReadBytesAsync());
-                }
+                //if (messageBytes != null)
+                //{
+                //    await _transmitter.SendNetworkMessageAsync(messageBytes);
+                //}
+
+                /*await */
+                Task.Run(() => ReadBytesAsync());
+
             }
-            catch (IOException)
-            {
-                Disconnect();
-                throw;
-            }
+            //catch (IOException)
+            //{
+            //    Disconnect();
+            //    throw;
+            //}
             catch (Exception ex)
             {
+
+#if DebugExceptions
+
                 MessageBox.Show(ex.Message);
-                //MessageBox.Show("Подключение прервано...");
-                throw;
+
+#endif
+                Disconnect();
             }
         }
 
@@ -139,25 +143,25 @@ namespace WpfMessengerClient.Services
 
         public async Task ReadBytesAsync()
         {
-            //try
-            //{
-            while (true)
+            try
             {
-                byte[] data = await _transmitter.ReceiveBytesAsync();
+                while (true)
+                {
+                    byte[] data = await _transmitter.ReceiveBytesAsync();
 
-                BytesReceived?.Invoke(data);
+                    BytesReceived?.Invoke(data);
                 //OnBytesReceived(data);
+                }
             }
-            //}
-            //catch (IOException)
-            //{
-            //    Disconnect();
-            //    throw;
-            //}
-            //catch (Exception)
-            //{
-            //    throw;
-            //}
+            catch (IOException)
+            {
+                Disconnect();
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void CloseConnection()

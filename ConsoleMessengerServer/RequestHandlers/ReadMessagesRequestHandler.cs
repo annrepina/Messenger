@@ -29,11 +29,12 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             Response response = CreateReadMessagesResponse(messagesAreReadRequest, networkProvider.Id);
 
-            NetworkMessage responseMessage = CreateNetworkMessage(response, out ResponseDto dto, NetworkMessageCode.MessagesAreReadResponseCode);
+            //NetworkMessage responseMessage = CreateNetworkMessage(response, out ResponseDto dto, NetworkMessageCode.MessagesAreReadResponseCode);
 
-            byte[] byteResponse = SerializationHelper.Serialize(responseMessage);
+            //byte[] byteResponse = SerializationHelper.Serialize(responseMessage);
+            byte[] byteResponse = ByteArrayConverter<Response, ResponseDto>.Convert(response, NetworkMessageCode.MessagesAreReadResponseCode);
 
-            PrintReport(networkProvider.Id, networkMessage.Code, responseMessage.Code, messagesAreReadRequest.ToString(), response.Status);
+            PrintReport(networkProvider.Id, networkMessage.Code, NetworkMessageCode.MessagesAreReadResponseCode, messagesAreReadRequest.ToString(), response.Status);
 
             return byteResponse;
         }
@@ -44,9 +45,10 @@ namespace ConsoleMessengerServer.RequestHandlers
 
             MessagesAreReadRequestForClient readMessagesRequest = new MessagesAreReadRequestForClient(readRequest.MessagesId, readRequest.DialogId);
 
-            NetworkMessage requestMessage = CreateNetworkMessage(readMessagesRequest, out MessagesAreReadRequestForClientDto dto, NetworkMessageCode.MessagesAreReadRequestCode);
+            //NetworkMessage requestMessage = CreateNetworkMessage(readMessagesRequest, out MessagesAreReadRequestForClientDto dto, NetworkMessageCode.MessagesAreReadRequestCode);
 
-            byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
+            //byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
+            byte[] requestBytes = ByteArrayConverter<MessagesAreReadRequestForClient, MessagesAreReadRequestForClientDto>.Convert(readMessagesRequest, NetworkMessageCode.MessagesAreReadRequestCode);
 
             _conectionController.BroadcastToSenderAsync(requestBytes, readRequest.UserId, networkProviderId);
 

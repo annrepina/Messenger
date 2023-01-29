@@ -3,6 +3,7 @@ using DtoLib.Dto.Requests;
 using DtoLib.NetworkServices;
 using Prism.Commands;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using WpfMessengerClient.Models;
@@ -15,14 +16,14 @@ using WpfMessengerClient.Obsevers;
 namespace WpfMessengerClient.ViewModels
 {
     /// <summary>
-    /// Вьюмодель для окна регистрации
+    /// ViewModel для окна регистрации
     /// </summary>
     public class SignUpWindowViewModel : BaseSignUpSignInViewModel
     {
         /// <summary>
-        /// Маппер для мапинга моделей на DTO и обратно
+        /// Маппер для мапинга DTO
         /// </summary>
-        protected readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Команда по нажатию кнопки регистрации
@@ -30,68 +31,55 @@ namespace WpfMessengerClient.ViewModels
         public DelegateCommand SignUpCommand { get; init; }
 
         /// <summary>
-        /// Данные о регистрации нового пользователя
+        /// Запрос о регистрации нового пользователя
         /// </summary>
         public SignUpRequest Request { get; init; }
 
-        #region Конструкторы
-
         /// <summary>
-        /// Конструктор с параметром
+        /// Конструктор с параметрамиы
         /// </summary>
-        /// <param _name="windowsManager">Менеджер окон в приложении</param>
-        public SignUpWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController*/IClientNetworkProvider networkProvider) 
-            : base(windowsManager, networkMessageHandler, /*connectionController*/networkProvider)
+        /// <param name="windowsManager">Менеджер окон</param>
+        /// <param name="networkMessageHandler">Обработчик сетевого сообщения</param>
+        /// <param name="networkProvider">Сетевой провайдер</param>
+        public SignUpWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider) 
+            : base(windowsManager, networkMessageHandler, networkProvider)
         {
-            SignUpCommand = new DelegateCommand(async () => await RegisterNewUserAsync());
+            SignUpCommand = new DelegateCommand(async () => await OnSignUpCommand());
             Request = new SignUpRequest();
 
             MessengerMapper mapper = MessengerMapper.GetInstance();
             _mapper = mapper.CreateIMapper();
         }
 
-        #endregion Конструкторы
-
         /// <summary>
-        /// Зарегистрировать нового пользователя
+        /// Обработка команды регистрации нового пользователя
         /// </summary>
-        /// <returns></returns>
-        private async Task RegisterNewUserAsync()
+        private async Task OnSignUpCommand()
         {
             try
             {
-                //// если ошибок нет
-                //if (String.IsNullOrEmpty(SignUpRequest.Error))
-                //{
+                if (Request.HasNotErrors() == true)
+                {
+                    AreControlsAvailable = false;
 
-                AreControlsAvailable = false;
+                    TaskCompletionSource completionSource = new TaskCompletionSource();
+                    var observer = new Observer<SignUpResponse>(completionSource, _networkMessageHandler.SignUpResponseReceived);
 
-                TaskCompletionSource completionSource = new TaskCompletionSource();
+                    _networkProvider.SendBytesAsync(RequestConverter<SignUpRequest, SignUpRequestDto>.Convert(Request, NetworkMessageCode.SignUpRequestCode));
 
-                var observer = new Observer<SignUpResponse>(completionSource, _networkMessageHandler.SignUpResponseReceived);
+                    await completionSource.Task;
 
-                _networkProvider.SendBytesAsync(RequestConverter<SignUpRequest, SignUpRequestDto>.Convert(Request, _mapper, NetworkMessageCode.SignUpRequestCode));
-                //_connectionController.SendRequestAsync(RequestConverter<SignUpRequest, SignUpRequestDto>.Convert(Request, _mapper, NetworkMessageCode.SignUpRequestCode));
+                    ProcessSignUpResponse(observer.Response);
 
-                //_networkMessageHandler.SendRequestAsync<SignUpRequest, SignUpRequestDto>(Request, NetworkMessageCode.SignUpRequestCode);
+                    AreControlsAvailable = true;
+                }
 
-                await completionSource.Task;
-
-                ProcessSignUpResponse(observer.Response);
-
-                AreControlsAvailable = true;
-
-                //}
-
-                //else
-                //{
-                //    MessageBox.Show(SignUpRequest.Error);
-                //}
+                else
+                    MessageBox.Show(Request.GetError());
             }
             catch (Exception)
             {
                 CloseWindow();
-                throw;
             }
         }
 
@@ -105,7 +93,7 @@ namespace WpfMessengerClient.ViewModels
                 User user = _mapper.Map<User>(Request);
                 user.Id = response.UserId;
 
-                _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, /*_connectionController*/_networkProvider, user);
+                _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, _networkProvider, user);
             }
             else if (response.Status == NetworkResponseStatus.Failed)
             {
@@ -114,10 +102,7 @@ namespace WpfMessengerClient.ViewModels
                 MessageBox.Show("Пользователь с таким телефоном уже существует. Введите другой номер или войдите в мессенджер.");
             }
             else
-            {
-                MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
-                _messengerWindowsManager.CloseCurrentWindow();
-            }
-        }
+                CloseWindow();
+        }      
     }
 }

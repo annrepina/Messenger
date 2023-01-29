@@ -1,22 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WpfMessengerClient
 {
     /// <summary>
-    /// Класс, который является оберткой над событием в классе _networkMessageHandler
+    /// Класс, который является обёрткой над событием в классе NetworkMessageHandler - обработчике сетевых сообщений
     /// </summary>
-    public class NetworkMessageHandlerEvent<TResponse>
-        where TResponse : class
+    /// <typeparam name="TData">Данные, хранящиеся в сетевом сообщении</typeparam>
+    public class NetworkMessageHandlerEvent<TData>
+        where TData : class
     {
-        public event Action<TResponse> ResponseReceived;
+        /// <summary>
+        /// Событие - сетевое сообщение получено
+        /// </summary>
+        public event Action<TData> NetworkMessageReceived;
 
-        public void Invoke(TResponse response)
+        /// <summary>
+        /// Вызов обработчиков события
+        /// </summary>
+        /// <param name="data">Данные, хранящиеся в сетевом сообщении</param>
+        public void Invoke(TData data)
         {
-            ResponseReceived?.Invoke(response);
+            NetworkMessageReceived?.Invoke(data);
         }
     }
 }

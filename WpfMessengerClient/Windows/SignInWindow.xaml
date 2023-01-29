@@ -42,10 +42,24 @@
                 <TextBlock Grid.Row="0" Text="Вход" FontSize="32" FontFamily="Tahoma" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
                 <TextBlock Grid.Row="1" Text="Введите номер телефона и пароль" FontSize="16" FontFamily="Tahoma" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Foreground="#6f7378"/>
             </Grid>
-            <TextBox Grid.Row="1" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPhoneNumberTextBox}" Height="90" Margin="5,0,5,5" VerticalAlignment="Bottom"/>
-            <TextBox Grid.Row="2" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPasswordTextBox}"/>
 
-            <Button Grid.Row="3" Style="{StaticResource RoundedButton}" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Content="Войти" Command="{Binding SignInCommand}"/>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPhoneNumberTextBox}" Margin="5,0,5,5" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputPasswordTextBox}" Margin="5,0,5,5" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Button Grid.Row="3" IsEnabled="{Binding AreControlsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource RoundedButton}" Content="Войти" Command="{Binding SignInCommand}"/>
             <!--<Border CornerRadius="18"/>-->
         </Grid>
     </Grid>

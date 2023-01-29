@@ -21,9 +21,9 @@ namespace WpfChatClient
         public MessengerWindowsManager MessengerWindowsManager { get; set; }
 
         /// <summary>
-        /// Переопределение метода
+        /// Переопределение метода OnStartup
         /// </summary>
-        /// <param _name="e">Содержит аргументы события StartUp</param>
+        /// <param name="e">Содержит аргументы события StartUp</param>
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);

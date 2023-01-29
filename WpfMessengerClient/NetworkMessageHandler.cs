@@ -4,117 +4,100 @@ using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
 using DtoLib.NetworkServices;
 using DtoLib.Serialization;
-using System.Threading.Tasks;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
-using WpfMessengerClient.NetworkServices;
 
 namespace WpfMessengerClient
 {
     /// <summary>
-    /// Класс, который является посредником между сетевым провайдероми и данными пользователя
+    /// Обработчик сетевого сообщения
     /// </summary>
     public class NetworkMessageHandler : BaseNotifyPropertyChanged, INetworkMessageHandler
     {
         #region События
 
         /// <summary>
-        /// Событие регистрации пользователя
+        /// Событие - ответ от сервера на запрос о регистрации пользователя в мессенджере получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<SignUpResponse> SignUpResponseReceived = new();
 
         /// <summary>
-        /// Событие входа пользователя
+        /// Событие - ответ от сервера на запрос о входе пользователя получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<SignInResponse> SignInResponseReceived = new();
 
         /// <summary>
-        /// Событие выхода пользователя из мессенджера
+        /// Событие - ответ от сервера на запрос о выходе пользователя из мессенджера получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<Response> SignOutResponseReceived = new();
 
         /// <summary>
-        /// Событие получение успешного результата поиска пользователя
+        /// Событие  - ответ от сервера на запрос о поиске пользователя получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<UserSearchResponse> UserSearchResponseReceived = new();
 
         /// <summary>
-        /// Событие - диалог создан, обработчик принимает в качестве аргумента ответ на создание нового диалога
+        /// Событие - ответ от сервера на запрос о создании диалога получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<CreateDialogResponse> CreateDialogResponseReceived = new();
 
         /// <summary>
-        /// Событие - получили запрос на создание нового диалога
+        /// Событие - запрос от сервера на создание диалога получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<Dialog> CreateDialogRequestReceived = new();
 
         /// <summary>
-        /// Событие - получили ответ, что сообщение доставлено
+        /// Событие - ответ от сервера на запрос об отправке сообщения получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<SendMessageResponse> SendMessageResponseReceived = new();
 
         /// <summary>
-        /// Событие - в диалоге появилось новое сообщение
-        /// Либо сообщение получено от собеседника, либо сообщение отправил текущий пользователь с другого устройства
+        /// Событие - запрос от сервера на получение диалогом нового сообщения получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<SendMessageRequest> DialogReceivedNewMessage = new();
 
         /// <summary>
-        /// Событие получения ответа на запрос обу удалении сообщения
+        /// Событие - ответ от сервера на запрос об удалении сообщения получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<Response> DeleteMessageResponseReceived = new();
 
         /// <summary>
-        /// Событие получения запроса на удаление сообщения
+        /// Событие - запрос от сервера на удаления сообщения получен
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<DeleteMessageRequestForClient> DeleteMessageRequestForClientReceived = new();
+        public readonly NetworkMessageHandlerEvent<DeleteMessageRequest> DeleteMessageRequestReceived = new();
 
         /// <summary>
-        /// Событие получения ответа на запрос об удалении диалога
+        /// Событие - ответ от сервера на запрос об удалении диалога получен
         /// </summary>
         public readonly NetworkMessageHandlerEvent<Response> DeleteDialogResponseReceived = new();
 
         /// <summary>
-        /// Событие получения запроса на удаление диалога
+        /// Событие - запрос об удалении диалога от сервера получен
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<DeleteDialogRequestForClient> DeleteDialogRequestForClientReceived = new();
+        public readonly NetworkMessageHandlerEvent<DeleteDialogRequest> DeleteDialogRequestReceived = new();
 
         /// <summary>
-        /// Событие получения ответа на запрос о прочтении сообщения
+        /// Событие - ответ от сервера на запрос о прочтении сообщения получен
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<Response> MessageIsReadResponseReceived = new();
+        public readonly NetworkMessageHandlerEvent<Response> ReadMessageResponseReceived = new();
 
         /// <summary>
-        /// Событие получение запроса на прочтение сообщения текущим пользователем с другого клиента
+        /// Событие - запрос от сервера о прочтении сообщения текущим пользователем на другом клиенте получен
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<MessagesAreReadRequestForClient> MessagesAreReadRequestForClientReceived = new();
+        public readonly NetworkMessageHandlerEvent<ReadMessagesRequest> MessagesAreReadRequestForClientReceived = new();
 
         #endregion События
 
         #region Приватные поля
 
         /// <summary>
-        /// Маппер для мапинга моделей на DTO и обратно
+        /// Маппер для мапинга DTO
         /// </summary>
         private readonly IMapper _mapper;
 
-        private IConnectionController _connectionController;
-
         #endregion Приватные поля
-
-        #region  Свойства
-
-        public IConnectionController ConnectionController
-        {
-            set
-            {
-                _connectionController = value;
-            }
-        }
-
-        #endregion Свойства
 
         #region Конструкторы
 
@@ -134,65 +117,78 @@ namespace WpfMessengerClient
         /// <summary>
         /// Обработать сетевое сообщение
         /// </summary>
-        /// <param _name="_message">Сетевое сообщение</param>
-        private void ProcessNetworkMessage(NetworkMessage message)
+        /// <param name="netMessageBytes">Сетевое сообщение в виде массива байт</param>
+        public void ProcessNetworkMessage(byte[] netMessageBytes)
         {
-            switch (message.Code)
+            NetworkMessage networkMessage = SerializationHelper.Deserialize<NetworkMessage>(netMessageBytes);
+
+            ProcessNetworkMessage(networkMessage);
+        }
+
+        #endregion Реализация INetworkMessageHandler
+
+        /// <summary>
+        /// Обработать сетевое сообщение
+        /// </summary>
+        /// <param name="networkMessage">Сетевое сообщение</param>
+        private void ProcessNetworkMessage(NetworkMessage networkMessage)
+        {
+            switch (networkMessage.Code)
             {
                 case NetworkMessageCode.SignUpResponseCode:
-                    ProcessMessage<SignUpResponseDto, SignUpResponse>(message, SignUpResponseReceived);
+                    ProcessNetworkMessage<SignUpResponseDto, SignUpResponse>(networkMessage, SignUpResponseReceived);
                     break;
 
                 case NetworkMessageCode.SignInResponseCode:
-                    ProcessMessage<SignInResponseDto, SignInResponse>(message, SignInResponseReceived);
+                    ProcessNetworkMessage<SignInResponseDto, SignInResponse>(networkMessage, SignInResponseReceived);
                     break;
 
                 case NetworkMessageCode.SearchUserResponseCode:
-                    ProcessMessage<UserSearchResponseDto, UserSearchResponse>(message, UserSearchResponseReceived);
+                    ProcessNetworkMessage<UserSearchResponseDto, UserSearchResponse>(networkMessage, UserSearchResponseReceived);
                     break;
 
                 case NetworkMessageCode.CreateDialogRequestCode:
-                    ProcessMessage<DialogDto, Dialog>(message, CreateDialogRequestReceived);
+                    ProcessNetworkMessage<DialogDto, Dialog>(networkMessage, CreateDialogRequestReceived);
                     break;
 
                 case NetworkMessageCode.CreateDialogResponseCode:
-                    ProcessMessage<CreateDialogResponseDto, CreateDialogResponse>(message, CreateDialogResponseReceived);
+                    ProcessNetworkMessage<CreateDialogResponseDto, CreateDialogResponse>(networkMessage, CreateDialogResponseReceived);
                     break;
 
                 case NetworkMessageCode.SendMessageRequestCode:
-                    ProcessMessage<SendMessageRequestDto, SendMessageRequest>(message, DialogReceivedNewMessage);
+                    ProcessNetworkMessage<SendMessageRequestDto, SendMessageRequest>(networkMessage, DialogReceivedNewMessage);
                     break;
 
                 case NetworkMessageCode.SendMessageResponseCode:
-                    ProcessMessage<SendMessageResponseDto, SendMessageResponse>(message, SendMessageResponseReceived);
+                    ProcessNetworkMessage<SendMessageResponseDto, SendMessageResponse>(networkMessage, SendMessageResponseReceived);
                     break;
 
                 case NetworkMessageCode.DeleteMessageResponseCode:
-                    ProcessMessage<ResponseDto, Response>(message, DeleteMessageResponseReceived);
+                    ProcessNetworkMessage<ResponseDto, Response>(networkMessage, DeleteMessageResponseReceived);
                     break;
 
                 case NetworkMessageCode.DeleteMessageRequestCode:
-                    ProcessMessage<DeleteMessageRequestForClientDto, DeleteMessageRequestForClient>(message, DeleteMessageRequestForClientReceived);
+                    ProcessNetworkMessage<DeleteMessageRequestForClientDto, DeleteMessageRequest>(networkMessage, DeleteMessageRequestReceived);
                     break;
 
                 case NetworkMessageCode.MessagesAreReadRequestCode:
-                    ProcessMessage<MessagesAreReadRequestForClientDto, MessagesAreReadRequestForClient>(message, MessagesAreReadRequestForClientReceived);
+                    ProcessNetworkMessage<MessagesAreReadRequestForClientDto, ReadMessagesRequest>(networkMessage, MessagesAreReadRequestForClientReceived);
                     break;
 
                 case NetworkMessageCode.MessagesAreReadResponseCode:
-                    ProcessMessage<ResponseDto, Response>(message, MessageIsReadResponseReceived);
+                    ProcessNetworkMessage<ResponseDto, Response>(networkMessage, ReadMessageResponseReceived);
                     break;
 
                 case NetworkMessageCode.DeleteDialogResponseCode:
-                    ProcessMessage<ResponseDto, Response>(message, DeleteDialogResponseReceived);
+                    ProcessNetworkMessage<ResponseDto, Response>(networkMessage, DeleteDialogResponseReceived);
                     break;
 
                 case NetworkMessageCode.DeleteDialogRequestCode:
-                    ProcessMessage<DeleteDialogRequestForClientDto, DeleteDialogRequestForClient>(message, DeleteDialogRequestForClientReceived);
+                    ProcessNetworkMessage<DeleteDialogRequestForClientDto, DeleteDialogRequest>(networkMessage, DeleteDialogRequestReceived);
                     break;
 
                 case NetworkMessageCode.SignOutResponseCode:
-                    ProcessMessage<ResponseDto, Response>(message, SignOutResponseReceived);
+                    ProcessNetworkMessage<ResponseDto, Response>(networkMessage, SignOutResponseReceived);
                     break;
 
                 default:
@@ -200,56 +196,20 @@ namespace WpfMessengerClient
             }
         }
 
-        #endregion Реализация INetworkMessageHandler
-
-        private void ProcessMessage<Tdto, Tdest>(NetworkMessage message, NetworkMessageHandlerEvent<Tdest> action)
+        /// <summary>
+        /// Обработать сетевое сообщение
+        /// </summary>
+        /// <typeparam name="Tdto">Тип объекта представляющего DTO</typeparam>
+        /// <typeparam name="Tdest">Тип объекта представляющего цель мапинга</typeparam>
+        /// <param name="networkMessage">Сетевое сообщение</param>
+        /// <param name="event">Событие получения ответа/запроса</param>
+        private void ProcessNetworkMessage<Tdto, Tdest>(NetworkMessage networkMessage, NetworkMessageHandlerEvent<Tdest> @event)
             where Tdest : class
         {
-            Tdto dto = SerializationHelper.Deserialize<Tdto>(message.Data);
+            Tdto dto = SerializationHelper.Deserialize<Tdto>(networkMessage.Data);
             Tdest destination = _mapper.Map<Tdest>(dto);
 
-            action?.Invoke(destination);
+            @event?.Invoke(destination);
         }
-
-        #region Методы взаимодействия с сетью
-
-        /// <summary>
-        /// Обобщенный метод асинхронной отправки сетевого сообщеия
-        /// </summary>
-        /// <typeparam name="Treq">Тип объекта, представляющего запрос на сервер</typeparam>
-        /// <typeparam name="Tdto">Тип dto объекта, представляющего запрос на сервер</typeparam>
-        /// <param name="requestData">Данные запроса на сервер</param>
-        /// <param name="code">Код сетевого сообщения</param>
-        /// <returns></returns>
-        public async Task SendRequestAsync<Treq, Tdto>(Treq requestData, NetworkMessageCode code)
-                    where Tdto : class
-        {
-            //try
-            //{
-            Tdto dto = _mapper.Map<Tdto>(requestData);
-
-            byte[] data = SerializationHelper.Serialize(dto);
-
-            NetworkMessage networkMessage = new NetworkMessage(data, code);
-
-            byte[] messageBytes = SerializationHelper.Serialize(networkMessage);
-
-            await _connectionController.SendRequestAsync(messageBytes);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //    throw;
-            //}
-        }
-
-        public void ProcessData(byte[] data)
-        {
-            NetworkMessage networkMessage = SerializationHelper.Deserialize<NetworkMessage>(data);
-
-            ProcessNetworkMessage(networkMessage);
-        }
-
-        #endregion Методы взаимодействия с сетью
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.NetworkServices;
@@ -13,60 +9,57 @@ using WpfMessengerClient.Windows;
 namespace WpfMessengerClient
 {
     /// <summary>
-    /// Класс, который управляет окнами wpf в приложении
+    /// Класс, который управляет окнами в текущем приложении
     /// </summary>
     public class MessengerWindowsManager
     {
         /// <summary>
-        /// Текущее окно
+        /// Текущее окно приложения
         /// </summary>
-        public static Window CurrentWindow { get; set; }
+        private static Window _currentWindow;
 
         /// <summary>
         /// Текущее приложение окнами которого управляет менеджер
         /// </summary>
-        public Application CurrentApplication { get; set; }
+        private Application _currentApplication;
 
         /// <summary>
-        /// Конструктор с параметром
+        /// Конструктор с параметром - приложением
         /// </summary>
-        /// <param _name="currentApplication"></param>
+        /// <param name="currentApplication">Текущее приложение</param>
         public MessengerWindowsManager(Application currentApplication)
         {
-            CurrentWindow = null;
-            CurrentApplication = currentApplication;
+            _currentApplication = currentApplication;
+            _currentApplication.MainWindow = _currentWindow;
         }
 
         /// <summary>
-        /// Открывает окно регистрации/входа
+        /// Открывает начальное окно приложения
         /// </summary>
         public void OpenStartWindow()
         {
             StartWindowViewModel viewModel = new StartWindowViewModel(this);
-
-            CurrentWindow = new StartWindow(viewModel);
-
-            CurrentApplication.MainWindow = CurrentWindow;
-            CurrentApplication.MainWindow.Show();
+            _currentWindow = new StartWindow(viewModel);
+            _currentWindow.Show();
         }
 
+        /// <summary>
+        /// Вернуться в начальное окно
+        /// </summary>
         public void ReturnToStartWindow()
         {
-            Window windowToShow = null;
+            _currentWindow.Hide();
 
-            CurrentWindow.Hide();
-
-            foreach(Window window in Application.Current.Windows)
+            foreach (Window window in Application.Current.Windows)
             {
-                if(window is StartWindow signUpSignInWindow)
+                if (window is StartWindow)
                 {
-                    windowToShow = window;
+                    _currentWindow = window;
                     break;
                 }
             }
 
-            CurrentWindow = windowToShow;
-            CurrentWindow.Show();
+            _currentWindow.Show();
         }
 
         /// <summary>
@@ -74,20 +67,10 @@ namespace WpfMessengerClient
         /// </summary>
         public void SwitchToSignUpWindow()
         {
-            //var builder = new NetworkMessageHandlerBuilder();
-            //builder.Build();
+            SignUpWindowViewModel signUpWindowViewModel = new SignUpWindowViewModel(this, new NetworkMessageHandler(), new ClientNetworkProvider());
+            SignUpWindow signUpWindow = new SignUpWindow(signUpWindowViewModel);
 
-            ConnectionController connectionController = new ConnectionController();
-            NetworkMessageHandler networkMessageHandler = new NetworkMessageHandler();
-            connectionController.NetworkMessageHandler = networkMessageHandler;
-            networkMessageHandler.ConnectionController = connectionController;  
-
-            SignUpWindowViewModel registrationWindowViewModel = new SignUpWindowViewModel(this, networkMessageHandler, connectionController);
-            SignUpWindow registrationWindow = new SignUpWindow(registrationWindowViewModel);
-
-            CurrentWindow.Hide();
-            CurrentWindow = registrationWindow;
-            CurrentWindow.Show();
+            ChangeWindow(signUpWindow);
         }
 
         /// <summary>
@@ -95,59 +78,53 @@ namespace WpfMessengerClient
         /// </summary>
         public void SwitchToSignInWindow()
         {
-            //var builder = new NetworkMessageHandlerBuilder();
-            //builder.Build();
-            //ConnectionController connectionController = new ConnectionController();
-            NetworkMessageHandler networkMessageHandler = new NetworkMessageHandler();
-            //connectionController.NetworkMessageHandler = networkMessageHandler;
-            //networkMessageHandler.ConnectionController = connectionController;
-            IClientNetworkProvider clientNetworkProvider = new ClientNetworkProvider();
-
-            SignInWindowViewModel signInWindowViewModel = new SignInWindowViewModel(this, networkMessageHandler, connectionController);
+            SignInWindowViewModel signInWindowViewModel = new SignInWindowViewModel(this, new NetworkMessageHandler(), new ClientNetworkProvider());
             SignInWindow signInWindow = new SignInWindow(signInWindowViewModel);
 
-            CurrentWindow.Hide();
-            CurrentWindow = signInWindow;
-            CurrentWindow.Show();
+            ChangeWindow(signInWindow);
         }
 
         /// <summary>
         /// Переключиться на окно чата
         /// </summary>
-        public void SwitchToChatWindow(NetworkMessageHandler networkMessageHandler, /*ConnectionController connectionController,*/IClientNetworkProvider networkProvider, User user)
+        public void SwitchToChatWindow(NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user)
         {
             ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(this, networkMessageHandler, networkProvider, user);
-
             ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
 
-            CurrentWindow.Hide();
-
-            CurrentWindow = chatWindow;
-
-            CurrentWindow.Show();
+            ChangeWindow(chatWindow);
         }
 
         /// <summary>
-        /// Переключиться на окно чата
+        /// Перегрузка метода - переключиться на окно чата
         /// </summary>
         public void SwitchToChatWindow(NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user, List<Dialog> dialogs)
         {
             ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(this, networkMessageHandler, networkProvider, user, dialogs);
-
             ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
 
-            CurrentWindow.Hide();
-
-            CurrentWindow = chatWindow;
-
-            CurrentWindow.Show();
+            ChangeWindow(chatWindow);
         }
 
+        /// <summary>
+        /// Закрыть текущее окно
+        /// </summary>
         public void CloseCurrentWindow()
         {
-            CurrentWindow.Close();
+            _currentApplication.Shutdown();
 
-            CurrentApplication.Shutdown();
+            _currentWindow.Close();
+        }
+
+        /// <summary>
+        /// Изменить текущее окно
+        /// </summary>
+        /// <param name="window">Окно</param>
+        private void ChangeWindow(Window window)
+        {
+            _currentWindow.Hide();
+            _currentWindow = window;
+            _currentWindow.Show();
         }
     }
 }
