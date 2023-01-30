@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Информация необходимая для входа в мессенджер
+    /// Запрос на вход в мессенджер
     /// </summary>
     public class SignInRequest : BaseNotifyPropertyChanged, IDataErrorInfo
     {
@@ -34,27 +34,28 @@ namespace WpfMessengerClient.Models.Requests
 
         #region Приватные поля
 
-        /// <summary>
-        /// Номер телефона
-        /// </summary>
+        /// <inheritdoc cref="PhoneNumber"/>
         private string _phoneNumber;
 
-        /// <summary>
-        /// Пароль
-        /// </summary>
+        /// <inheritdoc cref="Password"/>
         private string _password;
 
-        /// <summary>
-        /// Ошибка, которая может возникнуть при валидации данных класса
-        /// </summary>
+        /// <inheritdoc cref="Error"/>
         private string _error;
-
-        public string PhoneNumberError { get; protected set; }
-        public string PasswordError { get; protected set; }
 
         #endregion Приватные поля
 
         #region Свойства
+
+        /// <summary>
+        /// Ошибка при пооверке на корректность телефона
+        /// </summary>
+        public string PhoneNumberError { get; protected set; }
+
+        /// <summary>
+        /// Ошибка при проверке на корректность пароля
+        /// </summary>
+        public string PasswordError { get; protected set; }
 
         /// <summary>
         /// Свойство - номер телефона
@@ -86,28 +87,6 @@ namespace WpfMessengerClient.Models.Requests
             }
         }
 
-        #endregion Свойства 
-
-        #region Конструкторы 
-
-        /// <summary>
-        /// Конструктор по умолчанию
-        /// </summary>
-        public SignInRequest()
-        {
-            Password = "";
-            PhoneNumber = "";
-            Error = "";
-            //HasPhoneNumberError = true;
-            //HasPasswordError = true;
-            PhoneNumberError = "";
-            PasswordError = "";
-        }
-
-        #endregion Конструкторы
-
-        #region Реализация интерфейса IDataErrorInfo
-
         /// <summary>
         /// Ошибка при валидации свойства
         /// </summary>
@@ -123,31 +102,46 @@ namespace WpfMessengerClient.Models.Requests
             }
         }
 
+        #endregion Свойства 
+
+        #region Конструкторы 
+
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
+        public SignInRequest()
+        {
+            Password = "";
+            PhoneNumber = "";
+            Error = "";
+            PhoneNumberError = "";
+            PasswordError = "";
+        }
+
+        #endregion Конструкторы
+
+        #region Валидация 
+
         /// <summary>
         /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
         /// </summary>
-        /// <param _name="propName">Имя свойства</param>
+        /// <param name="propName">Имя свойства</param>
         /// <returns></returns>
         public virtual string this[string propName]
         {
             get
             {
-                // Проверяем есть ли у текущего объекта ошибка
-                ValidateAllProperties(propName);
+                ValidateProperty(propName);
 
                 return Error;
             }
         }
 
-        #endregion Реализация интерфейса IDataErrorInfo
-
-        #region Валидация 
-
         /// <summary>
         /// Проверить все свойства класса на корректность
         /// </summary>
-        /// <param _name="propName">Имя свойства</param>
-        protected virtual void ValidateAllProperties(string propName)
+        /// <param name="propName">Имя свойства</param>
+        protected virtual void ValidateProperty(string propName)
         {
             switch (propName)
             {
@@ -157,7 +151,6 @@ namespace WpfMessengerClient.Models.Requests
 
                 case nameof(Password):
                     ValidatePassword();
-
                     break;
 
                 default:
@@ -175,14 +168,12 @@ namespace WpfMessengerClient.Models.Requests
             if (!regex.IsMatch(Password))
             {
                 Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
-                //HasPasswordError = true;
                 PasswordError = Error;
             }
 
             else if (Password.Length > MaxLengthOfPassword)
             {
                 Error = "Пароль должен содержать не больше 10ти символов";
-                //HasPasswordError = true;
                 PasswordError = Error;
             }
 
@@ -192,16 +183,10 @@ namespace WpfMessengerClient.Models.Requests
                 PasswordError = Error;
             }
 
-            //else if(HasPhoneNumberError == false)
-            //{
-            //    HasPasswordError = false;
-
-            //}
             else
             {
                 Error = "";
                 PasswordError = "";
-                //HasPasswordError = false;
             }
         }
 
@@ -217,40 +202,35 @@ namespace WpfMessengerClient.Models.Requests
             if (!regex.IsMatch(PhoneNumber))
             {
                 Error = "Телефон должен начинаться с +7 и далее состоять из 10 цифр";
-                //HasPhoneNumberError = true;
                 PhoneNumberError = Error;
             }
 
             else if (PhoneNumber.Length != PhoneNumberLength)
             {
                 Error = "Телефон должнен состоять из 12 символов всего";
-                //HasPhoneNumberError = true;
                 PhoneNumberError = Error;
             }
 
-            //else if (HasPasswordError == false)
-            //{
-            //    //HasPhoneNumberError = false;
-            //    Error = "";
-            //}
             else
             {
                 Error = "";
                 PhoneNumberError = "";
-                //HasPhoneNumberError = false;
             }
         }
-
-        #endregion Валидация
-
+        
+        /// <summary>
+        /// Запрос содержит ошибку?
+        /// </summary>
+        /// <returns>true - если содержит, false - если нет</returns>
         public virtual bool HasNotErrors()
         {
-            if (PhoneNumberError == "" && PasswordError == "")
-                return true;
-
-            return false;
+            return PhoneNumberError == "" && PasswordError == "";
         }
 
+        /// <summary>
+        /// Получить ошибку запроса
+        /// </summary>
+        /// <returns>Ошибка запроса</returns>
         public virtual string GetError()
         {
             if (PhoneNumberError != "")
@@ -258,5 +238,7 @@ namespace WpfMessengerClient.Models.Requests
 
             return PasswordError;
         }
+
+        #endregion Валидация
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WpfMessengerClient
+namespace WpfMessengerClient.NetworkMessageProcessing
 {
     /// <summary>
     /// Класс, который является обёрткой над событием в классе NetworkMessageHandler - обработчике сетевых сообщений

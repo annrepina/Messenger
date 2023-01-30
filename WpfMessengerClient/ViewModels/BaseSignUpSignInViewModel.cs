@@ -1,4 +1,5 @@
 ﻿using Prism.Commands;
+using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 
 namespace WpfMessengerClient.ViewModels

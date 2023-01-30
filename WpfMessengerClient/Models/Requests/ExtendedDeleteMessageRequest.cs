@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Данные, представляющие запрос на удаление сообщения
+    /// Расширенный запрос на удаление сообщения от клиента к серверу
     /// </summary>
     public class ExtendedDeleteMessageRequest
     {

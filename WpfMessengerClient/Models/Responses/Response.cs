@@ -13,16 +13,18 @@ namespace WpfMessengerClient.Models.Responses
     /// </summary>
     public class Response : IResponse
     {
+        /// <summary>
+        /// Статус ответа
+        /// </summary>
         public NetworkResponseStatus Status { get; set; }
 
+        /// <summary>
+        /// Конструктор с параметром
+        /// </summary>
+        /// <param name="status">Статус ответа</param>
         public Response(NetworkResponseStatus status)
         {
             Status = status;
         }
-
-        //public Response()
-        //{
-        //    Status = NetworkResponseStatus.Successful;
-        //}
     }
 }

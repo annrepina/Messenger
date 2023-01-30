@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using WpfMessengerClient.Models;
+using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 using WpfMessengerClient.Services;
 using WpfMessengerClient.ViewModels;
@@ -67,7 +68,10 @@ namespace WpfMessengerClient
         /// </summary>
         public void SwitchToSignUpWindow()
         {
-            SignUpWindowViewModel signUpWindowViewModel = new SignUpWindowViewModel(this, new NetworkMessageHandler(), new ClientNetworkProvider());
+            NetworkMessageHandler networkMessageHandler = new NetworkMessageHandler();
+            IClientNetworkProvider clientNetworkProvider = new ClientNetworkProvider(networkMessageHandler);
+
+            SignUpWindowViewModel signUpWindowViewModel = new SignUpWindowViewModel(this, networkMessageHandler, clientNetworkProvider);
             SignUpWindow signUpWindow = new SignUpWindow(signUpWindowViewModel);
 
             ChangeWindow(signUpWindow);
@@ -78,7 +82,10 @@ namespace WpfMessengerClient
         /// </summary>
         public void SwitchToSignInWindow()
         {
-            SignInWindowViewModel signInWindowViewModel = new SignInWindowViewModel(this, new NetworkMessageHandler(), new ClientNetworkProvider());
+            NetworkMessageHandler networkMessageHandler = new NetworkMessageHandler();
+            IClientNetworkProvider clientNetworkProvider = new ClientNetworkProvider(networkMessageHandler);
+
+            SignInWindowViewModel signInWindowViewModel = new SignInWindowViewModel(this, networkMessageHandler, clientNetworkProvider);
             SignInWindow signInWindow = new SignInWindow(signInWindowViewModel);
 
             ChangeWindow(signInWindow);

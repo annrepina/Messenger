@@ -14,6 +14,7 @@ using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
+using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 using WpfMessengerClient.Obsevers;
 using WpfMessengerClient.Services;
@@ -351,9 +352,6 @@ namespace WpfMessengerClient.ViewModels
         public ChatWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user) 
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
-            _networkMessageHandler.provider = _networkProvider as ClientNetworkProvider;
-            _networkProvider.NetworkMessageHandler = networkMessageHandler;
-
             _networkMessageHandler.CreateDialogRequestReceived.EventOccurred += OnCreateDialogRequestReceived;
             _networkMessageHandler.DialogReceivedNewMessage.EventOccurred += OnDialogReceivedNewMessage;
             _networkMessageHandler.DeleteMessageRequestReceived.EventOccurred += OnDeleteMessageRequestReceived;
@@ -618,12 +616,12 @@ namespace WpfMessengerClient.ViewModels
                 SystemSounds.Hand.Play();
             });
 
-            if (HasActiveDialogNewMessage(dialog, message))
-            {
-                List<int> messagesId = new List<int> { message.Id };
+            //if (HasActiveDialogNewMessage(dialog, message))
+            //{
+            //    List<int> messagesId = new List<int> { message.Id };
 
-                SendReadMessagesRequest(messagesId, dialog);
-            }
+            //    SendReadMessagesRequest(messagesId, dialog);
+            //}
 
             dialog.CheckLastMessagesRead();
         }

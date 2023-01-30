@@ -14,15 +14,6 @@ namespace WpfMessengerClient.Models
     /// </summary>
     public class Dialog : BaseNotifyPropertyChanged
     {
-        #region Константы
-
-        /// <summary>
-        /// Константное кол-во пользователей в диалоге
-        /// </summary>
-        private const int NumberOfUsers = 2;
-
-        #endregion Константы
-
         #region Приватные поля
 
         /// <inheritdoc cref="Id"/>
@@ -48,6 +39,7 @@ namespace WpfMessengerClient.Models
             set
             {
                 _id = value;
+
                 OnPropertyChanged(nameof(Id));
             }
         }
@@ -62,21 +54,22 @@ namespace WpfMessengerClient.Models
             set
             {
                 _currentUser = value;
+
                 OnPropertyChanged(nameof(CurrentUser));
             }
         }
 
         /// <summary>
-        /// Свойство - название диалога, которым явдляется имя пользователя, которым не является текущий пользователь
+        /// Свойство - название диалога, которым является имя пользователя, которым не является текущий пользователь
         /// </summary>
         public string Title => Users.First(n => n.Id != _currentUser.Id).Name;
 
+        /// <summary>
+        /// У диалога есть непрочитанные сообщения?
+        /// </summary>
         public bool HasUnreadMessages
         {
-            get
-            {
-                return _hasUnreadMessages;
-            }
+            get => _hasUnreadMessages;
 
             set
             {
@@ -94,7 +87,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Обозреваемая коллекция сообщений в диалоге
         /// </summary>
-        public ObservableCollection<Message> Messages { get; set; }
+        public ObservableCollection<Message> Messages { get; init; }
 
         #endregion Свойства
 
@@ -103,12 +96,8 @@ namespace WpfMessengerClient.Models
         public Dialog()
         {
             Id = 0;
-            //Users = new ObservableCollection<User>();
-            //Users.CollectionChanged += OnUserDataCollectionChanged;
             Users = new List<User>();
-
             Messages = new ObservableCollection<Message>();
-            Messages.CollectionChanged += OnMessagesChanged;
         }
 
         /// <summary>
@@ -121,83 +110,6 @@ namespace WpfMessengerClient.Models
         }
 
         #endregion Конструкторы
-
-        #region Обработчики событий
-
-        ///// <summary>
-        ///// Обработчик события изменения обозреваемой коллекции данных пользователей участвующих в диалоге
-        ///// </summary>
-        ///// <param _name="sender">Объект, который вызвал событие</param>
-        ///// <param _name="e">Содержит информацию о событии</param>
-        ///// <exception cref="NotImplementedException"></exception>
-        //private void OnUserDataCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.OldItems != null)
-        //    {
-        //        foreach (INotifyPropertyChanged item in e.OldItems)
-        //        {
-        //            item.PropertyChanged -= OnUserDataChanged;
-        //        }
-        //    }
-
-        //    if (e.NewItems != null)
-        //    {
-        //        foreach (INotifyPropertyChanged item in e.NewItems)
-        //        {
-        //            item.PropertyChanged += OnUserDataChanged;
-        //        }
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Обработчик события изменения данных конкретного пользователя участвующего в диалоге
-        ///// </summary>
-        ///// <param _name="sender">Объект, который вызвал событие</param>
-        ///// <param _name="e">Содержит информацию о событии</param>
-        ///// <exception cref="NotImplementedException"></exception>
-        //private void OnUserDataChanged(object? sender, PropertyChangedEventArgs e)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        /// <summary>
-        /// Обработчик события изменения обозреваемой коллекции сообщений
-        /// </summary>
-        /// <param _name="sender">Объект, который вызвал событие</param>
-        /// <param _name="e">Содержит информацию о событии</param>
-        private void OnMessagesChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.OldItems)
-                {
-                    item.PropertyChanged -= OnMessageChanged;
-                }
-            }
-
-            if (e.NewItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.NewItems)
-                {
-                    item.PropertyChanged += OnMessageChanged;
-                }
-            }
-
-            //CheckLastMessagesRead();
-        }
-
-        /// <summary>
-        /// Обработчик события измения конкретного сообщения в обозреваемой коллекции сообщений
-        /// </summary>
-        /// <param _name="sender">Объект, который вызвал событие</param>
-        /// <param _name="e">Содержит информацию о событии</param>
-        private void OnMessageChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            //if(e.PropertyName == nameof(Message.IsRead))
-            //    CheckLastMessagesRead();                
-        }
-
-        #endregion Обработчики событий
 
         /// <summary>
         /// Проверить прочитаны ли последние сообщения от собеседника

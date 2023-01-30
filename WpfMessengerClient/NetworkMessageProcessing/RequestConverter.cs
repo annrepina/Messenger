@@ -3,7 +3,7 @@ using DtoLib.NetworkServices;
 using DtoLib.Serialization;
 using WpfMessengerClient.Models.Mapping;
 
-namespace WpfMessengerClient
+namespace WpfMessengerClient.NetworkMessageProcessing
 {
     /// <summary>
     /// Конвертер запроса для сервера

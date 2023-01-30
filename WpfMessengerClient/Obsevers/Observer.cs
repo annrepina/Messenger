@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using WpfMessengerClient.NetworkMessageProcessing;
 
 namespace WpfMessengerClient.Obsevers
 {

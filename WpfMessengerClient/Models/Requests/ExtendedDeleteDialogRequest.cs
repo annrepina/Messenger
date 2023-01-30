@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Запрос на удаление диалога
+    /// Расширенный запрос на удаление диалога от клиента серверу
     /// </summary>
     public class ExtendedDeleteDialogRequest
     {
@@ -21,7 +21,12 @@ namespace WpfMessengerClient.Models.Requests
         /// Идентификатор пользователя, удалившего диалог
         /// </summary>
         public int UserId { get; init; }
-
+        
+        /// <summary>
+        /// Конструктор с параметрами
+        /// </summary>
+        /// <param name="dialogId">Id диалога</param>
+        /// <param name="userId">Id пользователя</param>
         public ExtendedDeleteDialogRequest(int dialogId, int userId)
         {
             DialogId = dialogId;

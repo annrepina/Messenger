@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 
 namespace WpfMessengerClient.ViewModels
@@ -56,7 +57,6 @@ namespace WpfMessengerClient.ViewModels
             _messengerWindowsManager = windowsManager;
             _networkMessageHandler = networkMessageHandler;
             _networkProvider = networkProvider;
-            _networkProvider.BytesReceived += _networkMessageHandler.ProcessNetworkMessage;
             _networkProvider.Disconnected += CloseWindow;
             AreControlsAvailable = true;
         }

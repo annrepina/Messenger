@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Данные, необходимые при регистрации в мессенджере
+    /// Запрос на регистрацию в мессенджере
     /// </summary>
     public class SignUpRequest : SignInRequest
     {
@@ -29,18 +29,11 @@ namespace WpfMessengerClient.Models.Requests
 
         #region Приватные поля
 
-        /// <summary>
-        /// Повторяющийся пароль
-        /// </summary>
+        /// <inheritdoc cref="RepeatedPassword"/>
         private string _repeatedPassword;
 
-        /// <summary>
-        /// Имя
-        /// </summary>
+        /// <inheritdoc cref="Name"/>
         private string _name;
-
-        //private bool HasRepeatedPasswordError;
-        //private bool _hasNameError;
 
         #endregion Приватные поля
 
@@ -76,52 +69,55 @@ namespace WpfMessengerClient.Models.Requests
             }
         }
 
+        /// <summary>
+        /// Ошибка в имени в запросе
+        /// </summary>
         public string NameError { get; protected set; }
+
+        /// <summary>
+        /// Ошика в повторяющемся пароле в запросе
+        /// </summary>
         public string RepeatedPasswordError { get; protected set; } 
 
         #endregion Свойства 
 
         #region Конструкторы 
 
+        /// <summary>
+        /// Запрос по умолчанию
+        /// </summary>
         public SignUpRequest() : base()
         {
             Name = "";
             RepeatedPassword = "";
-            //HasRepeatedPasswordError = true;
-            //_hasNameError = true;
             NameError = "";
             RepeatedPasswordError = "";
         }
 
         #endregion Конструкторы
 
-        #region Реализация интерфейса IDataErrorInfo
+        #region Валидация 
 
         /// <summary>
         /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
         /// </summary>
-        /// <param _name="propName">Имя свойства</param>
+        /// <param name="propName">Имя свойства</param>
         /// <returns></returns>
         public override string this[string propName]
         {
             get
             {
-                // Проверяем есть ли у текущего объекта ошибка
-                ValidateAllProperties(propName);
+                ValidateProperty(propName);
 
                 return Error;
             }
         }
 
-        #endregion Реализация интерфейса IDataErrorInfo
-
-        #region Валидация 
-
         /// <summary>
         /// Проверить все свойства класса на корректность
         /// </summary>
-        /// <param _name="propName">Имя свойства</param>
-        protected override void ValidateAllProperties(string propName)
+        /// <param name="propName">Имя свойства</param>
+        protected override void ValidateProperty(string propName)
         {
             base.ValidatePhoneNumber();
 
@@ -132,7 +128,6 @@ namespace WpfMessengerClient.Models.Requests
                     break;
 
                 case nameof(Password):
-                    //ValidatePassword(Password, RepeatedPassword, PasswordError);
                     ValidatePassword();
                     break;
 
@@ -148,48 +143,9 @@ namespace WpfMessengerClient.Models.Requests
         /// <summary>
         /// Проверить на корректность пароль
         /// </summary>
-        private void ValidatePassword(string validatedPassword, string secondPassword, string paswordError)
-        {
-            Regex regex = new Regex(@"^\w{6}");
-
-            //Error = "";
-
-            if (!regex.IsMatch(validatedPassword))
-            {
-                Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
-                paswordError = Error;
-            }
-
-            else if (validatedPassword.Length > MaxLengthOfPassword)
-            {
-                Error = "Пароль должен содержать не больше 10ти символов";
-                paswordError = Error;
-            }
-
-            else if (validatedPassword.Length < MinLengthOfPassword)
-            {
-                Error = "Пароль должен содержать не меньше 6ти символов";
-                paswordError = Error;
-            }
-
-            else if (secondPassword != "" && validatedPassword != secondPassword)
-            {
-                Error = "Пароли должны совпадать";
-                paswordError = Error;
-            }
-
-            else
-            {
-                Error = "";
-                paswordError = "";
-            }
-        }
-
         protected override void ValidatePassword()
         {
             Regex regex = new Regex(@"^\w{6}");
-
-            //Error = "";
 
             if (!regex.IsMatch(Password))
             {
@@ -222,11 +178,12 @@ namespace WpfMessengerClient.Models.Requests
             }
         }
 
+        /// <summary>
+        /// Проверить на корректность повторяющийся пароль
+        /// </summary>
         protected void ValidateRepeatedPassword()
         {
             Regex regex = new Regex(@"^\w{6}");
-
-            //Error = "";
 
             if (!regex.IsMatch(RepeatedPassword))
             {
@@ -266,61 +223,50 @@ namespace WpfMessengerClient.Models.Requests
         {
             Regex regex = new Regex(@"^\w+");
 
-            //Error = "";
-
             if (String.IsNullOrEmpty(Name))
             {
                 Error = "Имя должно быть не меньше 2х символов";
-                //_hasNameError = true;
                 NameError = Error;
             }
 
             else if (!regex.IsMatch(Name))
             {
                 Error = "Недопустимые символы";
-                //_hasNameError = true;
                 NameError = Error;
             }
 
             else if (Name.Length > MaxNameLength)
             {
                 Error = "Имя не должно превышать 50ти символов";
-                //_hasNameError = true;
                 NameError = Error;
             }
 
             else if (Name.Length < MinNameLength)
             {
                 Error = "Имя должно быть не меньше 2х символов";
-                //_hasNameError = true;
                 NameError = Error;
             }
 
-            //else if (HasPasswordError == false && HasRepeatedPasswordError == false && HasPhoneNumberError == false)
-            //{
-            //    Error = "";
-            //    _hasNameError = false;
-            //}
-
             else
             {
-                //_hasNameError = false;
                 Error = "";
                 NameError = "";
             }
-
         }
 
-        #endregion Валидация
-
+        /// <summary>
+        /// Есть ошибка в запросе?
+        /// </summary>
+        /// <returns>true - если есть, false - если нет</returns>
         public override bool HasNotErrors()
         {
-            if(base.HasNotErrors() && RepeatedPasswordError == "" && NameError == "")
-                return true;
-
-            return false;
+            return base.HasNotErrors() && RepeatedPasswordError == "" && NameError == "";
         }
 
+        /// <summary>
+        /// Получить ошибку запроса
+        /// </summary>
+        /// <returns>Ошибка запроса</returns>
         public override string GetError()
         {
             if (base.GetError() != "")
@@ -331,5 +277,7 @@ namespace WpfMessengerClient.Models.Requests
 
             return NameError;
         }
+
+        #endregion Валидация
     }
 }

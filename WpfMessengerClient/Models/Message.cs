@@ -132,22 +132,6 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        ///// <summary>
-        ///// Горизонтальное выравнивание
-        ///// </summary>
-        //public TextAlignment TextAlignment
-        //{
-        //    get => IsCurrentUserMessage ? TextAlignment.Right : TextAlignment.Left;
-        //}
-
-        ///// <summary>
-        ///// Горизонтальное выравнивание
-        ///// </summary>
-        //public HorizontalAlignment HorizontalAlignment
-        //{
-        //    get => IsCurrentUserMessage ? HorizontalAlignment.Right : HorizontalAlignment.Left;
-        //}
-
         #endregion Свойства
 
         #region Конструкторы
@@ -168,9 +152,10 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
-        /// <param _name="text">Текст сообщения</param>
-        /// <param _name="senderUserAccount">Данные о пользователе - отправителе сообщения</param>
-        /// <param _name="dialog">Диалог, в котором существует сообщение</param>
+        /// <param name="text">Текст сообщения</param>
+        /// <param name="senderUserAccount">Пользователь - отправитель сообщения</param>
+        /// <param name="isCurrentUserMessage">Является ли отправителем этого сообщения текущий пользователь?</param>
+        /// <param name="isRead">Прочитано сообщение? По умолчанию - значение false</param>
         public Message(string text, User senderUserAccount, bool isCurrentUserMessage, bool isRead = false)
         {
             Id = 0;

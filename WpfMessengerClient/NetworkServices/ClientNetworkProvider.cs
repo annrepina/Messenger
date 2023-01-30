@@ -6,6 +6,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 
 namespace WpfMessengerClient.Services
@@ -23,32 +24,7 @@ namespace WpfMessengerClient.Services
         /// </summary>
         public event Action Disconnected;
 
-        /// <summary>
-        /// Событие получения массива байт по сети
-        /// </summary>
-        public event Action<byte[]> BytesReceived;
-
         #endregion События
-
-        #region Приватные поля
-
-        /// <summary>
-        /// Обеспечивает клиентские подключения для сетевых служб TCP
-        /// </summary>
-        private TcpClient _tcpClient;
-
-        /// <inheritdoc cref="Transmitter"/>
-        private ITransmitterAsync _transmitter;
-
-        /// <summary>
-        /// Свойство - провайдер подключен к серверу?
-        /// </summary>
-        private bool _isConnected;
-        private NetworkMessageHandler _networkMessageHandler;
-
-        public NetworkMessageHandler NetworkMessageHandler { set => _networkMessageHandler = value; }
-
-        #endregion Приватные поля
 
         #region Константы
 
@@ -64,6 +40,26 @@ namespace WpfMessengerClient.Services
 
         #endregion Константы
 
+        #region Приватные поля
+
+        /// <summary>
+        /// Обеспечивает клиентские подключения для сетевых служб TCP
+        /// </summary>
+        private TcpClient _tcpClient;
+
+        /// <inheritdoc cref="Transmitter"/>
+        private ITransmitterAsync _transmitter;
+
+        /// <summary>
+        /// Свойство - провайдер подключен к серверу?
+        /// </summary>
+        private bool _isConnected;
+
+        /// <inheritdoc cref="NetworkMessageHandler"/>
+        private INetworkMessageHandler _networkMessageHandler;
+
+        #endregion Приватные поля
+
         #region Свойства
 
         /// <summary>
@@ -75,7 +71,11 @@ namespace WpfMessengerClient.Services
         /// Предоставляет базовый поток данных для доступа к сети
         /// </summary>
         public NetworkStream NetworkStream { get; private set; }
-        //NetworkMessageHandler IClientNetworkProvider.NetworkMessageHandler { set => throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Обработчик сетевых сообщений
+        /// </summary>
+        public INetworkMessageHandler NetworkMessageHandler { set => _networkMessageHandler = value; }
 
         #endregion Свойства 
 
@@ -84,11 +84,12 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
-        public ClientNetworkProvider() : base()
+        public ClientNetworkProvider(INetworkMessageHandler networkMessageHandler) : base()
         {
             Transmitter = new Transmitter(this);
             _tcpClient = new TcpClient();
             _isConnected = false;
+            NetworkMessageHandler = networkMessageHandler;
         }
 
         #endregion Конструкторы
@@ -165,8 +166,7 @@ namespace WpfMessengerClient.Services
                 {
                     byte[] data = await _transmitter.ReceiveBytesAsync();
 
-                    //BytesReceived?.Invoke(data);
-                    _networkMessageHandler.ProcessNetworkMessage(data);
+                    _networkMessageHandler?.ProcessNetworkMessage(data);
                 }
             }
             catch (Exception ex)

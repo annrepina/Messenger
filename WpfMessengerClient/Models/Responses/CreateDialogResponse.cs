@@ -1,9 +1,4 @@
 ﻿using DtoLib.NetworkServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models.Responses
 {
@@ -21,11 +16,6 @@ namespace WpfMessengerClient.Models.Responses
         /// Идентификатор первого сообщения
         /// </summary>
         public int MessageId { get; init; }
-
-        //public CreateDialogResponse() : base()
-        //{
-        //    //Status = NetworkResponseStatus.Successful;
-        //}
 
         /// <summary>
         /// Конструктор с параметрами

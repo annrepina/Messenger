@@ -62,7 +62,6 @@ namespace WpfMessengerClient.Converters
         /// Возвращает объект, предоставленный в качестве значения целевого свойства для этого расширения разметки.
         /// </summary>
         /// <param name="serviceProvider"></param>
-        /// <returns></returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             if (_converter == null) _converter = new BooleanConverterToHorizontalAlignment();

@@ -2,20 +2,20 @@
 using DtoLib.Dto;
 using DtoLib.Dto.Requests;
 using DtoLib.Dto.Responses;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Resources.Extensions;
-using System.Text;
-using System.Threading.Tasks;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
-using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient.Models.Mapping
 {
+    /// <summary>
+    /// Класс, который представляет конфигурация для мапинга
+    /// </summary>
     public class MappingProfile : Profile
     {
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public MappingProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
@@ -32,13 +32,13 @@ namespace WpfMessengerClient.Models.Mapping
 
             CreateMap<Message, MessageDto>().ReverseMap();
             CreateMap<SendMessageRequest, SendMessageRequestDto>().ReverseMap();
-            CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();   
+            CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();
             CreateMap<ExtendedDeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
             CreateMap<DeleteMessageRequestForClientDto, DeleteMessageRequest>().ReverseMap();
             CreateMap<ExtendedReadMessagesRequest, MessagesAreReadRequestDto>().ReverseMap();
             CreateMap<MessagesAreReadRequestForClientDto, ReadMessagesRequest>().ReverseMap();
 
-            CreateMap<SignUpRequest, SignUpRequestDto>().ReverseMap();        
+            CreateMap<SignUpRequest, SignUpRequestDto>().ReverseMap();
             CreateMap<SignUpRequest, User>().ReverseMap();
             CreateMap<SignUpResponse, SignUpResponseDto>().ReverseMap();
 
@@ -48,7 +48,7 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<SearchRequest, SearchRequestDto>().ReverseMap();
             CreateMap<SearchResponse, UserSearchResponseDto>().ReverseMap();
 
-            CreateMap<SignOutRequest, SignOutRequestDto>().ReverseMap(); 
+            CreateMap<SignOutRequest, SignOutRequestDto>().ReverseMap();
         }
     }
 }

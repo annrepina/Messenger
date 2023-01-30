@@ -1,5 +1,6 @@
 ﻿using DtoLib.NetworkServices.Interfaces;
 using System;
+using WpfMessengerClient.NetworkMessageProcessing;
 
 namespace WpfMessengerClient.NetworkServices.Interfaces
 {
@@ -9,16 +10,14 @@ namespace WpfMessengerClient.NetworkServices.Interfaces
     /// </summary>
     public interface IClientNetworkProvider : INetworkProvider
     {
-        public NetworkMessageHandler NetworkMessageHandler { set; }
+        /// <summary>
+        /// Интерфейс - обработчик сетевых сообщений
+        /// </summary>
+        public INetworkMessageHandler NetworkMessageHandler { set; }
 
         /// <summary>
         /// Событие отключения от сети
         /// </summary>
         public event Action Disconnected;
-
-        /// <summary>
-        /// Событие получения массива байт по сети
-        /// </summary>
-        public event Action<byte[]> BytesReceived;
     }
 }

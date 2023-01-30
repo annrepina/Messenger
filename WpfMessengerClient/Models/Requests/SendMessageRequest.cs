@@ -8,25 +8,25 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Запрос который содержит в себе сообщение и диалог, к которому оно принадлежит
+    /// Запрос от клиента для сервера на отправку сообщения 
     /// </summary>
     public class SendMessageRequest 
     {
         /// <summary>
         /// Сообщение
         /// </summary>
-        public Message Message { get; set; }
+        public Message Message { get; init; }
 
         /// <summary>
-        /// Идентификатор диалога, в котором существует сообщение
+        /// Id диалога, в котором существует сообщение
         /// </summary>
-        public int DialogId { get; set; }
+        public int DialogId { get; init; }
 
         /// <summary>
         /// Конструктор с параметрами
         /// </summary>
         /// <param name="message">Сообщение</param>
-        /// <param name="dialogId">Идентификатор диалога</param>
+        /// <param name="dialogId">Id диалога</param>
         public SendMessageRequest(Message message, int dialogId)
         {
             Message = message;

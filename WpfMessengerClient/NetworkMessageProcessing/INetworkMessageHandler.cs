@@ -1,4 +1,6 @@
-﻿namespace WpfMessengerClient
+﻿using WpfMessengerClient.NetworkServices.Interfaces;
+
+namespace WpfMessengerClient.NetworkMessageProcessing
 {
     /// <summary>
     /// Интерфейс - обработчик сетевого сообщения, который представлен массивом байт

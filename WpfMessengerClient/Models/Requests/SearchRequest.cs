@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace WpfMessengerClient.Models.Requests
 {
     /// <summary>
-    /// Данные о поисковом запросе
+    /// Класс - представляет запрос по поиску пользователя среди зарегистрированных в мессенджере
     /// </summary>
     public class SearchRequest : BaseNotifyPropertyChanged, IDataErrorInfo
     {
@@ -34,15 +30,13 @@ namespace WpfMessengerClient.Models.Requests
 
         #region Приватные поля
 
-        /// <summary>
-        /// Имя
-        /// </summary>
+        /// <inheritdoc cref="Name"/>
         private string _name;
 
-        /// <summary>
-        /// Номер телефона
-        /// </summary>
+        /// <inheritdoc cref="PhoneNumber"/>
         private string _phoneNumber;
+
+        /// <inheritdoc cref="Error"
         private string _error;
 
         #endregion Приватные поля
@@ -94,26 +88,53 @@ namespace WpfMessengerClient.Models.Requests
             }
         }
 
+        /// <summary>
+        /// Ошибка при валидации телефона
+        /// </summary>
         public string PhoneNumberError { get; private set; }
+
+        /// <summary>
+        /// Ошибка при валидации имени
+        /// </summary>
         public string NameError { get; private set; }
+
+        #endregion Свойства
+
+        #region Конструкторы
+
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
+        public SearchRequest()
+        {
+            Name = "";
+            PhoneNumber = "";
+            PhoneNumberError = "";
+            NameError = "";
+        }
+
+        #endregion Конструкторы
 
         /// <summary>
         /// Получает сообщение об ошибке для свойства с заданным именем по индексатору
         /// </summary>
         /// <param name="propName">Имя свойства</param>
-        /// <returns></returns>
+        /// <returns>Возвращает ошибку, полученную во время валидации</returns>
         public string this[string propName]
         {
             get
             {
-                // Проверяем есть ли у текущего объекта ошибка
-                ValidateAllProperties(propName);
+                ValidateProperty(propName);
 
                 return Error;
             }
         }
 
-        private void ValidateAllProperties(string propName)
+        /// <summary>
+        /// Проверить на корректность свойство
+        /// </summary>
+        /// <param name="propName">Имя свойства</param>
+        private void ValidateProperty(string propName)
         {
             switch (propName)
             {
@@ -147,7 +168,6 @@ namespace WpfMessengerClient.Models.Requests
             {
                 Error = "";
                 PhoneNumberError = "";
-                //HasPhoneNumberError = false;
             }
         }
 
@@ -157,8 +177,6 @@ namespace WpfMessengerClient.Models.Requests
         private void ValidateName()
         {
             Regex regex = new Regex(@"^\w+");
-
-            //Error = "";
 
             if (!String.IsNullOrEmpty(Name) && Name.Length < MinNameLength)
             {
@@ -178,12 +196,6 @@ namespace WpfMessengerClient.Models.Requests
                 NameError = Error;
             }
 
-            //else if (HasPasswordError == false && HasRepeatedPasswordError == false && HasPhoneNumberError == false)
-            //{
-            //    Error = "";
-            //    _hasNameError = false;
-            //}
-
             else
             {
                 Error = "";
@@ -192,31 +204,19 @@ namespace WpfMessengerClient.Models.Requests
 
         }
 
-        #endregion Свойства
-
-        #region Конструкторы
-
         /// <summary>
-        /// Конструктор по умолчанию
+        /// Запрос содержит ошибку?
         /// </summary>
-        public SearchRequest()
-        {
-            Name = "";
-            PhoneNumber = "";
-            PhoneNumberError = "";
-            NameError = "";
-        }
-
-        #endregion Конструкторы
-
+        /// <returns>true - если содержит, false - если нет</returns>
         public bool HasNotErrors()
         {
-            if (PhoneNumberError == "" && NameError == "" && (PhoneNumber != "" || Name != ""))
-                return true;
-
-            return false;
+            return PhoneNumberError == "" && NameError == "" && (PhoneNumber != "" || Name != "");
         }
 
+        /// <summary>
+        /// Получить текст ошибки запроса
+        /// </summary>
+        /// <returns>текст ошибки запроса</returns>
         public string GetError()
         {
             if (PhoneNumberError != "")

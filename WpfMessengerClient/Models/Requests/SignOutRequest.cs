@@ -16,6 +16,10 @@ namespace WpfMessengerClient.Models.Requests
         /// </summary>
         public int UserId { get; init; }
 
+        /// <summary>
+        /// Конструктор с параметром
+        /// </summary>
+        /// <param name="userId">Id пользователя</param>
         public SignOutRequest(int userId)
         {
             UserId = userId;

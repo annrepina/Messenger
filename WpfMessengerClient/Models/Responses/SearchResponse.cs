@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace WpfMessengerClient.Models.Responses
 {
     /// <summary>
-    /// Класс, который представляет ответ на запрос поиска пользователя с удачным результатом 
+    /// Класс, который представляет ответ на запрос поиска пользователя среди зарегестированных в мессенджере
     /// </summary>
     public class SearchResponse : Response
     {
@@ -20,6 +20,8 @@ namespace WpfMessengerClient.Models.Responses
         /// <summary>
         /// Конструктор с параметром
         /// </summary>
+        /// <param name="relevantUsers">Пользователи удовлетворяющие поиску</param>
+        /// <param name="status">Статус ответа</param>
         public SearchResponse(List<User> relevantUsers, NetworkResponseStatus status) : base(status)
         {
             RelevantUsers = relevantUsers;
