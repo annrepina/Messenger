@@ -1,25 +1,32 @@
-﻿using CommonLib.NetworkServices;
-using CommonLib.NetworkServices.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Common.NetworkServices;
+using Common.NetworkServices.Interfaces;
 
 namespace ConsoleMessengerServer.Responses
 {
+    /// <summary>
+    /// Класс представлят ответ на запрос
+    /// </summary>
     public class Response : IResponse
     {
+        /// <summary>
+        /// Статус ответа
+        /// </summary>
         public NetworkResponseStatus Status { get; set; }
 
+        /// <summary>
+        /// Конструктор с параметром
+        /// </summary>
+        /// <param name="status">Статус ответа</param>
         public Response(NetworkResponseStatus status)
         {
             Status = status;
         }
 
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public Response()
         {
-            //Status = NetworkResponseStatus.Successful;
         }
     }
 }

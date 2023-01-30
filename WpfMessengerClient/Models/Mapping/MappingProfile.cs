@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using CommonLib.Dto;
-using CommonLib.Dto.Requests;
-using CommonLib.Dto.Responses;
+using Common.Dto;
+using Common.Dto.Requests;
+using Common.Dto.Responses;
 using System.Linq;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
@@ -35,7 +35,7 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();
             CreateMap<ExtendedDeleteMessageRequest, ExtendedDeleteMessageRequestDto>().ReverseMap();
             CreateMap<DeleteMessageRequestDto, DeleteMessageRequest>().ReverseMap();
-            CreateMap<ExtendedReadMessagesRequest, MessagesReadRequestDto>().ReverseMap();
+            CreateMap<ExtendedReadMessagesRequest, ExtendedReadMessagesRequestDto>().ReverseMap();
             CreateMap<ReadMessagesRequestDto, ReadMessagesRequest>().ReverseMap();
 
             CreateMap<SignUpRequest, SignUpRequestDto>().ReverseMap();

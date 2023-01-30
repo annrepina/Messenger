@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleMessengerServer.Entities
+﻿namespace ConsoleMessengerServer.Entities
 {
     /// <summary>
     /// Класс - сущность данных пользователя
@@ -14,7 +6,7 @@ namespace ConsoleMessengerServer.Entities
     public class User
     {
         /// <summary>
-        /// Идентификатор
+        /// Id
         /// </summary>
         public int Id { get; set; }
 
@@ -32,11 +24,6 @@ namespace ConsoleMessengerServer.Entities
         /// Пароль
         /// </summary>
         public string Password { get; set; }
-
-        ///// <summary>
-        ///// Пользователь онлайн?
-        ///// </summary>
-        //public bool IsOnline { get; set; }
 
         /// <summary>
         /// Список диалогов
@@ -58,9 +45,9 @@ namespace ConsoleMessengerServer.Entities
         }
 
         /// <summary>
-        /// Перегрузка метода приведение объекта класса к строке
+        /// Перегрузка метода ToString()
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Строковое представление объекта класса</returns>
         public override string ToString()
         {
             return $"Id: {Id}. Имя: {Name}. Телефон: {PhoneNumber}. Пароль: {Password}";

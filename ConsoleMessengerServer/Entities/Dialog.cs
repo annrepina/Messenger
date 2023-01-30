@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleMessengerServer.Entities
+﻿namespace ConsoleMessengerServer.Entities
 {
     /// <summary>
     /// Класс, который представляет сущность диалога
@@ -13,17 +6,17 @@ namespace ConsoleMessengerServer.Entities
     public class Dialog
     {
         /// <summary>
-        /// Свойство - Id
+        /// Id
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Свойство - список данных пользователей, участвующих в диалоге
+        /// Список данных пользователей, участвующих в диалоге
         /// </summary>
         public List<User> Users { get; set; }
 
         /// <summary>
-        /// Свойство - список сообщений
+        /// Список сообщений
         /// </summary>
         public List<Message> Messages { get; set; }
 

@@ -1,14 +1,7 @@
-﻿using CommonLib.NetworkServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleMessengerServer.Net.Interfaces
+﻿namespace ConsoleMessengerServer.Net.Interfaces
 {
     /// <summary>
-    /// Интерфейс, который обрабатывает сетевые сообщения на стороне клиента
+    /// Интерфейс, который управляет обработкой запросов отпрвленных клиентами
     /// </summary>
     public interface IRequestController
     {
@@ -16,7 +9,7 @@ namespace ConsoleMessengerServer.Net.Interfaces
         /// Обрабатывает массив байтов переданных по сети
         /// </summary>
         /// <param name="data">Полученный массив байтов</param>
-        /// <param name="networkProviderId">Идентификатор отправителя</param>
+        /// <param name="networkProviderId">Идентификатор сетевого провайдера</param>
         /// <returns></returns>
         public byte[] ProcessRequest(byte[] data, IServerNetworProvider networkProviderId);
     }

@@ -1,9 +1,4 @@
-﻿using CommonLib.NetworkServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Common.NetworkServices;
 
 namespace ConsoleMessengerServer.Responses
 {
@@ -22,10 +17,17 @@ namespace ConsoleMessengerServer.Responses
         /// </summary>
         public int MessageId { get; init; }
 
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public CreateDialogResponse() : base()
         {
         }
 
+        /// <summary>
+        /// Конструктор с параметром
+        /// </summary>
+        /// <param name="status">Статус ответа</param>
         public CreateDialogResponse(NetworkResponseStatus status) : base(status)
         {
         }

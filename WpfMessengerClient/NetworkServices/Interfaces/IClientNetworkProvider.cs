@@ -1,4 +1,4 @@
-﻿using CommonLib.NetworkServices.Interfaces;
+﻿using Common.NetworkServices.Interfaces;
 using System;
 using WpfMessengerClient.NetworkMessageProcessing;
 

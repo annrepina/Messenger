@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfMessengerClient", "WpfMe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleMessengerServer", "ConsoleMessengerServer\ConsoleMessengerServer.csproj", "{ED046568-27C5-4F8A-871E-F52FCCAF9B2F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLib", "DtoLib\CommonLib.csproj", "{38D0DDFE-30EE-4D52-A09C-8E25D9331E8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{38D0DDFE-30EE-4D52-A09C-8E25D9331E8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

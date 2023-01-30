@@ -1,4 +1,4 @@
-﻿using CommonLib.Dto;
+﻿using Common.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ConsoleMessengerServer.Net;
 using ConsoleMessengerServer.Responses;
-using CommonLib.Dto.Requests;
-using CommonLib.Dto.Responses;
+using Common.Dto.Requests;
+using Common.Dto.Responses;
 using ConsoleMessengerServer.Requests;
 
 namespace ConsoleMessengerServer.Entities.Mapping
@@ -28,14 +28,14 @@ namespace ConsoleMessengerServer.Entities.Mapping
             CreateMap<CreateDialogResponse, CreateDialogResponseDto>().ReverseMap();
             CreateMap<Dialog, CreateDialogResponse>().ForMember(dest => dest.DialogId, exp => exp.MapFrom(dial => dial.Id))
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
-            CreateMap<DeleteDialogRequestForClient, DeleteDialogRequestDto>().ReverseMap();
+            CreateMap<DeleteDialogRequest, DeleteDialogRequestDto>().ReverseMap();
             CreateMap<Response, ResponseDto>().ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
             CreateMap<SendMessageRequestDto, SendMessageRequest>().ReverseMap();
             CreateMap<SendMessageResponse, SendMessageResponseDto>().ReverseMap();
-            CreateMap<MessagesAreReadRequestForClient, ReadMessagesRequestDto>().ReverseMap();
-            CreateMap<DeleteMessageRequestForClient, DeleteMessageRequestDto>().ReverseMap();
+            CreateMap<ReadMessagesRequest, ReadMessagesRequestDto>().ReverseMap();
+            CreateMap<DeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
 
             CreateMap<SignUpResponse, SignUpResponseDto>().ReverseMap();
             CreateMap<SignInResponse, SignInResponseDto>().ReverseMap();

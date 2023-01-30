@@ -1,16 +1,6 @@
-﻿using ConsoleMessengerServer.DataBase;
-using ConsoleMessengerServer.Entities;
-using ConsoleMessengerServer.Net.Interfaces;
-using CommonLib;
-using CommonLib.Dto;
-using CommonLib.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ConsoleMessengerServer.Net.Interfaces;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.Net
 {
@@ -19,6 +9,9 @@ namespace ConsoleMessengerServer.Net
     /// </summary>
     public class Server
     {
+        /// <summary>
+        /// Отвечает за соединение по сети с клиентами
+        /// </summary>
         private IConnectionController _connectionController;
 
         /// <summary>

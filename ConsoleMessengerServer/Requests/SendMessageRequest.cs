@@ -1,14 +1,9 @@
 ﻿using ConsoleMessengerServer.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.Requests
 {
     /// <summary>
-    /// Запрос на отправку сообщениясодержащий в себе сообщение
+    /// Запрос на отправку сообщения
     /// </summary>
     public class SendMessageRequest
     {

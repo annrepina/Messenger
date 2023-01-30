@@ -33,7 +33,7 @@ namespace WpfMessengerClient.Models.Mapping
         /// <summary>
         /// Метод получения единственного экземпляра мапинга
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Единственный экземпляр MessengerMapper</returns>
         public static MessengerMapper GetInstance()
         {
             if(_instance == null )
@@ -47,7 +47,7 @@ namespace WpfMessengerClient.Models.Mapping
         /// <summary>
         /// Создать мапер
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Маппер</returns>
         public IMapper CreateIMapper() => new MapperConfiguration(cfg =>
         {
             cfg.AddProfile(_profile);

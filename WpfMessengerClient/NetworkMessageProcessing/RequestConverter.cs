@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CommonLib.NetworkServices;
-using CommonLib.Serialization;
+using Common.NetworkServices;
+using Common.Serialization;
 using WpfMessengerClient.Models.Mapping;
 
 namespace WpfMessengerClient.NetworkMessageProcessing

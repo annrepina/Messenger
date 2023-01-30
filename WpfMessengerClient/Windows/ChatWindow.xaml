@@ -51,7 +51,7 @@
                 <Button Margin="0,5,0,5" Style="{StaticResource RoundedButton}" Width="60"
                              IsEnabled="{Binding AreControlsAvailable}" Command="{Binding SignOutCommand}">
                     <Button.Background>
-                        <ImageBrush Stretch="Uniform" ImageSource="/Windows/logout (1).png">
+                        <ImageBrush Stretch="Uniform" ImageSource="/Windows/Images/logout.png">
                             <ImageBrush.RelativeTransform>
                                 <TransformGroup>
                                     <ScaleTransform CenterY="0.5" CenterX="0.5"/>
@@ -126,10 +126,10 @@
                     </Style>
                 </TabControl.Resources>
 
-                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" >
+                <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#FF021F38">
                     <TabItem.Header>
                         <StackPanel>
-                            <Image Height="35" Width="30" Source="/Windows/chat.png" />
+                            <Image Height="35" Width="30" Source="/Windows/Images/chat.png" />
                             <TextBlock Text="Чаты"/>
                         </StackPanel>
                     </TabItem.Header>
@@ -175,12 +175,12 @@
                 <TabItem FontFamily="Tahoma" FontSize="15" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" >
                     <TabItem.Header>
                         <StackPanel Orientation="Vertical">
-                            <Image Height="35" Width="30" Panel.ZIndex="10" Source="/Windows/magnifier.png" />
+                            <Image Height="35" Width="30" Panel.ZIndex="10" Source="/Windows/Images/magnifier.png" />
                             <TextBlock Text="Поиск"/>
                         </StackPanel>
                     </TabItem.Header>
 
-                    <Grid Background="#FF021F38" HorizontalAlignment="Stretch">
+                    <Grid Background="#FF021F38" HorizontalAlignment="Stretch" MinWidth="250">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="40"/>
                             <RowDefinition Height="50"/>
@@ -199,13 +199,13 @@
                                    HorizontalAlignment="Left" VerticalAlignment="Center" Padding="15" Foreground="White" Grid.ColumnSpan="2" />
                         <TextBox Grid.Row="3" Style="{StaticResource InputSearchingPhoneNumberTextBox}" Grid.ColumnSpan="2" Margin="5,5,5,5" />
 
-                        <Button Grid.Row="4" Background="#FF355D9A" Content="Найти" Command="{Binding SearchCommand}" IsEnabled="{Binding AreControlsAvailable}" Style="{StaticResource RoundedButton}" Grid.ColumnSpan="2" Margin="5,5,5,5"/>
+                        <Button Grid.Row="4" Style="{StaticResource RoundedButton}" Content="Найти" Command="{Binding SearchCommand}" IsEnabled="{Binding AreControlsAvailable}"  Grid.ColumnSpan="2" Margin="5,5,5,5"/>
 
                         <ListView Grid.Row="5" Margin="0,10,0,0" Padding="15" FontFamily="Tahoma" FontSize="18"  
-                                    
+                                    Background="#FF021F38"
                                     BorderBrush="{x:Null}" Foreground="White"
                                     SelectedItem="{Binding SelectedSearchedUser}" 
-                                    Background="Transparent" ItemsSource="{Binding SearchUserResults}" Grid.ColumnSpan="2">
+                                    ItemsSource="{Binding SearchUserResults}" Grid.ColumnSpan="2">
 
                             <ListView.ItemTemplate>
                                 <DataTemplate>
@@ -229,10 +229,11 @@
                             <TextBox Grid.Row="0" Style="{StaticResource InputGreetingMessageTextBox}"
                                      Visibility="{Binding IsGreetTextBoxVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <Button Grid.Row="1" Name="OpenDialogButton" Content="{Binding GreetButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            <Button Grid.Row="1" Name="OpenDialogButton" Style="{StaticResource RoundedButton}"
+                                    Content="{Binding GreetButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                     IsEnabled="{Binding IsGreetButtonEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                     Visibility="{Binding WasSearchedUserSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                    Height="50" VerticalAlignment="Bottom"
+                                    VerticalAlignment="Stretch" FontSize="16"                          
                                     Command="{Binding SendGreetingMesCommand}"/>
 
                         </Grid>

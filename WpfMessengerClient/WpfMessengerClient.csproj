@@ -8,20 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Windows\5f50cf3d4869a94052c1cf18bcab280e.jpg" />
-    <None Remove="Windows\6254-r15.jpg" />
-    <None Remove="Windows\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
-    <None Remove="Windows\chat.png" />
-    <None Remove="Windows\hero-img_copy.jpg" />
-    <None Remove="Windows\logout %281%29.png" />
-    <None Remove="Windows\logout.png" />
-    <None Remove="Windows\loupe.png" />
-    <None Remove="Windows\magnifier.png" />
-    <None Remove="Windows\magnifying-glass.png" />
-    <None Remove="Windows\storm %282%29.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Prism.Core" Version="8.1.97" />
@@ -30,18 +16,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DtoLib\CommonLib.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Windows\chat.png" />
-    <Resource Include="Windows\Images\5f50cf3d4869a94052c1cf18bcab280e.jpg" />
-    <Resource Include="Windows\Images\6254-r15.jpg" />
-    <Resource Include="Windows\Images\beskrajnee-nebo-kak-beskonechnyj-okean.jpg" />
-    <Resource Include="Windows\Images\storm %282%29.png" />
-    <Resource Include="Windows\logout (1).png" />
-    <Resource Include="Windows\logout.png" />
-    <Resource Include="Windows\magnifier.png" />
+    <Resource Include="Windows\Images\storm.png" />
+    <Resource Include="Windows\Images\logout.png" />
+    <Resource Include="Windows\Images\magnifier.png" />
+    <Resource Include="Windows\Images\chat.png" />
+    <Resource Include="Windows\Images\sky.jpg" />
   </ItemGroup>
 
 </Project>

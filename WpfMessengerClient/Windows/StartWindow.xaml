@@ -23,8 +23,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.ColumnSpan="3" Grid.Row="0" Background="#9ba4a8">
-            <Image Grid.ColumnSpan="3" Source="/Windows/Images/beskrajnee-nebo-kak-beskonechnyj-okean.jpg" Stretch="UniformToFill" Opacity="0.99"></Image>
-            <Image Source="/Windows/Images/storm (2).png" Width="88" RenderTransformOrigin="0.5,0.5">
+            <Image Grid.ColumnSpan="3" Source="/Windows/Images/sky.jpg" Stretch="UniformToFill" Opacity="0.99"></Image>
+            <Image Source="/Windows/Images/storm.png" Width="88" RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>

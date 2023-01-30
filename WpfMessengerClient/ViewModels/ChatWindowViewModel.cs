@@ -1,6 +1,6 @@
 ﻿//#define Debug
-using CommonLib.Dto.Requests;
-using CommonLib.NetworkServices;
+using Common.Dto.Requests;
+using Common.NetworkServices;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -490,7 +490,7 @@ namespace WpfMessengerClient.ViewModels
         {
             ExtendedReadMessagesRequest messageIsReadRequest = new ExtendedReadMessagesRequest(messagesId, CurrentUser.Id, dialog.Id);
 
-            var response = await SendRequestAsync<ExtendedReadMessagesRequest, MessagesReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.ReadMessageResponseReceived, NetworkMessageCode.ReadMessagesRequestCode);
+            var response = await SendRequestAsync<ExtendedReadMessagesRequest, ExtendedReadMessagesRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.ReadMessageResponseReceived, NetworkMessageCode.ReadMessagesRequestCode);
 
             ProcessReadMessagesResponse(response, messagesId, dialog);
         }

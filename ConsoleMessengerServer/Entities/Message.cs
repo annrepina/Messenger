@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleMessengerServer.Entities
+﻿namespace ConsoleMessengerServer.Entities
 {
     /// <summary>
     /// Класс - сущность сообщения
@@ -12,42 +6,42 @@ namespace ConsoleMessengerServer.Entities
     public class Message
     {
         /// <summary>
-        /// Свойство - идентификатор сообщения
+        /// Id сообщения
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Свойство - текст сообщения
+        /// Текст сообщения
         /// </summary>
         public string Text { get; set; }
 
         /// <summary>
-        /// Свойство - данные о пользователе - отправителе сообщения
+        /// Пользователь - отправитель сообщения
         /// </summary>
         public User UserSender { get; set; }
 
         /// <summary>
-        /// Свойство - идентификатор данных о пользователе - отправителе сообщения
+        /// Id пользователя - отправителя сообщения
         /// </summary>
         public int UserSenderId { get; set; }
 
         /// <summary>
-        /// Свойство - диалог в котором существует сообщение
+        /// Диалог в котором существует сообщение
         /// </summary>
         public Dialog Dialog { get; set; }
 
         /// <summary>
-        /// Свойство - идентификатор диалога в котором существует сообщение
+        /// Id диалога в котором существует сообщение
         /// </summary>
         public int DialogId { get; set; }
 
         /// <summary>
-        /// Свойство - прочитано сообщение?
+        /// Прочитано сообщение?
         /// </summary>
         public bool IsRead { get; set; }
 
         /// <summary>
-        /// Свойство - дата и время отправки сообщения
+        /// Дата и время отправки сообщения
         /// </summary>
         public DateTime DateTime { get; set; }
     }

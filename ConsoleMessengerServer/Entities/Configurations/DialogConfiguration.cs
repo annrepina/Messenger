@@ -1,15 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleMessengerServer.Entities.Configurations
 {
+    /// <summary>
+    /// Конфигурация для сущности Dialog
+    /// </summary>
     public class DialogConfiguration : IEntityTypeConfiguration<Dialog>
     {
+        /// <summary>
+        /// Настраивает сущность Dialog
+        /// </summary>
+        /// <param name="builder">Строитель, который используется для конфигурации сущности</param>
         public void Configure(EntityTypeBuilder<Dialog> builder)
         {
             builder.HasKey(d => d.Id);

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using CommonLib.Dto;
-using CommonLib.Dto.Requests;
-using CommonLib.Dto.Responses;
-using CommonLib.NetworkServices;
-using CommonLib.Serialization;
+using Common.Dto;
+using Common.Dto.Requests;
+using Common.Dto.Responses;
+using Common.NetworkServices;
+using Common.Serialization;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;

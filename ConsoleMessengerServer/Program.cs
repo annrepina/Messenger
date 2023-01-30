@@ -1,5 +1,4 @@
 ﻿//#define DEBUG
-using ConsoleMessengerServer.Net;
 
 namespace ConsoleMessengerServer
 {
@@ -7,12 +6,9 @@ namespace ConsoleMessengerServer
     {
         static async Task Main(string[] args)
         {
-            //using(App app = new App())
             App app = new App();
 
-            //Task.Run(() => app.ReadStopKey());
-
-            await app.LaunchAsync();            
+            await app.LaunchAsync();
         }
     }
 }

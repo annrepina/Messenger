@@ -31,45 +31,13 @@
                                         </Binding.ValidationRules>
                                     </Binding>
                                 </TextBox.Text>
-                                <!--KeyDown="OnPhoneNumberInputTextBoxBackspaceDown">-->
-                                <!--<TextBox.InputBindings>
-                                    -->
-                                <!--<KeyBinding Command="{Binding OnRegisterInMessengerCommand}" Key="Return"/>-->
-                                <!--
-                                    <KeyBinding Key="Backspace" Command="{Binding OnPhoneNumberInputTextBoxBackspaceDownCommand}" />
-                                </TextBox.InputBindings>-->
-
-                                <!--<TextBox.Style>
-                                    <Style TargetType="TextBox">
-                                        <Style.Triggers>
-                                            <Trigger Property="Validation.HasError" Value="true">
-                                                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)[0].ErrorContent}"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBox.Style>-->
 
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
                                         <Setter Property="Validation.ErrorTemplate">
                                             <Setter.Value>
                                                 <ControlTemplate>
-                                                    <!--<StackPanel>
-                                                        <AdornedElementPlaceholder />
-                                                        <ItemsControl
-                                                            Margin="0 5 0 0"
-                                                            FontSize="8"
-                                                            ItemsSource="{Binding}">
-                                                            <ItemsControl.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <TextBlock Foreground="Red" Text="{Binding ErrorContent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                                </DataTemplate>
-                                                            </ItemsControl.ItemTemplate>
-                                                        </ItemsControl>
-                                                    </StackPanel>-->
-                                                    <Border CornerRadius="8">
-                                                        
-                                                    </Border>
+                                                    <Border CornerRadius="8"/>
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
@@ -77,7 +45,6 @@
                                 </TextBox.Style>
 
                             </TextBox>
-
 
                             <TextBlock IsHitTestVisible="False"
                                        Text="+7"
@@ -104,9 +71,6 @@
                         </Grid>
                     </Border>
                 </ControlTemplate>
-
-
-
 
             </Setter.Value>
         </Setter>

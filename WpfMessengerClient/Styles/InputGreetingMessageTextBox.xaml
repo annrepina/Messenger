@@ -6,9 +6,6 @@
         <Setter Property="Margin" Value="5"/>
         <Setter Property="IsEnabled" Value="{Binding IsGreetTextBoxEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--<Setter Property="Visibility" Value="{Binding IsGreetingMessageTextBoxAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
-        <!--<Setter Property="Height" Value="50"/>-->
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -24,8 +21,8 @@
                                      BorderThickness="0"
                                      Foreground="Gray"
                                      CaretBrush="Gray"
-                                     Margin="8,0,0,0"
-                                     FontSize="16">
+                                     Margin="8,0,8,0"
+                                     FontSize="14">
                                 <TextBox.Text>
                                     <Binding Path="GreetingMessage.Text" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                         <Binding.ValidationRules>
@@ -39,10 +36,10 @@
                                        Text="Введите приветственное сообщение"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Left"
-                                       Margin="10,0,0,0"
+                                       Margin="8,0,8,0"
                                        Foreground="#FF5F5D5D"
                                        FontFamily="Tahoma"
-                                       FontSize="16">
+                                       FontSize="14">
 
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">

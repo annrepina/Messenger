@@ -1,16 +1,10 @@
-﻿using CommonLib.NetworkServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Common.NetworkServices;
 
 namespace ConsoleMessengerServer.Responses
 {
     /// <summary>
     /// Представляет ответ на запрос об отправке сообщения для пользователя, который его отправил.
     /// Подтверждает, что сообщение отправлено.
-    /// Обертка для идентификатора отправленного сообщения
     /// </summary>
     public class SendMessageResponse : Response
     {
@@ -19,6 +13,10 @@ namespace ConsoleMessengerServer.Responses
         /// </summary>
         public int MessageId { get; init; }
 
+        /// <summary>
+        /// Конструктор с параметром
+        /// </summary>
+        /// <param name="status">Статус ответа</param>
         public SendMessageResponse(NetworkResponseStatus status) : base(status)
         {
         }
@@ -27,6 +25,7 @@ namespace ConsoleMessengerServer.Responses
         /// Конструктор с параметром
         /// </summary>
         /// <param name="id">Идентификатор сообщения</param>
+        /// <param name="status">Статус ответа</param>
         public SendMessageResponse(int id, NetworkResponseStatus status) : base(status)
         {
             MessageId = id;
