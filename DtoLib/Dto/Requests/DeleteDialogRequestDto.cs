@@ -1,30 +1,17 @@
 ﻿using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DtoLib.Dto.Requests
+namespace CommonLib.Dto.Requests
 {
+    /// <summary>
+    /// Data transfer object который представляет собой запрос от сервера клиенту на удаление диалога
+    /// </summary>
     [ProtoContract]
     public class DeleteDialogRequestDto
     {
         /// <summary>
-        /// Идентификатор диалога, который нужно удалить
+        /// Id диалога
         /// </summary>
         [ProtoMember(1)]
         public int DialogId { get; init; }
-
-        /// <summary>
-        /// Идентификатор пользователя, удалившего диалог
-        /// </summary>
-        [ProtoMember(2)]
-        public int UserId { get; init; }
-
-        public override string ToString()
-        {
-            return $"Пользователь - Id: {UserId} отправил запрос на удаление диалога - Id: {DialogId}.";
-        }
     }
 }

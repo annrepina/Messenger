@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ConsoleMessengerServer.Entities;
 using ConsoleMessengerServer.Entities.Mapping;
-using DtoLib.Dto.Requests;
+using CommonLib.Dto.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleMessengerServer.DataBase
@@ -53,7 +53,7 @@ namespace ConsoleMessengerServer.DataBase
             }//using
         }
 
-        public void ReadMessages(MessagesAreReadRequestDto messagesAreReadRequest)
+        public void ReadMessages(MessagesReadRequestDto messagesAreReadRequest)
         {
             using (var dbContext = new MessengerDbContext())
             {
@@ -147,7 +147,7 @@ namespace ConsoleMessengerServer.DataBase
             }
         }
 
-        public Dialog? FindDialog(DeleteDialogRequestDto deleteDialogRequestDto)
+        public Dialog? FindDialog(ExtendedDeleteDialogRequestDto deleteDialogRequestDto)
         {
             using (var dbContext = new MessengerDbContext())
             {
@@ -197,7 +197,7 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="messageId">Id сообщения</param>
         /// <returns></returns>
-        public Message? FindMessage(DeleteMessageRequestDto deleteMessageRequestDto)
+        public Message? FindMessage(ExtendedDeleteMessageRequestDto deleteMessageRequestDto)
         {
             using (var dbContext = new MessengerDbContext())
             {

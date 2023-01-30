@@ -1,5 +1,5 @@
-﻿using DtoLib.Dto;
-using DtoLib.Serialization;
+﻿using CommonLib.Dto;
+using CommonLib.Serialization;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.NetworkServices
+namespace CommonLib.NetworkServices
 {
     /// <summary>
     /// Сетевое сообщение, которое будет отправляться от клиентского приложения к серверному и обратно

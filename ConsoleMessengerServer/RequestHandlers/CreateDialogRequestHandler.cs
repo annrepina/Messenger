@@ -3,11 +3,11 @@ using ConsoleMessengerServer.DataBase;
 using ConsoleMessengerServer.Entities;
 using ConsoleMessengerServer.Net.Interfaces;
 using ConsoleMessengerServer.Responses;
-using DtoLib.Dto;
-using DtoLib.Dto.Requests;
-using DtoLib.Dto.Responses;
-using DtoLib.NetworkServices;
-using DtoLib.Serialization;
+using CommonLib.Dto;
+using CommonLib.Dto.Requests;
+using CommonLib.Dto.Responses;
+using CommonLib.NetworkServices;
+using CommonLib.Serialization;
 
 namespace ConsoleMessengerServer.RequestHandlers
 {

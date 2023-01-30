@@ -1,15 +1,10 @@
-﻿using DtoLib.NetworkServices;
+﻿using CommonLib.NetworkServices;
 using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DtoLib.Dto.Responses
+namespace CommonLib.Dto.Responses
 {
     /// <summary>
-    /// Dto для данных представляющих ответ на успешную регистрацию пользователя в мессенджере
+    /// Data transfer onject представляющий ответ на запрос о регистрации пользователя в мессенджере
     /// </summary>
     [ProtoContract]
     public class SignUpResponseDto
@@ -20,7 +15,10 @@ namespace DtoLib.Dto.Responses
         [ProtoMember(1)]
         public int UserId { get; init; }
 
+        /// <summary>
+        /// Статус ответа
+        /// </summary>
         [ProtoMember(2)]
-        public NetworkResponseStatus Status { get; set; }
+        public NetworkResponseStatus Status { get; init; }
     }
 }

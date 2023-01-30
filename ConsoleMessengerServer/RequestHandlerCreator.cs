@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ConsoleMessengerServer.Net.Interfaces;
 using ConsoleMessengerServer.RequestHandlers;
-using DtoLib.NetworkServices;
+using CommonLib.NetworkServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;

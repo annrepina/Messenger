@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.NetworkServices
+namespace CommonLib.NetworkServices
 {
     public enum NetworkResponseStatus : byte
     {

@@ -1,6 +1,6 @@
 ﻿//#define Debug
-using DtoLib.Dto.Requests;
-using DtoLib.NetworkServices;
+using CommonLib.Dto.Requests;
+using CommonLib.NetworkServices;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -490,7 +490,7 @@ namespace WpfMessengerClient.ViewModels
         {
             ExtendedReadMessagesRequest messageIsReadRequest = new ExtendedReadMessagesRequest(messagesId, CurrentUser.Id, dialog.Id);
 
-            var response = await SendRequestAsync<ExtendedReadMessagesRequest, MessagesAreReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.ReadMessageResponseReceived, NetworkMessageCode.MessagesAreReadRequestCode);
+            var response = await SendRequestAsync<ExtendedReadMessagesRequest, MessagesReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.ReadMessageResponseReceived, NetworkMessageCode.MessagesAreReadRequestCode);
 
             ProcessReadMessagesResponse(response, messagesId, dialog);
         }
@@ -533,13 +533,13 @@ namespace WpfMessengerClient.ViewModels
             if (ActiveDialog.Messages.Count > 1)
             {
                 ExtendedDeleteMessageRequest deleteMessageRequest = new ExtendedDeleteMessageRequest(SelectedMessage.Id, ActiveDialog.Id, CurrentUser.Id);
-                var response = await SendRequestAsync<ExtendedDeleteMessageRequest, DeleteMessageRequestDto, Response>(deleteMessageRequest, _networkMessageHandler.DeleteMessageResponseReceived, NetworkMessageCode.DeleteMessageRequestCode);
+                var response = await SendRequestAsync<ExtendedDeleteMessageRequest, ExtendedDeleteMessageRequestDto, Response>(deleteMessageRequest, _networkMessageHandler.DeleteMessageResponseReceived, NetworkMessageCode.DeleteMessageRequestCode);
                 ProcessDeleteMessageResponse(response);
             }
             else
             {
                 ExtendedDeleteDialogRequest deleteDialogRequest = new ExtendedDeleteDialogRequest(ActiveDialog.Id, CurrentUser.Id);
-                var response = await SendRequestAsync<ExtendedDeleteDialogRequest, DeleteDialogRequestDto, Response>(deleteDialogRequest, _networkMessageHandler.DeleteDialogResponseReceived, NetworkMessageCode.DeleteDialogRequestCode);
+                var response = await SendRequestAsync<ExtendedDeleteDialogRequest, ExtendedDeleteDialogRequestDto, Response>(deleteDialogRequest, _networkMessageHandler.DeleteDialogResponseReceived, NetworkMessageCode.DeleteDialogRequestCode);
                 ProcessDeleteDialogResponse(response);
             }
 
@@ -615,13 +615,6 @@ namespace WpfMessengerClient.ViewModels
 
                 SystemSounds.Hand.Play();
             });
-
-            //if (HasActiveDialogNewMessage(dialog, message))
-            //{
-            //    List<int> messagesId = new List<int> { message.Id };
-
-            //    SendReadMessagesRequest(messagesId, dialog);
-            //}
 
             dialog.CheckLastMessagesRead();
         }

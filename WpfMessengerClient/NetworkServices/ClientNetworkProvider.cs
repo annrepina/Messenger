@@ -1,6 +1,6 @@
 ﻿#define DebugExceptions
-using DtoLib.NetworkServices;
-using DtoLib.NetworkServices.Interfaces;
+using CommonLib.NetworkServices;
+using CommonLib.NetworkServices.Interfaces;
 using System;
 using System.IO;
 using System.Net.Sockets;

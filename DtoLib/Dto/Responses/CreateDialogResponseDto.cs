@@ -1,32 +1,30 @@
-﻿using DtoLib.NetworkServices;
+﻿using CommonLib.NetworkServices;
 using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DtoLib.Dto.Responses
+namespace CommonLib.Dto.Responses
 {
     /// <summary>
     /// Data transfer object класса, который представляет ответ на запрос о создании нового диалога
     /// </summary>
     [ProtoContract]
-    public class CreateDialogResponseDto 
+    public class CreateDialogResponseDto
     {
         /// <summary>
         /// Идентификатор созданного диалога
         /// </summary>
         [ProtoMember(1)]
-        public int DialogId { get; set; }
+        public int DialogId { get; init; }
 
         /// <summary>
         /// Идентификатор первого сообщения
         /// </summary>
         [ProtoMember(2)]
-        public int MessageId { get; set; }
+        public int MessageId { get; init; }
 
+        /// <summary>
+        /// Статус ответа
+        /// </summary>
         [ProtoMember(3)]
-        public NetworkResponseStatus Status { get; set; }
+        public NetworkResponseStatus Status { get; init; }
     }
 }

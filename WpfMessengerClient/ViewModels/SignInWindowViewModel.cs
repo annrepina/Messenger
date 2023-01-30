@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using DtoLib.Dto.Requests;
-using DtoLib.NetworkServices;
+using CommonLib.Dto.Requests;
+using CommonLib.NetworkServices;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;

@@ -1,15 +1,10 @@
-﻿using DtoLib.NetworkServices;
+﻿using CommonLib.NetworkServices;
 using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DtoLib.Dto.Responses
+namespace CommonLib.Dto.Responses
 {
     /// <summary>
-    /// Data transfer onject ответа на запрос о регистрации
+    /// Data transfer onject представляющий ответ на запрос о регистрации
     /// </summary>
     [ProtoContract]
     public class SignInResponseDto
@@ -18,13 +13,13 @@ namespace DtoLib.Dto.Responses
         /// Пользователь
         /// </summary>
         [ProtoMember(1)]
-        public UserDto? User { get; set; }
+        public UserDto? User { get; init; }
 
         /// <summary>
         /// Список диалогов пользователя
         /// </summary>
         [ProtoMember(2)]
-        public List<DialogDto>? Dialogs { get; set; }
+        public List<DialogDto>? Dialogs { get; init; }
 
         /// <summary>
         /// Статус ответа
@@ -38,6 +33,9 @@ namespace DtoLib.Dto.Responses
         [ProtoMember(4)]
         public SignInFailContext Context { get; init; }
 
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public SignInResponseDto()
         {
             Dialogs = new List<DialogDto>();

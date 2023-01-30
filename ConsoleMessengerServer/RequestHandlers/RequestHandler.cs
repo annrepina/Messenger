@@ -2,9 +2,9 @@
 using ConsoleMessengerServer.DataBase;
 using ConsoleMessengerServer.Net.Interfaces;
 using ConsoleMessengerServer.Responses;
-using DtoLib.Dto.Responses;
-using DtoLib.NetworkServices;
-using DtoLib.Serialization;
+using CommonLib.Dto.Responses;
+using CommonLib.NetworkServices;
+using CommonLib.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;

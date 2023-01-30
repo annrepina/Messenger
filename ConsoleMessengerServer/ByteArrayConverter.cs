@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ConsoleMessengerServer.Entities.Mapping;
-using DtoLib.NetworkServices;
-using DtoLib.Serialization;
+using CommonLib.NetworkServices;
+using CommonLib.Serialization;
 
 namespace ConsoleMessengerServer
 {

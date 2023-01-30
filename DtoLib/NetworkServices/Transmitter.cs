@@ -1,12 +1,12 @@
-﻿using DtoLib.NetworkServices.Interfaces;
-using DtoLib.Serialization;
+﻿using CommonLib.NetworkServices.Interfaces;
+using CommonLib.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.NetworkServices
+namespace CommonLib.NetworkServices
 {
     /// <summary>
     /// Класс, который отвечает за пересылку байтов между клиентом и сервером.

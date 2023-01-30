@@ -3,10 +3,10 @@ using ConsoleMessengerServer.DataBase;
 using ConsoleMessengerServer.Net.Interfaces;
 using ConsoleMessengerServer.Requests;
 using ConsoleMessengerServer.Responses;
-using DtoLib.Dto.Requests;
-using DtoLib.Dto.Responses;
-using DtoLib.NetworkServices;
-using DtoLib.Serialization;
+using CommonLib.Dto.Requests;
+using CommonLib.Dto.Responses;
+using CommonLib.NetworkServices;
+using CommonLib.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace ConsoleMessengerServer.RequestHandlers
 
         protected override byte[] OnProcess(DbService dbService, NetworkMessage networkMessage, IServerNetworProvider networkProvider)
         {
-            MessagesAreReadRequestDto messagesAreReadRequest = SerializationHelper.Deserialize<MessagesAreReadRequestDto>(networkMessage.Data);
+            MessagesReadRequestDto messagesAreReadRequest = SerializationHelper.Deserialize<MessagesReadRequestDto>(networkMessage.Data);
 
             dbService.ReadMessages(messagesAreReadRequest);
 
@@ -39,16 +39,16 @@ namespace ConsoleMessengerServer.RequestHandlers
             return byteResponse;
         }
 
-        private Response CreateReadMessagesResponse(MessagesAreReadRequestDto readRequest, int networkProviderId)
+        private Response CreateReadMessagesResponse(MessagesReadRequestDto readRequest, int networkProviderId)
         {
             Response response = new Response(NetworkResponseStatus.Successful);
 
             MessagesAreReadRequestForClient readMessagesRequest = new MessagesAreReadRequestForClient(readRequest.MessagesId, readRequest.DialogId);
 
-            //NetworkMessage requestMessage = CreateNetworkMessage(readMessagesRequest, out MessagesAreReadRequestForClientDto dto, NetworkMessageCode.MessagesAreReadRequestCode);
+            //NetworkMessage requestMessage = CreateNetworkMessage(readMessagesRequest, out ReadMessagesRequestDto dto, NetworkMessageCode.MessagesAreReadRequestCode);
 
             //byte[] requestBytes = SerializationHelper.Serialize(requestMessage);
-            byte[] requestBytes = ByteArrayConverter<MessagesAreReadRequestForClient, MessagesAreReadRequestForClientDto>.Convert(readMessagesRequest, NetworkMessageCode.MessagesAreReadRequestCode);
+            byte[] requestBytes = ByteArrayConverter<MessagesAreReadRequestForClient, ReadMessagesRequestDto>.Convert(readMessagesRequest, NetworkMessageCode.MessagesAreReadRequestCode);
 
             _conectionController.BroadcastToSenderAsync(requestBytes, readRequest.UserId, networkProviderId);
 

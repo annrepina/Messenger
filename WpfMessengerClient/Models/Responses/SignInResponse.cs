@@ -1,4 +1,4 @@
-﻿using DtoLib.NetworkServices;
+﻿using CommonLib.NetworkServices;
 using System.Collections.Generic;
 
 namespace WpfMessengerClient.Models.Responses

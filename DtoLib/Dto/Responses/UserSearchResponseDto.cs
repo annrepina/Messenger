@@ -1,29 +1,29 @@
-﻿using DtoLib.NetworkServices;
+﻿using CommonLib.NetworkServices;
 using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DtoLib.Dto.Responses
+namespace CommonLib.Dto.Responses
 {
     /// <summary>
-    /// Data transfer object класса, который представляет собой результат поиска пользователей
+    /// Data transfer object представляет собой ответ на запрос о поиске пользователя среди зарегистрированных в мессенджере
     /// </summary>
     [ProtoContract]
     public class UserSearchResponseDto
     {
         /// <summary>
         /// Пользователи, удовлетворяющие поиску
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
         public List<UserDto> RelevantUsers { get; init; }
 
+        /// <summary>
+        /// Статус ответа
+        /// </summary>
         [ProtoMember(2)]
-        public NetworkResponseStatus Status { get; set; }
+        public NetworkResponseStatus Status { get; init; }
 
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public UserSearchResponseDto()
         {
             RelevantUsers = new List<UserDto>();

@@ -4,8 +4,8 @@ using ConsoleMessengerServer.Entities.Mapping;
 using ConsoleMessengerServer.Net;
 using ConsoleMessengerServer.Net.Interfaces;
 using ConsoleMessengerServer.RequestHandlers;
-using DtoLib.NetworkServices;
-using DtoLib.Serialization;
+using CommonLib.NetworkServices;
+using CommonLib.Serialization;
 
 namespace ConsoleMessengerServer
 {

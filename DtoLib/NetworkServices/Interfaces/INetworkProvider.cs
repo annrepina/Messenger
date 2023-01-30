@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.NetworkServices.Interfaces
+namespace CommonLib.NetworkServices.Interfaces
 {
     /// <summary>
     /// Интерфейс, который представляет собой сетевого провайдера

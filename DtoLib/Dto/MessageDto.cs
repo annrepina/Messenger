@@ -1,52 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DtoLib.Serialization;
-using ProtoBuf;
+﻿using ProtoBuf;
 
-namespace DtoLib.Dto
+namespace CommonLib.Dto
 {
     /// <summary>
-    /// Data transfer object класса Message
+    /// Data transfer object представляет сообщение, которое отправил пользователь
     /// </summary>
     [ProtoContract]
-    public class MessageDto 
+    public class MessageDto
     {
         /// <summary>
-        /// Свойство - id
+        /// Id
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
-        public int Id { get; set; }
+        public int Id { get; init; }
 
         /// <summary>
-        /// Свойство - текст
+        /// Текст
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(2)]
-        public string Text { get; set; }
+        public string Text { get; init; }
 
         /// <summary>
-        /// Свойство - данные о пользователе-отправителе сообщения
+        /// Пользователь-отправитель сообщения
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(3)]
-        public UserDto UserSender { get; set; }
+        public UserDto UserSender { get; init; }
 
         /// <summary>
-        /// Свойство - прочитано ли сообщение 
+        /// Прочитано ли сообщение?
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(4)]
-        public bool IsRead { get; set; }
+        public bool IsRead { get; init; }
 
         /// <summary>
-        /// Свойство - дата и время отправки сообщения
+        /// Дата и время отправки сообщения
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(5)]
-        public DateTime DateTime { get; set; }
+        public DateTime DateTime { get; init; }
     }
 }

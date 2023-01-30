@@ -1,4 +1,4 @@
-﻿namespace DtoLib.NetworkServices.Interfaces
+﻿namespace CommonLib.NetworkServices.Interfaces
 {
     /// <summary>
     /// Интерфейс, который представляет из себя ответ на запрос

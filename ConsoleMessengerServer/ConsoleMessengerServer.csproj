@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DtoLib\DtoLib.csproj" />
+    <ProjectReference Include="..\DtoLib\CommonLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DtoLib.Dto;
-using DtoLib.Dto.Requests;
-using DtoLib.Dto.Responses;
+using CommonLib.Dto;
+using CommonLib.Dto.Requests;
+using CommonLib.Dto.Responses;
 using System.Linq;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
@@ -26,17 +26,17 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<CreateDialogResponse, CreateDialogResponseDto>().ReverseMap();
             CreateMap<Dialog, CreateDialogResponse>().ForMember(dest => dest.DialogId, exp => exp.MapFrom(dial => dial.Id))
                                                      .ForMember(dest => dest.MessageId, exp => exp.MapFrom(dial => dial.Messages.First().Id)).ReverseMap();
-            CreateMap<ExtendedDeleteDialogRequest, DeleteDialogRequestDto>().ReverseMap();
-            CreateMap<DeleteDialogRequestForClientDto, DeleteDialogRequest>().ReverseMap();
+            CreateMap<ExtendedDeleteDialogRequest, ExtendedDeleteDialogRequestDto>().ReverseMap();
+            CreateMap<DeleteDialogRequestDto, DeleteDialogRequest>().ReverseMap();
             CreateMap<ResponseDto, Response>().ReverseMap();
 
             CreateMap<Message, MessageDto>().ReverseMap();
             CreateMap<SendMessageRequest, SendMessageRequestDto>().ReverseMap();
             CreateMap<SendMessageResponseDto, SendMessageResponse>().ReverseMap();
-            CreateMap<ExtendedDeleteMessageRequest, DeleteMessageRequestDto>().ReverseMap();
-            CreateMap<DeleteMessageRequestForClientDto, DeleteMessageRequest>().ReverseMap();
-            CreateMap<ExtendedReadMessagesRequest, MessagesAreReadRequestDto>().ReverseMap();
-            CreateMap<MessagesAreReadRequestForClientDto, ReadMessagesRequest>().ReverseMap();
+            CreateMap<ExtendedDeleteMessageRequest, ExtendedDeleteMessageRequestDto>().ReverseMap();
+            CreateMap<DeleteMessageRequestDto, DeleteMessageRequest>().ReverseMap();
+            CreateMap<ExtendedReadMessagesRequest, MessagesReadRequestDto>().ReverseMap();
+            CreateMap<ReadMessagesRequestDto, ReadMessagesRequest>().ReverseMap();
 
             CreateMap<SignUpRequest, SignUpRequestDto>().ReverseMap();
             CreateMap<SignUpRequest, User>().ReverseMap();

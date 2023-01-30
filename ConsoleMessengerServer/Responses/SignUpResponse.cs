@@ -1,4 +1,4 @@
-﻿using DtoLib.NetworkServices;
+﻿using CommonLib.NetworkServices;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using DtoLib.NetworkServices;
+using CommonLib.NetworkServices;
 using ConsoleMessengerServer.Net.Interfaces;
-using DtoLib.NetworkServices.Interfaces;
+using CommonLib.NetworkServices.Interfaces;
 
 namespace ConsoleMessengerServer.Net
 {

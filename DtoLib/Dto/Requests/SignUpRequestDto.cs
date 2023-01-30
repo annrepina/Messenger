@@ -1,44 +1,38 @@
 ﻿using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DtoLib.Dto.Requests
+namespace CommonLib.Dto.Requests
 {
     /// <summary>
-    /// Data transfer object который представляет информацию, необходимую для регистрации пользователя в мессенджере
+    /// Data transfer object который представляет запрос на регистрацию пользователя в мессенджере
     /// </summary>
     [ProtoContract]
     public class SignUpRequestDto
     {
         /// <summary>
-        /// Свойство - объект класса, который представляет человека
+        /// Номер телефона
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; init; }
 
         /// <summary>
-        /// Свойство - пароль
+        /// Пароль
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(2)]
-        public string Password { get; set; }
+        public string Password { get; init; }
 
         /// <summary>
-        /// Свойство - имя
+        /// Имя
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(3)]
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         /// <summary>
         /// Переопределение метода ToString
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Строковое представление класса</returns>
         public override string ToString()
         {
             return $"Телефон: {PhoneNumber}. Имя: {Name}";

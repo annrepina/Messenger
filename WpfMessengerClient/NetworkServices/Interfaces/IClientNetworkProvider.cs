@@ -1,4 +1,4 @@
-﻿using DtoLib.NetworkServices.Interfaces;
+﻿using CommonLib.NetworkServices.Interfaces;
 using System;
 using WpfMessengerClient.NetworkMessageProcessing;
 

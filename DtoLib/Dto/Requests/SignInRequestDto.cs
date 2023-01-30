@@ -1,14 +1,9 @@
 ﻿using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DtoLib.Dto.Requests
+namespace CommonLib.Dto.Requests
 {
     /// <summary>
-    /// Data transfer object для запроса на вход в мессенджер
+    /// Data transfer object который представляет запрос на вход в мессенджер
     /// </summary>
     [ProtoContract]
     public class SignInRequestDto
@@ -17,14 +12,18 @@ namespace DtoLib.Dto.Requests
         /// Свойство - номер телефона
         /// </summary>
         [ProtoMember(1)]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; init; }
 
         /// <summary>
         /// Свойство - пароль
         /// </summary>
         [ProtoMember(2)]
-        public string Password { get; set; }
+        public string Password { get; init; }
 
+        /// <summary>
+        /// Перегрузка ToString()
+        /// </summary>
+        /// <returns>Строковое представление класса</returns>
         public override string ToString()
         {
             return $"Телефон: {PhoneNumber}.";

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using DtoLib.Dto;
-using DtoLib.Dto.Requests;
-using DtoLib.Dto.Responses;
-using DtoLib.NetworkServices;
-using DtoLib.Serialization;
+using CommonLib.Dto;
+using CommonLib.Dto.Requests;
+using CommonLib.Dto.Responses;
+using CommonLib.NetworkServices;
+using CommonLib.Serialization;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
@@ -170,11 +170,11 @@ namespace WpfMessengerClient.NetworkMessageProcessing
                     break;
 
                 case NetworkMessageCode.DeleteMessageRequestCode:
-                    ProcessNetworkMessage<DeleteMessageRequestForClientDto, DeleteMessageRequest>(networkMessage, DeleteMessageRequestReceived);
+                    ProcessNetworkMessage<DeleteMessageRequestDto, DeleteMessageRequest>(networkMessage, DeleteMessageRequestReceived);
                     break;
 
                 case NetworkMessageCode.MessagesAreReadRequestCode:
-                    ProcessNetworkMessage<MessagesAreReadRequestForClientDto, ReadMessagesRequest>(networkMessage, ReadMessagesRequestReceived);
+                    ProcessNetworkMessage<ReadMessagesRequestDto, ReadMessagesRequest>(networkMessage, ReadMessagesRequestReceived);
                     break;
 
                 case NetworkMessageCode.MessagesAreReadResponseCode:
@@ -186,7 +186,7 @@ namespace WpfMessengerClient.NetworkMessageProcessing
                     break;
 
                 case NetworkMessageCode.DeleteDialogRequestCode:
-                    ProcessNetworkMessage<DeleteDialogRequestForClientDto, DeleteDialogRequest>(networkMessage, DeleteDialogRequestReceived);
+                    ProcessNetworkMessage<DeleteDialogRequestDto, DeleteDialogRequest>(networkMessage, DeleteDialogRequestReceived);
                     break;
 
                 case NetworkMessageCode.SignOutResponseCode:

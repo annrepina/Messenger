@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DtoLib.NetworkServices.Interfaces
+namespace CommonLib.NetworkServices.Interfaces
 {
     /// <summary>
     /// Интерфейс который отвечает за пересылку байтов по сети асинхронно

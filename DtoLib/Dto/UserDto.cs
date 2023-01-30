@@ -1,58 +1,48 @@
-﻿using System.Collections.ObjectModel;
-using System.Security.Cryptography;
-using System;
-using ProtoBuf;
-using DtoLib.NetworkServices;
-using DtoLib.Serialization;
+﻿using ProtoBuf;
 
-namespace DtoLib.Dto
+namespace CommonLib.Dto
 {
     /// <summary>
-    /// Data transfer object класса UserData
+    /// Data transfer object представляет пользователя
     /// </summary>
     [ProtoContract]
-    public class UserDto 
+    public class UserDto
     {
         /// <summary>
-        /// Свойство - идентификатор
+        /// Id
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(1)]
-        public int Id { get; set; }
+        public int Id { get; init; }
 
         /// <summary>
-        /// Свойство - имя
+        /// Имя
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(2)]
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         /// <summary>
-        /// Свойство - номер телефона
+        /// Номер телефона
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(3)]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; init; }
 
         /// <summary>
-        /// Свойство - пароль
+        /// Пароль
         /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
         /// </summary>
         [ProtoMember(4)]
-        public string Password { get; set; }
-
-
-        #region Debug
+        public string Password { get; init; }
 
         /// <summary>
         /// Переопределение метода ToString
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Строковое представление класса</returns>
         public override string ToString()
         {
             return $"Id: {Id}. PhoneNumber: {PhoneNumber}. Password: {Password}.";
         }
-
-        #endregion Debug
     }
 }
