@@ -29,11 +29,6 @@ namespace CommonLib.NetworkServices.Interfaces
         /// <param name="data">Отправляемые данные</param>
         public Task SendBytesAsync(byte[] data);
 
-        ///// <summary>
-        ///// Считать массив байт с сетевого потока асинхронно
-        ///// </summary>
-        //public Task ReadBytesAsync();
-
         /// <summary>
         /// Уведомить об отключении от сети
         /// </summary>

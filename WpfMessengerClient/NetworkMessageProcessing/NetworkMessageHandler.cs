@@ -145,7 +145,7 @@ namespace WpfMessengerClient.NetworkMessageProcessing
                     ProcessNetworkMessage<SignInResponseDto, SignInResponse>(networkMessage, SignInResponseReceived);
                     break;
 
-                case NetworkMessageCode.SearchUserResponseCode:
+                case NetworkMessageCode.SearchResponseCode:
                     ProcessNetworkMessage<UserSearchResponseDto, SearchResponse>(networkMessage, SearchResponseReceived);
                     break;
 
@@ -173,11 +173,11 @@ namespace WpfMessengerClient.NetworkMessageProcessing
                     ProcessNetworkMessage<DeleteMessageRequestDto, DeleteMessageRequest>(networkMessage, DeleteMessageRequestReceived);
                     break;
 
-                case NetworkMessageCode.MessagesAreReadRequestCode:
+                case NetworkMessageCode.ReadMessagesRequestCode:
                     ProcessNetworkMessage<ReadMessagesRequestDto, ReadMessagesRequest>(networkMessage, ReadMessagesRequestReceived);
                     break;
 
-                case NetworkMessageCode.MessagesAreReadResponseCode:
+                case NetworkMessageCode.ReadMessagesResponseCode:
                     ProcessNetworkMessage<ResponseDto, Response>(networkMessage, ReadMessageResponseReceived);
                     break;
 

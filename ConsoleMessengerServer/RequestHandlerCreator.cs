@@ -40,7 +40,7 @@ namespace ConsoleMessengerServer
                 case NetworkMessageCode.SignOutRequestCode:
                     return new SignOutRequestHandler(mapper, connectionController);
 
-                case NetworkMessageCode.MessagesAreReadRequestCode:
+                case NetworkMessageCode.ReadMessagesRequestCode:
                     return new ReadMessagesRequestHandler(mapper, connectionController);
 
                 default:

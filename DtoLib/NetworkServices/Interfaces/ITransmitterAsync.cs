@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CommonLib.NetworkServices.Interfaces
+﻿namespace CommonLib.NetworkServices.Interfaces
 {
     /// <summary>
-    /// Интерфейс который отвечает за пересылку байтов по сети асинхронно
+    /// Интерфейс - трансмиттер который отвечает за пересылку байтов по сети асинхронно
     /// </summary>
     public interface ITransmitterAsync
     {
         /// <summary>
         /// Отправить сетевое сообщение серверу асинхронно
         /// </summary>
-        /// <param name="networkMessage">Сетевое сообщение в виде байтов</param>
-        public Task SendNetworkMessageAsync(byte[] networkMessage);
+        /// <param name="networkMessageBytes">Сетевое сообщение в виде байтов</param>
+        public Task SendNetworkMessageAsync(byte[] networkMessageBytes);
 
+        /// <summary>
+        /// Получить массив байт из потока асинхронно
+        /// </summary>
+        /// <returns>Массив полученных байт</returns>
         public Task<byte[]> ReceiveBytesAsync();
     }
 }

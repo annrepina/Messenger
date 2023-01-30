@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CommonLib.NetworkServices
+﻿namespace CommonLib.NetworkServices
 {
+    /// <summary>
+    /// Представляет собой код сетевого сообщения
+    /// </summary>
     public enum NetworkMessageCode : byte
     {
         SignUpRequestCode,
@@ -13,7 +10,7 @@ namespace CommonLib.NetworkServices
         SignInRequestCode,
         SignInResponseCode,
         SearcRequestCode,
-        SearchUserResponseCode,
+        SearchResponseCode,
         CreateDialogRequestCode,
         CreateDialogResponseCode,
         SendMessageRequestCode,
@@ -24,7 +21,7 @@ namespace CommonLib.NetworkServices
         DeleteDialogResponseCode,
         SignOutRequestCode,
         SignOutResponseCode,
-        MessagesAreReadRequestCode,
-        MessagesAreReadResponseCode
+        ReadMessagesRequestCode,
+        ReadMessagesResponseCode
     }
 }

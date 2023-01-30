@@ -1,10 +1,4 @@
-﻿using CommonLib.Dto;
-using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ProtoBuf;
 
 namespace CommonLib.Serialization
 {
@@ -20,7 +14,6 @@ namespace CommonLib.Serialization
         /// <param name="data">Данные в виде массива байтов</param>
         /// <returns></returns>
         public static T Deserialize<T>(byte[] data)
-            //where T : class
         {
             try
             {
@@ -53,7 +46,7 @@ namespace CommonLib.Serialization
                     return memoryStream.ToArray();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine("Не существует протокола сериализации для объекта данного типа");
                 throw;

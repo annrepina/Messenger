@@ -490,7 +490,7 @@ namespace WpfMessengerClient.ViewModels
         {
             ExtendedReadMessagesRequest messageIsReadRequest = new ExtendedReadMessagesRequest(messagesId, CurrentUser.Id, dialog.Id);
 
-            var response = await SendRequestAsync<ExtendedReadMessagesRequest, MessagesReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.ReadMessageResponseReceived, NetworkMessageCode.MessagesAreReadRequestCode);
+            var response = await SendRequestAsync<ExtendedReadMessagesRequest, MessagesReadRequestDto, Response>(messageIsReadRequest, _networkMessageHandler.ReadMessageResponseReceived, NetworkMessageCode.ReadMessagesRequestCode);
 
             ProcessReadMessagesResponse(response, messagesId, dialog);
         }
