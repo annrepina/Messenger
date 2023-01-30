@@ -21,7 +21,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Менеджер окон приложения
         /// </summary>
-        protected readonly MessengerWindowsManager _messengerWindowsManager;
+        protected readonly WindowsManager _messengerWindowsManager;
 
         /// <summary>
         /// Сетевой провайдер, отвечающий за передачу данных по сети
@@ -51,7 +51,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="windowsManager">Менеджер окон приложения</param>
         /// <param name="networkMessageHandler">Обработчик сетевого сообщения</param>
         /// <param name="networkProvider">Сетевой провайдер</param>
-        public BaseViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
+        public BaseViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
         {
             _messengerWindowsManager = windowsManager;
             _networkMessageHandler = networkMessageHandler;

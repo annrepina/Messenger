@@ -259,40 +259,6 @@ namespace WpfMessengerClient.Models.Requests
             }
         }
 
-
-        ///// <summary>
-        ///// Проверить на корректность пароль
-        ///// </summary>
-        //protected void ValidateRepeatedPassword()
-        //{
-        //    Regex regex = new Regex(@"^\w{6}");
-
-        //    //Error = "";
-
-        //    if (!regex.IsMatch(RepeatedPassword))
-        //    {
-
-        //    }
-        //        Error = "Пароль может состоять из заглавных и строчных букв, а также цифр";
-
-        //    else if (RepeatedPassword.Length > MaxLengthOfPassword)
-        //        Error = "Пароль должен содержать не больше 10ти символов";
-
-        //    else if (RepeatedPassword.Length < MinLengthOfPassword)
-        //        Error = "Пароль должен содержать не меньше 6ти символов";
-
-        //    else if (Password != "" && RepeatedPassword != Password)
-        //        Error = "Пароли должны совпадать";
-
-        //    else if(HasPasswordError == false && _hasNameError == false && HasPhoneNumberError == false)
-        //    {
-        //        Error = "";
-        //        HasRepeatedPasswordError = false;
-        //    }
-        //    else
-        //        HasRepeatedPasswordError = false;
-        //}
-
         /// <summary>
         /// Проверить на корретность имя
         /// </summary>

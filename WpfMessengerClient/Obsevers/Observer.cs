@@ -36,14 +36,14 @@ namespace WpfMessengerClient.Obsevers
 
             _event = eventWrapper;
 
-            _event.NetworkMessageReceived += OnEventOccured;
+            _event.EventOccurred += OnEventOccured;
         }
 
         protected void OnEventOccured(TResponse response)
         {
             Response = response;
 
-            _event.NetworkMessageReceived -= OnEventOccured;
+            _event.EventOccurred -= OnEventOccured;
 
             _completionSource.SetResult();
         }

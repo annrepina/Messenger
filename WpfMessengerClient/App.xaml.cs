@@ -18,7 +18,7 @@ namespace WpfChatClient
         /// <summary>
         /// Свойство - Менеджер окон приложения
         /// </summary>
-        public MessengerWindowsManager MessengerWindowsManager { get; set; }
+        public WindowsManager MessengerWindowsManager { get; set; }
 
         /// <summary>
         /// Переопределение метода OnStartup
@@ -28,7 +28,7 @@ namespace WpfChatClient
         {
             base.OnStartup(e);
 
-            MessengerWindowsManager = new MessengerWindowsManager(this);
+            MessengerWindowsManager = new WindowsManager(this);
 
             MessengerWindowsManager.OpenStartWindow();
         }

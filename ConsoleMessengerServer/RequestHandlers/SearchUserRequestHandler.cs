@@ -29,7 +29,7 @@ namespace ConsoleMessengerServer.RequestHandlers
 
         protected override byte[] OnProcess(DbService dbService, NetworkMessage networkMessage, IServerNetworProvider networkProvider)
         {
-            UserSearchRequestDto searchRequestDto = SerializationHelper.Deserialize<UserSearchRequestDto>(networkMessage.Data);
+            SearchRequestDto searchRequestDto = SerializationHelper.Deserialize<SearchRequestDto>(networkMessage.Data);
 
             List<User> usersList = dbService.FindListOfUsers(searchRequestDto);
 

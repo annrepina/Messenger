@@ -4,7 +4,8 @@
         <Setter Property="Foreground" Value="Gray"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="Margin" Value="5"/>
-        <Setter Property="IsEnabled" Value="{Binding IsGreetingMessageTextBoxAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Setter Property="IsEnabled" Value="{Binding IsGreetTextBoxEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
         <!--<Setter Property="Visibility" Value="{Binding IsGreetingMessageTextBoxAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
         <!--<Setter Property="Height" Value="50"/>-->
 

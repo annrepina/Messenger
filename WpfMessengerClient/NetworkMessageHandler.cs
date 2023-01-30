@@ -36,7 +36,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие  - ответ от сервера на запрос о поиске пользователя получен
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<UserSearchResponse> UserSearchResponseReceived = new();
+        public readonly NetworkMessageHandlerEvent<SearchResponse> SearchResponseReceived = new();
 
         /// <summary>
         /// Событие - ответ от сервера на запрос о создании диалога получен
@@ -86,7 +86,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие - запрос от сервера о прочтении сообщения текущим пользователем на другом клиенте получен
         /// </summary>
-        public readonly NetworkMessageHandlerEvent<ReadMessagesRequest> MessagesAreReadRequestForClientReceived = new();
+        public readonly NetworkMessageHandlerEvent<ReadMessagesRequest> ReadMessagesRequestReceived = new();
 
         #endregion События
 
@@ -144,7 +144,7 @@ namespace WpfMessengerClient
                     break;
 
                 case NetworkMessageCode.SearchUserResponseCode:
-                    ProcessNetworkMessage<UserSearchResponseDto, UserSearchResponse>(networkMessage, UserSearchResponseReceived);
+                    ProcessNetworkMessage<UserSearchResponseDto, SearchResponse>(networkMessage, SearchResponseReceived);
                     break;
 
                 case NetworkMessageCode.CreateDialogRequestCode:
@@ -172,7 +172,7 @@ namespace WpfMessengerClient
                     break;
 
                 case NetworkMessageCode.MessagesAreReadRequestCode:
-                    ProcessNetworkMessage<MessagesAreReadRequestForClientDto, ReadMessagesRequest>(networkMessage, MessagesAreReadRequestForClientReceived);
+                    ProcessNetworkMessage<MessagesAreReadRequestForClientDto, ReadMessagesRequest>(networkMessage, ReadMessagesRequestReceived);
                     break;
 
                 case NetworkMessageCode.MessagesAreReadResponseCode:

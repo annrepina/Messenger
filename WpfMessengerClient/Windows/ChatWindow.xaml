@@ -49,7 +49,7 @@
                     </Style>
                 </Border.Resources>
                 <Button Margin="0,5,0,5" Style="{StaticResource RoundedButton}" Width="60"
-                             IsEnabled="{Binding AreControlsAvailable}" Command="{Binding ExitCommand}">
+                             IsEnabled="{Binding AreControlsAvailable}" Command="{Binding SignOutCommand}">
                     <Button.Background>
                         <ImageBrush Stretch="Uniform" ImageSource="/Windows/logout (1).png">
                             <ImageBrush.RelativeTransform>
@@ -227,14 +227,13 @@
                             </Grid.RowDefinitions>
 
                             <TextBox Grid.Row="0" Style="{StaticResource InputGreetingMessageTextBox}"
-                                     Visibility="{Binding IsGreetingMessageTextBoxVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     IsEnabled="{Binding IsGreetingMessageTextBoxAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Visibility="{Binding IsGreetTextBoxVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <Button Grid.Row="1" Name="OpenDialogButton" Content="{Binding OpenDialogButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                    IsEnabled="{Binding IsOpenDialogButtonAvailable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                    Visibility="{Binding WasUserSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            <Button Grid.Row="1" Name="OpenDialogButton" Content="{Binding GreetButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    IsEnabled="{Binding IsGreetButtonEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    Visibility="{Binding WasSearchedUserSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                     Height="50" VerticalAlignment="Bottom"
-                                    Command="{Binding OpenDialogCommand}"/>
+                                    Command="{Binding SendGreetingMesCommand}"/>
 
                         </Grid>
 

@@ -45,8 +45,8 @@ namespace WpfMessengerClient.Models.Mapping
             CreateMap<SignInRequest, SignInRequestDto>().ReverseMap();
             CreateMap<SignInResponseDto, SignInResponse>().ReverseMap();
 
-            CreateMap<UserSearchRequest, UserSearchRequestDto>().ReverseMap();
-            CreateMap<UserSearchResponse, UserSearchResponseDto>().ReverseMap();
+            CreateMap<SearchRequest, SearchRequestDto>().ReverseMap();
+            CreateMap<SearchResponse, UserSearchResponseDto>().ReverseMap();
 
             CreateMap<SignOutRequest, SignOutRequestDto>().ReverseMap(); 
         }

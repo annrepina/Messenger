@@ -11,7 +11,7 @@ namespace DtoLib.Dto.Requests
     /// Data transfer object который представляет информацию, необходимую для поиска пользователя в мессенджере
     /// </summary>
     [ProtoContract]
-    public class UserSearchRequestDto
+    public class SearchRequestDto
     {
         /// <summary>
         /// Свойство - имя

@@ -22,7 +22,7 @@ namespace ConsoleMessengerServer
                 case NetworkMessageCode.SignInRequestCode:
                     return new SignInRequestHandler(mapper, connectionController);
 
-                case NetworkMessageCode.SearchUserRequestCode:
+                case NetworkMessageCode.SearcRequestCode:
                     return new SearchUserRequestHandler(mapper, connectionController);
 
                 case NetworkMessageCode.CreateDialogRequestCode:

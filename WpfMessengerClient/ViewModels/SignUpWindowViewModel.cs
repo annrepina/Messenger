@@ -41,7 +41,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="windowsManager">Менеджер окон</param>
         /// <param name="networkMessageHandler">Обработчик сетевого сообщения</param>
         /// <param name="networkProvider">Сетевой провайдер</param>
-        public SignUpWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider) 
+        public SignUpWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider) 
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
             SignUpCommand = new DelegateCommand(async () => await OnSignUpCommand());

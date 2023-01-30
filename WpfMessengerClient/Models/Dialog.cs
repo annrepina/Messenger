@@ -183,7 +183,7 @@ namespace WpfMessengerClient.Models
                 }
             }
 
-            //CheckLastMessagesToUser();
+            //CheckLastMessagesRead();
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace WpfMessengerClient.Models
         private void OnMessageChanged(object? sender, PropertyChangedEventArgs e)
         {
             //if(e.PropertyName == nameof(Message.IsRead))
-            //    CheckLastMessagesToUser();                
+            //    CheckLastMessagesRead();                
         }
 
         #endregion Обработчики событий
@@ -202,8 +202,7 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Проверить прочитаны ли последние сообщения от собеседника
         /// </summary>
-        /// <param name="userId">Текущий пользователь, которому присылают сообщения</param>
-        public void CheckLastMessagesToUser(int userId)
+        public void CheckLastMessagesRead()
         {
             HasUnreadMessages = Messages.Count > 0 && Messages.Last().IsCurrentUserMessage == false && Messages.Last().IsRead == false;
         }

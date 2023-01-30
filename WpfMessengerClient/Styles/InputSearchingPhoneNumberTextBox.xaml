@@ -25,7 +25,7 @@
                                      CaretBrush="Gray"
                                      Margin="8,0,0,0">
                                 <TextBox.Text>
-                                    <Binding Path="SearchingRequest.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding Path="SearchRequest.PhoneNumber" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                         <Binding.ValidationRules>
                                             <DataErrorValidationRule />
                                         </Binding.ValidationRules>
@@ -48,6 +48,33 @@
                                         </Style.Triggers>
                                     </Style>
                                 </TextBox.Style>-->
+
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Validation.ErrorTemplate">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <!--<StackPanel>
+                                                        <AdornedElementPlaceholder />
+                                                        <ItemsControl
+                                                            Margin="0 5 0 0"
+                                                            FontSize="8"
+                                                            ItemsSource="{Binding}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Foreground="Red" Text="{Binding ErrorContent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>-->
+                                                    <Border CornerRadius="8">
+                                                        
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
 
                             </TextBox>
 

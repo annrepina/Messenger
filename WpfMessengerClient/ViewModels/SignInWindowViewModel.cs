@@ -49,7 +49,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="windowsManager">Менеджер окон</param>
         /// <param name="networkMessageHandler">Обработчик сетевого сообщения</param>
         /// <param name="networkProvider">Сетевой провайдер</param>
-        public SignInWindowViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
+        public SignInWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
             SignInCommand = new DelegateCommand(async () => await SignInAsync());

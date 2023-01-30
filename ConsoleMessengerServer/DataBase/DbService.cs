@@ -118,7 +118,7 @@ namespace ConsoleMessengerServer.DataBase
         /// </summary>
         /// <param name="searchRequestDto">Dto поискового запроса</param>
         /// <returns></returns>
-        public List<User> FindListOfUsers(UserSearchRequestDto searchRequestDto)
+        public List<User> FindListOfUsers(SearchRequestDto searchRequestDto)
         {
             using (var dbContext = new MessengerDbContext())
             {

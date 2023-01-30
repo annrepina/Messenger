@@ -23,12 +23,25 @@
                                      Margin="8,0,0,0"
                                      FontSize="18">
                                 <TextBox.Text>
-                                    <Binding Path="SearchingRequest.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding Path="SearchRequest.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                         <Binding.ValidationRules>
                                             <DataErrorValidationRule />
                                         </Binding.ValidationRules>
                                     </Binding>
                                 </TextBox.Text>
+
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Validation.ErrorTemplate">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <Border CornerRadius="8"/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+
                             </TextBox>
 
                             <TextBlock IsHitTestVisible="False"

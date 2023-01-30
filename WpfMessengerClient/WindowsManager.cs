@@ -11,7 +11,7 @@ namespace WpfMessengerClient
     /// <summary>
     /// Класс, который управляет окнами в текущем приложении
     /// </summary>
-    public class MessengerWindowsManager
+    public class WindowsManager
     {
         /// <summary>
         /// Текущее окно приложения
@@ -27,7 +27,7 @@ namespace WpfMessengerClient
         /// Конструктор с параметром - приложением
         /// </summary>
         /// <param name="currentApplication">Текущее приложение</param>
-        public MessengerWindowsManager(Application currentApplication)
+        public WindowsManager(Application currentApplication)
         {
             _currentApplication = currentApplication;
             _currentApplication.MainWindow = _currentWindow;

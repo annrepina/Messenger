@@ -18,7 +18,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Менеджер окон для мессенджера
         /// </summary>
-        private readonly MessengerWindowsManager _messengerWindowsManager;
+        private readonly WindowsManager _messengerWindowsManager;
 
         /// <summary>
         /// Команда по нажатию на кнопку регистрации
@@ -49,7 +49,7 @@ namespace WpfMessengerClient.ViewModels
         /// Конструктор с параметром
         /// </summary>
         /// <param name="windowsManager">Менеджер окон для приложения</param>
-        public StartWindowViewModel(MessengerWindowsManager windowsManager)
+        public StartWindowViewModel(WindowsManager windowsManager)
         {
             _messengerWindowsManager = windowsManager;
 

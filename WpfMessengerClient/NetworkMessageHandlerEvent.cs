@@ -12,7 +12,7 @@ namespace WpfMessengerClient
         /// <summary>
         /// Событие - сетевое сообщение получено
         /// </summary>
-        public event Action<TData> NetworkMessageReceived;
+        public event Action<TData> EventOccurred;
 
         /// <summary>
         /// Вызов обработчиков события
@@ -20,7 +20,7 @@ namespace WpfMessengerClient
         /// <param name="data">Данные, хранящиеся в сетевом сообщении</param>
         public void Invoke(TData data)
         {
-            NetworkMessageReceived?.Invoke(data);
+            EventOccurred?.Invoke(data);
         }
     }
 }

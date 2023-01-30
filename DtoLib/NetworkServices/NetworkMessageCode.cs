@@ -12,7 +12,7 @@ namespace DtoLib.NetworkServices
         SignUpResponseCode,
         SignInRequestCode,
         SignInResponseCode,
-        SearchUserRequestCode,
+        SearcRequestCode,
         SearchUserResponseCode,
         CreateDialogRequestCode,
         CreateDialogResponseCode,

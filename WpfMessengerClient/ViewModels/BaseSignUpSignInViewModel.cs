@@ -20,7 +20,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="windowsManager">Менеджер окон</param>
         /// <param name="networkMessageHandler">Обработчик сетевых сообщений</param>
         /// <param name="networkProvider">Сетевой провайдер</param>
-        public BaseSignUpSignInViewModel(MessengerWindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
+        public BaseSignUpSignInViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
             BackCommand = new DelegateCommand(GoBack);

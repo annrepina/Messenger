@@ -49,9 +49,6 @@ namespace WpfMessengerClient.Models.Requests
         /// </summary>
         private string _error;
 
-        //public bool HasPhoneNumberError { get; protected set; }
-        //protected bool HasPasswordError { get; protected set; }
-
         public string PhoneNumberError { get; protected set; }
         public string PasswordError { get; protected set; }
 
