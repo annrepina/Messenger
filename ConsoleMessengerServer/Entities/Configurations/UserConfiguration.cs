@@ -25,7 +25,7 @@ namespace ConsoleMessengerServer.Entities.Configurations
 
             builder.Property(acc => acc.Password).HasMaxLength(MaxLengthOfPassword).IsRequired();
 
-            builder.Property(acc => acc.IsOnline).IsRequired().HasDefaultValue(false);
+            //builder.Property(acc => acc.IsOnline).IsRequired().HasDefaultValue(false);
 
             builder.HasMany(acc => acc.Dialogs).WithMany(d => d.Users);
 

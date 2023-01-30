@@ -9,42 +9,39 @@ namespace DtoLib.NetworkServices.Interfaces
 {
     /// <summary>
     /// Интерфейс, который представляет собой сетевого провайдера
+    /// Отвечает за подключение к сети и обмен данными в сети
     /// </summary>
     public interface INetworkProvider
     {
-        //public event Action<byte[], INetworkProvider> BytesReceived;
-
         /// <summary>
-        /// Отвечает за пересылку байтов между клиентом и сервером.
+        /// Отвечает за пересылку массивов байт между клиентом и сервером.
         /// </summary>
         public ITransmitterAsync Transmitter { set; }
 
         /// <summary>
         /// Сетевой поток, по которому будет осуществляться передача данных
         /// </summary>
-        public NetworkStream? NetworkStream { get; set; }
+        public NetworkStream? NetworkStream { get; }
 
         /// <summary>
-        /// Обеспечивает клиентские соединения для сетевых служб tcp.
+        /// Отправить массив байт по сетевому потоку асинхронно
         /// </summary>
-        public TcpClient? TcpClient { get; set; }
-
-        ///// <summary>
-        ///// Уведомить о получении массива байтов
-        ///// </summary>
-        ///// <param name="data">Массив байтов</param>
-        //public void NotifyBytesReceived(byte[] data);
-
-        /// <summary>
-        /// Отправить массив байтов
-        /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">Отправляемые данные</param>
         public Task SendBytesAsync(byte[] data);
 
-        public Task ReadBytesAsync();
+        ///// <summary>
+        ///// Считать массив байт с сетевого потока асинхронно
+        ///// </summary>
+        //public Task ReadBytesAsync();
 
-        public void Disconnect();
+        /// <summary>
+        /// Уведомить об отключении от сети
+        /// </summary>
+        public void NotifyDisconnected();
 
+        /// <summary>
+        /// Закрыть соединение с сетью
+        /// </summary>
         public void CloseConnection();
     }
 }

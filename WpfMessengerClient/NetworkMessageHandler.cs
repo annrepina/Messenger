@@ -8,6 +8,7 @@ using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
+using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient
 {
@@ -98,6 +99,8 @@ namespace WpfMessengerClient
         private readonly IMapper _mapper;
 
         #endregion Приватные поля
+
+        public ClientNetworkProvider provider { get; set; }
 
         #region Конструкторы
 

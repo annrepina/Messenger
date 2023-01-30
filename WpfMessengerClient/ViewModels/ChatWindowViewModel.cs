@@ -14,8 +14,9 @@ using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
-using WpfMessengerClient.NetworkServices;
+using WpfMessengerClient.NetworkServices.Interfaces;
 using WpfMessengerClient.Obsevers;
+using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -350,6 +351,9 @@ namespace WpfMessengerClient.ViewModels
         public ChatWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user) 
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
+            _networkMessageHandler.provider = _networkProvider as ClientNetworkProvider;
+            _networkProvider.NetworkMessageHandler = networkMessageHandler;
+
             _networkMessageHandler.CreateDialogRequestReceived.EventOccurred += OnCreateDialogRequestReceived;
             _networkMessageHandler.DialogReceivedNewMessage.EventOccurred += OnDialogReceivedNewMessage;
             _networkMessageHandler.DeleteMessageRequestReceived.EventOccurred += OnDeleteMessageRequestReceived;
@@ -916,7 +920,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Проверить на null вактивный диалог
         /// </summary>
-        void CheckActiveDialog()
+        private void CheckActiveDialog()
         {
             if (_activeDialog != null)
             {
@@ -932,7 +936,7 @@ namespace WpfMessengerClient.ViewModels
         /// <summary>
         /// Проверяет на null выбранное сообщение
         /// </summary>
-        void CheckSelectedMessage()
+        private void CheckSelectedMessage()
         {
             if (_selectedMessage != null)
                 WasMessageSelected = true;
@@ -1007,7 +1011,7 @@ namespace WpfMessengerClient.ViewModels
         /// </summary>
         /// <param name="sender">Объект вызвавший события</param>
         /// <param name="e">Содержит данные о событии</param>
-        internal void OnWindowClosing(object? sender, CancelEventArgs e)
+        public void OnWindowClosing(object? sender, CancelEventArgs e)
         {
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }

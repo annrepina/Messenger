@@ -33,10 +33,10 @@ namespace ConsoleMessengerServer.Entities
         /// </summary>
         public string Password { get; set; }
 
-        /// <summary>
-        /// Пользователь онлайн?
-        /// </summary>
-        public bool IsOnline { get; set; }
+        ///// <summary>
+        ///// Пользователь онлайн?
+        ///// </summary>
+        //public bool IsOnline { get; set; }
 
         /// <summary>
         /// Список диалогов

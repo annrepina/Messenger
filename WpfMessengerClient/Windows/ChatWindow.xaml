@@ -271,7 +271,7 @@
                     Margin="0,5,5,10" BorderBrush="{x:Null}" 
                     Foreground="#FFDCD7D7" FontFamily="Tahoma"
                     HorizontalContentAlignment="Stretch"
-                    IsEnabled="{Binding WasDeleteButtonClicked, Converter={local1:InverseBooleanConverter}}">
+                    IsEnabled="{Binding AreControlsAvailable}">
 
                 <ListView.InputBindings>
                     <KeyBinding Key="Delete" Command="{Binding DeleteMessageCommand}"/>
@@ -279,20 +279,20 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Border HorizontalAlignment="{Binding HorizontalAlignment}">
-                            <StackPanel Orientation="Vertical" Margin="2" HorizontalAlignment="{Binding HorizontalAlignment}">
+                        <Border HorizontalAlignment="{Binding IsCurrentUserMessage, Converter={local1:BooleanConverterToHorizontalAlignment}}">
+                            <StackPanel Orientation="Vertical" Margin="2" HorizontalAlignment="{Binding IsCurrentUserMessage, Converter={local1:BooleanConverterToHorizontalAlignment}}">
 
                                 <TextBlock TextWrapping="Wrap" Padding="2"
                                     Text="{Binding Time}"
                                     FontFamily="Tahoma"
-                                    HorizontalAlignment="{Binding HorizontalAlignment}"
+                                    HorizontalAlignment="{Binding IsCurrentUserMessage, Converter={local1:BooleanConverterToHorizontalAlignment}}"
                                     MaxWidth="{Binding RelativeSource=
                                     {RelativeSource AncestorType = {x:Type ListView}}, Path=ActualWidth}"/>
 
                                 <TextBlock TextWrapping="Wrap" Padding="2" 
                                     Text="{Binding Text}"
                                     FontFamily="Tahoma" FontSize="18"     
-                                    HorizontalAlignment="{Binding HorizontalAlignment}"
+                                    HorizontalAlignment="{Binding IsCurrentUserMessage, Converter={local1:BooleanConverterToHorizontalAlignment}}"
                                     MaxWidth="550"/>
 
                             </StackPanel>

@@ -10,8 +10,9 @@ using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
-using WpfMessengerClient.NetworkServices;
+using WpfMessengerClient.NetworkServices.Interfaces;
 using WpfMessengerClient.Obsevers;
+using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -52,6 +53,9 @@ namespace WpfMessengerClient.ViewModels
         public SignInWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
+            _networkMessageHandler.provider = _networkProvider as ClientNetworkProvider;
+            _networkProvider.NetworkMessageHandler = networkMessageHandler;
+
             SignInCommand = new DelegateCommand(async () => await SignInAsync());
 
             Request = new SignInRequest();

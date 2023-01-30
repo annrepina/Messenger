@@ -65,7 +65,7 @@ namespace ConsoleMessengerServer.Net
             }
             catch (IOException)
             {
-                Disconnect();
+                NotifyDisconnected();
 
                 var dateTime = DateTime.Now;
 
@@ -98,7 +98,7 @@ namespace ConsoleMessengerServer.Net
             await _transmitter.SendNetworkMessageAsync(data);
         }
 
-        public void Disconnect()
+        public void NotifyDisconnected()
         {
             Disconnected.Invoke(Id);
             CloseConnection();

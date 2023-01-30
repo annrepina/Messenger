@@ -9,36 +9,26 @@ using System.Windows;
 namespace WpfMessengerClient.Models
 {
     /// <summary>
-    /// Сообщения отправляемые пользователями
+    /// Класс - текстовое сообщение, которыми обмениваются пользователи
     /// </summary>
     public class Message : BaseNotifyPropertyChanged
     {
         #region Приватные поля
 
-        /// <summary>
-        /// Текст сообщения
-        /// </summary>
+        /// <inheritdoc cref="Id"/>
+        private int _id;
+
+        /// <inheritdoc cref="Text"/>
         private string _text;
 
-        /// <summary>
-        /// Прочитано сообщение?
-        /// </summary>
+        /// <inheritdoc cref="IsRead"/>
         private bool _isRead;
 
-        /// <summary>
-        /// Дата и время отправки сообщения
-        /// </summary>
+        /// <inheritdoc cref="DateTime"/>
         private DateTime _dateTime;
 
-        /// <summary>
-        /// Данные о пользователе - отправителе сообщения
-        /// </summary>
+        /// <inheritdoc cref="UserSender"/>
         private User? _userSender;
-
-        /// <summary>
-        /// Идентификатор сообщения
-        /// </summary>
-        private int _id;
 
         /// <inheritdoc cref="IsCurrentUserMessage"/>
         private bool _isCurrentUserMessage;
@@ -78,7 +68,7 @@ namespace WpfMessengerClient.Models
         }
 
         /// <summary>
-        /// Свойство - данные о пользователе - отправителе сообщения
+        /// Свойство - пользователь-отправитель сообщения
         /// </summary>
         public User? UserSender
         {
@@ -117,6 +107,7 @@ namespace WpfMessengerClient.Models
             set
             {
                 _dateTime = value;
+
                 OnPropertyChanged(nameof(DateTime));
             }
         }
@@ -124,13 +115,10 @@ namespace WpfMessengerClient.Models
         /// <summary>
         /// Время отправки сообщения
         /// </summary>
-        public string Time
-        {
-            get => DateTime.ToString("dd-MM-yyyy hh:mm:ss");
-        }
+        public string Time { get => DateTime.ToString("dd-MM-yyyy hh:mm"); }
 
         /// <summary>
-        /// Является ли это сообщение сообщением текущего пользователя
+        /// Является ли это сообщение сообщением текущего пользователя?
         /// </summary>
         public bool IsCurrentUserMessage 
         { 
@@ -144,23 +132,21 @@ namespace WpfMessengerClient.Models
             }
         }
 
-        /// <summary>
-        /// Горизонтальное выравнивание
-        /// </summary>
-        public TextAlignment TextAlignment
-        {
-            get => IsCurrentUserMessage ? TextAlignment.Right : TextAlignment.Left;
-        }
+        ///// <summary>
+        ///// Горизонтальное выравнивание
+        ///// </summary>
+        //public TextAlignment TextAlignment
+        //{
+        //    get => IsCurrentUserMessage ? TextAlignment.Right : TextAlignment.Left;
+        //}
 
-        /// <summary>
-        /// Горизонтальное выравнивание
-        /// </summary>
-        public HorizontalAlignment HorizontalAlignment
-        {
-            get => IsCurrentUserMessage ? HorizontalAlignment.Right : HorizontalAlignment.Left;
-        }
-
-        //public string MessagePresentation => $"{Time}\n{Text}";
+        ///// <summary>
+        ///// Горизонтальное выравнивание
+        ///// </summary>
+        //public HorizontalAlignment HorizontalAlignment
+        //{
+        //    get => IsCurrentUserMessage ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+        //}
 
         #endregion Свойства
 

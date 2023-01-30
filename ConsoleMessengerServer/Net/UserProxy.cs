@@ -115,7 +115,7 @@ namespace ConsoleMessengerServer.Net
             await _connections.First(con => con.Id == netWorkProviderId).SendBytesAsync(response);
         }
 
-        //todo возможно понадобится реализовать Закрытие соединения
+        //дtodo возможно понадобится реализовать Закрытие соединения
         /// <summary>
         /// Закрыть все соединения
         /// </summary>

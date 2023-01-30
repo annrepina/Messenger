@@ -10,7 +10,7 @@ using WpfMessengerClient.Models;
 using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
-using WpfMessengerClient.NetworkServices;
+using WpfMessengerClient.NetworkServices.Interfaces;
 using WpfMessengerClient.Obsevers;
 
 namespace WpfMessengerClient.ViewModels

@@ -41,13 +41,6 @@ namespace DtoLib.Dto
         [ProtoMember(4)]
         public string Password { get; set; }
 
-        /// <summary>
-        /// Свойство - онлайн ли пользователь в текущий момент
-        /// Атрибут - для сереализации/десереализации, задает интовый идентификатор для свойства
-        /// </summary>
-        [ProtoMember(5)]
-        public bool IsOnline { get; set; }
-
 
         #region Debug
 
@@ -57,7 +50,7 @@ namespace DtoLib.Dto
         /// <returns></returns>
         public override string ToString()
         {
-            return $"Id: {Id}. PhoneNumber: {PhoneNumber}. Password: {Password}. IsOnline: {IsOnline}.";
+            return $"Id: {Id}. PhoneNumber: {PhoneNumber}. Password: {Password}.";
         }
 
         #endregion Debug

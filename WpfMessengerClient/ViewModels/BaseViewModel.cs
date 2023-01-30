@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using WpfMessengerClient.NetworkServices;
+using WpfMessengerClient.NetworkServices.Interfaces;
 
 namespace WpfMessengerClient.ViewModels
 {

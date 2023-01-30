@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using WpfMessengerClient.Models;
-using WpfMessengerClient.NetworkServices;
+using WpfMessengerClient.NetworkServices.Interfaces;
 using WpfMessengerClient.Services;
 using WpfMessengerClient.ViewModels;
 using WpfMessengerClient.Windows;

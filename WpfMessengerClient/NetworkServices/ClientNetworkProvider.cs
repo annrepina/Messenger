@@ -6,19 +6,49 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows;
-using WpfMessengerClient.NetworkServices;
+using WpfMessengerClient.NetworkServices.Interfaces;
 
 namespace WpfMessengerClient.Services
 {
     /// <summary>
-    /// Сетевой провайдер на стороне клиента
+    /// Класс, который представляет собой сетевого провайдера в клиентском приложении
+    /// Отвечает за подключение к сети и обмен данными в сети
     /// </summary>
-    public class ClientNetworkProvider : /*NetworkProvider, */IClientNetworkProvider
+    public class ClientNetworkProvider : IClientNetworkProvider
     {
+        #region События
+
+        /// <summary>
+        /// Событие отключения от сети
+        /// </summary>
         public event Action Disconnected;
+
+        /// <summary>
+        /// Событие получения массива байт по сети
+        /// </summary>
         public event Action<byte[]> BytesReceived;
 
+        #endregion События
+
+        #region Приватные поля
+
+        /// <summary>
+        /// Обеспечивает клиентские подключения для сетевых служб TCP
+        /// </summary>
+        private TcpClient _tcpClient;
+
+        /// <inheritdoc cref="Transmitter"/>
         private ITransmitterAsync _transmitter;
+
+        /// <summary>
+        /// Свойство - провайдер подключен к серверу?
+        /// </summary>
+        private bool _isConnected;
+        private NetworkMessageHandler _networkMessageHandler;
+
+        public NetworkMessageHandler NetworkMessageHandler { set => _networkMessageHandler = value; }
+
+        #endregion Приватные поля
 
         #region Константы
 
@@ -37,19 +67,15 @@ namespace WpfMessengerClient.Services
         #region Свойства
 
         /// <summary>
-        /// Свойство - провайдер подключен к серверу?
-        /// </summary>
-        public bool IsConnected { get; set; }
-
-        public IConnectionController ConnectionController { get; set; }
-
-        /// <summary>
-        /// Отвечает за пересылку байтов между клиентом и сервером.
+        /// Трансмиттер - отвечает за пересылку байтов между клиентом и сервером.
         /// </summary>
         public ITransmitterAsync Transmitter { set => _transmitter = value; }
 
-        public NetworkStream NetworkStream { get; set; }
-        public TcpClient TcpClient { get; set; }
+        /// <summary>
+        /// Предоставляет базовый поток данных для доступа к сети
+        /// </summary>
+        public NetworkStream NetworkStream { get; private set; }
+        //NetworkMessageHandler IClientNetworkProvider.NetworkMessageHandler { set => throw new NotImplementedException(); }
 
         #endregion Свойства 
 
@@ -58,12 +84,11 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Констурктор по умолчанию
         /// </summary>
-        public ClientNetworkProvider(/*IConnectionController connectionController*/) : base()
+        public ClientNetworkProvider() : base()
         {
             Transmitter = new Transmitter(this);
-            TcpClient = new TcpClient();
-            IsConnected = false;
-            //ConnectionController = connectionController;
+            _tcpClient = new TcpClient();
+            _isConnected = false;
         }
 
         #endregion Конструкторы
@@ -73,75 +98,66 @@ namespace WpfMessengerClient.Services
         /// <summary>
         /// Подключиться к серверу асинхронно 
         /// </summary>
-        public async Task ConnectAsync(/*byte[] messageBytes*/)
+        private async Task ConnectAsync()
         {
             try
             {
+                _tcpClient.Connect(Host, Port);
+                NetworkStream = _tcpClient.GetStream();
+                _isConnected = true;
 
-                TcpClient.Connect(Host, Port);
-                NetworkStream = TcpClient.GetStream();
-                IsConnected = true;
-
-                //if (messageBytes != null)
-                //{
-                //    await _transmitter.SendNetworkMessageAsync(messageBytes);
-                //}
-
-                /*await */
-                Task.Run(() => ReadBytesAsync());
+                await Task.Run(() => ReadBytesAsync());
 
             }
-            //catch (IOException)
-            //{
-            //    Disconnect();
-            //    throw;
-            //}
             catch (Exception ex)
             {
 
 #if DebugExceptions
 
                 MessageBox.Show(ex.Message);
-
 #endif
-                Disconnect();
+                NotifyDisconnected();
             }
         }
 
-        //public void OnBytesReceived(byte[] data)
-        //{
-        //    ConnectionController.OnBytesReceived(data);
-        //}
-
+        /// <summary>
+        /// Отправить массив байт асинхронно серверу
+        /// </summary>
+        /// <param name="data">Отправляемые данные </param>
         public async Task SendBytesAsync(byte[] data)
         {
             try
             {
-                if (!IsConnected)
+                if (!_isConnected)
                     ConnectAsync();
 
                 await _transmitter.SendNetworkMessageAsync(data);
             }
-            catch (IOException)
-            {
-                Disconnect();
-                throw;
-            }
             catch (Exception ex)
             {
+                NotifyDisconnected();
+
+#if DebugExceptions
+
                 MessageBox.Show(ex.Message);
-                throw;
+#endif
             }
         }
 
-        public void Disconnect()
+        /// <summary>
+        /// Уведомить об отключении от сети
+        /// </summary>
+        public void NotifyDisconnected()
         {
             Disconnected.Invoke();
-            //ConnectionController.NotifyDisconnect();
             CloseConnection();
         }
 
-        public async Task ReadBytesAsync()
+        /// <summary>
+        /// Читать в бесконечном цикле байты по сети
+        /// </summary>
+        /// <returns></returns>
+        private async Task ReadBytesAsync()
         {
             try
             {
@@ -149,30 +165,33 @@ namespace WpfMessengerClient.Services
                 {
                     byte[] data = await _transmitter.ReceiveBytesAsync();
 
-                    BytesReceived?.Invoke(data);
-                //OnBytesReceived(data);
+                    //BytesReceived?.Invoke(data);
+                    _networkMessageHandler.ProcessNetworkMessage(data);
                 }
             }
-            catch (IOException)
+            catch (Exception ex)
             {
-                Disconnect();
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
+                NotifyDisconnected();
+
+#if DebugExceptions
+
+                MessageBox.Show(ex.Message);
+#endif
             }
         }
 
+        /// <summary>
+        /// Закрыть соединение с сетью
+        /// </summary>
         public void CloseConnection()
         {
             if (NetworkStream != null)
                 NetworkStream.Close();
 
-            if (TcpClient != null)
-                TcpClient.Close();
+            if (_tcpClient != null)
+                _tcpClient.Close();
 
-            IsConnected = false;
+            _isConnected = false;
         }
 
         #endregion Методы связанные с сетью

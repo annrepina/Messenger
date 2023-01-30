@@ -1,5 +1,5 @@
 ﻿using Prism.Commands;
-using WpfMessengerClient.NetworkServices;
+using WpfMessengerClient.NetworkServices.Interfaces;
 
 namespace WpfMessengerClient.ViewModels
 {
