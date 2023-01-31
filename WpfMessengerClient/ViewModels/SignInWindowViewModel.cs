@@ -1,19 +1,14 @@
-﻿using AutoMapper;
-using Common.Dto.Requests;
+﻿using Common.Dto.Requests;
 using Common.NetworkServices;
 using Prism.Commands;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
-using WpfMessengerClient.Models;
-using WpfMessengerClient.Models.Mapping;
 using WpfMessengerClient.Models.Requests;
 using WpfMessengerClient.Models.Responses;
 using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 using WpfMessengerClient.Obsevers;
-using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -89,7 +84,7 @@ namespace WpfMessengerClient.ViewModels
             }
             catch (Exception)
             {
-                CloseWindow();
+                CloseWindowAfterError();
                 throw;
             }
         }
@@ -101,7 +96,10 @@ namespace WpfMessengerClient.ViewModels
         private void ProcessSignInResponse(SignInResponse signInResponse)
         {
             if (signInResponse.Status == NetworkResponseStatus.Successful)
+            {
+                _networkProvider.Disconnected -= CloseWindowAfterError;
                 _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, _networkProvider, signInResponse.User, signInResponse.Dialogs);
+            }
 
             else if (signInResponse.Status == NetworkResponseStatus.Failed)
             {
@@ -118,15 +116,7 @@ namespace WpfMessengerClient.ViewModels
             }
 
             else
-                CloseWindow();
-        }
-
-        /// <summary>
-        /// Переключиться на окно чатов
-        /// </summary>
-        public void SwitchToChatWindow(User user, List<Dialog> dialogs)
-        {
-            _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, _networkProvider, user, dialogs);
+                CloseWindowAfterError();
         }
     }
 }

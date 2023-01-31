@@ -1,11 +1,9 @@
-﻿#define DebugExceptions
+﻿//#define DebugExceptions
 using Common.NetworkServices;
 using Common.NetworkServices.Interfaces;
 using System;
-using System.IO;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using System.Windows;
 using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 
@@ -150,7 +148,7 @@ namespace WpfMessengerClient.Services
         /// </summary>
         public void NotifyDisconnected()
         {
-            Disconnected.Invoke();
+            Disconnected?.Invoke();
             CloseConnection();
         }
 

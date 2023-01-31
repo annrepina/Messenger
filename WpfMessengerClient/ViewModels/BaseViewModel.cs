@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 
@@ -57,20 +58,34 @@ namespace WpfMessengerClient.ViewModels
             _messengerWindowsManager = windowsManager;
             _networkMessageHandler = networkMessageHandler;
             _networkProvider = networkProvider;
-            _networkProvider.Disconnected += CloseWindow;
+            _networkProvider.Disconnected += CloseWindowAfterError;
             AreControlsAvailable = true;
         }
 
         /// <summary>
-        /// Закрывает текущее окно
+        /// Закрывает текущее окно после выявления ошибки
         /// </summary>
-        protected void CloseWindow()
+        protected void CloseWindowAfterError()
         {
             MessageBox.Show("Ой, кажется что-то пошло не так.\nМы уже работаем над решением проблемы, попробуйте запустить приложение позже.");
 
             _networkProvider.CloseConnection();
 
             Application.Current.Dispatcher.Invoke(() => _messengerWindowsManager.CloseCurrentWindow());
+        }
+
+        /// <summary>
+        /// Обработчик события закрытия окна чатов
+        /// </summary>
+        /// <param name="sender">Объект вызвавший события</param>
+        /// <param name="e">Содержит данные о событии</param>
+        public void OnWindowClosing(object? sender, CancelEventArgs e)
+        {
+            _networkProvider.Disconnected -= CloseWindowAfterError;
+
+            _networkProvider.CloseConnection();
+
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
 }

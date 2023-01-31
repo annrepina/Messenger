@@ -5,8 +5,6 @@ using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Media;
 using System.Threading.Tasks;
@@ -17,7 +15,6 @@ using WpfMessengerClient.Models.Responses;
 using WpfMessengerClient.NetworkMessageProcessing;
 using WpfMessengerClient.NetworkServices.Interfaces;
 using WpfMessengerClient.Obsevers;
-using WpfMessengerClient.Services;
 
 namespace WpfMessengerClient.ViewModels
 {
@@ -349,7 +346,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="networkMessageHandler">Обработчик сетевых сообщений</param>
         /// <param name="networkProvider">Сетевой провайдер</param>
         /// <param name="user">Текущий пользователь мессенджера</param>
-        public ChatWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user) 
+        public ChatWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user)
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
             _networkMessageHandler.CreateDialogRequestReceived.EventOccurred += OnCreateDialogRequestReceived;
@@ -391,7 +388,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="networkProvider">Сетевой провайдер</param>
         /// <param name="user">Текущий пользователь мессенджера</param>
         /// <param name="dialogs">Диалоги, которые есть у текущего пользователя</param>
-        public ChatWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user, List<Dialog> dialogs) 
+        public ChatWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user, List<Dialog> dialogs)
             : this(windowsManager, networkMessageHandler, networkProvider, user)
         {
             SetDialogs(dialogs);
@@ -701,7 +698,7 @@ namespace WpfMessengerClient.ViewModels
                 ResetSearchControls();
 
             else
-                CloseWindow();
+                CloseWindowAfterError();
         }
 
         /// <summary>
@@ -754,7 +751,7 @@ namespace WpfMessengerClient.ViewModels
                 ActiveDialog = dialog;
             }
             else
-                CloseWindow();
+                CloseWindowAfterError();
         }
 
         /// <summary>
@@ -772,7 +769,7 @@ namespace WpfMessengerClient.ViewModels
             }
 
             else
-                CloseWindow();
+                CloseWindowAfterError();
         }
 
         /// <summary>
@@ -808,7 +805,7 @@ namespace WpfMessengerClient.ViewModels
                 ActiveDialog = Dialogs.First();
             }
             else
-                CloseWindow();
+                CloseWindowAfterError();
         }
 
         /// <summary>
@@ -825,7 +822,7 @@ namespace WpfMessengerClient.ViewModels
                 MessageBox.Show("Не удалось удалить сообщение. Попробуйте позже.");
 
             else
-                CloseWindow();
+                CloseWindowAfterError();
         }
 
         /// <summary>
@@ -852,7 +849,7 @@ namespace WpfMessengerClient.ViewModels
                 MessageBox.Show("Не удалось удалить диалог.");
 
             else
-                CloseWindow();
+                CloseWindowAfterError();
         }
 
         /// <summary>
@@ -864,17 +861,22 @@ namespace WpfMessengerClient.ViewModels
             if (response.Status == NetworkResponseStatus.Successful)
             {
                 AreControlsAvailable = true;
+
+                _networkProvider.Disconnected -= CloseWindowAfterError;
+
+                _networkProvider.CloseConnection();
+
                 _messengerWindowsManager.ReturnToStartWindow();
             }
 
             else
-                CloseWindow();
+                CloseWindowAfterError();
         }
 
         #endregion Методы обрабатывающие ответы на запросы
 
         #region Предикаты
-        
+
         /// <summary>
         /// У текущего пользователя уже есть диалог с выбранным среди найденных пользователей?
         /// </summary>
@@ -882,17 +884,6 @@ namespace WpfMessengerClient.ViewModels
         private bool HasDialogWithSelectedUser()
         {
             return Dialogs.FirstOrDefault(d => d.Users.Any(user => user.Id == _selectedSearchedUser.Id)) != null;
-        }
-
-        /// <summary>
-        /// Это активный диалог получил новое сообщение от собеседника?
-        /// </summary>
-        /// <param name="dialog">Диалог, который получил новое сообщение</param>
-        /// <param name="message">Новое сообщение</param>
-        /// <returns></returns>
-        private bool HasActiveDialogNewMessage(Dialog dialog, Message message)
-        {
-            return ActiveDialog != null && ActiveDialog.Id == dialog.Id && message.UserSender.Id != CurrentUser.Id;
         }
 
         /// <summary>
@@ -995,16 +986,6 @@ namespace WpfMessengerClient.ViewModels
                 IsGreetTextBoxVisible = false;
                 WasSearchedUserSelected = false;
             }
-        }
-
-        /// <summary>
-        /// Обработчик события закрытия окна чатов
-        /// </summary>
-        /// <param name="sender">Объект вызвавший события</param>
-        /// <param name="e">Содержит данные о событии</param>
-        public void OnWindowClosing(object? sender, CancelEventArgs e)
-        {
-            System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
 }

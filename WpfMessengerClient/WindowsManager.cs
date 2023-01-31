@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using WpfMessengerClient.Models;
 using WpfMessengerClient.NetworkMessageProcessing;
@@ -72,9 +73,14 @@ namespace WpfMessengerClient
             IClientNetworkProvider clientNetworkProvider = new ClientNetworkProvider(networkMessageHandler);
 
             SignUpWindowViewModel signUpWindowViewModel = new SignUpWindowViewModel(this, networkMessageHandler, clientNetworkProvider);
-            SignUpWindow signUpWindow = new SignUpWindow(signUpWindowViewModel);
 
-            ChangeWindow(signUpWindow);
+            SwitchToWindow<SignUpWindowViewModel, SignUpWindow>(signUpWindowViewModel);
+
+            if (_currentWindow is StartWindow)
+            {
+                SignUpWindow signUpWindow = new SignUpWindow(signUpWindowViewModel);
+                ChangeWindow(signUpWindow);
+            }
         }
 
         /// <summary>
@@ -86,9 +92,15 @@ namespace WpfMessengerClient
             IClientNetworkProvider clientNetworkProvider = new ClientNetworkProvider(networkMessageHandler);
 
             SignInWindowViewModel signInWindowViewModel = new SignInWindowViewModel(this, networkMessageHandler, clientNetworkProvider);
-            SignInWindow signInWindow = new SignInWindow(signInWindowViewModel);
 
-            ChangeWindow(signInWindow);
+            SwitchToWindow<SignInWindowViewModel, SignInWindow>(signInWindowViewModel);
+
+            if (_currentWindow is StartWindow)
+            {
+                SignInWindow signInWindow = new SignInWindow(signInWindowViewModel);
+
+                ChangeWindow(signInWindow);
+            }
         }
 
         /// <summary>
@@ -97,9 +109,8 @@ namespace WpfMessengerClient
         public void SwitchToChatWindow(NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user)
         {
             ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(this, networkMessageHandler, networkProvider, user);
-            ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
 
-            ChangeWindow(chatWindow);
+            SwitchToChatWindow(chatWindowViewModel);
         }
 
         /// <summary>
@@ -108,9 +119,43 @@ namespace WpfMessengerClient
         public void SwitchToChatWindow(NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider, User user, List<Dialog> dialogs)
         {
             ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(this, networkMessageHandler, networkProvider, user, dialogs);
-            ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
 
-            ChangeWindow(chatWindow);
+            SwitchToChatWindow(chatWindowViewModel);
+        }
+
+        /// <summary>
+        /// Переключается на окно чатов
+        /// </summary>
+        /// <param name="chatWindowViewModel">ViewModel</param>
+        private void SwitchToChatWindow(ChatWindowViewModel chatWindowViewModel)
+        {
+            SwitchToWindow<ChatWindowViewModel, ChatWindow>(chatWindowViewModel);
+
+            if (_currentWindow is SignInWindow || _currentWindow is SignUpWindow)
+            {
+                ChatWindow chatWindow = new ChatWindow(chatWindowViewModel);
+                ChangeWindow(chatWindow);
+            }
+        }
+
+        /// <summary>
+        /// Переключается на заданное окно
+        /// </summary>
+        /// <typeparam name="TViewModel">Тип объекта, представляющего ViewModel</typeparam>
+        /// <typeparam name="TWindow">Тип окна</typeparam>
+        /// <param name="viewModel">ViewModel</param>
+        private void SwitchToWindow<TViewModel, TWindow>(TViewModel viewModel)
+            where TWindow : Window, new()
+        {
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is TWindow)
+                {
+                    window.DataContext = viewModel;
+                    ChangeWindow(window);
+                    return;
+                }
+            }
         }
 
         /// <summary>

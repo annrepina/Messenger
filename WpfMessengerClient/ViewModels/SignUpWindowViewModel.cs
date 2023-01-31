@@ -3,7 +3,6 @@ using Common.Dto.Requests;
 using Common.NetworkServices;
 using Prism.Commands;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using WpfMessengerClient.Models;
@@ -42,7 +41,7 @@ namespace WpfMessengerClient.ViewModels
         /// <param name="windowsManager">Менеджер окон</param>
         /// <param name="networkMessageHandler">Обработчик сетевого сообщения</param>
         /// <param name="networkProvider">Сетевой провайдер</param>
-        public SignUpWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider) 
+        public SignUpWindowViewModel(WindowsManager windowsManager, NetworkMessageHandler networkMessageHandler, IClientNetworkProvider networkProvider)
             : base(windowsManager, networkMessageHandler, networkProvider)
         {
             SignUpCommand = new DelegateCommand(async () => await OnSignUpCommand());
@@ -80,7 +79,7 @@ namespace WpfMessengerClient.ViewModels
             }
             catch (Exception)
             {
-                CloseWindow();
+                CloseWindowAfterError();
             }
         }
 
@@ -94,6 +93,8 @@ namespace WpfMessengerClient.ViewModels
                 User user = _mapper.Map<User>(Request);
                 user.Id = response.UserId;
 
+                _networkProvider.Disconnected -= CloseWindowAfterError;
+
                 _messengerWindowsManager.SwitchToChatWindow(_networkMessageHandler, _networkProvider, user);
             }
             else if (response.Status == NetworkResponseStatus.Failed)
@@ -103,7 +104,7 @@ namespace WpfMessengerClient.ViewModels
                 MessageBox.Show("Пользователь с таким телефоном уже существует. Введите другой номер или войдите в мессенджер.");
             }
             else
-                CloseWindow();
-        }      
+                CloseWindowAfterError();
+        }
     }
 }

@@ -28,6 +28,7 @@ namespace WpfMessengerClient.Windows
         public SignUpWindow(SignUpWindowViewModel signUpWindowViewModel) : this()
         {
             DataContext = signUpWindowViewModel;
+            Closing += signUpWindowViewModel.OnWindowClosing;
         }
     }
 }
